@@ -18,6 +18,7 @@ from tqdm import tqdm
 from numba import jit
 from itertools import chain
 from matplotlib import figure
+from matplotlib import animation
 from collections import OrderedDict
 
 
@@ -1680,7 +1681,7 @@ def load_data_CNN(region_dict, info_dict, load_path):
             # name of neurons
             nrn_list.append([nrn1, nrn2])
 
-            # region of neurons
+            # region of neuron
             region_list.append(region1 + region2)
 
             # input of neurons
@@ -1720,7 +1721,7 @@ def load_data_CNN(region_dict, info_dict, load_path):
             # name of neurons
             nrn_list.append([nrn2, nrn1])
 
-            # region of neurons
+            # region of neuron
             region_list.append(region2 + region1)
 
             # input of neurons
