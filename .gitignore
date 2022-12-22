@@ -201,8 +201,8 @@ data/*
 plot/*
 
 # plot result
-3D_plot
-3D_plot/*
+3D_Plot
+3D_Plot/*
 Figure
 Figure/*
 .history/*
