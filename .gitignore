@@ -200,16 +200,6 @@ cython_debug/
 data/*
 plot/*
 
-# plot result
-3D_Plot
-3D_Plot/*
-Figure
-Figure/*
-.history/*
-.history
-
-.vscode
-
 # sandbox
 test
 test/*

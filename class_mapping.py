@@ -1,3 +1,5 @@
+import sys
+
 from util import *
 
 
@@ -61,7 +63,11 @@ class NrnMapping:
     def map_process(self, cor, cm, key):
         # set the upper limit of sn num
         with open(self.path["convert"] + self.name + ".pkl", "rb") as file:
-            self.nrn = pickle.load(file).loc[:, ["x", "y", "z", "base"]].to_numpy()
+            try:
+                self.nrn = pickle.load(file).loc[:, ["x", "y", "z", "base"]].to_numpy()
+            except:
+                print("2.A: overwrite:False-->True")
+                sys.exit(0)
 
         r_max, maps = mapping_rule(self.nrn, cor, cm, key)
 
