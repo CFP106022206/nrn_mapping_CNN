@@ -201,7 +201,14 @@ data/*
 plot/*
 
 # plot result
+3D_plot
 3D_plot/*
+Figure
+Figure/*
+.history/*
+.history
+
+.vscode
 
 # sandbox
 test
