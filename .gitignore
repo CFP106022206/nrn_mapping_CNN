@@ -203,3 +203,11 @@ plot/*
 # sandbox
 test
 test/*
+
+# VS Code
+.history/*
+.history
+
+3D_Plot
+Figure
+plot
