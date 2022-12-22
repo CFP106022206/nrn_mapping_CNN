@@ -59,7 +59,7 @@ class NrnRanking:
             candidate_vec = self.I_dict[key_w][self.file_list2[0]][np.newaxis, :]
             candidate_cm = self.cm_dict[key_w][self.file_list2[0]][np.newaxis, :]
             for k in range(1, len(self.file_list2)):
-                candidate_prin_vec = np.vstack((candidate_prin_vec, self.coord[key_w][self.file_list2[k]][:, 0]))
+                candidate_prin_vec = np.vstack((candidate_prin_vec, self.coord[key_w][self.file_list2[k]][0, :]))
                 candidate_vec = np.vstack((candidate_vec, self.I_dict[key_w][self.file_list2[k]]))
                 candidate_cm = np.vstack((candidate_cm, self.cm_dict[key_w][self.file_list2[k]]))
             candidate_prin_vec = candidate_prin_vec[np.newaxis]
@@ -70,7 +70,7 @@ class NrnRanking:
             _candidate_cm = np.tile(candidate_cm, (self.batch_num, 1, 1))
 
             for i in range(num):
-                if (i != num-1) or (int(len(self.file_list) % self.batch_num) == 0):
+                if i != num-1:
                     try:
                         target_prin_vec = self.coord[key_w][self.file_list[i*self.batch_num]][:, 0]
                         target_vec = self.I_dict[key_w][self.file_list[i*self.batch_num]]

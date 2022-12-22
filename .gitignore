@@ -200,14 +200,16 @@ cython_debug/
 data/*
 plot/*
 
-# sandbox
-test
-test/*
-
-# VS Code
+# plot result
+3D_Plot
+3D_Plot/*
+Figure
+Figure/*
 .history/*
 .history
 
-3D_Plot
-Figure
-plot
+.vscode
+
+# sandbox
+test
+test/*
