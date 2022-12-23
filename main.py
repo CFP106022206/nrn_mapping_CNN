@@ -5,21 +5,35 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import ranking_method as rk
+import shutil
 from util import *
 from config import *
 from class_mapping import NrnMapping
 from class_ranking import NrnRanking
 from class_CNN import CNN
 
+# %% Data Cleaning
+clean_path = ['/home/ming/Project/nrn_mapping_package-master/data/converted_data/',
+              '/home/ming/Project/nrn_mapping_package-master/data/mapping_data1/',
+              '/home/ming/Project/nrn_mapping_package-master/data/mapping_data2/',
+              '/home/ming/Project/nrn_mapping_package-master/data/statistical_results/',
+              '/home/ming/Project/nrn_mapping_package-master/data/selected_data/EM/',
+              '/home/ming/Project/nrn_mapping_package-master/data/selected_data/FC'
+              ]
+
+for path in clean_path:
+    try:
+        shutil.rmtree(path)
+        os.mkdir(path)
+    except:
+        print("Path Not Found:", path)
 
 # %% Pick swc data we need
-import shutil
 
 def put_file_in_folder(folder, file):
     if not os.path.isdir(folder):
         os.makedirs(folder, mode=0o777) # absolute makedirs
 
-    # print(f"put {file} in to the folder {folder}")
     try:
         shutil.copy(file, folder)
     except:
@@ -28,7 +42,7 @@ def put_file_in_folder(folder, file):
 EM_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/EM/'
 FC_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/FC/'
 
-labeled_lst_path = '/home/ming/Project/nrn_mapping_package-master/D1-D4.csv'
+labeled_lst_path = '/home/ming/Project/nrn_mapping_package-master/data/D1-D4.csv'
 labeled_lst = pd.read_csv(labeled_lst_path)
 
 EM_selected_path = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/EM/'
