@@ -78,7 +78,7 @@ Match.batch_matching_process(overwrite, target_list, candidate_list,
 
 # STEP 3. B. rank each pair of neurons and output the figure of the best combination of coordinates in each pair
 overwrite = True
-map_data_saving = False
+map_data_saving = True
 plot = False
 Match.batch_ranking_process(overwrite, map_data_saving, plot)
 
