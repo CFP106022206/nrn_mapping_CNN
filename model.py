@@ -1,5 +1,7 @@
 import os
 import numpy as np
+import tensorflow_addons as tfa
+
 from tensorflow.keras.models import *
 from tensorflow.keras.layers import *
 from tensorflow.keras.optimizers import *
@@ -119,6 +121,43 @@ def CNN_small(input_size=(256,256,3)):
     model.summary()
     return model
 
+
+def CNN_focal(input_size=(256,256,3)):
+    inputs = [Input(shape=input_size, name='EM'), Input(shape=input_size, name='FC')]
+    flattened_layers = []
+    for input in inputs:
+        # conv_layer = Conv2D(32, 3, activation = 'relu')(input)
+        conv_layer = Conv2D(32, (3,3))(input)
+        conv_layer = BatchNormalization()(conv_layer)
+        conv_layer = Activation('relu')(conv_layer)
+        conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
+        
+        conv_layer = Conv2D(32, (3,3))(conv_layer)
+        conv_layer = BatchNormalization()(conv_layer)
+        conv_layer = Activation('relu')(conv_layer)
+        conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
+        
+        # # conv_layer = GlobalAvgPool2D()(conv_layer)
+        # # conv_layer = Dropout(0.2)(conv_layer)
+        flattened_layers.append(Flatten()(conv_layer))
+    
+    concat_layer = concatenate(flattened_layers, axis=1)
+    # subtracted = Subtract()(flattened_layers)
+    # subtracted = Add()(flattened_layers)
+    output = Dropout(0.5)(concat_layer)
+    output = Dense(8)(output)
+    output = BatchNormalization()(output)
+    output = Activation('relu')(output)
+
+    # output = Dropout(0.5)(output)
+    # output = Dense(8, activation='relu')(output)
+    output = Dense(1, activation='sigmoid')(output)
+    
+    
+    model = Model(inputs=inputs, outputs=output)
+    model.compile(optimizer='Adam', loss = tfa.losses.SigmoidFocalCrossEntropy(), metrics = ['accuracy'])
+    model.summary()
+    return model
 
 def CNN_big(input_size=(256,256,3)):
     inputs = [Input(shape=input_size, name='EM'), Input(shape=input_size, name='FC')]

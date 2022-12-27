@@ -1,5 +1,5 @@
-# %%
 # from multiprocessing import pool
+# %%
 from cProfile import label
 import numpy as np
 import pandas as pd
@@ -38,7 +38,9 @@ use_D2_only = False
 add_low_score = True
 low_score_neg_rate = 2
 
-test_in_all_data = False
+test_in_all_data = True
+
+use_focal_loss = True
 
 # Load labeled csv
 label_csv_all = '/home/ming/Project/Neural_Mapping_ZGT/data/D1-D4.csv'
@@ -544,9 +546,13 @@ print('y_test shape:', len(y_test))
 #     pickle.dump(model_data, f)
 
 # %%
-from model import CNN_small, CNN_big
+from model import CNN_small, CNN_focal, CNN_big
 
-cnn = CNN_small((50, 50, 3))
+if use_focal_loss:
+    cnn = CNN_focal((50,50,3))
+else:
+    cnn = CNN_small((50, 50, 3))
+
 plot_model(cnn, '/home/ming/Project/nrn_mapping_package-master/Figure/cnn_small_structure.png', show_shapes=True)
 
 # %% Load pkl data
@@ -648,61 +654,61 @@ plt.legend(loc="lower right")
 plt.show()
 
 # %% Precision with different threshold
-def plot_conf_matrix(y_test, y_pred_binary, threshold):
-    conf_matrix = confusion_matrix(y_test, y_pred_binary, labels=[1,0])
-    # 可视化混淆矩阵
-    # group_names = ['True Neg','False Pos','False Neg','True Pos']
-    group_names = ['True Pos','False Neg','False Pos','True Neg']
-    group_counts = ['{0:0.0f}'.format(value) for value in conf_matrix.flatten()]
-    group_percent_false = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[:2]/np.sum(conf_matrix[0])]
-    group_percent_true = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[2:]/np.sum(conf_matrix[1])]
-    group_percent = group_percent_false + group_percent_true
-    labels = [f'{v1}\n{v2}\n{v3}' for v1, v2, v3 in zip(group_names,group_counts,group_percent)]
-    labels = np.asarray(labels).reshape(2,2)
-    sns.heatmap(conf_matrix, annot=labels, fmt='', cmap='Purples')
-    plt.title('Threshold = ' + str(np.round(threshold,1)))
-    plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/ConfuseMatric_tr_'+str(threshold)+'.png', dpi=100)
-    plt.show()
+# def plot_conf_matrix(y_test, y_pred_binary, threshold):
+#     conf_matrix = confusion_matrix(y_test, y_pred_binary, labels=[1,0])
+#     # 可视化混淆矩阵
+#     # group_names = ['True Neg','False Pos','False Neg','True Pos']
+#     group_names = ['True Pos','False Neg','False Pos','True Neg']
+#     group_counts = ['{0:0.0f}'.format(value) for value in conf_matrix.flatten()]
+#     group_percent_false = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[:2]/np.sum(conf_matrix[0])]
+#     group_percent_true = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[2:]/np.sum(conf_matrix[1])]
+#     group_percent = group_percent_false + group_percent_true
+#     labels = [f'{v1}\n{v2}\n{v3}' for v1, v2, v3 in zip(group_names,group_counts,group_percent)]
+#     labels = np.asarray(labels).reshape(2,2)
+#     sns.heatmap(conf_matrix, annot=labels, fmt='', cmap='Purples')
+#     plt.title('Threshold = ' + str(np.round(threshold,1)))
+#     plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/ConfuseMatric_tr_'+str(threshold)+'.png', dpi=100)
+#     plt.show()
 
-def binary_label(y_pred, threshold):
-    y_binary = y_pred.copy()
-    for i in range(len(y_pred)):
-        if y_pred[i] < threshold:
-            y_binary[i] = 0
-        else:
-            y_binary[i] = 1
-    return y_binary
+# def binary_label(y_pred, threshold):
+#     y_binary = y_pred.copy()
+#     for i in range(len(y_pred)):
+#         if y_pred[i] < threshold:
+#             y_binary[i] = 0
+#         else:
+#             y_binary[i] = 1
+#     return y_binary
 
-threshold = np.linspace(0,1,11)
+# threshold = np.linspace(0,1,11)
 
-pricision_score, recall_score, f1_pos_score = [], [], []
-for t in threshold:
-    y_binary = binary_label(y_pred, t)
-    conf_matrix = confusion_matrix(y_test, y_binary.flatten(), labels=[0,1])
-    plot_conf_matrix(y_test, y_binary.flatten(), t)
-    result_f1_score = f1_score(y_test, y_binary, average=None)
-    print('threshold = ', t, '\nf1 score = ', result_f1_score)
-    f1_pos_score.append(result_f1_score[1])
-    pricision = conf_matrix[1,1]/(conf_matrix[1,1]+conf_matrix[0,1])
-    recall = conf_matrix[1,1]/(conf_matrix[1,1]+conf_matrix[1,0])
-    pricision_score.append(pricision)
-    recall_score.append(recall)
+# pricision_score, recall_score, f1_pos_score = [], [], []
+# for t in threshold:
+#     y_binary = binary_label(y_pred, t)
+#     conf_matrix = confusion_matrix(y_test, y_binary.flatten(), labels=[0,1])
+#     plot_conf_matrix(y_test, y_binary.flatten(), t)
+#     result_f1_score = f1_score(y_test, y_binary, average=None)
+#     print('threshold = ', t, '\nf1 score = ', result_f1_score)
+#     f1_pos_score.append(result_f1_score[1])
+#     pricision = conf_matrix[1,1]/(conf_matrix[1,1]+conf_matrix[0,1])
+#     recall = conf_matrix[1,1]/(conf_matrix[1,1]+conf_matrix[1,0])
+#     pricision_score.append(pricision)
+#     recall_score.append(recall)
 
-pricision_recall_np = np.zeros((len(threshold),3))
-pricision_recall_np[:,0] = threshold
-pricision_recall_np[:,1] = pricision_score
-pricision_recall_np[:,2] = recall_score
+# pricision_recall_np = np.zeros((len(threshold),3))
+# pricision_recall_np[:,0] = threshold
+# pricision_recall_np[:,1] = pricision_score
+# pricision_recall_np[:,2] = recall_score
 
-print(pricision_recall_np)
-plt.plot(threshold[:-1], pricision_score[:-1],'o-',label='Pricision')
-plt.plot(threshold[:-1], recall_score[:-1],'o-', label='Recall')
-plt.plot(threshold[:-1], f1_pos_score[:-1], 'o-', label='f1_score')
+# print(pricision_recall_np)
+# plt.plot(threshold[:-1], pricision_score[:-1],'o-',label='Pricision')
+# plt.plot(threshold[:-1], recall_score[:-1],'o-', label='Recall')
+# plt.plot(threshold[:-1], f1_pos_score[:-1], 'o-', label='f1_score')
 
-plt.legend()
-plt.xlabel('Threshold')
-plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/Pricision_Recall.png', dpi=150)
-plt.show()
-confusion_matrix(y_test, binary_label(y_pred, 0.4).flatten(), labels=[0,1])
+# plt.legend()
+# plt.xlabel('Threshold')
+# plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/Pricision_Recall.png', dpi=150)
+# plt.show()
+# confusion_matrix(y_test, binary_label(y_pred, 0.4).flatten(), labels=[0,1])
 # %% compare big model
 
 # cnn2 = CNN_big((50, 50, 3))
