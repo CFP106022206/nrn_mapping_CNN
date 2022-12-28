@@ -1,16 +1,16 @@
-# Purpose:
-# Map neuronal skeletons into two dimensional data format and group them
-
-# %% #######################################################################################################################
+# Pick files(.swc) in DataBase, make pairs
+# %%
 import os
+import shutil
+import random
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import ranking_method as rk
-import shutil
 from util import *
 from config import *
 from class_mapping import NrnMapping
 from class_ranking import NrnRanking
-from class_CNN import CNN
+
 
 # %% Data Cleaning
 clean_path = ['/home/ming/Project/nrn_mapping_package-master/data/converted_data/',
@@ -39,25 +39,26 @@ def put_file_in_folder(folder, file):
     except:
         print('File not found:', file)
 
+EM_sample_num = 1500
+FC_sample_num = 1500
+
 EM_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/EM/'
 FC_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/FC/'
 
-labeled_lst_path = '/home/ming/Project/nrn_mapping_package-master/data/D1-D5.csv'
-labeled_lst = pd.read_csv(labeled_lst_path)
+EM_new_cross = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/EM/'
+FC_new_cross = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/FC/'
 
-EM_selected_path = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/EM/'
-FC_selected_path = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/FC/'
+EM_all_lst = os.listdir(EM_filepath)
+FC_all_lst = os.listdir(FC_filepath)
 
-EM_nrn_arr = np.unique(labeled_lst['em_id'].tolist())
-FC_nrn_arr = np.unique(labeled_lst['fc_id'].tolist())
+EM_sample_lst = random.sample(EM_all_lst, EM_sample_num)
+FC_sample_lst = random.sample(FC_all_lst, FC_sample_num)
 
-for em_nrn in EM_nrn_arr:
-    put_file_in_folder(EM_selected_path, EM_filepath+str(em_nrn)+'.swc')
+for nrn in EM_sample_lst:
+    put_file_in_folder(EM_new_cross, EM_filepath+nrn)
 
-for fc_nrn in FC_nrn_arr:
-    put_file_in_folder(FC_selected_path, FC_filepath+str(fc_nrn)+'.swc')
-
-
+for nrn in FC_sample_lst:
+    put_file_in_folder(FC_new_cross, FC_filepath+nrn)
 
 ########################################################################################################################
 # %% Parameters

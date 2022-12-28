@@ -22,8 +22,8 @@ from util import load_pkl
 
 
 seed = 17                       # Random Seed
-csv_threshold = [0.6, 0.7, 0.8] # selected labeled csv's threshold
-map_data_type = 'rsn'           # 三视图的加权种类选择
+# csv_threshold = [0.6, 0.7, 0.8] # selected labeled csv's threshold
+# map_data_type = 'rsn'           # 三视图的加权种类选择
 
 
 os.environ['PYTHONHASHSEED'] = str(seed)
@@ -43,7 +43,7 @@ test_in_all_data = True
 use_focal_loss = True
 
 # Load labeled csv
-label_csv_all = '/home/ming/Project/Neural_Mapping_ZGT/data/D1-D4.csv'
+label_csv_all = '/home/ming/Project/Neural_Mapping_ZGT/data/D1-D5.csv'
 label_csv_D2 = '/home/ming/Project/Neural_Mapping_ZGT/data/D2_data_1013.csv'
 label_table_all = pd.read_csv(label_csv_all)   # fc_id, em_id, score, rank, label
 label_table_D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
@@ -78,7 +78,7 @@ else:
 if not use_D2_only:
     if not test_in_all_data:
         # train data 使用D1～D4
-        train_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()
+        train_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()      # 如果不是test in all data, train pair就要重做
 
         # 將D1~D4中 test data 的部分刪除
         test_data_row = []
