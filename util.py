@@ -521,7 +521,7 @@ def components_core(lst, coordinate, cm, map_value):
     return r_max, components
 
 
-
+@jit(nopython=True)
 def mapping_flow(x1, y1, z1, map_value, total_grid_number, length):
     # mapping rule
     mp = diving(x1, y1, 1.0, total_grid_number)
@@ -1680,8 +1680,8 @@ def load_data_CNN(region_dict, info_dict, load_path):
         if "fc" in region1 and "em" in region2:
             # name of neurons
             nrn_list.append([nrn1, nrn2])
-
-            # region of neuron
+  
+            # Region of neuron
             region_list.append(region1 + region2)
 
             # input of neurons
@@ -1721,7 +1721,7 @@ def load_data_CNN(region_dict, info_dict, load_path):
             # name of neurons
             nrn_list.append([nrn2, nrn1])
 
-            # region of neuron
+            # Region of neuron
             region_list.append(region2 + region1)
 
             # input of neurons

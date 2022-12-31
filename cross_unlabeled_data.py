@@ -11,6 +11,32 @@ from config import *
 from class_mapping import NrnMapping
 from class_ranking import NrnRanking
 
+def put_file_in_folder(folder, file):
+    if not os.path.isdir(folder):
+        os.makedirs(folder, mode=0o777) # absolute makedirs
+
+    try:
+        shutil.copy(file, folder)
+    except:
+        print('File not found:', file)
+
+# %% 參數設定
+
+EM_sample_num = 1500
+FC_sample_num = 1500
+
+EM_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/EM/'
+FC_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/FC/'
+
+EM_new_cross = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/EM/'
+FC_new_cross = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/FC/'
+
+EM_all_lst = os.listdir(EM_filepath)
+FC_all_lst = os.listdir(FC_filepath)
+
+EM_sample_lst = random.sample(EM_all_lst, EM_sample_num)
+FC_sample_lst = random.sample(FC_all_lst, FC_sample_num)
+
 
 # %% Data Cleaning
 clean_path = ['/home/ming/Project/nrn_mapping_package-master/data/converted_data/',
@@ -27,32 +53,11 @@ for path in clean_path:
         os.mkdir(path)
     except:
         print("Path Not Found:", path)
+        print('Auto Create Path:', path)
+        os.mkdir(path)
+
 
 # %% Pick swc data we need
-
-def put_file_in_folder(folder, file):
-    if not os.path.isdir(folder):
-        os.makedirs(folder, mode=0o777) # absolute makedirs
-
-    try:
-        shutil.copy(file, folder)
-    except:
-        print('File not found:', file)
-
-EM_sample_num = 1500
-FC_sample_num = 1500
-
-EM_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/EM/'
-FC_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/FC/'
-
-EM_new_cross = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/EM/'
-FC_new_cross = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/FC/'
-
-EM_all_lst = os.listdir(EM_filepath)
-FC_all_lst = os.listdir(FC_filepath)
-
-EM_sample_lst = random.sample(EM_all_lst, EM_sample_num)
-FC_sample_lst = random.sample(FC_all_lst, FC_sample_num)
 
 for nrn in EM_sample_lst:
     put_file_in_folder(EM_new_cross, EM_filepath+nrn)
