@@ -41,11 +41,11 @@ low_score_neg_rate = 3
 use_focal_loss = True
 
 # Load labeled csv
-label_csv_D1 = '/home/ming/Project/nrn_mapping_package-master/data/D1_20221230.csv'
-label_csv_D2 = '/home/ming/Project/nrn_mapping_package-master/data/D2_20221230.csv'
-label_csv_D3 = '/home/ming/Project/nrn_mapping_package-master/data/D3_20221230.csv'
-label_csv_D4 = '/home/ming/Project/nrn_mapping_package-master/data/D4_20221230.csv'
-label_csv_D5 = '/home/ming/Project/nrn_mapping_package-master/data/D5_20221230.csv'
+label_csv_D1 = '/home/yining_juan/Documents/nrn_mapping_CNN/data/D1_20221230.csv'
+label_csv_D2 = '/home/yining_juan/Documents/nrn_mapping_CNN/data/D2_20221230.csv'
+label_csv_D3 = '/home/yining_juan/Documents/nrn_mapping_CNN/data/D3_20221230.csv'
+label_csv_D4 = '/home/yining_juan/Documents/nrn_mapping_CNN/data/D4_20221230.csv'
+label_csv_D5 = '/home/yining_juan/Documents/nrn_mapping_CNN/data/D5_20221230.csv'
 
 D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
 D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
@@ -101,13 +101,16 @@ train_pair_nrn = label_table_train[['fc_id', 'em_id', 'label']].to_numpy()
 
 # 讀神經三視圖資料
 # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
-map_data_D1 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D1.pkl')
-map_data_D2 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D2.pkl')
-map_data_D3 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D3.pkl')
-map_data_D4 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D4.pkl')
-map_data_D5 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5.pkl')
+'''
+map_data_D1 = load_pkl('/home/yining_juan/Documents/nrn_mapping_CNN/data/mapping_data_sn_D1.pkl')
+map_data_D2 = load_pkl('/home/yining_juan/Documents/nrn_mapping_CNN/data/mapping_data_sn_D2.pkl')
+map_data_D3 = load_pkl('/home/yining_juan/Documents/nrn_mapping_CNN/data/mapping_data_sn_D3.pkl')
+map_data_D4 = load_pkl('/home/yining_juan/Documents/nrn_mapping_CNN/data/mapping_data_sn_D4.pkl')
+map_data_D5 = load_pkl('/home/yining_juan/Documents/nrn_mapping_CNN/data/mapping_data_sn_D5.pkl')
 
 map_data = map_data_D1+map_data_D2+map_data_D3+map_data_D4+map_data_D5
+'''
+map_data = load_pkl('/home/yining_juan/Documents/nrn_mapping_CNN/data/mapping_data_sn.pkl')+load_pkl('/home/yining_juan/Documents/nrn_mapping_CNN/data/mapping_data_sn_D5_old.pkl')
 
 def data_preprocess(map_data, pair_nrn):
     data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
@@ -152,7 +155,7 @@ data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
 data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
 
 # Train Validation Split
-test_ratio = 0.1
+test_ratio = 0.2
 data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=test_ratio, random_state=seed)
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
@@ -543,7 +546,7 @@ if use_focal_loss:
 else:
     cnn = CNN_small((50, 50, 3))
 
-plot_model(cnn, '/home/ming/Project/nrn_mapping_package-master/Figure/cnn_small_structure.png', show_shapes=True)
+plot_model(cnn, '/home/yining_juan/Documents/nrn_mapping_CNN/Figure/cnn_small_structure.png', show_shapes=True)
 
 # %% Load pkl data
 # train_data = load_pkl('/home/ming/Project/Neural_Mapping_ZGT/data/training.pkl')
@@ -567,7 +570,7 @@ def scheduler(epoch, lr):
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
 # 設定模型儲存條件(儲存最佳模型)
-checkpoint = ModelCheckpoint('/home/ming/Project/nrn_mapping_package-master/CNN_small_Checkpoint.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
+checkpoint = ModelCheckpoint('/home/yining_juan/Documents/nrn_mapping_CNN/CNN_small_Checkpoint.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
 
 
@@ -585,13 +588,13 @@ history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, v
 plt.plot(history.history['loss'], label='loss')
 plt.plot(history.history['val_loss'], label='val_loss')
 plt.legend()
-plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/Train_Curve.png', dpi=100)
+plt.savefig('/home/yining_juan/Documents/nrn_mapping_CNN/Figure/Train_Curve.png', dpi=100)
 plt.show()
 
 cnn_small_train_loss = history.history['loss']
 cnn_small_valid_loss = history.history['val_loss']
 # %%
-model = load_model('/home/ming/Project/nrn_mapping_package-master/CNN_small_Checkpoint.h5')
+model = load_model('/home/yining_juan/Documents/nrn_mapping_CNN/CNN_small_Checkpoint.h5')
 y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM})
 pred_test_compare = np.hstack((y_pred, y_test.reshape(len(y_test), 1)))
 y_pred_binary = []
@@ -614,7 +617,7 @@ group_percent = group_percent_false + group_percent_true
 labels = [f'{v1}\n{v2}\n{v3}' for v1, v2, v3 in zip(group_names,group_counts,group_percent)]
 labels = np.asarray(labels).reshape(2,2)
 sns.heatmap(conf_matrix, annot=labels, fmt='', cmap='Purples')
-plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/ConfuseMatric.png', dpi=100)
+plt.savefig('/home/yining_juan/Documents/nrn_mapping_CNN/Figure/ConfuseMatric.png', dpi=100)
 
 # Precision and recall 
 print("Precision:", conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0]))
@@ -657,7 +660,7 @@ def plot_conf_matrix(y_test, y_pred_binary, threshold):
     labels = np.asarray(labels).reshape(2,2)
     sns.heatmap(conf_matrix, annot=labels, fmt='', cmap='Purples')
     plt.title('Threshold = ' + str(np.round(threshold,1)))
-    plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/ConfuseMatric_tr_'+str(threshold)+'.png', dpi=100)
+    plt.savefig('/home/yining_juan/Documents/nrn_mapping_CNN/Figure/ConfuseMatric_tr_'+str(threshold)+'.png', dpi=100)
     plt.show()
 
 def binary_label(y_pred, threshold):
@@ -696,7 +699,7 @@ plt.plot(threshold[:-1], f1_pos_score[:-1], 'o-', label='f1_score')
 
 plt.legend()
 plt.xlabel('Threshold')
-plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/Pricision_Recall.png', dpi=150)
+plt.savefig('/home/yining_juan/Documents/nrn_mapping_CNN/Figure/Pricision_Recall.png', dpi=150)
 plt.show()
 confusion_matrix(y_test, binary_label(y_pred, 0.4).flatten(), labels=[0,1])
 

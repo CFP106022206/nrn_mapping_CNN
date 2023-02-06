@@ -14,12 +14,12 @@ from class_ranking import NrnRanking
 from class_CNN import CNN
 
 # %% Data Cleaning
-clean_path = ['/home/ming/Project/nrn_mapping_package-master/data/converted_data/',
-              '/home/ming/Project/nrn_mapping_package-master/data/mapping_data1/',
-              '/home/ming/Project/nrn_mapping_package-master/data/mapping_data2/',
-              '/home/ming/Project/nrn_mapping_package-master/data/statistical_results/',
-              '/home/ming/Project/nrn_mapping_package-master/data/selected_data/EM/',
-              '/home/ming/Project/nrn_mapping_package-master/data/selected_data/FC/'
+clean_path = ['/home/yining_juan/Documents/nrn_mapping_CNN/data/converted_data',
+              '/home/yining_juan/Documents/nrn_mapping_CNN/data/mapping_data1/',
+              '/home/yining_juan/Documents/nrn_mapping_CNN/data/mapping_data2/',
+              '/home/yining_juan/Documents/nrn_mapping_CNN/data/statistical_results/',
+              '/home/yining_juan/Documents/nrn_mapping_CNN/data/selected_data/EM/',
+              '/home/yining_juan/Documents/nrn_mapping_CNN/data/selected_data/FC/'
               ]
 
 for path in clean_path:
@@ -40,14 +40,14 @@ def put_file_in_folder(folder, file):
     except:
         print('File not found:', file)
 
-EM_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/EM/'
-FC_filepath = '/home/ming/Project/nrn_mapping_package-master/data/DataBase/FC/'
+EM_filepath = '/home/yining_juan/Documents/nrn_mapping_CNN/data/DataBase/EM/'
+FC_filepath = '/home/yining_juan/Documents/nrn_mapping_CNN/data/DataBase/FC/'
 
-labeled_lst_path = '/home/ming/Project/nrn_mapping_package-master/data/D5_20221230.csv'
+labeled_lst_path = '/home/yining_juan/Documents/nrn_mapping_CNN/data/D5_20221230.csv'
 labeled_lst = pd.read_csv(labeled_lst_path)
 
-EM_selected_path = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/EM/'
-FC_selected_path = '/home/ming/Project/nrn_mapping_package-master/data/selected_data/FC/'
+EM_selected_path = '/home/yining_juan/Documents/nrn_mapping_CNN/data/selected_data/EM/'
+FC_selected_path = '/home/yining_juan/Documents/nrn_mapping_CNN/data/selected_data/FC/'
 
 EM_nrn_arr = np.unique(labeled_lst['em_id'].tolist())
 FC_nrn_arr = np.unique(labeled_lst['fc_id'].tolist())
