@@ -101,6 +101,7 @@ train_pair_nrn = label_table_train[['fc_id', 'em_id', 'label']].to_numpy()
 
 # 讀神經三視圖資料
 # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
+'''
 map_data_D1 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D1.pkl')
 map_data_D2 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D2.pkl')
 map_data_D3 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D3.pkl')
@@ -108,7 +109,9 @@ map_data_D4 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mappi
 map_data_D5 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5.pkl')
 
 map_data = map_data_D1+map_data_D2+map_data_D3+map_data_D4+map_data_D5
-
+del map_data_D1, map_data_D2, map_data_D3, map_data_D4, map_data_D5
+'''
+map_data = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn.pkl')+load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5_old.pkl')
 def data_preprocess(map_data, pair_nrn):
     data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
     FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
@@ -152,7 +155,7 @@ data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
 data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
 
 # Train Validation Split
-test_ratio = 0.1
+test_ratio = 0.2
 data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=test_ratio, random_state=seed)
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
