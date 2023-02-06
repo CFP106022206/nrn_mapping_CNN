@@ -34,16 +34,27 @@ os.environ['TF_DITERMINISTIC_OPS'] = '1'
 
 # %% Data Preprocessing 1 -------------------------------------------------------------------------------------------
 
-add_low_score = True
+add_low_score = False
 low_score_neg_rate = 2
 
 use_focal_loss = True
 
 # Load labeled csv
-label_csv_all = '/home/ming/Project/nrn_mapping_package-master/data/D1~D5_20221230.csv'
+label_csv_D1 = '/home/ming/Project/nrn_mapping_package-master/data/D1_20221230.csv'
 label_csv_D2 = '/home/ming/Project/nrn_mapping_package-master/data/D2_20221230.csv'
-label_table_all = pd.read_csv(label_csv_all)   # fc_id, em_id, score, rank, label
-label_table_D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
+label_csv_D3 = '/home/ming/Project/nrn_mapping_package-master/data/D3_20221230.csv'
+label_csv_D4 = '/home/ming/Project/nrn_mapping_package-master/data/D4_20221230.csv'
+label_csv_D5 = '/home/ming/Project/nrn_mapping_package-master/data/D5_20221230.csv'
+
+# label_csv_all = '/home/ming/Project/nrn_mapping_package-master/data/D1-D4.csv'
+
+D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
+D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
+D3 = pd.read_csv(label_csv_D3)     # FC, EM, label
+D4 = pd.read_csv(label_csv_D4)     # FC, EM, label
+D5 = pd.read_csv(label_csv_D5)     # FC, EM, label
+
+label_table_all = pd.concat([D1, D2, D3, D4, D5])   # fc_id, em_id, score, rank, label
 
 # # D2_data_1013 label 錯誤修正
 # relabel_lst = []
@@ -65,7 +76,17 @@ label_table_D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
 label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
 
 #Testing data 從全部裡面挑選20%
-train_pair_nrn, test_pair_nrn = train_test_split(label_table_all[['fc_id','em_id','label']].to_numpy(), test_size=0.2, random_state=seed)
+# train_pair_nrn, test_pair_nrn = train_test_split(label_table_all[['fc_id','em_id','label']].to_numpy(), test_size=0.2, random_state=seed)
+
+# 新作法 手動裁切特定範圍的Test Data
+test_ratio = 0.2
+test_size = int(label_table_all.shape[0]*test_ratio)
+# train_pair_nrn = np.vstack((label_table_all[['fc_id','em_id','label']].to_numpy()[:3*test_size], label_table_all[['fc_id','em_id','label']].to_numpy()[4*test_size:]))
+train_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[:4*test_size]
+
+# test_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[3*test_size : 4*test_size]
+test_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[4*test_size:]
+
 
 # # 檢查 Testing data 是否出現在Training 中
 # repeat_idx, diff_idx = [], []
@@ -83,9 +104,9 @@ train_pair_nrn, test_pair_nrn = train_test_split(label_table_all[['fc_id','em_id
 
 # 讀神經三視圖資料
 map_data_D1toD4 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn.pkl')
-map_data_D5 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5.pkl')
+map_data_D5 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5_old.pkl')
 # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
-map_data = map_data_D1toD4 + map_data_D5
+map_data = map_data_D1toD4
 
 
 def data_preprocess(map_data, pair_nrn):
@@ -132,8 +153,7 @@ data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
 data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
 
 # Train Validation Split
-test_ratio = 0.1
-data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=test_ratio, random_state=seed)
+data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.2, random_state=seed)
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
 
@@ -368,7 +388,7 @@ if add_low_score and pos >= neg:
     k=0
     for i in range(X_train_add.shape[0]):
         for j in range(k, len(map_data)):
-            if map_data[j][2] < 0.5:
+            if map_data[j][2] < 0.4:
                 for n in range(3):
                     X_train_add[i, 0, :, :, n] = map_data[j][3][n] # FC Image
                     X_train_add[i, 1, :, :, n] = map_data[j][4][n] # EM Image
@@ -517,7 +537,7 @@ def scheduler(epoch, lr):
     min_lr=0.0000001
     total_epoch = train_epochs
     init_lr = 0.001
-    epoch_lr = init_lr*((1-epoch/total_epoch)**5)
+    epoch_lr = init_lr*((1-epoch/total_epoch)**2)
     if epoch_lr<min_lr:
         epoch_lr = min_lr
 

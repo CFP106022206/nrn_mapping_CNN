@@ -33,42 +33,81 @@ os.environ['TF_DITERMINISTIC_OPS'] = '1'
 
 # %% Data Preprocessing 1 -------------------------------------------------------------------------------------------
 
-add_low_score = True
+test_data_in = 'D5'
+
+# add_low_score = True
 low_score_neg_rate = 3
 
 use_focal_loss = True
 
 # Load labeled csv
-label_csv_all = '/home/ming/Project/nrn_mapping_package-master/data/D1~D5_20221230.csv'
+label_csv_D1 = '/home/ming/Project/nrn_mapping_package-master/data/D1_20221230.csv'
+label_csv_D2 = '/home/ming/Project/nrn_mapping_package-master/data/D2_20221230.csv'
+label_csv_D3 = '/home/ming/Project/nrn_mapping_package-master/data/D3_20221230.csv'
+label_csv_D4 = '/home/ming/Project/nrn_mapping_package-master/data/D4_20221230.csv'
 label_csv_D5 = '/home/ming/Project/nrn_mapping_package-master/data/D5_20221230.csv'
-label_table_all = pd.read_csv(label_csv_all)   # fc_id, em_id, score_fc, rank_fc, label_final
-label_table_D5 = pd.read_csv(label_csv_D5)     # fc_id, em_id, score, rank, label
 
-# 分離出 D5 pair 作為Testing Data
+D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
+D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+
+D2 = pd.read_csv(label_csv_D2)
+D2.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
+
+D3 = pd.read_csv(label_csv_D3)
+D3.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
+
+D4 = pd.read_csv(label_csv_D4)
+D4.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
+
+D5 = pd.read_csv(label_csv_D5)
+D5.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
+
+
+label_table_all = pd.concat([D1, D2, D3, D4, D5])   # fc_id, em_id, score, rank, label
+label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+
+
+# 过滤 Training 中 Testing Data 出现的资料组
 pair_all = np.array(label_table_all[['fc_id', 'em_id']])
-pair_D5 = np.array(label_table_D5[['fc_id', 'em_id']])
+
+if test_data_in == 'D1':
+    pair_test = np.array(D1[['fc_id', 'em_id']])
+    test_pair_nrn = D1[['fc_id', 'em_id', 'label']].to_numpy()
+elif test_data_in == 'D2':
+    pair_test = np.array(D2[['fc_id', 'em_id']])
+    test_pair_nrn = D2[['fc_id', 'em_id', 'label']].to_numpy()
+elif test_data_in == 'D3':
+    pair_test = np.array(D3[['fc_id', 'em_id']])
+    test_pair_nrn = D3[['fc_id', 'em_id', 'label']].to_numpy()
+elif test_data_in == 'D4':
+    pair_test = np.array(D4[['fc_id', 'em_id']])
+    test_pair_nrn = D4[['fc_id', 'em_id', 'label']].to_numpy()
+elif test_data_in == 'D5':
+    pair_test = np.array(D5[['fc_id', 'em_id']])
+    test_pair_nrn = D5[['fc_id', 'em_id', 'label']].to_numpy()
 
 repeat_idx, diff_idx = [], []
 for i in range(len(pair_all)):
-    for j in range(len(pair_D5)):
-        if str(pair_all[i][0]) == str(pair_D5[j][0]) and str(pair_all[i][1]) == str(pair_D5[j][1]):
+    for j in range(len(pair_test)):
+        if str(pair_all[i][0]) == str(pair_test[j][0]) and str(pair_all[i][1]) == str(pair_test[j][1]):
             repeat_idx.append(i)
             break
 
-        if j == len(pair_D5)-1:
+        if j == len(pair_test)-1:
             diff_idx.append(i)
-
-label_table_train = label_table_all.iloc[diff_idx] #test_pair_nrn
+label_table_train = label_table_all.iloc[diff_idx] # test_pair_nrn
 
 train_pair_nrn = label_table_train[['fc_id', 'em_id', 'label']].to_numpy()
-test_pair_nrn = label_table_D5[['fc_id', 'em_id', 'label']].to_numpy()
 
 # 讀神經三視圖資料
-map_data_train = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn.pkl')
-map_data_test = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5.pkl')
 # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
+map_data_D1 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D1.pkl')
+map_data_D2 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D2.pkl')
+map_data_D3 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D3.pkl')
+map_data_D4 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D4.pkl')
+map_data_D5 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5.pkl')
 
-map_data = map_data_train+map_data_test
+map_data = map_data_D1+map_data_D2+map_data_D3+map_data_D4+map_data_D5
 
 def data_preprocess(map_data, pair_nrn):
     data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
@@ -106,7 +145,7 @@ def data_preprocess(map_data, pair_nrn):
 
     return data_np, pair_df
 
-resolutions = map_data_train[0][3].shape
+resolutions = map_data[0][3].shape
 print('Image shape: ', resolutions)
 
 data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
@@ -363,23 +402,23 @@ class_weights = {0:weight[0], 1:weight[1]}
 print('Balanced Weight in: \n', np.unique(y_train),'\n', weight)
 
 
-if add_low_score and pos >= neg:
-    X_train_add = np.zeros((low_score_neg_rate*(pos-neg), X_train.shape[1], X_train.shape[2], X_train.shape[3], X_train.shape[4]))   # 製作需要增加的x_train 量
-    y_train_add = np.zeros(X_train_add.shape[0], dtype=np.int64)
+# if add_low_score and pos >= neg:
+#     X_train_add = np.zeros((low_score_neg_rate*(pos-neg), X_train.shape[1], X_train.shape[2], X_train.shape[3], X_train.shape[4]))   # 製作需要增加的x_train 量
+#     y_train_add = np.zeros(X_train_add.shape[0], dtype=np.int64)
     
-    k=0
-    for i in range(X_train_add.shape[0]):
-        for j in range(k, len(map_data_train)):
-            if map_data_train[j][2] < 0.4:
-                for n in range(3):
-                    X_train_add[i, 0, :, :, n] = map_data_train[j][3][n] # FC Image
-                    X_train_add[i, 1, :, :, n] = map_data_train[j][4][n] # EM Image
+#     k=0
+#     for i in range(X_train_add.shape[0]):
+#         for j in range(k, len(map_data_train)):
+#             if map_data_train[j][2] < 0.4:
+#                 for n in range(3):
+#                     X_train_add[i, 0, :, :, n] = map_data_train[j][3][n] # FC Image
+#                     X_train_add[i, 1, :, :, n] = map_data_train[j][4][n] # EM Image
 
-                k=j+1
-                break
+#                 k=j+1
+#                 break
     
-    X_train = np.vstack((X_train, X_train_add))
-    y_train = np.hstack((y_train, y_train_add))
+#     X_train = np.vstack((X_train, X_train_add))
+#     y_train = np.hstack((y_train, y_train_add))
 
 
 
