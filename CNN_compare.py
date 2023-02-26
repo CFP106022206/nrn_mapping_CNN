@@ -9,6 +9,7 @@ import pickle
 import os
 import random
 import tensorflow as tf
+import keras_tuner as kt
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.models import *
@@ -32,12 +33,16 @@ np.random.seed(seed)
 tf.random.set_seed(seed)
 os.environ['TF_DITERMINISTIC_OPS'] = '1'
 
-# %% Data Preprocessing 1 -------------------------------------------------------------------------------------------
+# %% Data Prepare
 
-add_low_score = False
+train_range_to = 'D5'   # 'D4' or 'D5'
+save_model_name = 'Train_Test_In_D1-D5'
+
+add_low_score = True
 low_score_neg_rate = 2
 
 use_focal_loss = True
+tuner = True    # 在tuner中默认使用focal loss
 
 # Load labeled csv
 label_csv_D1 = '/home/ming/Project/nrn_mapping_package-master/data/D1_20221230.csv'
@@ -49,12 +54,40 @@ label_csv_D5 = '/home/ming/Project/nrn_mapping_package-master/data/D5_20221230.c
 # label_csv_all = '/home/ming/Project/nrn_mapping_package-master/data/D1-D4.csv'
 
 D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
-D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
-D3 = pd.read_csv(label_csv_D3)     # FC, EM, label
-D4 = pd.read_csv(label_csv_D4)     # FC, EM, label
-D5 = pd.read_csv(label_csv_D5)     # FC, EM, label
+D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-label_table_all = pd.concat([D1, D2, D3, D4, D5])   # fc_id, em_id, score, rank, label
+D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
+D2.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+
+D3 = pd.read_csv(label_csv_D3)     # FC, EM, label
+D3.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+
+D4 = pd.read_csv(label_csv_D4)     # FC, EM, label
+D4.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+
+
+if train_range_to == 'D5':
+    D5 = pd.read_csv(label_csv_D5)     # FC, EM, label
+    D5.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+
+    label_table_all = pd.concat([D1, D2, D3, D4, D5])   # fc_id, em_id, score, rank, label
+
+    # 讀神經三視圖資料
+    map_data_D1toD4 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn.pkl')
+    # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
+    map_data_D5 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5_old.pkl')
+    map_data = map_data_D1toD4 + map_data_D5
+    del map_data_D1toD4, map_data_D5
+
+else:
+    label_table_all = pd.concat([D1, D2, D3, D4])   # fc_id, em_id, score, rank, label
+    
+    map_data = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn.pkl')
+
+
+label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+
+
 
 # # D2_data_1013 label 錯誤修正
 # relabel_lst = []
@@ -72,8 +105,6 @@ label_table_all = pd.concat([D1, D2, D3, D4, D5])   # fc_id, em_id, score, rank,
 
 # label_table_D2['label'] = relabel_lst
 
-# 刪除重複
-label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
 
 #Testing data 從全部裡面挑選20%
 # train_pair_nrn, test_pair_nrn = train_test_split(label_table_all[['fc_id','em_id','label']].to_numpy(), test_size=0.2, random_state=seed)
@@ -100,13 +131,6 @@ test_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[4*test_siz
 #             diff_idx.append(i)
 
 # label_table_train = label_table_all.iloc[diff_idx] #test_pair_nrn
-
-
-# 讀神經三視圖資料
-map_data_D1toD4 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn.pkl')
-map_data_D5 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5_old.pkl')
-# map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
-map_data = map_data_D1toD4
 
 
 def data_preprocess(map_data, pair_nrn):
@@ -385,17 +409,26 @@ if add_low_score and pos >= neg:
     X_train_add = np.zeros((low_score_neg_rate*(pos-neg), X_train.shape[1], X_train.shape[2], X_train.shape[3], X_train.shape[4]))   # 製作需要增加的x_train 量
     y_train_add = np.zeros(X_train_add.shape[0], dtype=np.int64)
     
+    nrn_pair_test_np = nrn_pair_test[['FC','EM']].to_numpy()    # 以np格式獲取test中pair的神經名稱
+    
     k=0
     for i in range(X_train_add.shape[0]):
         for j in range(k, len(map_data)):
-            if map_data[j][2] < 0.4:
+            in_test = 0 # 檢查擴增的資料組是否出現在test中
+            for row in range(nrn_pair_test_np.shape[0]):
+                if str(map_data[j][0]) == str(nrn_pair_test_np[row,0]) and str(map_data[j][1]) == str(nrn_pair_test_np[row,1]):
+                    in_test = 1
+                    break
+            
+            if in_test == 0 and map_data[j][2] < 0.4:
+
                 for n in range(3):
                     X_train_add[i, 0, :, :, n] = map_data[j][3][n] # FC Image
                     X_train_add[i, 1, :, :, n] = map_data[j][4][n] # EM Image
 
                 k=j+1
                 break
-    
+
     X_train = np.vstack((X_train, X_train_add))
     y_train = np.hstack((y_train, y_train_add))
 
@@ -432,6 +465,11 @@ X_train = np.vstack((X_train, X_train_add))
 y_train = np.hstack((y_train, y_train_add))
 
 print('UpSampling: After Augmentation:\nTrue Label/Total in X_train:\n',np.sum(y_train),'/', len(X_train))
+
+
+
+
+
 # %%    All train data augmentation
 # 翻倍
 X_train_aug1 = np.zeros_like(X_train)
@@ -514,15 +552,19 @@ print('y_test shape:', len(y_test))
 # with open('/home/ming/Project/Neural_Mapping_ZGT/data/model_data.pkl', 'wb') as f:
 #     pickle.dump(model_data, f)
 
+
+
+
+
 # %%
 from model import CNN_small, CNN_focal, CNN_big
 
 if use_focal_loss:
-    cnn = CNN_focal((50,50,3))
+    cnn = CNN_focal((resolutions[1],resolutions[2],3))
 else:
-    cnn = CNN_small((50, 50, 3))
+    cnn = CNN_small((resolutions[1],resolutions[2],3))
 
-plot_model(cnn, '/home/ming/Project/nrn_mapping_package-master/Figure/cnn_small_structure.png', show_shapes=True)
+plot_model(cnn, '/home/ming/Project/nrn_mapping_package-master/Figure/CNN_' + save_model_name + '.png', show_shapes=True)
 
 # %% Load pkl data
 # train_data = load_pkl('/home/ming/Project/Neural_Mapping_ZGT/data/training.pkl')
@@ -530,7 +572,7 @@ plot_model(cnn, '/home/ming/Project/nrn_mapping_package-master/Figure/cnn_small_
 # test_data = load_pkl('/home/ming/Project/Neural_Mapping_ZGT/data/test.pkl')
 # class_weights = [0.52363299, 11.07843137]
 
-train_epochs = 150
+train_epochs = 100
 # Scheduler
 def scheduler(epoch, lr): 
 
@@ -546,7 +588,7 @@ def scheduler(epoch, lr):
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
 # 設定模型儲存條件(儲存最佳模型)
-checkpoint = ModelCheckpoint('/home/ming/Project/nrn_mapping_package-master/CNN_small_Checkpoint.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
+checkpoint = ModelCheckpoint('/home/ming/Project/nrn_mapping_package-master/CNN_' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
 
 
@@ -566,16 +608,17 @@ plt.plot(history.history['val_loss'], label='val_loss')
 plt.legend()
 plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/Train_Curve.png', dpi=100)
 plt.show()
+plt.close('all')
 
 cnn_small_train_loss = history.history['loss']
 cnn_small_valid_loss = history.history['val_loss']
 # %%
-model = load_model('/home/ming/Project/nrn_mapping_package-master/CNN_small_Checkpoint.h5')
+model = load_model('/home/ming/Project/nrn_mapping_package-master/CNN_' + save_model_name + '.h5')
 y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM})
 pred_test_compare = np.hstack((y_pred, y_test.reshape(len(y_test), 1)))
 y_pred_binary = []
 for ans in y_pred:
-    if ans >= 0.5:
+    if ans > 0.5:
         y_pred_binary.append(1)
     else:
         y_pred_binary.append(0)
@@ -594,6 +637,8 @@ labels = [f'{v1}\n{v2}\n{v3}' for v1, v2, v3 in zip(group_names,group_counts,gro
 labels = np.asarray(labels).reshape(2,2)
 sns.heatmap(conf_matrix, annot=labels, fmt='', cmap='Purples')
 plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/ConfuseMatric.png', dpi=100)
+plt.show()
+
 
 # Precision and recall 
 print("Precision:", conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0]))
@@ -701,6 +746,8 @@ plt.bar(bin_pos, heights, width=bin_width, edgecolor='black', label='Morphology 
 plt.legend()
 # show the graph
 plt.show()
+
+plt.close('all')
 # %% compare big model
 
 # cnn2 = CNN_big((50, 50, 3))

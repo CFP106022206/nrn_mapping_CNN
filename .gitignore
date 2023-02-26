@@ -213,3 +213,8 @@ Figure/*
 # sandbox
 test
 test/*
+
+# tuner
+CNN_Tuner
+CNN_Tuner/*
+mnist_kt_test

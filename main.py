@@ -75,7 +75,7 @@ interpolate_length = {"FC": 2.5, "EM": 2.5}  # 0.5 for FC data, 50 for original 
 # todo: key-independently overwrite
 weighting_keys_c = ["unit", "sn", "rsn"]  # unit, sn, rsn
 max_sn = np.inf  # the maximum acceptable value of Strahler number will appear in mapping
-grid_num = 75  # the number of grids on each side of map
+grid_num = 50  # the number of grids on each side of map
 ignore_soma = False  # ignore the soma branch
 normalization_of_sn = True  # normalizing the Strahler number in 2D-maps to 1
 normalization_of_moi = True  # normalizing the eigenvalues of moment of inertia with its maximum value
