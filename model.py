@@ -1,8 +1,9 @@
 import os
 import numpy as np
-import tensorflow_addons as tfa
+# import tensorflow_addons as tfa
 import keras_tuner as kt
 
+from keras.losses import *
 from keras.models import *
 from keras.layers import *
 from keras.optimizers import *
@@ -158,7 +159,7 @@ def CNN_focal(input_size=(50,50,3)):
     
     
     model = Model(inputs=inputs, outputs=output)
-    model.compile(optimizer='Adam', loss = tfa.losses.SigmoidFocalCrossEntropy(), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
+    model.compile(optimizer='Adam', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
     model.summary()
     return model
 
@@ -167,12 +168,12 @@ def CNN_tuner(hp, input_size=(50,50,3)):
     flattened_layers = []
     for input in inputs:
         # 寻找超参数
-        conv_layer = Conv2D(filters=hp.Choice('num_filters_1', values=[16, 32, 48]), kernel_size=hp.Choice('kernel_size_1', values=[3, 5]))(input)
+        conv_layer = Conv2D(filters=hp.Choice('num_filters_1', values=[8, 16, 24, 32, 40, 48, 56]), kernel_size=hp.Choice('kernel_size_1', values=[3, 5, 7]))(input)
         conv_layer = BatchNormalization()(conv_layer)
         conv_layer = Activation('relu')(conv_layer)
         conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
         
-        conv_layer = Conv2D(filters=hp.Choice('num_filters_2', values=[16, 32]), kernel_size=hp.Choice('kernel_size_2', values=[3, 5]))(conv_layer)
+        conv_layer = Conv2D(filters=hp.Choice('num_filters_2', values=[8, 16, 24, 32, 40, 48, 56]), kernel_size=hp.Choice('kernel_size_2', values=[3, 5, 7]))(conv_layer)
         conv_layer = BatchNormalization()(conv_layer)
         conv_layer = Activation('relu')(conv_layer)
         conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
@@ -185,8 +186,8 @@ def CNN_tuner(hp, input_size=(50,50,3)):
     # subtracted = Subtract()(flattened_layers)
     # subtracted = Add()(flattened_layers)
     output = Dropout(0.5)(concat_layer)
-    output = Dense(8)(output)
-    # output = Dense(units=hp.Int('units_3', min_value=2, max_value=8, step=2))(output)    #寻找超参数
+    # output = Dense(8)(output)
+    output = Dense(units=hp.Int('units_3', min_value=8, max_value=256, step=8))(output)    #寻找超参数
     output = BatchNormalization()(output)
     output = Activation('relu')(output)
 
@@ -215,12 +216,46 @@ def CNN_tuner(hp, input_size=(50,50,3)):
         recall = recall_m(y_true, y_pred)
         return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
+    optimizer = hp.Choice(name="optimizer", values=["rmsprop", "adam", "sgd"])
 
-
-    model.compile(optimizer='Adam', loss = tfa.losses.SigmoidFocalCrossEntropy(), metrics = [BinaryAccuracy(name='accuracy'), f1])
+    model.compile(optimizer=optimizer, loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics = [BinaryAccuracy(name='accuracy'), f1])
     # model.summary()
     return model
 
+
+def CNN_best(input_size=(50,50,3)):
+    inputs = [Input(shape=input_size, name='EM'), Input(shape=input_size, name='FC')]
+    flattened_layers = []
+    for input in inputs:
+        conv_layer = Conv2D(56, (5,5))(input)
+        conv_layer = BatchNormalization()(conv_layer)
+        conv_layer = Activation('relu')(conv_layer)
+        conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
+        
+        conv_layer = Conv2D(24, (3,3))(conv_layer)
+        conv_layer = BatchNormalization()(conv_layer)
+        conv_layer = Activation('relu')(conv_layer)
+        conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
+        
+        # # conv_layer = GlobalAvgPool2D()(conv_layer)
+        # # conv_layer = Dropout(0.2)(conv_layer)
+        flattened_layers.append(Flatten()(conv_layer))
+    
+    concat_layer = concatenate(flattened_layers, axis=1)
+    # subtracted = Subtract()(flattened_layers)
+    # subtracted = Add()(flattened_layers)
+    output = Dropout(0.5)(concat_layer)
+    output = Dense(256)(output)
+    output = BatchNormalization()(output)
+    output = Activation('relu')(output)
+
+    output = Dense(1, activation='sigmoid')(output)
+    
+    
+    model = Model(inputs=inputs, outputs=output)
+    model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
+    model.summary()
+    return model
 
 
 def CNN_big(input_size=(256,256,3)):

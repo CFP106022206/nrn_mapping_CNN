@@ -1,4 +1,8 @@
 # keras tuner test
+# %% Test Tensorflow GPU
+import tensorflow as tf
+tf.test.is_gpu_available()
+
 # %%
 import numpy as np
 import tensorflow as tf

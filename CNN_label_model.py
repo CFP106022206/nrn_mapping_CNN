@@ -1,56 +1,52 @@
-# from multiprocessing import pool
 # %%
-from cProfile import label
+import sys
+sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
+# %%
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
-import pickle
+import pandas as pd
 import os
 import random
 import tensorflow as tf
-import keras_tuner as kt
-from keras.utils import plot_model
-from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
-from keras.models import *
-from keras.layers import *
-from keras.optimizers import *
-from keras.preprocessing.image import ImageDataGenerator
+import seaborn as sns
+
+from tensorflow.keras.utils import plot_model
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
+from tensorflow.keras.models import *
+from tensorflow.keras.layers import *
+from tensorflow.keras.optimizers import *
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import confusion_matrix, f1_score
 from util import load_pkl
 
+# %% 此档案目的为 load 最佳参数模型, 然后对一帆那边画出的未标注三视图进行标注
+
 
 seed = 10                       # Random Seed
-# csv_threshold = [0.6, 0.7, 0.8] # selected labeled csv's threshold
-# map_data_type = 'rsn'           # 三视图的加权种类选择
-
 
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
 np.random.seed(seed)
 tf.random.set_seed(seed)
 os.environ['TF_DITERMINISTIC_OPS'] = '1'
-
 # %% Data Prepare
 
-train_range_to = 'D4'   # 'D4' or 'D5'
-save_model_name = 'Train_Test_In_D1-D4'
+train_range_to = 'D5'   # 'D4' or 'D5'
+save_model_name = 'Train_Test_In_D1-D5'
 
 add_low_score = True
-low_score_neg_rate = 3
+low_score_neg_rate = 2
 
-tuner = True    # 在tuner中默认使用focal loss
+use_focal_loss = True
 
 # Load labeled csv
-label_csv_D1 = 'data/D1_20221230.csv'
-label_csv_D2 = 'data/D2_20221230.csv'
-label_csv_D3 = 'data/D3_20221230.csv'
-label_csv_D4 = 'data/D4_20221230.csv'
-label_csv_D5 = 'data/D5_20221230.csv'
+label_csv_D1 = './data/D1_20221230.csv'
+label_csv_D2 = './data/D2_20221230.csv'
+label_csv_D3 = './data/D3_20221230.csv'
+label_csv_D4 = './data/D4_20221230.csv'
+label_csv_D5 = './data/D5_20221230.csv'
 
-# label_csv_all = 'data/D1-D4.csv'
 
 D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
 D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
@@ -72,66 +68,41 @@ if train_range_to == 'D5':
     label_table_all = pd.concat([D1, D2, D3, D4, D5])   # fc_id, em_id, score, rank, label
 
     # 讀神經三視圖資料
-    map_data_D1toD4 = load_pkl('data/mapping_data_sn.pkl')
+    map_data_D1toD4 = load_pkl('./data/mapping_data_sn.pkl')
     # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
-    map_data_D5 = load_pkl('data/mapping_data_sn_D5_old.pkl')
+    map_data_D5 = load_pkl('./data/mapping_data_sn_D5_old.pkl')
     map_data = map_data_D1toD4 + map_data_D5
     del map_data_D1toD4, map_data_D5
-
 else:
     label_table_all = pd.concat([D1, D2, D3, D4])   # fc_id, em_id, score, rank, label
     
-    map_data = load_pkl('data/mapping_data_sn.pkl')
+    map_data = load_pkl('./data/mapping_data_sn.pkl')
 
 
 label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
+# shuffle label_table_all 
+label_table_all = label_table_all.sample(frac=1, random_state=seed).reset_index(drop=True)
+
+# 将 label_table_all 分成两份: train and test
+test_ratio = 0.2
+test_size = int(label_table_all.shape[0]*test_ratio)
+
+label_table_test = label_table_all.iloc[:test_size]
+label_table_train = label_table_all.iloc[test_size:]
+
+# turn to numpy array
+test_pair_nrn = label_table_test[['fc_id','em_id','label']].to_numpy()
+train_pair_nrn = label_table_train[['fc_id','em_id','label']].to_numpy()
+
+# save as csv
+label_table_test.to_csv('./data/label_table_test.csv', index=False)
+label_table_train.to_csv('./data/label_table_train.csv', index=False)
 
 
-# # D2_data_1013 label 錯誤修正
-# relabel_lst = []
-# for i in range(len(label_table_D2)):
-#     fc_id = label_table_D2['FC'][i]
-#     em_id = label_table_D2['EM'][i]
-#     old_label = label_table_D2['label'][i]
-#     for j in range(len(label_table_all)):
-#         if fc_id == label_table_all['fc_id'][j] and em_id == label_table_all['em_id'][j]:
-#             relabel_lst.append(label_table_all['label'][j])
-#             break
+# %% train model 1 with best parameters(or load one from tuner)
 
-#         if j == len(label_table_all)-1:
-#             relabel_lst.append(old_label)   #找不到新label
-
-# label_table_D2['label'] = relabel_lst
-
-
-# Testing data 從全部裡面挑選20%
-train_pair_nrn, test_pair_nrn = train_test_split(label_table_all[['fc_id','em_id','label']].to_numpy(), test_size=0.2, random_state=seed)
-
-# # 新作法 手動裁切特定範圍的Test Data
-# test_ratio = 0.2
-# test_size = int(label_table_all.shape[0]*test_ratio)
-# # train_pair_nrn = np.vstack((label_table_all[['fc_id','em_id','label']].to_numpy()[:3*test_size], label_table_all[['fc_id','em_id','label']].to_numpy()[4*test_size:]))
-# train_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[:4*test_size]
-
-# # test_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[3*test_size : 4*test_size]
-# test_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[4*test_size:]
-
-
-# # 檢查 Testing data 是否出現在Training 中
-# repeat_idx, diff_idx = [], []
-# for i in range(len(train_pair_nrn)):
-#     for j in range(len(test_pair_nrn)):
-#         if str(train_pair_nrn[i][0]) == str(test_pair_nrn[j][0]) and str(train_pair_nrn[i][1]) == str(test_pair_nrn[j][1]):
-#             repeat_idx.append(i)
-#             break
-
-#         if j == len(test_pair_nrn)-1:
-#             diff_idx.append(i)
-
-# label_table_train = label_table_all.iloc[diff_idx] #test_pair_nrn
-
-
+# data prerpare
 def data_preprocess(map_data, pair_nrn):
     data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
     FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
@@ -181,60 +152,26 @@ data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
 
 
-# 讀取腦科重標記label的csv檔案(因為後續腦科那邊可能會更改原本的label)
-
-# def relabel(pair_df, path='/home/ming/Project/Neural_Mapping_ZGT/data/D1-D4.csv'):
-#     relabel_table = pd.read_csv(path)
-
-#     #執行label修正
-#     relabel_fc, relabel_em, old_label, new_label = [],[],[],[]
-#     for i in range(pair_df.shape[0]):
-#         fc_id = str(pair_df.iloc[i,0])      #'FC'
-#         em_id = str(pair_df.iloc[i,1])      #'EM'
-#         label_o = str(pair_df.iloc[i,2])  #'label'
-#         for j in range(relabel_table.shape[0]):
-#             new_inform = relabel_table.iloc[j]
-#             if str(new_inform['fc_id']) == fc_id and str(new_inform['em_id']) == em_id and str(new_inform['label']) != label_o:
-#                 pair_df.iloc[i,2] = new_inform['label']
-#                 relabel_fc.append(fc_id)
-#                 relabel_em.append(em_id)
-#                 old_label.append(label_o)
-#                 new_label.append(str(new_inform['label']))
-
-
-#     relabel_df = pd.DataFrame({'rFC':relabel_fc, 'rEM':relabel_em, 'old_l':old_label, 'new_l':new_label})
-#     label_lst = pair_df.iloc[:,2]
-
-#     return pair_df, relabel_df
-
-# nrn_pair_train, relabel_train = relabel(nrn_pair_train)
-# nrn_pair_valid, relabel_valid = relabel(nrn_pair_valid)
-# nrn_pair_test, relabel_test = relabel(nrn_pair_test)
-
 X_val = data_np_valid
 X_test = data_np_test
 y_val = np.array(nrn_pair_valid['label'],dtype=np.int32)
 y_test = np.array(nrn_pair_test['label'],dtype=np.int32)
 
-del data_np_valid, data_np_test
 
 # %% See the image
 
-def See_RGB_img(data_np, pair_df, idx):
-    plt.figure(figsize=(20,10))
-
-    plt.subplot(1,2,1)
-    plt.imshow(data_np[idx,0])    # FC img
-    plt.title('FC: ' + pair_df.iloc[idx][0]+'Label= '+ str(pair_df.iloc[idx][2]))
-
-    plt.subplot(1,2,2)
-    plt.imshow(data_np[idx,1])    # EM img
-    plt.title('EM: ' + pair_df.iloc[idx][1])
-
-# for idx in range(10):
-#     See_RGB_img(data_np_train, nrn_pair_train, idx)
-
-
+# # print_img = 4
+# # def See_img(img_data, label_lst, img_idx):
+# #     print('Show image index:', img_idx)
+# #     print('Label: ', label_lst[img_idx])
+# #     print('FC\nEM')
+# #     plt.figure(figsize=(16,10))
+# #     for i in range(3):
+# #         plt.subplot(2,3,i+1)
+# #         plt.imshow(img_data[img_idx,0,:,:,i])    # FC img
+# #         plt.subplot(2,3,i+4)
+# #         plt.imshow(img_data[img_idx,1,:,:,i])    # EM img
+# #     plt.show()
 
 # def Plot_NRN_Img(data_np, pair_df, idx):
 #     plt.figure(figsize=(20,10))
@@ -254,9 +191,10 @@ def See_RGB_img(data_np, pair_df, idx):
 #     plt.subplot(2,4,8)
 #     plt.imshow(data_np[idx,1,:,:])  # EM
 #     plt.title('EM: '+ pair_df.iloc[idx][1] + '     3 Channels')
-#     # plt.savefig('/home/ming/Project/Neural_Mapping_ZGT/Figure/SN/'+pair_df.iloc[idx][0]+'_'+pair_df.iloc[idx][1]+'.png', dpi=200)
+#     plt.savefig('/home/ming/Project/Neural_Mapping_ZGT/Figure/SN/'+pair_df.iloc[idx][0]+'_'+pair_df.iloc[idx][1]+'.png', dpi=200)
 
 
+# # See_img(data_np, label_lst, print_img)
 # for i in range(len(data_np_train)):
 #     Plot_NRN_Img(data_np_train, nrn_pair_train, i)
 # for i in range(len(X_val)):
@@ -390,7 +328,6 @@ else:
     X_train = data_np_train
     y_train = np.array(nrn_pair_train['label'],dtype=np.int32)
 
-del data_np_train
 
 # 找出 label為1的 X_train
 true_label_idx, false_label_idx = [], []
@@ -469,7 +406,8 @@ y_train = np.hstack((y_train, y_train_add))
 
 print('UpSampling: After Augmentation:\nTrue Label/Total in X_train:\n',np.sum(y_train),'/', len(X_train))
 
-del X_train_add
+
+
 
 
 # %%    All train data augmentation
@@ -501,7 +439,7 @@ for i in range(X_train_aug3.shape[0]):
 X_train = np.vstack((X_train, X_train_aug3))
 y_train = np.hstack((y_train, y_train))
 
-del X_train_aug1, X_train_aug2, X_train_aug3
+
 
 # X_train_add = np.zeros(((X_train.shape[0]-pos),X_train.shape[1],X_train.shape[2],X_train.shape[3], X_train.shape[4]))
 
@@ -542,34 +480,17 @@ print('X_test shape:', X_test_FC.shape, X_test_EM.shape)
 print('y_test shape:', len(y_test))
 
 
-
-
 # %%
-from model import CNN_tuner
+from model import CNN_best
 
-max_search_trials = 150
-train_epochs = 50
-set_batch_size = 128
-
-tuner = kt.BayesianOptimization(
-    CNN_tuner,
-    objective=kt.Objective("val_f1", direction="max"),
-    # objective='val_accuracy',
-    max_trials=max_search_trials,                  # 指定超参数搜索的最大尝试次数
-    executions_per_trial=3,         # 指定在给定超参数组合下要执行多少次训练和评估操作。它的作用是通过多次执行来减小随机性
-    directory="CNN_Tuner",          # 指定了用于存储tuner结果的目录路径
-    overwrite=True                 # False 时 Keras Tuner将尝试从已经存在的目录中加载之前的实例和状态信息
+cnn = CNN_best((resolutions[1],resolutions[2],3))
 
 
-)
-
-
-tuner.search_space_summary()
-
-# %% Scheduler
+train_epochs = 100
+# Scheduler
 def scheduler(epoch, lr): 
 
-    min_lr=0.000001
+    min_lr=0.0000001
     total_epoch = train_epochs
     init_lr = 0.001
     epoch_lr = init_lr*((1-epoch/total_epoch)**2)
@@ -578,115 +499,38 @@ def scheduler(epoch, lr):
 
     return epoch_lr
 
-reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=0)
+reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
-callbacks = [EarlyStopping(monitor="val_loss", patience=10), reduce_lr]
-
-
-tuner.search(
-    {'FC':X_train_FC, 'EM':X_train_EM}, y_train,
-    batch_size=set_batch_size,
-    epochs=train_epochs,
-    validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val),
-    callbacks=callbacks,
-    shuffle=True,
-    verbose=2,      #verbose=2: 在每个 epoch 结束时输出一条记录，包括训练和验证指标的平均值。
-)
+# 設定模型儲存條件(儲存最佳模型)
+checkpoint = ModelCheckpoint('./CNN_best_' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
+early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
 
 
+# Scheduler
+history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint, reduce_lr])
 
-# %% 查看搜索结果
-tuner.results_summary()
+# plt.plot(history.history['loss'], label='loss')
+# plt.plot(history.history['val_loss'], label='val_loss')
+# plt.legend()
+# plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/Train_Curve.png', dpi=100)
+# plt.show()
+# plt.close('all')
 
-top_n = 5
-best_hps = tuner.get_best_hyperparameters(top_n)
+cnn_train_loss = history.history['loss']
+cnn_valid_loss = history.history['val_loss']
 
+model = load_model('./CNN_best_' + save_model_name + '.h5')
+y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM})
+pred_test_compare = np.hstack((y_pred, y_test.reshape(len(y_test), 1)))
+y_pred_binary = []
+for ans in y_pred:
+    if ans > 0.5:
+        y_pred_binary.append(1)
+    else:
+        y_pred_binary.append(0)
 
+conf_matrix = confusion_matrix(y_test.tolist(), y_pred_binary, labels=[1,0])# 統一標籤格式
 
-
-# %% 将validation并入训练集(可选),读取最佳超参数组合，训练出最佳模型
-
-
-def get_best_epoch(hp):
-    model = CNN_tuner(hp)
-    callbacks=[EarlyStopping(monitor="val_loss", mode="min", patience=10),
-               reduce_lr]
-    
-    history = model.fit(
-        {'FC':X_train_FC, 'EM':X_train_EM}, 
-        y_train,
-        validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val),
-        epochs=train_epochs,
-        batch_size=set_batch_size,
-        callbacks=callbacks)
-
-    val_loss_per_epoch = history.history["val_loss"]
-    best_epoch = val_loss_per_epoch.index(min(val_loss_per_epoch)) + 1
-    print(f"\nBest epoch: {best_epoch}")
-    return best_epoch
-
-def get_best_trained_model(hp):
-    best_epoch = get_best_epoch(hp)
-
-    model = CNN_tuner(hp)
-    model.fit(
-        {'FC':X_train_FC, 'EM':X_train_EM},
-        y_train,
-        validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val),
-        batch_size = set_batch_size,
-        epochs = best_epoch,
-        verbose = 0)    #Verbose=0: 安靜模式
-    return model
-
-
-
-# X_train_full = np.vstack((X_train, X_val))
-# X_train_FC_full = X_train_full[:,0,:]
-# X_train_EM_full = X_train_full[:,1,:]
-
-# y_train_full = np.vstack((y_train, y_val))
-
-
-# def get_best_trained_model_full_set(hp):
-#     best_epoch = get_best_epoch(hp)
-
-#     model = CNN_tuner(hp)
-#     model.fit(
-#         {'FC':X_train_FC_full, 'EM':X_train_EM_full},
-#         y_train_full,
-#         batch_size=set_batch_size,
-#         epochs=int(best_epoch * 1.2))   # 因為現在使用了更多資料來訓練, 訓練 epoch 數要比剛剛找到的最佳 epoch 數多 1.2 倍
-#     return model
-
-
-def binary_predict(y_pred, threshold=0.5):  #将模型结果转为0或1的判断
-    y_pred_binary = []
-    for ans in y_pred:
-        if ans > threshold:
-            y_pred_binary.append(1)
-        else:
-            y_pred_binary.append(0)
-    return y_pred_binary
-
-
-
-# 可视化混淆矩阵
-# def plot_conf_martix(conf_matrix, name='0'):
-#     # group_names = ['True Neg','False Pos','False Neg','True Pos']
-#     group_names = ['True Pos','False Neg','False Pos','True Neg']
-#     group_counts = ['{0:0.0f}'.format(value) for value in conf_matrix.flatten()]
-#     group_percent_false = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[:2]/np.sum(conf_matrix[0])]
-#     group_percent_true = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[2:]/np.sum(conf_matrix[1])]
-#     group_percent = group_percent_false + group_percent_true
-#     labels = [f'{v1}\n{v2}\n{v3}' for v1, v2, v3 in zip(group_names,group_counts,group_percent)]
-#     labels = np.asarray(labels).reshape(2,2)
-#     sns.heatmap(conf_matrix, annot=labels, fmt='', cmap='Purples')
-#     plt.title('Confusion Matrix for Model' + name)
-#     plt.savefig('Figure/ConfuseMatrix'+name+'.png', dpi=100)
-#     # plt.show()
-#     plt.close('all')
-
-# 混淆矩阵打在终端上
 def print_conf_martix(conf_matrix, name='0'):
 
     print('\nConfusion Matrix for ' + name)
@@ -695,69 +539,66 @@ def print_conf_martix(conf_matrix, name='0'):
     print('False Pos','True Neg')
     print(conf_matrix[1])
 
+print_conf_martix(conf_matrix)
 
 
-# 读取最佳超参数组合(不合并验证集)
-print('Evaluate Tuner Best Model')
-for _i, hp in enumerate(best_hps):
-    print('\n\nTuned model ', str(_i))
-    model = get_best_trained_model(hp)
-    
-    y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM})
-    y_pred_binary = binary_predict(y_pred)
-    conf_matrix = confusion_matrix(y_test.tolist(), y_pred_binary, labels=[1,0])# 統一標籤格式
-    
-    # Precision and recall 
-    print("Precision:", conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0]))
-    print("Recall:", conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[0,1]))
-    
-    # F1 Score
-    result_f1_score = f1_score(y_test, y_pred_binary, average=None)
-    print('F1 Score for Neg:', result_f1_score[0])
-    print('F1 Score for Pos:', result_f1_score[1])
 
-    print_conf_martix(conf_matrix, name='Model '+str(_i))
+# Precision and recall 
+print("Precision:", conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0]))
+print("Recall:", conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[0,1]))
 
-    model.save(save_model_name + '_'+str(_i) + '.h5')
+# F1 Score
+result_f1_score = f1_score(y_test, y_pred_binary, average=None)
+print('F1 Score for Neg:', result_f1_score[0])
+print('F1 Score for Pos:', result_f1_score[1])
 
 
-# %% ROC Curve
-# from sklearn.metrics import roc_curve, auc
-
-# fpr, tpr, thresholds = roc_curve(y_test, y_pred)
-# roc_auc = auc(fpr, tpr)
-
-# fig = plt.figure()
-# lw = 2
-# plt.plot(fpr, tpr, '-o', lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
-# plt.plot([0, 1], [0, 1], lw=lw, linestyle='--')
-# plt.xlim([-0.05, 1.0])
-# plt.ylim([0.0, 1.05])
-# plt.xlabel('False Positive Rate')
-# plt.ylabel('True Positive Rate')
-# plt.title('Receiver operating characteristic example')
-# plt.legend(loc="lower right")
-# #fig.savefig('/tmp/roc.png')
-# plt.show()
 
 
-# %% 檢查 map data 中的 label score 分佈
-# score_test = nrn_pair_test['score'].to_numpy()
+# # %% 对新数据集进行标注
+# unlabel_path = './data/mapping_data_0.7/'
 
-# # plot histogram chart for var1
-# sns.histplot(y_pred, bins=30, edgecolor='black',label='ML Prediction')
+# # 将文件夹下文件名存入列表
+# file_list = os.listdir(unlabel_path)
+# # 计算label
+# model = load_model('./CNN_best_' + save_model_name + '.h5')
+
+# def annotator(model,fc_img, em_img):
+#     # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
+#     fc_img = np.transpose(fc_img, (1, 2, 0))
+#     em_img = np.transpose(em_img, (1, 2, 0))
+
+#     # 将数据维度扩展至4维（符合CNN输入）
+#     fc_img = np.expand_dims(fc_img, axis=0)
+#     em_img = np.expand_dims(em_img, axis=0)
+#     label = model.predict({'FC':fc_img, 'EM':em_img})
+#     # binary label
+#     if label > 0.5:
+#         label = 1
+#     else:
+#         label = 0
+#     return label
 
 
-# # get positions and heights of bars
-# heights, bins = np.histogram(score_test, bins=20) 
-# # multiply by -1 to reverse it
-# heights *= -1
-# bin_width = np.diff(bins)[0]
-# bin_pos = bins[:-1] + bin_width / 2
 
-# # plot
-# plt.bar(bin_pos, heights, width=bin_width, edgecolor='black', label='Morphology Matching Score')
-# plt.legend()
+# # 初始化一个空的DataFrame，用于存储文件名和计算结果
+# label_df = pd.DataFrame(columns=['fc_id', 'em_id', 'score', 'label'])
 
-# plt.show()
+# # 遍历母文件夹下的所有条目
+# for file_name in (file_list):
+#     # 创建完整文件路径
+#     file_path = os.path.join(unlabel_path, file_name)
 
+#     # 检查是否为.pkl档案
+#     if file_path.endswith('.pkl'):
+#         # 读取pkl文件
+#         data_lst = load_pkl(file_path)
+#         for data in data_lst:
+#             # 计算结果
+#             result = annotator(model, data[3], data[4])
+
+#             # 将文件名和计算结果添加到DataFrame
+#             label_df = label_df.append({'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label':result}, ignore_index=True)
+
+# # 将DataFrame存储为csv文件
+# label_df.to_csv('./data/label_df_0.7.csv', index=False)
