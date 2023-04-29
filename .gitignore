@@ -203,7 +203,6 @@ plot/*
 # plot result
 3D_Plot
 3D_Plot/*
-Figure
 Figure/*
 .history/*
 .history
@@ -213,3 +212,14 @@ Figure/*
 # sandbox
 test
 test/*
+
+# tuner
+CNN_Tuner
+CNN_Tuner/*
+mnist_kt_test
+
+# Result
+result/*
+Final_Model/*
+Second_Stage_Model/*
+Annotator_Model/*

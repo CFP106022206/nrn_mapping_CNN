@@ -1,75 +1,108 @@
-# from multiprocessing import pool
 # %%
-from cProfile import label
+import sys
+sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
+# %%
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
+import pandas as pd
 import os
 import random
 import tensorflow as tf
+import seaborn as sns
+
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.models import *
 from tensorflow.keras.layers import *
 from tensorflow.keras.optimizers import *
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import confusion_matrix, f1_score
 from util import load_pkl
-from numpy import linspace
 
-seed = 18                       # Random Seed
-# csv_threshold = [0.6, 0.7, 0.8] # selected labeled csv's threshold
-# map_data_type = 'rsn'           # 三视图的加权种类选择
+# %% 此档案目的为 load 最佳参数模型, 然后对一帆那边画出的未标注三视图进行标注
 
+
+seed = 10                       # Random Seed
 
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
 np.random.seed(seed)
 tf.random.set_seed(seed)
 os.environ['TF_DITERMINISTIC_OPS'] = '1'
+# %% Data Prepare
 
-# %% Data Preprocessing 1 -------------------------------------------------------------------------------------------
+train_range_to = 'D5'   # 'D4' or 'D5'
+save_model_name = 'Train_Test_In_D1-D5'
 
 add_low_score = True
-low_score_neg_rate = 3
+low_score_neg_rate = 2
 
 use_focal_loss = True
 
 # Load labeled csv
-label_csv_all = '/home/ming/Project/nrn_mapping_package-master/data/D1~D5_20221230.csv'
-label_csv_D2 = '/home/ming/Project/nrn_mapping_package-master/data/D2_20221230.csv'
-label_table_all = pd.read_csv(label_csv_all)   # fc_id, em_id, score_fc, rank_fc, label_final
-label_table_D2 = pd.read_csv(label_csv_D2)     # fc_id, em_id, score, rank, label
+label_csv_D1 = './data/D1_20221230.csv'
+label_csv_D2 = './data/D2_20221230.csv'
+label_csv_D3 = './data/D3_20221230.csv'
+label_csv_D4 = './data/D4_20221230.csv'
+label_csv_D5 = './data/D5_20221230.csv'
 
-# 分離出 D2 pair 作為Testing Data
-pair_all = np.array(label_table_all[['fc_id', 'em_id']])
-pair_D2 = np.array(label_table_D2[['fc_id', 'em_id']])
 
-repeat_idx, diff_idx = [], []
-for i in range(len(pair_all)):
-    for j in range(len(pair_D2)):
-        if str(pair_all[i][0]) == str(pair_D2[j][0]) and str(pair_all[i][1]) == str(pair_D2[j][1]):
-            repeat_idx.append(i)
-            break
+D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
+D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-        if j == len(pair_D2)-1:
-            diff_idx.append(i)
+D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
+D2.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-label_table_train = label_table_all.iloc[diff_idx] #test_pair_nrn
+D3 = pd.read_csv(label_csv_D3)     # FC, EM, label
+D3.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-train_pair_nrn = label_table_train[['fc_id', 'em_id', 'label']].to_numpy()
-test_pair_nrn = label_table_D2[['fc_id', 'em_id', 'label']].to_numpy()
+D4 = pd.read_csv(label_csv_D4)     # FC, EM, label
+D4.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-# 讀神經三視圖資料
-map_data_D1_to_D4 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn.pkl')
-map_data_D5 = load_pkl('/home/ming/Project/nrn_mapping_package-master/data/mapping_data_sn_D5.pkl')
-# map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
 
-map_data = map_data_D1_to_D4 + map_data_D5
+if train_range_to == 'D5':
+    D5 = pd.read_csv(label_csv_D5)     # FC, EM, label
+    D5.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
+    label_table_all = pd.concat([D1, D2, D3, D4, D5])   # fc_id, em_id, score, rank, label
+
+    # 讀神經三視圖資料
+    map_data_D1toD4 = load_pkl('./data/mapping_data_sn.pkl')
+    # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
+    map_data_D5 = load_pkl('./data/mapping_data_sn_D5_old.pkl')
+    map_data = map_data_D1toD4 + map_data_D5
+    del map_data_D1toD4, map_data_D5
+else:
+    label_table_all = pd.concat([D1, D2, D3, D4])   # fc_id, em_id, score, rank, label
+    
+    map_data = load_pkl('./data/mapping_data_sn.pkl')
+
+
+label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+
+# shuffle label_table_all 
+label_table_all = label_table_all.sample(frac=1, random_state=seed).reset_index(drop=True)
+
+# 将 label_table_all 分成两份: train and test
+test_ratio = 0.2
+test_size = int(label_table_all.shape[0]*test_ratio)
+
+label_table_test = label_table_all.iloc[:test_size]
+label_table_train = label_table_all.iloc[test_size:]
+
+# turn to numpy array
+test_pair_nrn = label_table_test[['fc_id','em_id','label']].to_numpy()
+train_pair_nrn = label_table_train[['fc_id','em_id','label']].to_numpy()
+
+# save as csv
+label_table_test.to_csv('./data/label_table_test.csv', index=False)
+label_table_train.to_csv('./data/label_table_train.csv', index=False)
+
+
+# %% train model 1 with best parameters(or load one from tuner)
+
+# data prerpare
 def data_preprocess(map_data, pair_nrn):
     data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
     FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
@@ -106,46 +139,18 @@ def data_preprocess(map_data, pair_nrn):
 
     return data_np, pair_df
 
-resolutions = map_data_D1_to_D4[0][3].shape
+
+resolutions = map_data[0][3].shape
 print('Image shape: ', resolutions)
 
 data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
 data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
 
 # Train Validation Split
-test_ratio = 0.1
-data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=test_ratio, random_state=seed)
+data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.2, random_state=seed)
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
 
-
-# 讀取腦科重標記label的csv檔案(因為後續腦科那邊可能會更改原本的label)
-
-def relabel(pair_df, path='/home/ming/Project/nrn_mapping_package-master/data/D1-D4.csv'):
-    relabel_table = pd.read_csv(path)
-
-    #執行label修正
-    relabel_fc, relabel_em, old_label, new_label = [],[],[],[]
-    for i in range(pair_df.shape[0]):
-        fc_id = str(pair_df.iloc[i,0])      #'FC'
-        em_id = str(pair_df.iloc[i,1])      #'EM'
-        label_o = str(pair_df.iloc[i,2])  #'label'
-        for j in range(relabel_table.shape[0]):
-            new_inform = relabel_table.iloc[j]
-            if str(new_inform['fc_id']) == fc_id and str(new_inform['em_id']) == em_id and str(new_inform['label']) != label_o:
-                pair_df.iloc[i,2] = new_inform['label']
-                relabel_fc.append(fc_id)
-                relabel_em.append(em_id)
-                old_label.append(label_o)
-                new_label.append(str(new_inform['label']))
-
-
-    relabel_df = pd.DataFrame({'rFC':relabel_fc, 'rEM':relabel_em, 'old_l':old_label, 'new_l':new_label})
-    label_lst = pair_df.iloc[:,2]
-
-    return pair_df, relabel_df
-
-nrn_pair_test, relabel_test = relabel(nrn_pair_test)
 
 X_val = data_np_valid
 X_test = data_np_test
@@ -197,27 +202,6 @@ y_test = np.array(nrn_pair_test['label'],dtype=np.int32)
 # for i in range(len(X_test)):
 #     Plot_NRN_Img(X_test, nrn_pair_test, i)
 
-# 檢查 map data 中的 label score 分佈
-score_train = nrn_pair_train['score'].to_numpy()
-score_test = nrn_pair_test['score'].to_numpy()
-
-# plot histogram chart for var1
-sns.histplot(score_train, bins=50, edgecolor='black',label='D1, D3~D5 Score')
-
-# plot histogram chart for var2
-
-# get positions and heights of bars
-heights, bins = np.histogram(score_test, bins=30) 
-# multiply by -1 to reverse it
-heights *= -1
-bin_width = np.diff(bins)[0]
-bin_pos = bins[:-1] + bin_width / 2
-
-# plot
-plt.bar(bin_pos, heights, width=bin_width, edgecolor='black', label='D2 Score')
-plt.legend()
-# show the graph
-plt.show()
 # %%
 #   Data Augmentation: 
 #   以下說明增加資料方法，大寫字母表示 FC id, 小寫表示 EM id
@@ -365,17 +349,26 @@ if add_low_score and pos >= neg:
     X_train_add = np.zeros((low_score_neg_rate*(pos-neg), X_train.shape[1], X_train.shape[2], X_train.shape[3], X_train.shape[4]))   # 製作需要增加的x_train 量
     y_train_add = np.zeros(X_train_add.shape[0], dtype=np.int64)
     
+    nrn_pair_test_np = nrn_pair_test[['FC','EM']].to_numpy()    # 以np格式獲取test中pair的神經名稱
+    
     k=0
     for i in range(X_train_add.shape[0]):
-        for j in range(k, len(map_data_D1_to_D4)):
-            if map_data_D1_to_D4[j][2] < 0.4:
+        for j in range(k, len(map_data)):
+            in_test = 0 # 檢查擴增的資料組是否出現在test中
+            for row in range(nrn_pair_test_np.shape[0]):
+                if str(map_data[j][0]) == str(nrn_pair_test_np[row,0]) and str(map_data[j][1]) == str(nrn_pair_test_np[row,1]):
+                    in_test = 1
+                    break
+            
+            if in_test == 0 and map_data[j][2] < 0.4:
+
                 for n in range(3):
-                    X_train_add[i, 0, :, :, n] = map_data_D1_to_D4[j][3][n] # FC Image
-                    X_train_add[i, 1, :, :, n] = map_data_D1_to_D4[j][4][n] # EM Image
+                    X_train_add[i, 0, :, :, n] = map_data[j][3][n] # FC Image
+                    X_train_add[i, 1, :, :, n] = map_data[j][4][n] # EM Image
 
                 k=j+1
                 break
-    
+
     X_train = np.vstack((X_train, X_train_add))
     y_train = np.hstack((y_train, y_train_add))
 
@@ -412,6 +405,11 @@ X_train = np.vstack((X_train, X_train_add))
 y_train = np.hstack((y_train, y_train_add))
 
 print('UpSampling: After Augmentation:\nTrue Label/Total in X_train:\n',np.sum(y_train),'/', len(X_train))
+
+
+
+
+
 # %%    All train data augmentation
 # 翻倍
 X_train_aug1 = np.zeros_like(X_train)
@@ -482,42 +480,20 @@ print('X_test shape:', X_test_FC.shape, X_test_EM.shape)
 print('y_test shape:', len(y_test))
 
 
-# 保存 training validation testing data 為 pickle
-# RAM 不夠，保存結束關閉kernel 重啟，load 回 data
-
-# model_train_data = {'FC':X_train_FC, 'EM':X_train_EM, 'y': y_train}
-# model_valid_data = {'FC':X_val_FC, 'EM':X_val_EM, 'y': y_val}
-# model_test_data = {'FC':X_test_FC, 'EM': X_test_EM, 'y': y_test}
-
-# model_data = [model_train_data, model_valid_data, model_test_data, class_weights]
-
-# with open('/home/ming/Project/Neural_Mapping_ZGT/data/model_data.pkl', 'wb') as f:
-#     pickle.dump(model_data, f)
-
 # %%
-from model import CNN_small, CNN_focal, CNN_big
+from model import CNN_best
 
-if use_focal_loss:
-    cnn = CNN_focal((50,50,3))
-else:
-    cnn = CNN_small((50, 50, 3))
+cnn = CNN_best((resolutions[1],resolutions[2],3))
 
-plot_model(cnn, '/home/ming/Project/nrn_mapping_package-master/Figure/cnn_small_structure.png', show_shapes=True)
 
-# %% Load pkl data
-# train_data = load_pkl('/home/ming/Project/Neural_Mapping_ZGT/data/training.pkl')
-# valid_data = load_pkl('/home/ming/Project/Neural_Mapping_ZGT/data/valid.pkl')
-# test_data = load_pkl('/home/ming/Project/Neural_Mapping_ZGT/data/test.pkl')
-# class_weights = [0.52363299, 11.07843137]
-
-train_epochs = 150
+train_epochs = 100
 # Scheduler
 def scheduler(epoch, lr): 
 
     min_lr=0.0000001
     total_epoch = train_epochs
     init_lr = 0.001
-    epoch_lr = init_lr*((1-epoch/total_epoch)**5)
+    epoch_lr = init_lr*((1-epoch/total_epoch)**2)
     if epoch_lr<min_lr:
         epoch_lr = min_lr
 
@@ -526,137 +502,103 @@ def scheduler(epoch, lr):
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
 # 設定模型儲存條件(儲存最佳模型)
-checkpoint = ModelCheckpoint('/home/ming/Project/nrn_mapping_package-master/CNN_' + save_model_name, verbose=1, monitor='val_loss', save_best_only=True, mode='min')
+checkpoint = ModelCheckpoint('./CNN_best_' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
 
 
 # Scheduler
 history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint, reduce_lr])
 
+# plt.plot(history.history['loss'], label='loss')
+# plt.plot(history.history['val_loss'], label='val_loss')
+# plt.legend()
+# plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/Train_Curve.png', dpi=100)
+# plt.show()
+# plt.close('all')
 
-# No Scheduler
-# history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint])    # No Schedular
+cnn_train_loss = history.history['loss']
+cnn_valid_loss = history.history['val_loss']
 
-
-#  No Callback
-# history = cnn.fit({'FC':train_data['FC'], 'EM':train_data['EM']}, train_data['y'], batch_size=32, validation_data=({'FC':valid_data['FC'], 'EM':valid_data['EM']}, valid_data['y']), class_weight=class_weights, epochs=50, shuffle=True)
-
-plt.plot(history.history['loss'], label='loss')
-plt.plot(history.history['val_loss'], label='val_loss')
-plt.legend()
-plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/Train_Curve.png', dpi=100)
-plt.show()
-
-cnn_small_train_loss = history.history['loss']
-cnn_small_valid_loss = history.history['val_loss']
-# %%
-model = load_model('/home/ming/Project/nrn_mapping_package-master/CNN_small_Checkpoint.h5')
+model = load_model('./CNN_best_' + save_model_name + '.h5')
 y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM})
 pred_test_compare = np.hstack((y_pred, y_test.reshape(len(y_test), 1)))
 y_pred_binary = []
 for ans in y_pred:
-    if ans >= 0.5:
+    if ans > 0.5:
         y_pred_binary.append(1)
     else:
         y_pred_binary.append(0)
 
 conf_matrix = confusion_matrix(y_test.tolist(), y_pred_binary, labels=[1,0])# 統一標籤格式
 
+def print_conf_martix(conf_matrix, name='0'):
 
-# 可视化混淆矩阵
-# group_names = ['True Neg','False Pos','False Neg','True Pos']
-group_names = ['True Pos','False Neg','False Pos','True Neg']
-group_counts = ['{0:0.0f}'.format(value) for value in conf_matrix.flatten()]
-group_percent_false = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[:2]/np.sum(conf_matrix[0])]
-group_percent_true = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[2:]/np.sum(conf_matrix[1])]
-group_percent = group_percent_false + group_percent_true
-labels = [f'{v1}\n{v2}\n{v3}' for v1, v2, v3 in zip(group_names,group_counts,group_percent)]
-labels = np.asarray(labels).reshape(2,2)
-sns.heatmap(conf_matrix, annot=labels, fmt='', cmap='Purples')
-plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/ConfuseMatric.png', dpi=100)
+    print('\nConfusion Matrix for ' + name)
+    print('True Pos','False Neg')
+    print(conf_matrix[0])
+    print('False Pos','True Neg')
+    print(conf_matrix[1])
+
+print_conf_martix(conf_matrix)
+
+
 
 # Precision and recall 
 print("Precision:", conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0]))
 print("Recall:", conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[0,1]))
+
 # F1 Score
 result_f1_score = f1_score(y_test, y_pred_binary, average=None)
 print('F1 Score for Neg:', result_f1_score[0])
 print('F1 Score for Pos:', result_f1_score[1])
 
-# %% ROC Curve
-from sklearn.metrics import roc_curve, auc
 
-fpr, tpr, thresholds = roc_curve(y_test, y_pred)
-roc_auc = auc(fpr, tpr)
 
-fig = plt.figure()
-lw = 2
-plt.plot(fpr, tpr, '-o', lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
-plt.plot([0, 1], [0, 1], lw=lw, linestyle='--')
-plt.xlim([-0.05, 1.0])
-plt.ylim([0.0, 1.05])
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('Receiver operating characteristic example')
-plt.legend(loc="lower right")
-#fig.savefig('/tmp/roc.png')
-plt.show()
 
-#%% Precision with different threshold
-def plot_conf_matrix(y_test, y_pred_binary, threshold):
-    conf_matrix = confusion_matrix(y_test, y_pred_binary, labels=[1,0])
-    # 可视化混淆矩阵
-    # group_names = ['True Neg','False Pos','False Neg','True Pos']
-    group_names = ['True Pos','False Neg','False Pos','True Neg']
-    group_counts = ['{0:0.0f}'.format(value) for value in conf_matrix.flatten()]
-    group_percent_false = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[:2]/np.sum(conf_matrix[0])]
-    group_percent_true = ['{0:.2%}'.format(value) for value in conf_matrix.flatten()[2:]/np.sum(conf_matrix[1])]
-    group_percent = group_percent_false + group_percent_true
-    labels = [f'{v1}\n{v2}\n{v3}' for v1, v2, v3 in zip(group_names,group_counts,group_percent)]
-    labels = np.asarray(labels).reshape(2,2)
-    sns.heatmap(conf_matrix, annot=labels, fmt='', cmap='Purples')
-    plt.title('Threshold = ' + str(np.round(threshold,1)))
-    plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/ConfuseMatric_tr_'+str(threshold)+'.png', dpi=100)
-    plt.show()
+# # %% 对新数据集进行标注
+# unlabel_path = './data/mapping_data_0.7/'
 
-def binary_label(y_pred, threshold):
-    y_binary = y_pred.copy()
-    for i in range(len(y_pred)):
-        if y_pred[i] < threshold:
-            y_binary[i] = 0
-        else:
-            y_binary[i] = 1
-    return y_binary
+# # 将文件夹下文件名存入列表
+# file_list = os.listdir(unlabel_path)
+# # 计算label
+# model = load_model('./CNN_best_' + save_model_name + '.h5')
 
-threshold = np.linspace(0,1,11)
+# def annotator(model,fc_img, em_img):
+#     # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
+#     fc_img = np.transpose(fc_img, (1, 2, 0))
+#     em_img = np.transpose(em_img, (1, 2, 0))
 
-pricision_score, recall_score, f1_pos_score = [], [], []
-for t in threshold:
-    y_binary = binary_label(y_pred, t)
-    conf_matrix = confusion_matrix(y_test, y_binary.flatten(), labels=[0,1])
-    plot_conf_matrix(y_test, y_binary.flatten(), t)
-    result_f1_score = f1_score(y_test, y_binary, average=None)
-    print('threshold = ', t, '\nf1 score = ', result_f1_score)
-    f1_pos_score.append(result_f1_score[1])
-    pricision = conf_matrix[1,1]/(conf_matrix[1,1]+conf_matrix[0,1])
-    recall = conf_matrix[1,1]/(conf_matrix[1,1]+conf_matrix[1,0])
-    pricision_score.append(pricision)
-    recall_score.append(recall)
+#     # 将数据维度扩展至4维（符合CNN输入）
+#     fc_img = np.expand_dims(fc_img, axis=0)
+#     em_img = np.expand_dims(em_img, axis=0)
+#     label = model.predict({'FC':fc_img, 'EM':em_img})
+#     # binary label
+#     if label > 0.5:
+#         label = 1
+#     else:
+#         label = 0
+#     return label
 
-pricision_recall_np = np.zeros((len(threshold),3))
-pricision_recall_np[:,0] = threshold
-pricision_recall_np[:,1] = pricision_score
-pricision_recall_np[:,2] = recall_score
 
-print(pricision_recall_np)
-plt.plot(threshold[:-1], pricision_score[:-1],'o-',label='Pricision')
-plt.plot(threshold[:-1], recall_score[:-1],'o-', label='Recall')
-plt.plot(threshold[:-1], f1_pos_score[:-1], 'o-', label='f1_score')
 
-plt.legend()
-plt.xlabel('Threshold')
-plt.savefig('/home/ming/Project/nrn_mapping_package-master/Figure/Pricision_Recall.png', dpi=150)
-plt.show()
-confusion_matrix(y_test, binary_label(y_pred, 0.4).flatten(), labels=[0,1])
+# # 初始化一个空的DataFrame，用于存储文件名和计算结果
+# label_df = pd.DataFrame(columns=['fc_id', 'em_id', 'score', 'label'])
 
-# %%
+# # 遍历母文件夹下的所有条目
+# for file_name in (file_list):
+#     # 创建完整文件路径
+#     file_path = os.path.join(unlabel_path, file_name)
+
+#     # 检查是否为.pkl档案
+#     if file_path.endswith('.pkl'):
+#         # 读取pkl文件
+#         data_lst = load_pkl(file_path)
+#         for data in data_lst:
+#             # 计算结果
+#             result = annotator(model, data[3], data[4])
+
+#             # 将文件名和计算结果添加到DataFrame
+#             label_df = label_df.append({'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label':result}, ignore_index=True)
+
+# # 将DataFrame存储为csv文件
+# label_df.to_csv('./data/label_df_0.7.csv', index=False)
