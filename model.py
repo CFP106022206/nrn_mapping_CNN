@@ -159,7 +159,7 @@ def CNN_focal(input_size=(50,50,3)):
     
     
     model = Model(inputs=inputs, outputs=output)
-    model.compile(optimizer='Adam', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
+    model.compile(optimizer='Adam', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
     model.summary()
     return model
 
@@ -219,7 +219,7 @@ def CNN_tuner(hp, input_size=(50,50,3)):
 
     optimizer = hp.Choice(name="optimizer", values=["rmsprop", "adam", "sgd"])
 
-    model.compile(optimizer=optimizer, loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics = [BinaryAccuracy(name='accuracy'), f1])
+    model.compile(optimizer=optimizer, loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics = [BinaryAccuracy(name='accuracy'), f1])
     # model.summary()
     return model
 
@@ -254,7 +254,7 @@ def CNN_best(input_size=(50,50,3)):
     
     
     model = Model(inputs=inputs, outputs=output)
-    model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
+    model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
     model.summary()
     return model
 
@@ -299,7 +299,7 @@ def CNN_deep(input_size=(50,50,3)):
     
     
     model = Model(inputs=inputs, outputs=output)
-    model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
+    model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
     model.summary()
     return model
 
@@ -356,7 +356,7 @@ def CNN_shared(input_size=(50, 50, 3)):
     output = Dense(1, activation="sigmoid")(output)
 
     model = Model(inputs=inputs, outputs=output)
-    model.compile(optimizer="rmsprop", loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
+    model.compile(optimizer="rmsprop", loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
     model.summary()
     return model
 

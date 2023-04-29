@@ -1,6 +1,6 @@
 '''
 1, Make Train/Test Set from D1~D4 or D1~D5
-2, Load Each Set and train model
+2, Load Each Set and train model(Data_process_Train.py)
 3, Transfer Big Model
 4, Result Analysis
 5, Iterative self-labeling

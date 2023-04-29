@@ -1,6 +1,6 @@
 '''
 1, Make Train/Test Set from D1~D4 or D1~D5
-2, Load Each Set and train model
+2, Load Each Set and train model(Data_process_Train.py)
 3, Transfer Big Model
 4, Result Analysis
 5, Iterative self-labeling
@@ -9,6 +9,10 @@
 # %%
 import sys
 sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
+sys.path.insert(0,'/home/yining_juan/anaconda3/envs/richard/lib/python310.zip')
+sys.path.insert(0, '/home/yining_juan/anaconda3/envs/richard/lib/python3.10')
+sys.path.insert(0,  '/home/yining_juan/anaconda3/envs/richard/lib/python3.10/lib-dynload')
+sys.path.insert(0, '/home/yining_juan/anaconda3/envs/richard/lib/python3.10/site-packages')
 
 import numpy as np
 import pandas as pd
@@ -35,7 +39,16 @@ from tqdm import tqdm
 num_splits = 98 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D5'   #D4 or D5
 
-add_low_score = True
+'''
+使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
+新寫法是使用和data_preprocess_annotator 相同的方法。
+'''
+use_KT_map = True
+grid75_path = './data/D1-D5_grid75_sn'
+
+resolutions = (3, 75, 75)
+
+add_low_score = False
 low_score_neg_rate = 2
 
 seed = 10
@@ -52,15 +65,19 @@ save_model_name  = 'Annotator_D1-' + data_range + '_' +str(num_splits)
 label_table_train = pd.read_csv('./data/train_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
 label_table_test = pd.read_csv('./data/test_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
 
+'''
+使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
+新寫法是使用和data_preprocess_annotator 相同的方法。
+'''
+if use_KT_map:
+    # 讀神經三視圖資料
+    map_data_D1toD4 = load_pkl('./data/mapping_data_sn.pkl')
+    # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
 
-# 讀神經三視圖資料
-map_data_D1toD4 = load_pkl('./data/mapping_data_sn.pkl')
-# map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
+    map_data_D5 = load_pkl('./data/mapping_data_sn_D5_old.pkl')
 
-map_data_D5 = load_pkl('./data/mapping_data_sn_D5_old.pkl')
-
-map_data = map_data_D1toD4 + map_data_D5
-del map_data_D1toD4, map_data_D5
+    map_data = map_data_D1toD4 + map_data_D5
+    del map_data_D1toD4, map_data_D5
 
 # turn to numpy array
 test_pair_nrn = label_table_test[['fc_id','em_id','label']].to_numpy()
@@ -73,58 +90,133 @@ train_pair_nrn = label_table_train[['fc_id','em_id','label']].to_numpy()
 
 # %% data prerpare
 
-def data_preprocess(map_data, pair_nrn):
-    data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
-    FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
+if use_KT_map:
+    resolutions = map_data[0][3].shape
+    print('Image shape: ', resolutions)
 
-    #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
-    data_dict = {}
-    for data in map_data:
-        key = f"{data[0]}_{data[1]}"
-        data_dict[key] = data
+    def data_preprocess(map_data, pair_nrn):
+        data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
+        FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
 
-    for i, row in enumerate(pair_nrn):
-        key = f'{row[0]}_{row[1]}'
-        if key in data_dict:
-            data = data_dict[key]   # 找出data的所有信息              
+        #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
+        data_dict = {}
+        for data in map_data:
+            key = f"{data[0]}_{data[1]}"
+            data_dict[key] = data
 
-            # 三視圖填入data_np
-            for k in range(3):
-                data_np[i, 0, :, :, k] = data[3][k] # FC Image
-                data_np[i, 1, :, :, k] = data[4][k] # EM Image
+        for i, row in enumerate(pair_nrn):
+            key = f'{row[0]}_{row[1]}'
+            if key in data_dict:
+                data = data_dict[key]   # 找出data的所有信息              
+
+                # 三視圖填入data_np
+                for k in range(3):
+                    data_np[i, 0, :, :, k] = data[3][k] # FC Image
+                    data_np[i, 1, :, :, k] = data[4][k] # EM Image
+                
+                # 其餘信息填入
+                FC_nrn_lst.append(data[0])
+                EM_nrn_lst.append(data[1])
+                score_lst.append(data[2]) 
+                label_lst.append(row[2])
+
+        # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
+        not_found_data = []
+        for i, data in enumerate(data_np):
+            if not(np.any(data)):
+                not_found_data.append(i)
+        data_np = np.delete(data_np, not_found_data, axis=0)
+
+        if not_found_data:
+            print('Not Found in map_data: ')
+            for i in not_found_data:
+                print(pair_nrn[i])
+
+
+        # Normalization : x' = x - min(x) / max(x) - min(x)
+        data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
+
+        pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+
+        return data_np, pair_df
+
+
+
+    data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
+    data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
+
+
+
+
+else:
+    def data_preprocess(file_path, pair_nrn):
+
+        print('\nCollecting 3-View Data Numpy Array..')
+
+        data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
+        FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
+
+
+        file_list = os.listdir(file_path)
+
+
+        # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
+        file_list = [file_name for file_name in os.listdir(file_path) if file_name.endswith('.pkl')]
+
+        #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
+        data_dict = {}
+        for file_name in file_list:
+            pkl_path = os.path.join(file_path, file_name)
+            data_lst = load_pkl(pkl_path)
+            for data in data_lst:
+                key = f"{data[0]}_{data[1]}"
+                data_dict[key] = data
+
+        # 依訓練名單從已有三視圖名單中查找是否存在
+        for i, row in tqdm(enumerate(pair_nrn), total=len(pair_nrn)):
             
-            # 其餘信息填入
-            FC_nrn_lst.append(data[0])
-            EM_nrn_lst.append(data[1])
-            score_lst.append(data[2]) 
-            label_lst.append(row[2])
+            key = f"{row[0]}_{row[1]}"
 
-    # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
-    not_found_data = []
-    for i, data in enumerate(data_np):
-        if not(np.any(data)):
-            not_found_data.append(i)
-    data_np = np.delete(data_np, not_found_data, axis=0)
-
-    if not_found_data:
-        print('Not Found in map_data: ')
-        for i in not_found_data:
-            print(pair_nrn[i])
+            if key in data_dict:
+                data = data_dict[key]   # 找出data的所有信息
+                # 三視圖填入 data_np
+                for k in range(3):
+                    data_np[i, 0, :, :, k] = data[3][k] # FC Image
+                    data_np[i, 1, :, :, k] = data[4][k] # EM Image
+                # 其餘信息填入list
+                FC_nrn_lst.append(data[0])
+                EM_nrn_lst.append(data[1])
+                score_lst.append(data[2])
+                label_lst.append(row[2])
+        
 
 
-    # Normalization : x' = x - min(x) / max(x) - min(x)
-    data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
+        # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
+        not_found_data = []
+        for i, data in enumerate(data_np):
+            if not(np.any(data)):
+                not_found_data.append(i)
+        data_np = np.delete(data_np, not_found_data, axis=0)
 
-    pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+        if not_found_data:
+            print('Not Found in map_data: ')
+            for i in not_found_data:
+                print(pair_nrn[i])
 
-    return data_np, pair_df
+
+        # Normalization : x' = x - min(x) / max(x) - min(x)
+        data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
+
+        pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+
+        return data_np, pair_df
 
 
-resolutions = map_data[0][3].shape
-print('Image shape: ', resolutions)
+    data_np_test, nrn_pair_test = data_preprocess(grid75_path, test_pair_nrn)
+    data_np_train, nrn_pair_train = data_preprocess(grid75_path, train_pair_nrn)
 
-data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
-data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
+
+
 
 # Train Validation Split
 data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.2, random_state=seed)
@@ -379,23 +471,23 @@ def rotate_and_pad(image, angle, border_value=(0, 0, 0)):
     return rotated_image
 
 
-def resize_and_pad(image, scale_factor):
-    augmented_image = cv2.resize(image, None, fx=scale_factor, fy=scale_factor)
+# def resize_and_pad(image, scale_factor):
+#     augmented_image = cv2.resize(image, None, fx=scale_factor, fy=scale_factor)
 
-    # 裁剪或填充缩放后的图像以保持原始尺寸
-    height, width = image.shape[:2]
-    if scale_factor > 1:
-        y_offset = (augmented_image.shape[0] - height) // 2
-        x_offset = (augmented_image.shape[1] - width) // 2
-        augmented_image = augmented_image[y_offset:y_offset+height, x_offset:x_offset+width]
-    else:
-        y_padding_top = (height - augmented_image.shape[0]) // 2
-        y_padding_bottom = height - augmented_image.shape[0] - y_padding_top
-        x_padding_left = (width - augmented_image.shape[1]) // 2
-        x_padding_right = width - augmented_image.shape[1] - x_padding_left
-        augmented_image = cv2.copyMakeBorder(augmented_image, y_padding_top, y_padding_bottom, x_padding_left, x_padding_right, cv2.BORDER_CONSTANT, value=0)
+#     # 裁剪或填充缩放后的图像以保持原始尺寸
+#     height, width = image.shape[:2]
+#     if scale_factor > 1:
+#         y_offset = (augmented_image.shape[0] - height) // 2
+#         x_offset = (augmented_image.shape[1] - width) // 2
+#         augmented_image = augmented_image[y_offset:y_offset+height, x_offset:x_offset+width]
+#     else:
+#         y_padding_top = (height - augmented_image.shape[0]) // 2
+#         y_padding_bottom = height - augmented_image.shape[0] - y_padding_top
+#         x_padding_left = (width - augmented_image.shape[1]) // 2
+#         x_padding_right = width - augmented_image.shape[1] - x_padding_left
+#         augmented_image = cv2.copyMakeBorder(augmented_image, y_padding_top, y_padding_bottom, x_padding_left, x_padding_right, cv2.BORDER_CONSTANT, value=0)
     
-    return augmented_image
+#     return augmented_image
 
 
 def augment_data(X_train, y_train, angle_range, resize_range):
@@ -406,10 +498,10 @@ def augment_data(X_train, y_train, angle_range, resize_range):
         resize_pair = np.zeros(X_train.shape[1:])
         for j in range(X_train.shape[1]):
             angle = np.random.uniform(angle_range[0], angle_range[1])
-            scale = np.random.uniform(resize_range[0], resize_range[1])
+            # scale = np.random.uniform(resize_range[0], resize_range[1])
 
             rotate_pair[j] = rotate_and_pad(X_train[i, j], angle)
-            resize_pair[j] = resize_and_pad(X_train[i, j], scale)
+            # resize_pair[j] = resize_and_pad(X_train[i, j], scale)
         
         X_augmented.append(rotate_pair)
         # X_augmented.append(resize_pair)
@@ -419,13 +511,13 @@ def augment_data(X_train, y_train, angle_range, resize_range):
 
     return np.array(X_augmented), np.array(y_augmented)
 
-# 示例用法
-angle_range = [-45, 45]  # 旋转角度范围（在 -10 到 10 之间）
-resize_range = [0.8, 1.2]   # 縮放範圍（在 0.8 到 1.2 之間）
-X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range)
+# # 示例用法
+# angle_range = [-50, 50]  # 旋转角度范围（在 -10 到 10 之间）
+# resize_range = [0.8, 1.2]   # 縮放範圍（在 0.8 到 1.2 之間）
+# X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range)
 
-X_train = np.vstack((X_train, X_train_augmented))
-y_train = np.hstack((y_train, y_train_augmented))
+# X_train = np.vstack((X_train, X_train_augmented))
+# y_train = np.hstack((y_train, y_train_augmented))
 
 # 翻倍  All train data augmentation
 
@@ -436,6 +528,9 @@ for i in range(X_train_aug1.shape[0]):
 
 X_train = np.vstack((X_train, X_train_aug1))
 y_train = np.hstack((y_train, y_train))
+
+del X_train_aug1
+
 # 翻倍
 X_train_aug2 = np.zeros_like(X_train)
 
@@ -446,22 +541,26 @@ for i in range(X_train_aug2.shape[0]):
 X_train = np.vstack((X_train, X_train_aug2))
 y_train = np.hstack((y_train, y_train))
 
-# 翻倍
-X_train_aug3 = np.zeros_like(X_train)
+del X_train_aug2
 
-for i in range(X_train_aug3.shape[0]):
-    X_train_aug3[i,0,:] = np.flipud(np.rot90(X_train[i,0,:],1))
-    X_train_aug3[i,1,:] = np.flipud(np.rot90(X_train[i,1,:],1))
+# # 翻倍
+# X_train_aug3 = np.zeros_like(X_train)
 
-X_train = np.vstack((X_train, X_train_aug3))
-y_train = np.hstack((y_train, y_train))
+# for i in range(X_train_aug3.shape[0]):
+#     X_train_aug3[i,0,:] = np.flipud(np.rot90(X_train[i,0,:],1))
+#     X_train_aug3[i,1,:] = np.flipud(np.rot90(X_train[i,1,:],1))
 
+# X_train = np.vstack((X_train, X_train_aug3))
+# y_train = np.hstack((y_train, y_train))
 
+# del X_train_aug3
 
 
 # FC/EM Split
 X_train_FC = X_train[:,0,:]
 X_train_EM = X_train[:,1,:]
+
+del X_train
 
 X_val_FC = X_val[:,0,:]
 X_val_EM = X_val[:,1,:]
@@ -478,39 +577,15 @@ print('y_test shape:', len(y_test))
 
 
 
-
 # %%
-class Metrics(tf.keras.callbacks.Callback):
-    def __init__(self, valid_data):
-        super(Metrics, self).__init__()
-        self.validation_data = valid_data
 
-    def on_epoch_end(self, epoch, logs=None):
-        logs = logs or {}
-        val_predict = np.argmax(self.model.predict(self.validation_data[0]), -1)
-        val_targ = self.validation_data[1]
-        if len(val_targ.shape) == 2 and val_targ.shape[1] != 1:
-            val_targ = np.argmax(val_targ, -1)
-
-        _val_f1 = f1_score(val_targ, val_predict, average='macro')
-        _val_recall = recall_score(val_targ, val_predict, average='macro')
-        _val_precision = precision_score(val_targ, val_predict, average='macro')
-
-        logs['val_f1'] = _val_f1
-        logs['val_recall'] = _val_recall
-        logs['val_precision'] = _val_precision
-        print(" — val_f1: %f — val_precision: %f — val_recall: %f" % (_val_f1, _val_precision, _val_recall))
-        return
- 
-
-
-
-from model import CNN_best, CNN_deep, CNN_shared
+from model import CNN_best, CNN_deep, CNN_shared, CNN_focal
 # from tensorflow.keras.utils import plot_model
 
+cnn = CNN_focal((resolutions[1],resolutions[2],3))
 # cnn = CNN_best((resolutions[1],resolutions[2],3))
 # cnn = CNN_deep((resolutions[1],resolutions[2],3))
-cnn = CNN_shared((resolutions[1],resolutions[2],3))
+# cnn = CNN_shared((resolutions[1],resolutions[2],3))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
 
@@ -554,9 +629,9 @@ Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM},
 plt.plot(Annotator_history.history['loss'], label='loss')
 plt.plot(Annotator_history.history['val_loss'], label='val_loss')
 plt.legend()
-# plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
+plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
 # plt.show()
-# plt.close('all')
+plt.close('all')
 
 # cnn_train_loss = history.history['loss']
 # cnn_valid_loss = history.history['val_loss']
@@ -608,57 +683,57 @@ with open('./result/Test_Result_'+save_model_name+'.pkl', 'wb') as f:
     pickle.dump(result, f)
 
 
-# %% 对新数据集进行标注
-unlabel_path = './data/mapping_data_0.7+/'
+# # %% 对新数据集进行标注
+# unlabel_path = './data/mapping_data_0.7+/'
 
-# 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
-file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]
+# # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
+# file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]
 
-# 计算label
-model = load_model('./Annotator_Model/' + save_model_name + '.h5')
+# # 计算label
+# model = load_model('./Annotator_Model/' + save_model_name + '.h5')
 
-def annotator(model,fc_img, em_img):
-    # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
-    fc_img = np.transpose(fc_img, (1, 2, 0))
-    em_img = np.transpose(em_img, (1, 2, 0))
+# def annotator(model,fc_img, em_img):
+#     # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
+#     fc_img = np.transpose(fc_img, (1, 2, 0))
+#     em_img = np.transpose(em_img, (1, 2, 0))
 
-    # 将数据维度扩展至4维（符合CNN输入）
-    fc_img = np.expand_dims(fc_img, axis=0)
-    em_img = np.expand_dims(em_img, axis=0)
-    label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
-    # binary label
-    if label > 0.5:
-        label = 1
-    else:
-        label = 0
-    return label
+#     # 将数据维度扩展至4维（符合CNN输入）
+#     fc_img = np.expand_dims(fc_img, axis=0)
+#     em_img = np.expand_dims(em_img, axis=0)
+#     label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
+#     # binary label
+#     if label > 0.5:
+#         label = 1
+#     else:
+#         label = 0
+#     return label
 
 
 
-# 初始化一个空lst，用于存储文件名和计算结果
-new_data_lst = []
+# # 初始化一个空lst，用于存储文件名和计算结果
+# new_data_lst = []
 
-print('\nLabeling..')
-# 遍历母文件夹下的所有条目
-for file_name in tqdm(file_list, total=len(file_list)):
-    # 创建完整文件路径
-    file_path = os.path.join(unlabel_path, file_name)
+# print('\nLabeling..')
+# # 遍历母文件夹下的所有条目
+# for file_name in tqdm(file_list, total=len(file_list)):
+#     # 创建完整文件路径
+#     file_path = os.path.join(unlabel_path, file_name)
 
-    # 读取pkl文件
-    data_lst = load_pkl(file_path)
-    for data in data_lst:
-        # 计算结果
-        result = annotator(model, data[3], data[4])
+#     # 读取pkl文件
+#     data_lst = load_pkl(file_path)
+#     for data in data_lst:
+#         # 计算结果
+#         result = annotator(model, data[3], data[4])
 
-        # 将文件名和计算结果添加到DataFrame
-        new_data = {'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label': result}
+#         # 将文件名和计算结果添加到DataFrame
+#         new_data = {'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label': result}
 
-        new_data_lst.append(new_data)
+#         new_data_lst.append(new_data)
 
-label_df = pd.DataFrame(new_data_lst)
+# label_df = pd.DataFrame(new_data_lst)
 
-# 将DataFrame存储为csv文件
-label_df.to_csv('./result/label_df_with_'+save_model_name+'.csv', index=False)
-print('\nSaved')
+# # 将DataFrame存储为csv文件
+# label_df.to_csv('./result/label_df_with_'+save_model_name+'.csv', index=False)
+# print('\nSaved')
 
 # %%
