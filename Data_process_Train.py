@@ -16,6 +16,8 @@ import os
 import random
 import tensorflow as tf
 import pickle
+import cv2
+import matplotlib.pyplot as plt
 from tensorflow.keras.utils import plot_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.models import *
@@ -23,7 +25,7 @@ from tensorflow.keras.layers import *
 from tensorflow.keras.optimizers import *
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
-from sklearn.metrics import confusion_matrix, f1_score
+from sklearn.metrics import confusion_matrix, f1_score, recall_score, precision_score
 from util import load_pkl
 from tqdm import tqdm
 
@@ -36,12 +38,13 @@ data_range = 'D5'   #D4 or D5
 add_low_score = True
 low_score_neg_rate = 2
 
-
 seed = 10
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
 np.random.seed(seed)
-os.environ['TF_DITERMINISTIC_OPS'] = '1'
+os.environ['TF_DETERMINISTIC_OPS'] = '1'
+tf.random.set_seed(seed)
+
 
 save_model_name  = 'Annotator_D1-' + data_range + '_' +str(num_splits)
 
@@ -134,7 +137,7 @@ X_test = data_np_test
 y_val = np.array(nrn_pair_valid['label'],dtype=np.int32)
 y_test = np.array(nrn_pair_test['label'],dtype=np.int32)
 
-# Data Augmentation: cross expand(Truned off)
+# %% Data Augmentation: cross expand(Truned off)
 
 #   以下說明增加資料方法，大寫字母表示 FC id, 小寫表示 EM id
 #   已知 A -> a
@@ -264,7 +267,7 @@ else:
 
 
 
-# 找出 label為1的 X_train
+# %% 找出 label為1的 X_train
 true_label_idx, false_label_idx = [], []
 for i in range(y_train.shape[0]):
     if y_train[i] == 1:
@@ -341,11 +344,88 @@ y_train = np.hstack((y_train, y_train_add))
 
 print('UpSampling: After Augmentation:\nTrue Label/Total in X_train:\n',np.sum(y_train),'/', len(X_train))
 
+# 圖片旋轉任一角度
+def rotate_and_pad(image, angle, border_value=(0, 0, 0)):
+    # 获取图像尺寸
+    h, w = image.shape[:2]
+    center = (w / 2, h / 2)
+
+    # 计算旋转矩阵
+    rot_mat = cv2.getRotationMatrix2D(center, angle, 1.0)
+
+    # 计算新图像的尺寸
+    new_w = int(h * abs(np.sin(np.radians(angle))) + w * abs(np.cos(np.radians(angle))))
+    new_h = int(h * abs(np.cos(np.radians(angle))) + w * abs(np.sin(np.radians(angle))))
+
+    # 更新旋转矩阵
+    rot_mat[0, 2] += (new_w / 2) - center[0]
+    rot_mat[1, 2] += (new_h / 2) - center[1]
+
+    # 应用旋转和填充
+    rotated_image = cv2.warpAffine(image, rot_mat, (new_w, new_h), borderValue=border_value)
+
+    # 裁剪或填充旋转后的图像以保持原始尺寸
+    if new_h > h and new_w > w:
+        y_offset = (new_h - h) // 2
+        x_offset = (new_w - w) // 2
+        rotated_image = rotated_image[y_offset:y_offset + h, x_offset:x_offset + w]
+    else:
+        y_padding_top = (h - new_h) // 2
+        y_padding_bottom = h - new_h - y_padding_top
+        x_padding_left = (w - new_w) // 2
+        x_padding_right = w - new_w - x_padding_left
+        rotated_image = cv2.copyMakeBorder(rotated_image, y_padding_top, y_padding_bottom, x_padding_left, x_padding_right, cv2.BORDER_CONSTANT, value=border_value)
+
+    return rotated_image
 
 
+def resize_and_pad(image, scale_factor):
+    augmented_image = cv2.resize(image, None, fx=scale_factor, fy=scale_factor)
+
+    # 裁剪或填充缩放后的图像以保持原始尺寸
+    height, width = image.shape[:2]
+    if scale_factor > 1:
+        y_offset = (augmented_image.shape[0] - height) // 2
+        x_offset = (augmented_image.shape[1] - width) // 2
+        augmented_image = augmented_image[y_offset:y_offset+height, x_offset:x_offset+width]
+    else:
+        y_padding_top = (height - augmented_image.shape[0]) // 2
+        y_padding_bottom = height - augmented_image.shape[0] - y_padding_top
+        x_padding_left = (width - augmented_image.shape[1]) // 2
+        x_padding_right = width - augmented_image.shape[1] - x_padding_left
+        augmented_image = cv2.copyMakeBorder(augmented_image, y_padding_top, y_padding_bottom, x_padding_left, x_padding_right, cv2.BORDER_CONSTANT, value=0)
+    
+    return augmented_image
 
 
+def augment_data(X_train, y_train, angle_range, resize_range):
+    X_augmented, y_augmented = [], []
 
+    for i in range(X_train.shape[0]):
+        rotate_pair = np.zeros(X_train.shape[1:])   # shape=(2,50,50,3)
+        resize_pair = np.zeros(X_train.shape[1:])
+        for j in range(X_train.shape[1]):
+            angle = np.random.uniform(angle_range[0], angle_range[1])
+            scale = np.random.uniform(resize_range[0], resize_range[1])
+
+            rotate_pair[j] = rotate_and_pad(X_train[i, j], angle)
+            resize_pair[j] = resize_and_pad(X_train[i, j], scale)
+        
+        X_augmented.append(rotate_pair)
+        # X_augmented.append(resize_pair)
+
+        y_augmented.append(y_train[i])
+        # y_augmented.append(y_train[i])
+
+    return np.array(X_augmented), np.array(y_augmented)
+
+# 示例用法
+angle_range = [-45, 45]  # 旋转角度范围（在 -10 到 10 之间）
+resize_range = [0.8, 1.2]   # 縮放範圍（在 0.8 到 1.2 之間）
+X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range)
+
+X_train = np.vstack((X_train, X_train_augmented))
+y_train = np.hstack((y_train, y_train_augmented))
 
 # 翻倍  All train data augmentation
 
@@ -399,13 +479,39 @@ print('y_test shape:', len(y_test))
 
 
 
+# %%
+class Metrics(tf.keras.callbacks.Callback):
+    def __init__(self, valid_data):
+        super(Metrics, self).__init__()
+        self.validation_data = valid_data
+
+    def on_epoch_end(self, epoch, logs=None):
+        logs = logs or {}
+        val_predict = np.argmax(self.model.predict(self.validation_data[0]), -1)
+        val_targ = self.validation_data[1]
+        if len(val_targ.shape) == 2 and val_targ.shape[1] != 1:
+            val_targ = np.argmax(val_targ, -1)
+
+        _val_f1 = f1_score(val_targ, val_predict, average='macro')
+        _val_recall = recall_score(val_targ, val_predict, average='macro')
+        _val_precision = precision_score(val_targ, val_predict, average='macro')
+
+        logs['val_f1'] = _val_f1
+        logs['val_recall'] = _val_recall
+        logs['val_precision'] = _val_precision
+        print(" — val_f1: %f — val_precision: %f — val_recall: %f" % (_val_f1, _val_precision, _val_recall))
+        return
+ 
 
 
 
-from model import CNN_best
-from tensorflow.keras.utils import plot_model
+from model import CNN_best, CNN_deep, CNN_shared
+# from tensorflow.keras.utils import plot_model
 
-cnn = CNN_best((resolutions[1],resolutions[2],3))
+# cnn = CNN_best((resolutions[1],resolutions[2],3))
+# cnn = CNN_deep((resolutions[1],resolutions[2],3))
+cnn = CNN_shared((resolutions[1],resolutions[2],3))
+
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
 
 train_epochs = 50
@@ -425,17 +531,31 @@ reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
 # 設定模型儲存條件(儲存最佳模型)
 checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
+
+# 按照 val_f1 保存模型
+# checkpoint = tf.keras.callbacks.ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5',
+#                                                  monitor='val_f1', 
+#                                                  mode='max', verbose=2,
+#                                                  save_best_only=True)
+
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
 
 
-# Scheduler
-Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint, reduce_lr], verbose=2)
+# Model.fit
+Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, 
+                            y_train, 
+                            batch_size=128, 
+                            validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), 
+                            epochs=train_epochs, 
+                            shuffle=True, 
+                            callbacks = [checkpoint, reduce_lr], verbose=2)
+                            # callbacks = [Metrics(valid_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val)), checkpoint, reduce_lr], verbose=2)
 
-# plt.plot(Annotator_history.history['loss'], label='loss')
-# plt.plot(Annotator_history.history['val_loss'], label='val_loss')
-# plt.legend()
+plt.plot(Annotator_history.history['loss'], label='loss')
+plt.plot(Annotator_history.history['val_loss'], label='val_loss')
+plt.legend()
 # plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
-# # plt.show()
+# plt.show()
 # plt.close('all')
 
 # cnn_train_loss = history.history['loss']

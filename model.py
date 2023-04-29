@@ -168,26 +168,27 @@ def CNN_tuner(hp, input_size=(50,50,3)):
     flattened_layers = []
     for input in inputs:
         # 寻找超参数
-        conv_layer = Conv2D(filters=hp.Choice('num_filters_1', values=[8, 16, 24, 32, 40, 48, 56]), kernel_size=hp.Choice('kernel_size_1', values=[3, 5, 7]))(input)
+        conv_layer = Conv2D(filters=hp.Choice('conv_filters_1', values=[32, 48, 56, 64, 72]), kernel_size=hp.Choice('kernel_size_1', values=[3, 5, 7]))(input)
         conv_layer = BatchNormalization()(conv_layer)
         conv_layer = Activation('relu')(conv_layer)
         conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
         
-        conv_layer = Conv2D(filters=hp.Choice('num_filters_2', values=[8, 16, 24, 32, 40, 48, 56]), kernel_size=hp.Choice('kernel_size_2', values=[3, 5, 7]))(conv_layer)
+        conv_layer = Conv2D(filters=hp.Choice('conv_filters_2', values=[24, 48, 64, 80, 96, 128]), kernel_size=hp.Choice('kernel_size_2', values=[3, 5, 7]))(conv_layer)
         conv_layer = BatchNormalization()(conv_layer)
         conv_layer = Activation('relu')(conv_layer)
         conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
         
-        # # conv_layer = GlobalAvgPool2D()(conv_layer)
-        # # conv_layer = Dropout(0.2)(conv_layer)
+        conv_layer = Conv2D(filters=hp.Choice('conv_filters_3', values=[48, 64, 96, 128, 256]), kernel_size=hp.Choice('kernel_size_3', values=[3, 5, 7]))(conv_layer)
+        conv_layer = BatchNormalization()(conv_layer)
+        conv_layer = Activation('relu')(conv_layer)
         flattened_layers.append(Flatten()(conv_layer))
     
     concat_layer = concatenate(flattened_layers, axis=1)
     # subtracted = Subtract()(flattened_layers)
     # subtracted = Add()(flattened_layers)
-    output = Dropout(0.5)(concat_layer)
+    output = Dropout(hp.Choice('drop_out_1', values=[0.4, 0.5, 0.6]))(concat_layer)
     # output = Dense(8)(output)
-    output = Dense(units=hp.Int('units_3', min_value=8, max_value=256, step=8))(output)    #寻找超参数
+    output = Dense(units=hp.Int('dense_units_1', min_value=64, max_value=512, step=64))(output)    #寻找超参数
     output = BatchNormalization()(output)
     output = Activation('relu')(output)
 
@@ -258,6 +259,109 @@ def CNN_best(input_size=(50,50,3)):
     return model
 
 
+def CNN_deep(input_size=(50,50,3)):
+    inputs = [Input(shape=input_size, name='EM'), Input(shape=input_size, name='FC')]
+    flattened_layers = []
+    for input in inputs:
+        conv_layer = Conv2D(16, (3,3))(input)
+        conv_layer = BatchNormalization()(conv_layer)
+        conv_layer = Activation('relu')(conv_layer)
+
+        conv_layer = Conv2D(32, (3,3))(conv_layer)
+        conv_layer = BatchNormalization()(conv_layer)
+        conv_layer = Activation('relu')(conv_layer)
+        conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
+
+        conv_layer = Conv2D(48, (3,3))(conv_layer)
+        conv_layer = BatchNormalization()(conv_layer)
+        conv_layer = Activation('relu')(conv_layer)
+
+        conv_layer = Conv2D(64, (3,3))(conv_layer)
+        conv_layer = BatchNormalization()(conv_layer)
+        conv_layer = Activation('relu')(conv_layer)
+        conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
+
+        flattened_layers.append(Flatten()(conv_layer))
+    
+    concat_layer = concatenate(flattened_layers, axis=1)
+
+    output = Dropout(0.5)(concat_layer)
+    output = Dense(512)(output)
+    output = BatchNormalization()(output)
+    output = Activation('relu')(output)
+
+    # output = Dropout(0.5)(output)
+    # output = Dense(4)(output)
+    # output = BatchNormalization()(output)
+    # output = Activation('relu')(output)
+
+    output = Dense(1, activation='sigmoid')(output)
+    
+    
+    model = Model(inputs=inputs, outputs=output)
+    model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
+    model.summary()
+    return model
+
+
+def CNN_shared(input_size=(50, 50, 3)):
+    inputs = [Input(shape=input_size, name="EM"), Input(shape=input_size, name="FC")]
+
+    # 定义共享卷积层和池化层
+    shared_conv1 = Conv2D(16, (3, 3), name="Shared_Conv1")
+    shared_bn1 = BatchNormalization(name="Shared_BN1")
+    shared_act1 = Activation("relu", name="Shared_Activation1")
+    shared_conv2 = Conv2D(32, (3, 3), name="Shared_Conv2")
+    shared_bn2 = BatchNormalization(name='Shared_BN2')
+    shared_act2 = Activation("relu", name='Shared_Activation2')
+    shared_pool1 = MaxPool2D(pool_size=(2, 2), name='Shared_pool1')
+    
+    shared_conv3 = Conv2D(48, (3, 3), name='Shared_Conv3')
+    shared_bn3 = BatchNormalization(name='Shared_BN3')
+    shared_act3 = Activation("relu", name='Shared_Activation3')
+    shared_conv4 = Conv2D(64, (3, 3), name='Shared_Conv4')
+    shared_bn4 = BatchNormalization(name='Shared_BN4')
+    shared_act4 = Activation("relu", name='Shared_Activation4')
+    shared_pool2 = MaxPool2D(pool_size=(2, 2), name='Shared_pool2')
+
+    flattened_layers = []
+    for input in inputs:
+        conv_layer = shared_conv1(input)
+        conv_layer = shared_bn1(conv_layer)
+        conv_layer = shared_act1(conv_layer)
+
+        conv_layer = shared_conv2(conv_layer)
+        conv_layer = shared_bn2(conv_layer)
+        conv_layer = shared_act2(conv_layer)
+        conv_layer = shared_pool1(conv_layer)
+
+        conv_layer = shared_conv3(conv_layer)
+        conv_layer = shared_bn3(conv_layer)
+        conv_layer = shared_act3(conv_layer)
+
+        conv_layer = shared_conv4(conv_layer)
+        conv_layer = shared_bn4(conv_layer)
+        conv_layer = shared_act4(conv_layer)
+        conv_layer = shared_pool2(conv_layer)
+
+        flattened_layers.append(Flatten()(conv_layer))
+
+    concat_layer = concatenate(flattened_layers, axis=1)
+
+    output = Dropout(0.5)(concat_layer)
+    output = Dense(256)(output)
+    output = BatchNormalization()(output)
+    output = Activation("relu")(output)
+
+    output = Dense(1, activation="sigmoid")(output)
+
+    model = Model(inputs=inputs, outputs=output)
+    model.compile(optimizer="rmsprop", loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
+    model.summary()
+    return model
+
+
+
 def CNN_big(input_size=(256,256,3)):
     inputs = [Input(shape=input_size, name='EM'), Input(shape=input_size, name='FC')]
     flattened_layers = []
@@ -289,29 +393,3 @@ def CNN_big(input_size=(256,256,3)):
     model.compile(optimizer='Adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
     model.summary()
     return model
-
-# def CNN(input_size=(50,50,3)):
-#     inputs = Input(shape=input_size)
-#     conv_layer = Conv2D(64, 3, activation = 'relu')(input)
-#     conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
-    
-#     conv_layer = Conv2D(32, 3, activation = 'relu')(conv_layer)
-#     conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
-#     #add layer
-#     # conv_layer = GlobalAvgPool2D()(conv_layer)
-#     conv_layer = Dropout(0.2)(conv_layer)
-    
-#     concat_layer = concatenate(flattened_layers, axis=1)
-#     # subtracted = Subtract()(flattened_layers)
-#     # subtracted = Add()(flattened_layers)
-
-#     output = Dense(32, activation='relu')(concat_layer)
-#     # output = Dense(512, activation='relu')(output)
-#     output = Dense(8, activation='relu')(output)
-#     output = Dense(1, activation='sigmoid')(output)
-    
-    
-#     model = Model(inputs=inputs, outputs=output)
-#     model.compile(optimizer='Adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
-#     model.summary()
-#     return model

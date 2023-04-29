@@ -69,6 +69,12 @@ classification_dictionary = {
 
 
 # %%
+
+test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
+
+data_range = 'D5'
+
+
 true_pos_path = './Figure/3_View/TruePos/'
 false_pos_path = './Figure/3_View/FalsePos/'
 true_neg_path = './Figure/3_View/TrueNeg/'
@@ -87,7 +93,7 @@ classification_path = {
     3: true_pos_path}
 
 # load model predict test nrn set
-nrn_pair = pd.read_csv('./result/final_label_model_D1-D5_98.csv')
+nrn_pair = pd.read_csv('./result/final_label_model_D1-'+data_range+'_'+str(test_set_num)+'.csv')
 
 # load map_data (3-view pkl file)
 map_data = load_pkl('./data/mapping_data_sn.pkl')

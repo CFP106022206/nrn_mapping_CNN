@@ -409,6 +409,7 @@ y_train = np.hstack((y_train, y_train))
 
 del X_train_aug1, X_train_aug2, X_train_add
 
+
 # 翻倍
 X_train_aug3 = np.zeros_like(X_train)
 
@@ -417,9 +418,9 @@ for i in range(X_train_aug3.shape[0]):
     X_train_aug3[i,1,:] = np.flipud(np.rot90(X_train[i,1,:],1))
 
 # 判斷x_train是否太大, 否則內存不足
-if len(X_train) + len(X_train_aug3) > 100000:
-    X_train_aug3 = X_train_aug3[:(100000-len(X_train))]
-    y_train_aug3 = y_train[:(100000-len(y_train))]
+if len(X_train) + len(X_train_aug3) > 90000:
+    X_train_aug3 = X_train_aug3[:(90000-len(X_train))]
+    y_train_aug3 = y_train[:(90000-len(y_train))]
 
     X_train = np.vstack((X_train, X_train_aug3))
     y_train = np.hstack((y_train, y_train_aug3))
@@ -447,10 +448,10 @@ print('y_val shape:', len(y_val))
 
 
 
-from model import CNN_best
+from model import CNN_best, CNN_shared
 
-cnn = CNN_best((resolutions[1],resolutions[2],3))
-
+# cnn = CNN_best((resolutions[1],resolutions[2],3))
+cnn = CNN_shared((resolutions[1], resolutions[2],3))
 
 train_epochs = 50
 # Scheduler
@@ -566,9 +567,9 @@ from keras.losses import BinaryFocalCrossentropy
 for layer in model.layers[:-5]:
     layer.trainable = False
 
-# # 确认模型状态
-# for layer in model.layers:
-#     print(layer, layer.trainable)
+# 确认模型状态
+for layer in model.layers:
+    print(layer, layer.trainable)
 model.summary()
 
 # 编译模型

@@ -4,18 +4,14 @@ from cProfile import label
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
-import pickle
 import os
 import random
 import tensorflow as tf
 import keras_tuner as kt
-from keras.utils import plot_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from keras.models import *
 from keras.layers import *
 from keras.optimizers import *
-from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import confusion_matrix, f1_score
@@ -88,65 +84,36 @@ label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除
 
 
 
-# # D2_data_1013 label 錯誤修正
-# relabel_lst = []
-# for i in range(len(label_table_D2)):
-#     fc_id = label_table_D2['FC'][i]
-#     em_id = label_table_D2['EM'][i]
-#     old_label = label_table_D2['label'][i]
-#     for j in range(len(label_table_all)):
-#         if fc_id == label_table_all['fc_id'][j] and em_id == label_table_all['em_id'][j]:
-#             relabel_lst.append(label_table_all['label'][j])
-#             break
-
-#         if j == len(label_table_all)-1:
-#             relabel_lst.append(old_label)   #找不到新label
-
-# label_table_D2['label'] = relabel_lst
-
-
 # Testing data 從全部裡面挑選20%
 train_pair_nrn, test_pair_nrn = train_test_split(label_table_all[['fc_id','em_id','label']].to_numpy(), test_size=0.2, random_state=seed)
 
-# # 新作法 手動裁切特定範圍的Test Data
-# test_ratio = 0.2
-# test_size = int(label_table_all.shape[0]*test_ratio)
-# # train_pair_nrn = np.vstack((label_table_all[['fc_id','em_id','label']].to_numpy()[:3*test_size], label_table_all[['fc_id','em_id','label']].to_numpy()[4*test_size:]))
-# train_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[:4*test_size]
-
-# # test_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[3*test_size : 4*test_size]
-# test_pair_nrn = label_table_all[['fc_id','em_id','label']].to_numpy()[4*test_size:]
-
-
-# # 檢查 Testing data 是否出現在Training 中
-# repeat_idx, diff_idx = [], []
-# for i in range(len(train_pair_nrn)):
-#     for j in range(len(test_pair_nrn)):
-#         if str(train_pair_nrn[i][0]) == str(test_pair_nrn[j][0]) and str(train_pair_nrn[i][1]) == str(test_pair_nrn[j][1]):
-#             repeat_idx.append(i)
-#             break
-
-#         if j == len(test_pair_nrn)-1:
-#             diff_idx.append(i)
-
-# label_table_train = label_table_all.iloc[diff_idx] #test_pair_nrn
 
 
 def data_preprocess(map_data, pair_nrn):
     data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
     FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
 
+    #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
+    data_dict = {}
+    for data in map_data:
+        key = f"{data[0]}_{data[1]}"
+        data_dict[key] = data
+
     for i, row in enumerate(pair_nrn):
-        for data in map_data:
-            if str(row[0]) == str(data[0]) and str(row[1]) == str(data[1]):              
-                FC_nrn_lst.append(str(data[0]))
-                EM_nrn_lst.append(str(data[1]))
-                score_lst.append(data[2]) 
-                label_lst.append(row[2])
-                for k in range(3):
-                    data_np[i, 0, :, :, k] = data[3][k] # FC Image
-                    data_np[i, 1, :, :, k] = data[4][k] # EM Image
-                break
+        key = f'{row[0]}_{row[1]}'
+        if key in data_dict:
+            data = data_dict[key]   # 找出data的所有信息              
+
+            # 三視圖填入data_np
+            for k in range(3):
+                data_np[i, 0, :, :, k] = data[3][k] # FC Image
+                data_np[i, 1, :, :, k] = data[4][k] # EM Image
+            
+            # 其餘信息填入
+            FC_nrn_lst.append(data[0])
+            EM_nrn_lst.append(data[1])
+            score_lst.append(data[2]) 
+            label_lst.append(row[2])
 
     # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
     not_found_data = []
@@ -164,10 +131,9 @@ def data_preprocess(map_data, pair_nrn):
     # Normalization : x' = x - min(x) / max(x) - min(x)
     data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
 
-    pair_df = pd.DataFrame({'FC':FC_nrn_lst, 'EM':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+    pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
 
     return data_np, pair_df
-
 
 resolutions = map_data[0][3].shape
 print('Image shape: ', resolutions)
@@ -180,36 +146,6 @@ data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
 
-
-# 讀取腦科重標記label的csv檔案(因為後續腦科那邊可能會更改原本的label)
-
-# def relabel(pair_df, path='/home/ming/Project/Neural_Mapping_ZGT/data/D1-D4.csv'):
-#     relabel_table = pd.read_csv(path)
-
-#     #執行label修正
-#     relabel_fc, relabel_em, old_label, new_label = [],[],[],[]
-#     for i in range(pair_df.shape[0]):
-#         fc_id = str(pair_df.iloc[i,0])      #'FC'
-#         em_id = str(pair_df.iloc[i,1])      #'EM'
-#         label_o = str(pair_df.iloc[i,2])  #'label'
-#         for j in range(relabel_table.shape[0]):
-#             new_inform = relabel_table.iloc[j]
-#             if str(new_inform['fc_id']) == fc_id and str(new_inform['em_id']) == em_id and str(new_inform['label']) != label_o:
-#                 pair_df.iloc[i,2] = new_inform['label']
-#                 relabel_fc.append(fc_id)
-#                 relabel_em.append(em_id)
-#                 old_label.append(label_o)
-#                 new_label.append(str(new_inform['label']))
-
-
-#     relabel_df = pd.DataFrame({'rFC':relabel_fc, 'rEM':relabel_em, 'old_l':old_label, 'new_l':new_label})
-#     label_lst = pair_df.iloc[:,2]
-
-#     return pair_df, relabel_df
-
-# nrn_pair_train, relabel_train = relabel(nrn_pair_train)
-# nrn_pair_valid, relabel_valid = relabel(nrn_pair_valid)
-# nrn_pair_test, relabel_test = relabel(nrn_pair_test)
 
 X_val = data_np_valid
 X_test = data_np_test
@@ -502,27 +438,6 @@ X_train = np.vstack((X_train, X_train_aug3))
 y_train = np.hstack((y_train, y_train))
 
 del X_train_aug1, X_train_aug2, X_train_aug3
-
-# X_train_add = np.zeros(((X_train.shape[0]-pos),X_train.shape[1],X_train.shape[2],X_train.shape[3], X_train.shape[4]))
-
-# # 篩選出 label為1的 X_train
-# true_label_idx = []
-# for i in range(y_train.shape[0]):
-#     if y_train[i] == 1:
-#         true_label_idx.append(i)
-
-# k=0
-# for i in range(neg):
-#     X_train_add[i] = X_train[true_label_idx[k]]
-
-#     if k >= len(true_label_idx)-1:
-#         k=0
-#     else:
-#         k+=1
-# y_train_add = np.ones(X_train_add.shape[0])
-
-# X_train = np.vstack((X_train, X_train_add))
-# y_train = np.hstack((y_train, y_train_add))
 
 # FC/EM Split
 X_train_FC = X_train[:,0,:]
