@@ -543,17 +543,17 @@ y_train = np.hstack((y_train, y_train))
 
 del X_train_aug2
 
-# # 翻倍
-# X_train_aug3 = np.zeros_like(X_train)
+# 翻倍
+X_train_aug3 = np.zeros_like(X_train)
 
-# for i in range(X_train_aug3.shape[0]):
-#     X_train_aug3[i,0,:] = np.flipud(np.rot90(X_train[i,0,:],1))
-#     X_train_aug3[i,1,:] = np.flipud(np.rot90(X_train[i,1,:],1))
+for i in range(X_train_aug3.shape[0]):
+    X_train_aug3[i,0,:] = np.flipud(np.rot90(X_train[i,0,:],1))
+    X_train_aug3[i,1,:] = np.flipud(np.rot90(X_train[i,1,:],1))
 
-# X_train = np.vstack((X_train, X_train_aug3))
-# y_train = np.hstack((y_train, y_train))
+X_train = np.vstack((X_train, X_train_aug3))
+y_train = np.hstack((y_train, y_train))
 
-# del X_train_aug3
+del X_train_aug3
 
 
 # FC/EM Split
