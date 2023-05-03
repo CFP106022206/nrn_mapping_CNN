@@ -1,6 +1,6 @@
 '''
 1, Make Train/Test Set from D1~D4 or D1~D5
-2, Load Each Set and train model
+2, Load Each Set and train model(Data_process_Train.py)
 3, Transfer Big Model
 4, Result Analysis
 5, Iterative self-labeling
@@ -18,11 +18,13 @@ import tensorflow as tf
 import pickle
 import cv2
 import matplotlib.pyplot as plt
+from keras.regularizers import l2
 from keras.utils import plot_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from keras.models import *
 from keras.layers import *
 from keras.optimizers import *
+from keras.losses import *
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import confusion_matrix, f1_score, recall_score, precision_score
@@ -31,7 +33,6 @@ from tqdm import tqdm
 
 
 
-# %%
 # %%
 num_splits = 98 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D5'   #D4 or D5
@@ -42,6 +43,8 @@ data_range = 'D5'   #D4 or D5
 '''
 use_KT_map = True
 grid75_path = './data/D1-D5_grid75_sn'
+
+encoder_mode = 'seperate'    # 'mix' or 'separate'
 
 add_low_score = False
 low_score_neg_rate = 2
@@ -579,19 +582,86 @@ print('y_test shape:', len(y_test))
 
 
 
+
+# %% 使用編碼器獲取latent vector
+# load encoder
+encoder_FC = load_model('./CAE_FC/encoder_FC_best.h5')
+encoder_EM = load_model('./CAE_EM/encoder_EM_best.h5')
+emcoder_mix = load_model('./CAE_mix/encoder_mix_best.h5')
+
+# 50,50,3 -> 48,48,3
+def remove_pixels(image_np):
+    cropped_np = np.zeros((image_np.shape[0], image_np.shape[1]-2, image_np.shape[2]-2, image_np.shape[3]))
+    
+    for i in range(len(cropped_np)):
+        cropped_np[i] = image_np[i, 1:-1, 1:-1, :]
+    
+    return cropped_np
+
+X_train_FC = remove_pixels(X_train_FC)
+X_train_EM = remove_pixels(X_train_EM)
+
+X_val_FC = remove_pixels(X_val_FC)
+X_val_EM = remove_pixels(X_val_EM)
+
+X_test_FC = remove_pixels(X_test_FC)
+X_test_EM = remove_pixels(X_test_EM)
+
+if encoder_mode == 'mix':
+    x_train_fc_lv = emcoder_mix.predict(X_train_FC)
+    x_train_em_lv = emcoder_mix.predict(X_train_EM)
+
+    x_val_fc_lv = emcoder_mix.predict(X_val_FC)
+    x_val_em_lv = emcoder_mix.predict(X_val_EM)
+
+    x_test_fc_lv = emcoder_mix.predict(X_test_FC)
+    x_test_em_lv = emcoder_mix.predict(X_test_EM)
+
+else:
+    x_train_fc_lv = encoder_FC.predict(X_train_FC)
+    x_train_em_lv = encoder_EM.predict(X_train_EM)
+
+    x_val_fc_lv = encoder_FC.predict(X_val_FC)
+    x_val_em_lv = encoder_EM.predict(X_val_EM)
+
+    x_test_fc_lv = encoder_FC.predict(X_test_FC)
+    x_test_em_lv = encoder_EM.predict(X_test_EM)
+
+x_train_lv = np.concatenate((x_train_em_lv, x_train_fc_lv), axis=1)
+x_val_lv = np.concatenate((x_val_em_lv, x_val_fc_lv), axis=1)
+x_test_lv = np.concatenate((x_test_em_lv, x_test_fc_lv), axis=1)
+
 # %%
 
-from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
-# from tensorflow.keras.utils import plot_model
+def dnn_classifier(input_shape):
+    l2_reg = 0.001
 
-cnn = CNN_L2shared((resolutions[1],resolutions[2],3))
-# cnn = CNN_best((resolutions[1],resolutions[2],3))
-# cnn = CNN_deep((resolutions[1],resolutions[2],3))
-# cnn = CNN_shared((resolutions[1],resolutions[2],3))
+    input_layer = Input(shape=input_shape)
+    # 定义分类器
+    dense = Dropout(0.5)(input_layer)
+    dense = Dense(256, kernel_regularizer=l2(l2_reg))(dense)
+    dense = BatchNormalization()(dense)
+    dense = Activation("relu")(dense)
 
-# plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
+    dense = Dropout(0.5)(dense)
+    dense = Dense(64, kernel_regularizer=l2(l2_reg))(dense)
+    dense = BatchNormalization()(dense)
+    dense = Activation("relu")(dense)
 
-train_epochs = 50
+    output_layer = Dense(1, activation="sigmoid")(dense)
+
+    # 构建和编译模型
+    model = Model(inputs=input_layer, outputs=output_layer)
+    model.compile(optimizer="adam", loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
+    model.summary()
+
+    return model
+
+dnn_classifier = dnn_classifier(input_shape=(x_train_lv.shape[1],))
+
+
+
+train_epochs = 100
 # Scheduler
 def scheduler(epoch, lr): 
 
@@ -607,44 +677,37 @@ def scheduler(epoch, lr):
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
 # 設定模型儲存條件(儲存最佳模型)
-checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
-
-# 按照 val_f1 保存模型
-# checkpoint = tf.keras.callbacks.ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5',
-#                                                  monitor='val_f1', 
-#                                                  mode='max', verbose=2,
-#                                                  save_best_only=True)
+checkpoint = ModelCheckpoint('./DNN_Classifier/dnn_01.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
 
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
 
 
 # Model.fit
-Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, 
-                            y_train, 
-                            batch_size=128, 
-                            validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), 
-                            epochs=train_epochs, 
-                            shuffle=True, 
-                            callbacks = [checkpoint, reduce_lr], verbose=2)
-                            # callbacks = [Metrics(valid_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val)), checkpoint, reduce_lr], verbose=2)
+dnn_history = dnn_classifier.fit(x_train_lv, 
+                                y_train, 
+                                batch_size=128, 
+                                validation_data=(x_val_lv, y_val), 
+                                epochs=train_epochs, 
+                                shuffle=True, 
+                                callbacks = [checkpoint, reduce_lr], verbose=2)
 
-plt.plot(Annotator_history.history['loss'], label='loss')
-plt.plot(Annotator_history.history['val_loss'], label='val_loss')
+plt.plot(dnn_history.history['loss'], label='loss')
+plt.plot(dnn_history.history['val_loss'], label='val_loss')
 plt.legend()
-plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
-# plt.show()
+plt.savefig('./DNN_Classifier/Train_Curve.png', dpi=150, bbox_inches="tight")
+plt.show()
 plt.close('all')
 
 # cnn_train_loss = history.history['loss']
 # cnn_valid_loss = history.history['val_loss']
 
 # Save history to file
-with open('./result/Train_History_'+save_model_name+'.pkl', 'wb') as f:
-    pickle.dump(Annotator_history.history, f)
+with open('./DNN_Classifier/Train_History_'+save_model_name+'.pkl', 'wb') as f:
+    pickle.dump(dnn_history.history, f)
 
 
-model = load_model('./Annotator_Model/' + save_model_name + '.h5')
-y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM})
+model = load_model('./DNN_Classifier/dnn_01.h5')
+y_pred = model.predict(x_test_lv)
 pred_test_compare = np.hstack((y_pred, y_test.reshape(len(y_test), 1)))
 y_pred_binary = []
 for ans in y_pred:
@@ -681,61 +744,9 @@ print('F1 Score for Pos:', result_f1_score[1])
 # save results
 result = {'conf_matrix': conf_matrix, 'Precision': precision, 'Recall': recall, 'F1_pos':result_f1_score[1]}
 
-with open('./result/Test_Result_'+save_model_name+'.pkl', 'wb') as f:
+with open('./DNN_Classifier/Test_Result_dnn_01.pkl', 'wb') as f:
     pickle.dump(result, f)
 
 
-# %% 对新数据集进行标注
-unlabel_path = './data/mapping_data_0.7+/'
-
-# 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
-file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]
-
-# 计算label
-model = load_model('./Annotator_Model/' + save_model_name + '.h5')
-
-def annotator(model,fc_img, em_img):
-    # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
-    fc_img = np.transpose(fc_img, (1, 2, 0))
-    em_img = np.transpose(em_img, (1, 2, 0))
-
-    # 将数据维度扩展至4维（符合CNN输入）
-    fc_img = np.expand_dims(fc_img, axis=0)
-    em_img = np.expand_dims(em_img, axis=0)
-    label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
-    # binary label
-    if label > 0.5:
-        label = 1
-    else:
-        label = 0
-    return label
-
-
-
-# 初始化一个空lst，用于存储文件名和计算结果
-new_data_lst = []
-
-print('\nLabeling..')
-# 遍历母文件夹下的所有条目
-for file_name in tqdm(file_list, total=len(file_list)):
-    # 创建完整文件路径
-    file_path = os.path.join(unlabel_path, file_name)
-
-    # 读取pkl文件
-    data_lst = load_pkl(file_path)
-    for data in data_lst:
-        # 计算结果
-        result = annotator(model, data[3], data[4])
-
-        # 将文件名和计算结果添加到DataFrame
-        new_data = {'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label': result}
-
-        new_data_lst.append(new_data)
-
-label_df = pd.DataFrame(new_data_lst)
-
-# 将DataFrame存储为csv文件
-label_df.to_csv('./result/label_df_with_'+save_model_name+'.csv', index=False)
-print('\nSaved')
 
 # %%

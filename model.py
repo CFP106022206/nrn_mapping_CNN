@@ -2,7 +2,7 @@ import os
 import numpy as np
 # import tensorflow_addons as tfa
 import keras_tuner as kt
-
+from tensorflow.keras.regularizers import l2
 from keras.losses import *
 from keras.models import *
 from keras.layers import *
@@ -311,15 +311,15 @@ def CNN_shared(input_size=(50, 50, 3)):
     shared_conv1 = Conv2D(16, (3, 3), name="Shared_Conv1")
     shared_bn1 = BatchNormalization(name="Shared_BN1")
     shared_act1 = Activation("relu", name="Shared_Activation1")
-    shared_conv2 = Conv2D(32, (3, 3), name="Shared_Conv2")
+    shared_conv2 = Conv2D(24, (3, 3), name="Shared_Conv2")
     shared_bn2 = BatchNormalization(name='Shared_BN2')
     shared_act2 = Activation("relu", name='Shared_Activation2')
     shared_pool1 = MaxPool2D(pool_size=(2, 2), name='Shared_pool1')
     
-    shared_conv3 = Conv2D(48, (3, 3), name='Shared_Conv3')
+    shared_conv3 = Conv2D(32, (3, 3), name='Shared_Conv3')
     shared_bn3 = BatchNormalization(name='Shared_BN3')
     shared_act3 = Activation("relu", name='Shared_Activation3')
-    shared_conv4 = Conv2D(64, (3, 3), name='Shared_Conv4')
+    shared_conv4 = Conv2D(48, (3, 3), name='Shared_Conv4')
     shared_bn4 = BatchNormalization(name='Shared_BN4')
     shared_act4 = Activation("relu", name='Shared_Activation4')
     shared_pool2 = MaxPool2D(pool_size=(2, 2), name='Shared_pool2')
@@ -352,6 +352,7 @@ def CNN_shared(input_size=(50, 50, 3)):
     output = Dense(256)(output)
     output = BatchNormalization()(output)
     output = Activation("relu")(output)
+    # output = Dropout(0.2)(output)
 
     output = Dense(1, activation="sigmoid")(output)
 
@@ -360,7 +361,64 @@ def CNN_shared(input_size=(50, 50, 3)):
     model.summary()
     return model
 
+def CNN_L2shared(input_size=(50, 50, 3), l2_reg=1e-4):
+    inputs = [Input(shape=input_size, name="EM"), Input(shape=input_size, name="FC")]
 
+    # 定义共享卷积层和池化层
+    shared_conv1 = Conv2D(24, (3, 3), kernel_regularizer=l2(l2_reg), name="Shared_Conv1")
+    shared_bn1 = BatchNormalization(name="Shared_BN1")
+    shared_act1 = Activation("relu", name="Shared_Activation1")
+
+    shared_conv2 = Conv2D(32, (3, 3), kernel_regularizer=l2(l2_reg), name="Shared_Conv2")
+    shared_bn2 = BatchNormalization(name='Shared_BN2')
+    shared_act2 = Activation("relu", name='Shared_Activation2')
+    shared_pool1 = MaxPool2D(pool_size=(2, 2), name='Shared_pool1')
+    
+    shared_conv3 = Conv2D(48, (3, 3), kernel_regularizer=l2(l2_reg), name='Shared_Conv3')   
+    shared_bn3 = BatchNormalization(name='Shared_BN3')
+    shared_act3 = Activation("relu", name='Shared_Activation3')
+
+    shared_conv4 = Conv2D(64, (3, 3), kernel_regularizer=l2(l2_reg), name='Shared_Conv4')
+    shared_bn4 = BatchNormalization(name='Shared_BN4')
+    shared_act4 = Activation("relu", name='Shared_Activation4')
+    shared_pool2 = MaxPool2D(pool_size=(2, 2), name='Shared_pool2')
+
+    flattened_layers = []
+    for input in inputs:
+        conv_layer = shared_conv1(input)
+        conv_layer = shared_bn1(conv_layer)
+        conv_layer = shared_act1(conv_layer)
+
+        conv_layer = shared_conv2(conv_layer)
+        conv_layer = shared_bn2(conv_layer)
+        conv_layer = shared_act2(conv_layer)
+        conv_layer = shared_pool1(conv_layer)
+
+        conv_layer = shared_conv3(conv_layer)
+        conv_layer = shared_bn3(conv_layer)
+        conv_layer = shared_act3(conv_layer)
+
+        conv_layer = shared_conv4(conv_layer)
+        conv_layer = shared_bn4(conv_layer)
+        conv_layer = shared_act4(conv_layer)
+        conv_layer = shared_pool2(conv_layer)
+        
+        flattened_layers.append(Flatten()(conv_layer))
+
+    concat_layer = concatenate(flattened_layers, axis=1)
+
+    output = Dropout(0.5)(concat_layer)
+    output = Dense(256, kernel_regularizer=l2(l2_reg*10))(output)
+    output = BatchNormalization()(output)
+    output = Activation("relu")(output)
+
+    # output = Dropout(0.2)(output)
+    output = Dense(1, activation="sigmoid")(output)
+
+    model = Model(inputs=inputs, outputs=output)
+    model.compile(optimizer="rmsprop", loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
+    model.summary()
+    return model
 
 def CNN_big(input_size=(256,256,3)):
     inputs = [Input(shape=input_size, name='EM'), Input(shape=input_size, name='FC')]
