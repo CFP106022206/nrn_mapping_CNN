@@ -27,9 +27,9 @@ import random
 # 在 Mode 2 下, 輸出的分割數據集檔案編號採用特殊編號 98
 # 在 Mode 3 下, 輸出的分割數據集檔案編號採用特殊編號 99
 
-mode = 2
+mode = 3
 
-use_new_label = True        # 使用日期為01-13的label table, 這項標注中將人類信心50%的標注視為Negative
+use_new_label = False        # 使用日期為01-13的label table, 這項標注中將人類信心50%的標注視為Negative
 
 num_splits = 10
 
@@ -148,14 +148,14 @@ elif mode == 2:
 
     # 創建一個輔助列'Merge', 表示在 test_table 中 D2 部分(作為 testing data)
     test_table_merge = test_table.merge(D2, on=['fc_id', 'em_id'], how='left', indicator=True)
-    
-    # 保留同時在D2中的pair，並將要保留的column name 還原
-    test_table_D2 = test_table_merge[test_table_merge['_merge']=='both'].rename(columns={'score_x': 'score', 'label_x': 'label'})
-    test_table_D2 = test_table_D2.drop(columns=['score_y', 'label_y', '_merge'])
+
+    # 保留同時在D2中的pair，並將要保留的column name 還原(對D2+D5nblast的標注有疑慮，目前以20221230為主)
+    test_table_D2 = test_table_merge[test_table_merge['_merge']=='both'].rename(columns={'score_y': 'score', 'label_y': 'label'})
+    test_table_D2 = test_table_D2.drop(columns=['score_x', 'label_x', '_merge'])
 
     # 創建一個輔助列'Merge', 表示是僅label_table_all 原有的還是同時在test_tabl中也出現
     label_table_cleaned = label_table_all.merge(test_table_D2, on=['fc_id', 'em_id'], how='left', indicator=True)
-    
+
     # 从csv2中删除交集'Both'的行, 刪除新增的輔助列label
     label_table_cleaned = label_table_cleaned[label_table_cleaned['_merge'] == 'left_only'].drop(columns='_merge')
 
@@ -170,7 +170,7 @@ elif mode == 2:
     test_table_D2.to_csv('./data/test_split_98_D1-'+train_range_to+'.csv', index=False)
 
 elif mode == 3:
-    test_table = pd.read_csv('./data/D2+D5_nblast_test.csv')
+    test_table = pd.read_csv('./data/D5_230503.csv')
     test_table.drop_duplicates(subset=['fc_id', 'em_id'], inplace=True) # 删除重复
 
     # 使用label_table_all的列名来筛选label_table中的列
@@ -181,8 +181,8 @@ elif mode == 3:
     test_table_merge = test_table.merge(D5, on=['fc_id', 'em_id'], how='left', indicator=True)
     
     # 保留同時在D5中的pair，並將要保留的column name 還原
-    test_table_D5 = test_table_merge[test_table_merge['_merge']=='both'].rename(columns={'score_x': 'score', 'label_x': 'label'})
-    test_table_D5 = test_table_D5.drop(columns=['score_y', 'label_y', '_merge'])
+    test_table_D5 = test_table_merge[test_table_merge['_merge']=='both'].rename(columns={'score_y': 'score', 'label_y': 'label'})
+    test_table_D5 = test_table_D5.drop(columns=['score_x', 'label_x', '_merge'])
 
     # 創建一個輔助列'Merge', 表示是僅label_table_all 原有的還是同時在test_tabl中也出現
     label_table_cleaned = label_table_all.merge(test_table_D5, on=['fc_id', 'em_id'], how='left', indicator=True)

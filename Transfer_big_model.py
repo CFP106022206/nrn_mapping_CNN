@@ -17,65 +17,18 @@ import os
 import random
 import tensorflow as tf
 import pickle
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
-from tensorflow.keras.models import *
-from tensorflow.keras.layers import *
-from tensorflow.keras.optimizers import *
+import cv2
+from keras.utils import plot_model
+from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
+from keras.models import *
+from keras.layers import *
+from keras.optimizers import *
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import confusion_matrix, f1_score
 from util import load_pkl
 from tqdm import tqdm
 from numba import jit, prange
-
-num_splits = 98 #0~9
-data_range = 'D5'   #D4 or D5
-
-add_low_score = True
-low_score_neg_rate = 2
-
-
-seed = 10
-os.environ['PYTHONHASHSEED'] = str(seed)
-random.seed(seed)
-np.random.seed(seed)
-os.environ['TF_DITERMINISTIC_OPS'] = '1'
-
-save_model_name  = 'model_D1-'+data_range+'_'+str(num_splits)
-
-# load annotator data
-label_annotator = pd.read_csv('./result/label_df_with_Annotator_D1-'+ data_range +'_' + str(num_splits)+'.csv')
-# TODO: 比較10個不同分割下的annotator表現差異性
-
-# load train, test
-label_table_train = pd.read_csv('./data/train_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
-label_table_test = pd.read_csv('./data/test_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
-
-
-# %% 刪除label_annotator 中與人工標註重複的部分
-
-# 删除label_table_train 在annotator中出现的数据
-merged = pd.merge(label_annotator, label_table_train, how='left', indicator=True)
-label_annotator = merged[merged['_merge'] == 'left_only'].drop('_merge', axis=1)
-
-# 删除label_table_test 在annotator中出现的数据
-merged = pd.merge(label_annotator, label_table_test, how='left', indicator=True)
-label_annotator = merged[merged['_merge'] == 'left_only'].drop('_merge', axis=1)
-
-
-
-#针对 label_annotator做 data_preprocess
-train_pair_nrn = label_annotator[['fc_id','em_id','label']].to_numpy()
-
-
-
-
-unlabel_path = './data/mapping_data_0.7+/'
-
-
-resolutions = [3,50,50]
-
 
 def data_preprocess(map_data, pair_nrn):
     data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
@@ -185,13 +138,72 @@ def data_preprocess_annotator(unlabel_path, pair_nrn):
 
     return data_np, pair_df
 
+def scheduler(epoch, lr): 
 
+    min_lr=0.0000001
+    total_epoch = train_epochs
+    init_lr = 0.001
+    epoch_lr = init_lr*((1-epoch/total_epoch)**2)
+    if epoch_lr<min_lr:
+        epoch_lr = min_lr
+
+    return epoch_lr
+
+resolutions = [3,50,50]
+
+num_splits = 2 #0~9
+data_range = 'D5'   #D4 or D5
+
+add_low_score = False
+low_score_neg_rate = 2
+
+
+seed = 10
+os.environ['PYTHONHASHSEED'] = str(seed)
+random.seed(seed)
+np.random.seed(seed)
+os.environ['TF_DITERMINISTIC_OPS'] = '1'
+
+save_model_name  = 'model_D1-'+data_range+'_'+str(num_splits)
+
+# load annotator data
+label_annotator = pd.read_csv('./result/label_df_with_Annotator_D1-'+ data_range +'_' + str(num_splits)+'.csv')
+# TODO: 比較10個不同分割下的annotator表現差異性
+
+# load train, test
+label_table_train = pd.read_csv('./data/train_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
+label_table_test = pd.read_csv('./data/test_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
+
+
+# %% 刪除label_annotator 中與人工標註重複的部分
+
+# 删除label_table_train 在annotator中出现的数据
+merged = pd.merge(label_annotator, label_table_train, how='left', indicator=True)
+label_annotator = merged[merged['_merge'] == 'left_only'].drop('_merge', axis=1)
+
+# 删除label_table_test 在annotator中出现的数据
+merged = pd.merge(label_annotator, label_table_test, how='left', indicator=True)
+label_annotator = merged[merged['_merge'] == 'left_only'].drop('_merge', axis=1)
+
+
+
+#针对 label_annotator做 data_preprocess
+train_pair_nrn = label_annotator[['fc_id','em_id','label']].to_numpy()
+
+
+
+
+unlabel_path = './data/mapping_data_0.7+'
+
+
+
+# %%
 
 
 data_np_train, nrn_pair_train = data_preprocess_annotator(unlabel_path, train_pair_nrn)
 
 # Train Validation Split
-data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.2, random_state=seed)
+data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.1, random_state=seed)
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid))
 
@@ -381,6 +393,73 @@ print('UpSampling: After Augmentation:\nTrue Label/Total in X_train:\n',np.sum(y
 
 
 
+# 圖片旋轉任一角度
+def rotate_and_pad(image, angle, border_value=(0, 0, 0)):
+    # 获取图像尺寸
+    h, w = image.shape[:2]
+    center = (w / 2, h / 2)
+
+    # 计算旋转矩阵
+    rot_mat = cv2.getRotationMatrix2D(center, angle, 1.0)
+
+    # 计算新图像的尺寸
+    new_w = int(h * abs(np.sin(np.radians(angle))) + w * abs(np.cos(np.radians(angle))))
+    new_h = int(h * abs(np.cos(np.radians(angle))) + w * abs(np.sin(np.radians(angle))))
+
+    # 更新旋转矩阵
+    rot_mat[0, 2] += (new_w / 2) - center[0]
+    rot_mat[1, 2] += (new_h / 2) - center[1]
+
+    # 应用旋转和填充
+    rotated_image = cv2.warpAffine(image, rot_mat, (new_w, new_h), borderValue=border_value)
+
+    # 裁剪或填充旋转后的图像以保持原始尺寸
+    if new_h > h and new_w > w:
+        y_offset = (new_h - h) // 2
+        x_offset = (new_w - w) // 2
+        rotated_image = rotated_image[y_offset:y_offset + h, x_offset:x_offset + w]
+    else:
+        y_padding_top = (h - new_h) // 2
+        y_padding_bottom = h - new_h - y_padding_top
+        x_padding_left = (w - new_w) // 2
+        x_padding_right = w - new_w - x_padding_left
+        rotated_image = cv2.copyMakeBorder(rotated_image, y_padding_top, y_padding_bottom, x_padding_left, x_padding_right, cv2.BORDER_CONSTANT, value=border_value)
+
+    return rotated_image
+
+
+def augment_data(X_train, y_train, angle_range, resize_range, aug_seed):
+    X_augmented, y_augmented = [], []
+
+    for i in range(X_train.shape[0]):
+        current_seed = aug_seed + i         #為每個循環定義一個種子。每張圖片旋轉角度因此不同
+        rng = np.random.default_rng(current_seed)
+        angle = rng.uniform(angle_range[0], angle_range[1])
+        # scale = rng.random.uniform(resize_range[0], resize_range[1])
+
+        rotate_pair = np.zeros(X_train.shape[1:])   # shape=(2,50,50,3)
+        resize_pair = np.zeros(X_train.shape[1:])
+        for j in range(X_train.shape[1]):
+            rotate_pair[j] = rotate_and_pad(X_train[i, j], angle)
+            # resize_pair[j] = resize_and_pad(X_train[i, j], scale)
+        
+        X_augmented.append(rotate_pair)
+        # X_augmented.append(resize_pair)
+
+        y_augmented.append(y_train[i])
+        # y_augmented.append(y_train[i])
+
+    return np.array(X_augmented), np.array(y_augmented)
+
+# # 示例用法
+# angle_range = [-45, 45]  # 旋转角度范围（在 -10 到 10 之间）
+# resize_range = [0.8, 1.2]   # 縮放範圍（在 0.8 到 1.2 之間）
+# X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range, seed)
+
+# X_train = np.vstack((X_train, X_train_augmented))
+# y_train = np.hstack((y_train, y_train_augmented))
+
+
 
 
 
@@ -396,21 +475,21 @@ X_train = np.vstack((X_train, X_train_aug1))
 y_train = np.hstack((y_train, y_train))
 
 
-# 翻倍
-X_train_aug2 = np.zeros_like(X_train)
+# # 翻倍
+# X_train_aug2 = np.zeros_like(X_train)
 
-for i in range(X_train_aug2.shape[0]):
-    X_train_aug2[i,0,:] = np.flipud(X_train[i,0,:])
-    X_train_aug2[i,1,:] = np.flipud(X_train[i,1,:])
+# for i in range(X_train_aug2.shape[0]):
+#     X_train_aug2[i,0,:] = np.flipud(X_train[i,0,:])
+#     X_train_aug2[i,1,:] = np.flipud(X_train[i,1,:])
 
-X_train = np.vstack((X_train, X_train_aug2))
-y_train = np.hstack((y_train, y_train))
-
-
-del X_train_aug1, X_train_aug2, X_train_add
+# X_train = np.vstack((X_train, X_train_aug2))
+# y_train = np.hstack((y_train, y_train))
 
 
-# 翻倍
+del X_train_add, X_train_aug1
+# del X_train_aug2
+
+# # # 翻倍
 X_train_aug3 = np.zeros_like(X_train)
 
 for i in range(X_train_aug3.shape[0]):
@@ -454,17 +533,7 @@ from model import CNN_best, CNN_shared
 cnn = CNN_shared((resolutions[1], resolutions[2],3))
 
 train_epochs = 50
-# Scheduler
-def scheduler(epoch, lr): 
 
-    min_lr=0.0000001
-    total_epoch = train_epochs
-    init_lr = 0.001
-    epoch_lr = init_lr*((1-epoch/total_epoch)**2)
-    if epoch_lr<min_lr:
-        epoch_lr = min_lr
-
-    return epoch_lr
 
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
@@ -515,8 +584,7 @@ X_test_EM = X_test[:,1,:]
 
 
 
-
-
+# %%
 model = load_model('./Second_Stage_Model/' + save_model_name + '.h5')
 y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM})
 pred_test_compare = np.hstack((y_pred, y_test.reshape(len(y_test), 1)))
@@ -570,10 +638,10 @@ for layer in model.layers[:-5]:
 # 确认模型状态
 for layer in model.layers:
     print(layer, layer.trainable)
-model.summary()
+# model.summary()
 
 # 编译模型
-model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=True), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
+model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
 
 
 
@@ -779,6 +847,98 @@ print('UpSampling: After Augmentation:\nTrue Label/Total in X_train:\n',np.sum(y
 
 
 
+# 圖片旋轉任一角度
+def rotate_and_pad(image, angle, border_value=(0, 0, 0)):
+    # 获取图像尺寸
+    h, w = image.shape[:2]
+    center = (w / 2, h / 2)
+
+    # 计算旋转矩阵
+    rot_mat = cv2.getRotationMatrix2D(center, angle, 1.0)
+
+    # 计算新图像的尺寸
+    new_w = int(h * abs(np.sin(np.radians(angle))) + w * abs(np.cos(np.radians(angle))))
+    new_h = int(h * abs(np.cos(np.radians(angle))) + w * abs(np.sin(np.radians(angle))))
+
+    # 更新旋转矩阵
+    rot_mat[0, 2] += (new_w / 2) - center[0]
+    rot_mat[1, 2] += (new_h / 2) - center[1]
+
+    # 应用旋转和填充
+    rotated_image = cv2.warpAffine(image, rot_mat, (new_w, new_h), borderValue=border_value)
+
+    # 裁剪或填充旋转后的图像以保持原始尺寸
+    if new_h > h and new_w > w:
+        y_offset = (new_h - h) // 2
+        x_offset = (new_w - w) // 2
+        rotated_image = rotated_image[y_offset:y_offset + h, x_offset:x_offset + w]
+    else:
+        y_padding_top = (h - new_h) // 2
+        y_padding_bottom = h - new_h - y_padding_top
+        x_padding_left = (w - new_w) // 2
+        x_padding_right = w - new_w - x_padding_left
+        rotated_image = cv2.copyMakeBorder(rotated_image, y_padding_top, y_padding_bottom, x_padding_left, x_padding_right, cv2.BORDER_CONSTANT, value=border_value)
+
+    return rotated_image
+
+
+# def resize_and_pad(image, scale_factor):
+#     augmented_image = cv2.resize(image, None, fx=scale_factor, fy=scale_factor)
+
+#     # 裁剪或填充缩放后的图像以保持原始尺寸
+#     height, width = image.shape[:2]
+#     if scale_factor > 1:
+#         y_offset = (augmented_image.shape[0] - height) // 2
+#         x_offset = (augmented_image.shape[1] - width) // 2
+#         augmented_image = augmented_image[y_offset:y_offset+height, x_offset:x_offset+width]
+#     else:
+#         y_padding_top = (height - augmented_image.shape[0]) // 2
+#         y_padding_bottom = height - augmented_image.shape[0] - y_padding_top
+#         x_padding_left = (width - augmented_image.shape[1]) // 2
+#         x_padding_right = width - augmented_image.shape[1] - x_padding_left
+#         augmented_image = cv2.copyMakeBorder(augmented_image, y_padding_top, y_padding_bottom, x_padding_left, x_padding_right, cv2.BORDER_CONSTANT, value=0)
+    
+#     return augmented_image
+
+
+def augment_data(X_train, y_train, angle_range, resize_range, aug_seed):
+    X_augmented, y_augmented = [], []
+
+    for i in range(X_train.shape[0]):
+        current_seed = aug_seed + i         #為每個循環定義一個種子。每張圖片旋轉角度因此不同
+        rng = np.random.default_rng(current_seed)
+        angle = rng.uniform(angle_range[0], angle_range[1])
+        # scale = rng.random.uniform(resize_range[0], resize_range[1])
+
+        rotate_pair = np.zeros(X_train.shape[1:])   # shape=(2,50,50,3)
+        resize_pair = np.zeros(X_train.shape[1:])
+        for j in range(X_train.shape[1]):
+            rotate_pair[j] = rotate_and_pad(X_train[i, j], angle)
+            # resize_pair[j] = resize_and_pad(X_train[i, j], scale)
+        
+        X_augmented.append(rotate_pair)
+        # X_augmented.append(resize_pair)
+
+        y_augmented.append(y_train[i])
+        # y_augmented.append(y_train[i])
+
+    return np.array(X_augmented), np.array(y_augmented)
+
+# 示例用法
+angle_range = [-45, 45]  # 旋转角度范围（在 -10 到 10 之间）
+resize_range = [0.8, 1.2]   # 縮放範圍（在 0.8 到 1.2 之間）
+X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range, seed)
+
+X_train = np.vstack((X_train, X_train_augmented))
+y_train = np.hstack((y_train, y_train_augmented))
+
+# 再做一次
+X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range, seed+10000)
+
+X_train = np.vstack((X_train, X_train_augmented))
+y_train = np.hstack((y_train, y_train_augmented))
+
+
 
 
 
@@ -834,7 +994,7 @@ print('y_test shape:', len(y_test))
 
 
 
-
+train_epochs = 50
 
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=0)
 

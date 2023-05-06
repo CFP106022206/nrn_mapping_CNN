@@ -13,11 +13,11 @@ from util import load_pkl
 
 # %% load model
 
-test_mode = 'single'    # Single: 指定單一 test data, Cross: 使用cross validation 覆蓋完整 test data
+test_mode = 'cross'    # Single: 指定單一 test data, Cross: 使用cross validation 覆蓋完整 test data
 
 test_set_num = 98       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
-cross_fold_num = 3      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
+cross_fold_num = 5      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 data_range = 'D5'
 

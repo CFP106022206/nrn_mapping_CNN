@@ -17,11 +17,11 @@ import random
 import tensorflow as tf
 import pickle
 
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.metrics import confusion_matrix, f1_score
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 from util import load_pkl
 from tqdm import tqdm
 

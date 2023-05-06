@@ -25,9 +25,9 @@ from sklearn.model_selection import KFold
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
 
 mode = 2
+mode2_file_path = './data/D5_230503.csv'
 
-
-cross_validation_num = 3
+cross_validation_num = 5
 
 
 seed = 10                       # Random Seed
@@ -93,17 +93,21 @@ if mode == 1:
         i += 1
 
 elif mode == 2:
-    test_table = pd.read_csv('./data/D2+D5_nblast_test.csv')
-    
+    test_table = pd.read_csv(mode2_file_path)
+
     # 使用label_table_all的列名来筛选label_table中的列, 保留和label_table_all 一樣的列
     selected_columns = [col for col in test_table.columns if col in label_table_all.columns]
     test_table = test_table[selected_columns]
     
+    # test_table label有誤,用 lebal_table_all 修正
+    test_table = test_table.merge(label_table_all, on=['fc_id', 'em_id'], how='inner')
+    test_table = test_table.rename(columns={'score_y':'score', 'label_y':'label'}).drop(columns=['score_x','label_x'])
+
     # 使用 KFold 分出test data, train data會是label_table_all 剔除 test data
     for train_index, test_index in kf.split(test_table):
         label_table_test = test_table.iloc[test_index]
     
-        # 創建一個輔助列'Merge', 表示是僅label_table_all 原有的還是同時在test_tabl中也出現
+        # 創建一個輔助列'Merge', 表示是僅 label_table_all 原有的還是同時在test_tabl中也出現
         label_table_cleaned = label_table_all.merge(label_table_test, on=['fc_id', 'em_id'], how='left', indicator=True)
         # 从csv2中删除交集'Both'的行, 刪除新增的輔助列label
         label_table_cleaned = label_table_cleaned[label_table_cleaned['_merge'] == 'left_only'].drop(columns='_merge')

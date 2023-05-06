@@ -33,7 +33,7 @@ from tqdm import tqdm
 
 # %%
 # %%
-num_splits = 98 #0~9, or 99 for whole nBLAST testing set
+num_splits = 2 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D5'   #D4 or D5
 
 '''
@@ -364,7 +364,7 @@ for i in range(y_train.shape[0]):
 neg, pos = np.bincount(y_train)     #label為0, label為1
 print('Total: {}\nPositive: {} ({:.2f}% of total)\n'.format(neg + pos, pos, 100 * pos / (neg + pos)))
 weight = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
-class_weights = {0:weight[0], 1:weight[1]}
+class_weights = {0:weight[0]*100, 1:weight[1]}
 print('Balanced Weight in: \n', np.unique(y_train),'\n', weight)
 
 
@@ -584,10 +584,10 @@ print('y_test shape:', len(y_test))
 from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
 # from tensorflow.keras.utils import plot_model
 
-cnn = CNN_L2shared((resolutions[1],resolutions[2],3))
+# cnn = CNN_L2shared((resolutions[1],resolutions[2],3))
 # cnn = CNN_best((resolutions[1],resolutions[2],3))
 # cnn = CNN_deep((resolutions[1],resolutions[2],3))
-# cnn = CNN_shared((resolutions[1],resolutions[2],3))
+cnn = CNN_shared((resolutions[1],resolutions[2],3))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
 
@@ -626,7 +626,7 @@ Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM},
                             epochs=train_epochs, 
                             shuffle=True, 
                             callbacks = [checkpoint, reduce_lr], verbose=2)
-                            # callbacks = [Metrics(valid_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val)), checkpoint, reduce_lr], verbose=2)
+                            # class_weight=class_weights)
 
 plt.plot(Annotator_history.history['loss'], label='loss')
 plt.plot(Annotator_history.history['val_loss'], label='val_loss')
@@ -686,7 +686,7 @@ with open('./result/Test_Result_'+save_model_name+'.pkl', 'wb') as f:
 
 
 # %% 对新数据集进行标注
-unlabel_path = './data/mapping_data_0.7+/'
+unlabel_path = './data/mapping_data_0.7+'
 
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
 file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]

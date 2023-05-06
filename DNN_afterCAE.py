@@ -34,7 +34,7 @@ from tqdm import tqdm
 
 
 # %%
-num_splits = 98 #0~9, or 99 for whole nBLAST testing set
+num_splits = 4 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D5'   #D4 or D5
 
 '''
@@ -44,7 +44,9 @@ data_range = 'D5'   #D4 or D5
 use_KT_map = True
 grid75_path = './data/D1-D5_grid75_sn'
 
-encoder_mode = 'seperate'    # 'mix' or 'separate'
+encoder_mode = 'sep'    # 'mix' or 'separate'
+
+train_epochs = 50
 
 add_low_score = False
 low_score_neg_rate = 2
@@ -57,7 +59,7 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 tf.random.set_seed(seed)
 
 
-save_model_name  = 'Annotator_D1-' + data_range + '_' +str(num_splits)
+save_model_name  = 'model_D1-' + data_range + '_' +str(num_splits)
 
 # load train, test
 label_table_train = pd.read_csv('./data/train_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
@@ -367,7 +369,7 @@ for i in range(y_train.shape[0]):
 neg, pos = np.bincount(y_train)     #label為0, label為1
 print('Total: {}\nPositive: {} ({:.2f}% of total)\n'.format(neg + pos, pos, 100 * pos / (neg + pos)))
 weight = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
-class_weights = {0:weight[0], 1:weight[1]}
+class_weights = {0:weight[0]*2, 1:weight[1]}
 print('Balanced Weight in: \n', np.unique(y_train),'\n', weight)
 
 
@@ -587,7 +589,9 @@ print('y_test shape:', len(y_test))
 # load encoder
 encoder_FC = load_model('./CAE_FC/encoder_FC_best.h5')
 encoder_EM = load_model('./CAE_EM/encoder_EM_best.h5')
-emcoder_mix = load_model('./CAE_mix/encoder_mix_best.h5')
+
+if encoder_mode == 'mix':
+    emcoder_mix = load_model('./CAE_mix/encoder_mix_best.h5')
 
 # 50,50,3 -> 48,48,3
 def remove_pixels(image_np):
@@ -634,25 +638,25 @@ x_test_lv = np.concatenate((x_test_em_lv, x_test_fc_lv), axis=1)
 # %%
 
 def dnn_classifier(input_shape):
-    l2_reg = 0.001
+    # l2_reg = 0
 
     input_layer = Input(shape=input_shape)
     # 定义分类器
     dense = Dropout(0.5)(input_layer)
-    dense = Dense(256, kernel_regularizer=l2(l2_reg))(dense)
+    dense = Dense(256)(dense)
     dense = BatchNormalization()(dense)
     dense = Activation("relu")(dense)
 
-    dense = Dropout(0.5)(dense)
-    dense = Dense(64, kernel_regularizer=l2(l2_reg))(dense)
-    dense = BatchNormalization()(dense)
-    dense = Activation("relu")(dense)
+    # dense = Dropout(0.5)(dense)
+    # dense = Dense(128)(dense)
+    # dense = BatchNormalization()(dense)
+    # dense = Activation("relu")(dense)
 
     output_layer = Dense(1, activation="sigmoid")(dense)
 
     # 构建和编译模型
     model = Model(inputs=input_layer, outputs=output_layer)
-    model.compile(optimizer="adam", loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
+    model.compile(optimizer="rmsprop", loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
     model.summary()
 
     return model
@@ -661,7 +665,6 @@ dnn_classifier = dnn_classifier(input_shape=(x_train_lv.shape[1],))
 
 
 
-train_epochs = 100
 # Scheduler
 def scheduler(epoch, lr): 
 
@@ -688,13 +691,14 @@ dnn_history = dnn_classifier.fit(x_train_lv,
                                 batch_size=128, 
                                 validation_data=(x_val_lv, y_val), 
                                 epochs=train_epochs, 
-                                shuffle=True, 
+                                shuffle=True,
+                                class_weight=class_weights, 
                                 callbacks = [checkpoint, reduce_lr], verbose=2)
 
 plt.plot(dnn_history.history['loss'], label='loss')
 plt.plot(dnn_history.history['val_loss'], label='val_loss')
 plt.legend()
-plt.savefig('./DNN_Classifier/Train_Curve.png', dpi=150, bbox_inches="tight")
+# plt.savefig('./DNN_Classifier/Train_Curve'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
 plt.show()
 plt.close('all')
 
@@ -744,9 +748,21 @@ print('F1 Score for Pos:', result_f1_score[1])
 # save results
 result = {'conf_matrix': conf_matrix, 'Precision': precision, 'Recall': recall, 'F1_pos':result_f1_score[1]}
 
-with open('./DNN_Classifier/Test_Result_dnn_01.pkl', 'wb') as f:
+with open('./DNN_Classifier/Test_Result_'+save_model_name+'.pkl', 'wb') as f:
     pickle.dump(result, f)
 
 
+# Save model prediction csv
+pred_result_df = nrn_pair_test.copy()
+pred_result_df['model_pred'] = y_pred
+pred_result_df['model_pred_binary'] = y_pred_binary
+
+# 将DataFrame存储为csv文件
+pred_result_df.to_csv('./DNN_Classifier/final_label_'+save_model_name+'.csv', index=False)
+print('\nSaved')
+
+
+
+print('\nProgram Completed')
 
 # %%

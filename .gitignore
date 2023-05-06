@@ -223,3 +223,12 @@ result/*
 Final_Model/*
 Second_Stage_Model/*
 Annotator_Model/*
+DNN_Classifier/*
+CAE_FC/*
+CAE_EM/*
+CAE_mix/*
+
+Iterative_Figure/*
+Iterative_result/*
+Iterative_Final_Model/*
+Iterative_Second_Stage_Model/*

@@ -20,7 +20,7 @@ from util import load_pkl
 
 # %% 读取三个阶段结果档案：annotator, first stage, second stage
 
-cross_fold_num = 3
+cross_fold_num = 5
 data_range = 'D5'
 
 annotator_model_name = 'Annotator_D1-' + data_range + '_'
@@ -123,11 +123,6 @@ generate_violinplot(Recall_set, 'Recall')
 generate_violinplot(F1_pos_set, 'F1_Score')
 
 
-
-# %% 箱线图
-
-
-
 # %% 计算各指标平均值
 
 # average_precision = []
@@ -154,9 +149,15 @@ def average_conf_matrix(conf_matrix_set):
     conf_average = conf_average/conf_matrix_set.shape[0]
     return conf_average
 
-conf_average_annotator = average_conf_matrix(conf_matrixs_annotator)
-conf_average_first_stage = average_conf_matrix(conf_matrixs_second_stage)
-conf_average_second_stage = average_conf_matrix(conf_matrixs_final_stage)
+def integrate_conf_matrix(conf_matrix_set):
+    conf_average = np.zeros((2,2))
+    for i in conf_matrix_set:
+        conf_average += i
+    return conf_average
+
+conf_average_annotator = integrate_conf_matrix(conf_matrixs_annotator)
+conf_average_first_stage = integrate_conf_matrix(conf_matrixs_second_stage)
+conf_average_second_stage = integrate_conf_matrix(conf_matrixs_final_stage)
 
 print('\nAverage conf_matrix: Annotator\n', np.round(conf_average_annotator))
 print('Average Precision, Recall, F1: Annotator\n', np.round(np.mean(Precisions_annotator),2), np.round(np.mean(Recalls_annotator), 2), np.round(np.mean(F1_pos_annotator), 2))
@@ -181,7 +182,7 @@ for conf_matrix in target:
 print(f1_score_lst.index(np.max(f1_score_lst)))
 print(target[f1_score_lst.index(np.max(f1_score_lst))])
 # %%
-
+plt.style.use('default')
 
 # 绘制训练损失和验证损失范围
 def generate_cross_loss_curve(losses_df, curve_color, name):
