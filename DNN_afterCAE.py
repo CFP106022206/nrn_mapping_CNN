@@ -34,7 +34,7 @@ from tqdm import tqdm
 
 
 # %%
-num_splits = 4 #0~9, or 99 for whole nBLAST testing set
+num_splits = 1 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D5'   #D4 or D5
 
 '''
@@ -46,6 +46,9 @@ grid75_path = './data/D1-D5_grid75_sn'
 
 encoder_mode = 'sep'    # 'mix' or 'separate'
 
+use_scheduler = True
+scheduler_exp = 1.5      #學習率調度器的約束力指數，越小約束越強
+initial_lr = 0.001
 train_epochs = 50
 
 add_low_score = False
@@ -59,7 +62,7 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 tf.random.set_seed(seed)
 
 
-save_model_name  = 'model_D1-' + data_range + '_' +str(num_splits)
+save_model_name  = 'D1-' + data_range + '_' +str(num_splits)
 
 # load train, test
 label_table_train = pd.read_csv('./data/train_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
@@ -656,7 +659,7 @@ def dnn_classifier(input_shape):
 
     # 构建和编译模型
     model = Model(inputs=input_layer, outputs=output_layer)
-    model.compile(optimizer="rmsprop", loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
+    model.compile(optimizer=RMSprop(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
     model.summary()
 
     return model
@@ -670,8 +673,7 @@ def scheduler(epoch, lr):
 
     min_lr=0.0000001
     total_epoch = train_epochs
-    init_lr = 0.001
-    epoch_lr = init_lr*((1-epoch/total_epoch)**2)
+    epoch_lr = lr*((1-epoch/total_epoch)**scheduler_exp)
     if epoch_lr<min_lr:
         epoch_lr = min_lr
 
@@ -706,7 +708,7 @@ plt.close('all')
 # cnn_valid_loss = history.history['val_loss']
 
 # Save history to file
-with open('./DNN_Classifier/Train_History_'+save_model_name+'.pkl', 'wb') as f:
+with open('./DNN_Classifier/Train_History_Annotator_'+save_model_name+'.pkl', 'wb') as f:
     pickle.dump(dnn_history.history, f)
 
 
@@ -748,7 +750,7 @@ print('F1 Score for Pos:', result_f1_score[1])
 # save results
 result = {'conf_matrix': conf_matrix, 'Precision': precision, 'Recall': recall, 'F1_pos':result_f1_score[1]}
 
-with open('./DNN_Classifier/Test_Result_'+save_model_name+'.pkl', 'wb') as f:
+with open('./DNN_Classifier/Test_Result_Annotator_'+save_model_name+'.pkl', 'wb') as f:
     pickle.dump(result, f)
 
 
@@ -758,7 +760,7 @@ pred_result_df['model_pred'] = y_pred
 pred_result_df['model_pred_binary'] = y_pred_binary
 
 # 将DataFrame存储为csv文件
-pred_result_df.to_csv('./DNN_Classifier/final_label_'+save_model_name+'.csv', index=False)
+pred_result_df.to_csv('./DNN_Classifier/final_label_model_'+save_model_name+'.csv', index=False)
 print('\nSaved')
 
 

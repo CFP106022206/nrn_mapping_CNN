@@ -22,6 +22,8 @@ from keras.utils import plot_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from keras.models import *
 from keras.layers import *
+from keras.losses import BinaryFocalCrossentropy
+from keras.metrics import BinaryAccuracy
 from keras.optimizers import *
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
@@ -138,21 +140,17 @@ def data_preprocess_annotator(unlabel_path, pair_nrn):
 
     return data_np, pair_df
 
-def scheduler(epoch, lr): 
-
-    min_lr=0.0000001
-    total_epoch = train_epochs
-    init_lr = 0.001
-    epoch_lr = init_lr*((1-epoch/total_epoch)**2)
-    if epoch_lr<min_lr:
-        epoch_lr = min_lr
-
-    return epoch_lr
 
 resolutions = [3,50,50]
 
-num_splits = 2 #0~9
+num_splits = 4 #0~9
 data_range = 'D5'   #D4 or D5
+
+fix_kernel = False  # 微調時是否凍結參數
+use_scheduler = False #是否使用scheduler 控制學習率
+scheduler_exp = 1      #學習率調度器的約束力指數，越小約束越強
+# initial_lr = 0.00005
+train_epochs = 50
 
 add_low_score = False
 low_score_neg_rate = 2
@@ -163,8 +161,19 @@ os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
 np.random.seed(seed)
 os.environ['TF_DITERMINISTIC_OPS'] = '1'
+tf.random.set_seed(seed)
 
 save_model_name  = 'model_D1-'+data_range+'_'+str(num_splits)
+
+def scheduler(epoch, lr): 
+
+    min_lr=0.0000001
+    total_epoch = train_epochs
+    epoch_lr = lr*((1-epoch/total_epoch)**scheduler_exp)
+    if epoch_lr<min_lr:
+        epoch_lr = min_lr
+
+    return epoch_lr
 
 # load annotator data
 label_annotator = pd.read_csv('./result/label_df_with_Annotator_D1-'+ data_range +'_' + str(num_splits)+'.csv')
@@ -543,14 +552,18 @@ early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=2, mode=
 
 
 # Scheduler
-second_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint, reduce_lr], verbose=2)
+if use_scheduler:
+    second_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint, reduce_lr], verbose=2)
+else:
+    cnn.compile(optimizer=Adam(learning_rate=0.0001), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-acc')])
+    second_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint], verbose=2)
 
-# plt.plot(second_history.history['loss'], label='loss')
-# plt.plot(second_history.history['val_loss'], label='val_loss')
-# plt.legend()
+plt.plot(second_history.history['loss'], label='loss')
+plt.plot(second_history.history['val_loss'], label='val_loss')
+plt.legend()
 # plt.savefig('./Figure/Second_Train_Curve_' + str(num_splits) + '.png', dpi=100)
-# # plt.show()
-# plt.close('all')
+plt.show()
+plt.close('all')
 
 # cnn_train_loss = history.history['loss']
 # cnn_valid_loss = history.history['val_loss']
@@ -630,19 +643,20 @@ with open('./result/Second_stage_Result_'+save_model_name+'.pkl', 'wb') as f:
 
 
 # %% 冻结前层参数
-from keras.losses import BinaryFocalCrossentropy
 
-for layer in model.layers[:-5]:
-    layer.trainable = False
+if fix_kernel:
+    for layer in model.layers[:-5]:
+        layer.trainable = False
 
-# 确认模型状态
-for layer in model.layers:
-    print(layer, layer.trainable)
-# model.summary()
+    # 确认模型状态
+    for layer in model.layers:
+        print(layer, layer.trainable)
+    # model.summary()
 
-# 编译模型
-model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics = [tf.keras.metrics.BinaryAccuracy(name='Bi-Acc')])
-
+    # 编译模型
+    model.compile(optimizer='rmsprop', loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics = [BinaryAccuracy(name='Bi-Acc')])
+else:
+    model.compile(optimizer=Adam(learning_rate=0.00001), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])
 
 
 # 准备人工标注的train data
@@ -994,7 +1008,7 @@ print('y_test shape:', len(y_test))
 
 
 
-train_epochs = 50
+train_epochs = 100
 
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=0)
 
@@ -1004,14 +1018,32 @@ early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode=
 
 
 # Scheduler
-final_history = model.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint, reduce_lr], verbose=2)
+if use_scheduler:
+    final_history = model.fit({'FC':X_train_FC, 'EM':X_train_EM}, 
+                              y_train,
+                              batch_size=128, 
+                              validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val),
+                              epochs=train_epochs,
+                              shuffle=True,
+                              callbacks = [checkpoint, reduce_lr],
+                              verbose=2)
+else:
+    final_history = model.fit({'FC':X_train_FC, 'EM':X_train_EM},
+                                y_train,
+                                batch_size = 128,
+                                validation_data = ({'FC':X_val_FC, 'EM':X_val_EM}, y_val),
+                                epochs = train_epochs,
+                                shuffle = True,
+                                callbacks = [checkpoint],
+                                verbose=2)
 
-# plt.plot(final_history.history['loss'], label='loss')
-# plt.plot(final_history.history['val_loss'], label='val_loss')
-# plt.legend()
+
+plt.plot(final_history.history['loss'], label='loss')
+plt.plot(final_history.history['val_loss'], label='val_loss')
+plt.legend()
 # plt.savefig('./Figure/Final_Train_Curve_' + str(num_splits) + '.png', dpi=100)
-# # plt.show()
-# plt.close('all')
+plt.show()
+plt.close('all')
 with open('./result/Train_History_Final_'+save_model_name+'.pkl', 'wb') as f:
     pickle.dump(final_history.history, f)
 

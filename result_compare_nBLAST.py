@@ -21,12 +21,17 @@ cross_fold_num = 5      # cross validation 的 fold 數量, 只有在test_mode==
 
 data_range = 'D5'
 
+use_final = False      # 如果True，使用最後階段的預測結果，如果False，使用第一階段的預測結果
 
+if use_final:
+    label_csv_name = './result/final_label_model_D1-'+data_range+'_'
+else:
+    label_csv_name = './result/test_label_Annotator_D1-'+data_range+'_'
 
 
 if test_mode == 'single':
     # load model predict test nrn set
-    nrn_pair = pd.read_csv('./result/final_label_model_D1-'+data_range+'_'+str(test_set_num)+'.csv')
+    nrn_pair = pd.read_csv(label_csv_name+str(test_set_num)+'.csv')
 
     y_pred = nrn_pair['model_pred']
     y_true = nrn_pair['label']
@@ -34,7 +39,7 @@ if test_mode == 'single':
 elif test_mode == 'cross':
     y_pred, y_true = [], []
     for i in range(cross_fold_num):
-        nrn_pair = pd.read_csv('./result/final_label_model_D1-'+data_range+'_'+str(i)+'.csv')
+        nrn_pair = pd.read_csv(label_csv_name+str(i)+'.csv')
         y_pred += nrn_pair['model_pred'].tolist()
         y_true += nrn_pair['label'].tolist()
     

@@ -22,6 +22,8 @@ from keras.utils import plot_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from keras.models import *
 from keras.layers import *
+from keras.losses import BinaryFocalCrossentropy
+from keras.metrics import BinaryAccuracy
 from keras.optimizers import *
 from sklearn.model_selection import train_test_split
 from sklearn.utils.class_weight import compute_class_weight
@@ -33,7 +35,7 @@ from tqdm import tqdm
 
 # %%
 # %%
-num_splits = 2 #0~9, or 99 for whole nBLAST testing set
+num_splits = 4 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D5'   #D4 or D5
 
 '''
@@ -42,6 +44,11 @@ data_range = 'D5'   #D4 or D5
 '''
 use_KT_map = True
 grid75_path = './data/D1-D5_grid75_sn'
+
+use_scheduler = True
+scheduler_exp = 1.5      #學習率調度器的約束力指數，越小約束越強
+# initial_lr = 0.00005
+train_epochs = 50
 
 add_low_score = False
 low_score_neg_rate = 2
@@ -591,18 +598,19 @@ cnn = CNN_shared((resolutions[1],resolutions[2],3))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
 
-train_epochs = 50
+# cnn.compile(optimizer=Adam(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])
+
 # Scheduler
 def scheduler(epoch, lr): 
 
     min_lr=0.0000001
     total_epoch = train_epochs
-    init_lr = 0.001
-    epoch_lr = init_lr*((1-epoch/total_epoch)**2)
+    epoch_lr = lr*((1-epoch/total_epoch)**scheduler_exp)
     if epoch_lr<min_lr:
         epoch_lr = min_lr
 
     return epoch_lr
+
 
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
@@ -619,20 +627,36 @@ early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode=
 
 
 # Model.fit
-Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, 
+if use_scheduler:
+    Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, 
+                                y_train, 
+                                batch_size=128, 
+                                validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), 
+                                epochs=train_epochs, 
+                                shuffle=True, 
+                                callbacks = [checkpoint, reduce_lr], verbose=2)
+                                # class_weight=class_weights)
+else:
+    Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, 
                             y_train, 
                             batch_size=128, 
                             validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), 
                             epochs=train_epochs, 
                             shuffle=True, 
-                            callbacks = [checkpoint, reduce_lr], verbose=2)
+                            callbacks = [checkpoint], verbose=2)
                             # class_weight=class_weights)
+
+
+
+
+
+
 
 plt.plot(Annotator_history.history['loss'], label='loss')
 plt.plot(Annotator_history.history['val_loss'], label='val_loss')
 plt.legend()
-plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
-# plt.show()
+# plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
+plt.show()
 plt.close('all')
 
 # cnn_train_loss = history.history['loss']
@@ -684,6 +708,17 @@ result = {'conf_matrix': conf_matrix, 'Precision': precision, 'Recall': recall, 
 with open('./result/Test_Result_'+save_model_name+'.pkl', 'wb') as f:
     pickle.dump(result, f)
 
+
+# 保存對Testing data的label情況
+
+# Save model prediction csv
+pred_result_df = nrn_pair_test.copy()
+pred_result_df['model_pred'] = y_pred
+pred_result_df['model_pred_binary'] = y_pred_binary
+
+# 将DataFrame存储为csv文件
+pred_result_df.to_csv('./result/test_label_'+save_model_name+'.csv', index=False)
+print('\nSaved')
 
 # %% 对新数据集进行标注
 unlabel_path = './data/mapping_data_0.7+'

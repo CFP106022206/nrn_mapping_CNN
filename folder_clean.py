@@ -9,10 +9,7 @@
 ./Iterative_result
 ./Iterative_Second_Stage_Model
 ./Iterative_Final_Model
-'./CAE_EM'
-'./CAE_EM'
-'./CAE_mix'
-'./DNN_Classifier'
+./DNN_Classifier
 '''
 # %%
 import os
@@ -28,7 +25,7 @@ def clear_directory(directory_path):
 
 delete_folder_lst = ['./Figure', './result', './Annotator_Model', './Second_Stage_Model', './Final_Model',
                      './Iterative_Figure', './Iterative_result', './Iterative_Second_Stage_Model',
-                     './Iterative_Final_Model', './CAE_EM', './CAE_EM', './CAE_mix', './DNN_Classifier']
+                     './Iterative_Final_Model', './DNN_Classifier']
 
 for folder in delete_folder_lst:
     clear_directory(folder)

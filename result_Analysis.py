@@ -156,16 +156,16 @@ def integrate_conf_matrix(conf_matrix_set):
     return conf_average
 
 conf_average_annotator = integrate_conf_matrix(conf_matrixs_annotator)
-conf_average_first_stage = integrate_conf_matrix(conf_matrixs_second_stage)
-conf_average_second_stage = integrate_conf_matrix(conf_matrixs_final_stage)
+conf_average_second_stage = integrate_conf_matrix(conf_matrixs_second_stage)
+conf_average_final_stage = integrate_conf_matrix(conf_matrixs_final_stage)
 
 print('\nAverage conf_matrix: Annotator\n', np.round(conf_average_annotator))
 print('Average Precision, Recall, F1: Annotator\n', np.round(np.mean(Precisions_annotator),2), np.round(np.mean(Recalls_annotator), 2), np.round(np.mean(F1_pos_annotator), 2))
 
-print('\nAverage conf_matrix: Second_stage\n', np.round(conf_average_first_stage))
+print('\nAverage conf_matrix: Second_stage\n', np.round(conf_average_second_stage))
 print('Average Precision, Recall, F1: Second_stage\n', np.round(np.mean(Precisions_second_stage), 2), np.round(np.mean(Recalls_second_stage), 2), np.round(np.mean(F1_pos_second_stage), 2))
 
-print('\nAverage conf_matrix: Final_stage\n', np.round(conf_average_second_stage))
+print('\nAverage conf_matrix: Final_stage\n', np.round(conf_average_final_stage))
 print('Average Precision, Recall, F1: Final_stage\n', np.round(np.mean(Precisions_final_stage), 2), np.round(np.mean(Recalls_final_stage), 2), np.round(np.mean(F1_pos_final_stage), 2))
 
 # calculate F1 score

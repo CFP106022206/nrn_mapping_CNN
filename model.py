@@ -358,7 +358,7 @@ def CNN_shared(input_size=(50, 50, 3)):
     output = Dense(1, activation="sigmoid")(output)
 
     model = Model(inputs=inputs, outputs=output)
-    model.compile(optimizer="rmsprop", loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
+    model.compile(optimizer=RMSprop(learning_rate=0.001), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
     model.summary()
     return model
 
