@@ -30,6 +30,8 @@ map_path = './data/all_pkl'
 data_aug = False
 encoder_mode = 'sep'
 
+use_contractive_loss = True # 打開會使得相似的輸入擁有相似的lv。注意此功能內部有調整權重的超參數
+
 seed = 10
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
@@ -244,7 +246,7 @@ print('FC after aug', fc_np_train.shape)
 # %%print('EM after aug', em_np_train.shape)
 
 
-train_epochs = 300
+train_epochs = 400
 
 
 # 定义卷积自编码器
@@ -285,9 +287,30 @@ def create_cae(input_shape=(48, 48, 3)):
 cae_FC, encoder_FC = create_cae(input_shape=(48, 48, 3))
 cae_EM, encoder_EM = create_cae(input_shape=(48, 48, 3))
 
+#在損失函數加上針對輸入的雅可比矩陣，做到將相似的輸入擁有相似的lv
+def contractive_loss(encoder):
+    def loss(y_pred, y_true):
+        mse = tf.reduce_mean(tf.square(y_true - y_pred))
+
+        # Compute the Jacobian
+        with tf.GradientTape() as tape:
+            tape.watch(y_pred)
+            encoded = encoder(y_pred)
+
+        jacobian = tape.jacobian(encoded, y_pred)
+        contractive = tf.reduce_sum(tf.square(jacobian))
+
+        return mse + 1e-4 * contractive  # 1e-4 is a hyperparameter, you can change it
+    return loss
+
+
 # 编译模型
-cae_FC.compile(optimizer='adam', loss='mse')
-cae_EM.compile(optimizer='adam', loss='mse')
+if use_contractive_loss:
+    cae_FC.compile(optimizer='adam', loss=contractive_loss(encoder_FC))
+    cae_EM.compile(optimizer='adam', loss=contractive_loss(encoder_EM))
+else:
+    cae_FC.compile(optimizer='adam', loss='mse')
+    cae_EM.compile(optimizer='adam', loss='mse')
 
 
 # 為保存最佳編碼器設定回調
@@ -324,7 +347,7 @@ checkpoint_EM = ModelCheckpoint('./CAE_EM/EM_CAE01.h5', verbose=1, monitor='val_
 
 print("Training FC CAE...")
 history_CAE_FC = cae_FC.fit(fc_np_train, fc_np_train, 
-           epochs=train_epochs, batch_size=32, shuffle=True, 
+           epochs=train_epochs, batch_size=128, shuffle=True, 
            validation_data=(fc_np_valid, fc_np_valid),
            callbacks = [checkpoint_FC, checkpoint_FC_encoder])
 
@@ -338,7 +361,7 @@ plt.close('all')
 
 print("Training EM CAE...")
 history_CAE_EM = cae_EM.fit(em_np_train, em_np_train, 
-           epochs=train_epochs, batch_size=32, shuffle=True, 
+           epochs=train_epochs, batch_size=128, shuffle=True, 
            validation_data=(em_np_valid, em_np_valid),
            callbacks = [checkpoint_EM, checkpoint_EM_encoder])
 
