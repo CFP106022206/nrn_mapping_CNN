@@ -22,7 +22,6 @@ from keras.utils import plot_model
 
 # %%
 
-num_splits = 0 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D5'   #D4 or D5
 
 map_path = './data/all_pkl'
@@ -32,26 +31,18 @@ encoder_mode = 'sep'
 
 use_contractive_loss = True # 打開會使得相似的輸入擁有相似的lv。注意此功能內部有調整權重的超參數
 
+cae_batch_size = 2     # 如果GPU內存不足，調小
+
+steps_gradient_accumulate = 64 #是否使用梯度累加，通常在極小batch size中使用. 設為0如果不使用
+
+train_epochs = 400
+
 seed = 10
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
 np.random.seed(seed)
 os.environ['TF_DETERMINISTIC_OPS'] = '1'
 tf.random.set_seed(seed)
-
-
-save_model_name  = 'Annotator_D1-' + data_range + '_' +str(num_splits)
-
-# load train, test
-label_table_train = pd.read_csv('./data/train_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
-label_table_test = pd.read_csv('./data/test_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
-
-
-# turn to numpy array
-test_pair_nrn = label_table_test[['fc_id','em_id','label']].to_numpy()
-train_pair_nrn = label_table_train[['fc_id','em_id','label']].to_numpy()
-
-
 
 
 
@@ -233,8 +224,8 @@ if data_aug:
 
 
 else:
-    fc_np_train = fc_np_train_ini
-    em_np_train = em_np_train_ini
+    fc_np_train = fc_np_train_ini[:50000]
+    em_np_train = em_np_train_ini[:50000]
 
 
 print('Data shape for model input')
@@ -244,9 +235,6 @@ print('FC after aug', fc_np_train.shape)
 
 
 # %%print('EM after aug', em_np_train.shape)
-
-
-train_epochs = 400
 
 
 # 定义卷积自编码器
@@ -312,6 +300,57 @@ else:
     cae_FC.compile(optimizer='adam', loss='mse')
     cae_EM.compile(optimizer='adam', loss='mse')
 
+# 梯度累加器，在batch size被迫很小的時候使用
+def train_with_gradient_accumulation(model, train_data, val_data, epochs, accumulation_steps=10, callbacks=None):
+    optimizer = tf.keras.optimizers.Adam()
+    loss_fn = tf.keras.losses.MeanSquaredError()
+
+    @tf.function
+    def train_step(x, y):
+        with tf.GradientTape() as tape:
+            logits = model(x, training=True)
+            loss_value = loss_fn(y, logits)
+        grads = tape.gradient(loss_value, model.trainable_weights)
+        grads = [g/accumulation_steps for g in grads]
+        return loss_value, grads
+
+    @tf.function
+    def val_step(x, y):
+        logits = model(x, training=False)
+        val_loss_value = loss_fn(y, logits)
+        return val_loss_value
+
+    train_loss_history, val_loss_history = [], []
+
+    for epoch in range(epochs):
+        print(f'Start of epoch {epoch+1}')
+        losses = []
+        for step, (x, y) in enumerate(train_data):
+            loss_value, grads = train_step(x, y)
+            if step % accumulation_steps == 0:
+                optimizer.apply_gradients(zip(grads, model.trainable_weights))
+                # print('Training loss (for one batch) at step %s: %s' % (step, float(loss_value)))
+                losses.append(loss_value)
+        
+        avg_loss = np.mean(losses)
+        train_loss_history.append(avg_loss)
+        print('loss at epoch= ',epoch, ':', avg_loss)
+        # Compute validation loss at the end of the epoch.
+        val_losses = []
+        for x, y in val_data:
+            val_loss = val_step(x, y)
+            val_losses.append(val_loss)
+
+        avg_val_loss = np.mean(val_losses)
+        val_loss_history.append(avg_val_loss)
+        print('va_loss at epoch= ',epoch, ':', avg_val_loss)
+
+        # 在每個epoch結束時調用callbacks的on_epoch_end方法
+        logs = {'loss': float(loss_value), 'val_loss': float(avg_val_loss)}
+        for callback in callbacks:
+            callback.on_epoch_end(epoch, logs)
+
+    return {'loss': train_loss_history, 'val_loss': val_loss_history}
 
 # 為保存最佳編碼器設定回調
 class SaveEncoderCallback(Callback):
@@ -333,43 +372,103 @@ class SaveEncoderCallback(Callback):
                 self.best_val_loss = val_loss
                 self.encoder.save(self.filepath)
 
+class CustomSaveModelCallback(Callback):
+    def __init__(self, model, filepath, monitor='val_loss', mode='min'):
+        super().__init__()
+        self.model = model
+        self.filepath = filepath
+        self.monitor = monitor
+        self.mode = mode
+        self.best_val_loss = float('inf') if mode == 'min' else float('-inf')
 
+    def on_epoch_end(self, epoch, logs=None):
+        val_loss = logs.get(self.monitor)
+        if val_loss is not None:
+            if self.mode == 'min' and val_loss < self.best_val_loss:
+                self.best_val_loss = val_loss
+                # tf.saved_model.save(self.model, self.filepath)
+                self.model.save(self.filepath)
+            elif self.mode == 'max' and val_loss > self.best_val_loss:
+                self.best_val_loss = val_loss
+                # tf.saved_model.save(self.model, self.filepath)
+                self.model.save(self.filepath)
 
 
 # 設定模型儲存條件(儲存最佳模型)
 checkpoint_FC_encoder = SaveEncoderCallback(encoder_FC, './CAE_FC/encoder_FC_best.h5', monitor='val_loss', mode='min')
-checkpoint_FC = ModelCheckpoint('./CAE_FC/FC_CAE01.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
+checkpoint_FC = ModelCheckpoint('./CAE_FC/FC_CAE01.h5', verbose=1, monitor='val_loss', save_best_only=True, save_weight_only=False, mode='min')
 
 checkpoint_EM_encoder = SaveEncoderCallback(encoder_EM, './CAE_EM/encoder_EM_best.h5', monitor='val_loss', mode='min')
-checkpoint_EM = ModelCheckpoint('./CAE_EM/EM_CAE01.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
+checkpoint_EM = ModelCheckpoint('./CAE_EM/EM_CAE01.h5', verbose=1, monitor='val_loss', save_best_only=True, save_weight_only=False, mode='min')
 
 
 
 print("Training FC CAE...")
-history_CAE_FC = cae_FC.fit(fc_np_train, fc_np_train, 
-           epochs=train_epochs, batch_size=128, shuffle=True, 
-           validation_data=(fc_np_valid, fc_np_valid),
-           callbacks = [checkpoint_FC, checkpoint_FC_encoder])
+if steps_gradient_accumulate == 0:
+
+
+    history_CAE_FC = cae_FC.fit(fc_np_train, fc_np_train, 
+            epochs=train_epochs, batch_size=cae_batch_size, shuffle=True, 
+            validation_data=(fc_np_valid, fc_np_valid),
+            callbacks = [checkpoint_FC, checkpoint_FC_encoder])
+
+
+else:
+    #自帶回調因為使用了自定義loss不可用，所以這裡使用自定義回調
+    checkpoint_FC = CustomSaveModelCallback(model=cae_FC, filepath='./CAE_FC/FC_CAE02.h5', monitor='val_loss', mode='min')
+
+
+
+    #手動將訓練數據建立為一個批次化的數據集
+    train_data = tf.data.Dataset.from_tensor_slices((fc_np_train, fc_np_train))
+    train_data = train_data.shuffle(buffer_size=1024).batch(cae_batch_size) #shuffle
+
+    val_data = tf.data.Dataset.from_tensor_slices((fc_np_valid, fc_np_valid))
+    val_data = val_data.shuffle(buffer_size=128).batch(cae_batch_size)
+
+    # 創建callback列表
+    callbacks = [checkpoint_FC, checkpoint_FC_encoder]
+
+    history_CAE_FC = train_with_gradient_accumulation(cae_FC, train_data, val_data, epochs=train_epochs, accumulation_steps=steps_gradient_accumulate, callbacks=callbacks)    
+
+
 
 plt.plot(history_CAE_FC.history['loss'], label='train')
 plt.plot(history_CAE_FC.history['val_loss'], label='valid')
 plt.legend()
 plt.title('CAE_FC')
-plt.savefig('./CAE_FC/FC_CAE01.png', dpi=150, bbox_inches="tight")
+plt.savefig('./CAE_FC/FC_CAE02.png', dpi=150, bbox_inches="tight")
 # plt.show()
 plt.close('all')
 
 print("Training EM CAE...")
-history_CAE_EM = cae_EM.fit(em_np_train, em_np_train, 
-           epochs=train_epochs, batch_size=128, shuffle=True, 
-           validation_data=(em_np_valid, em_np_valid),
-           callbacks = [checkpoint_EM, checkpoint_EM_encoder])
+if steps_gradient_accumulate == 0:
+    history_CAE_EM = cae_EM.fit(em_np_train, em_np_train, 
+            epochs=train_epochs, batch_size=cae_batch_size, shuffle=True, 
+            validation_data=(em_np_valid, em_np_valid),
+            callbacks = [checkpoint_EM, checkpoint_EM_encoder])
+
+else:
+    checkpoint_EM = CustomSaveModelCallback(model=cae_EM, filepath='./CAE_EM/EM_CAE02.h5', monitor='val_loss', mode='min')
+
+
+    #手動將訓練數據建立為一個批次化的數據集
+    train_data = tf.data.Dataset.from_tensor_slices((em_np_train, em_np_train))
+    train_data = train_data.shuffle(buffer_size=1024).batch(cae_batch_size) #shuffle
+
+    val_data = tf.data.Dataset.from_tensor_slices((em_np_valid, em_np_valid))
+    val_data = val_data.shuffle(buffer_size=128).batch(cae_batch_size)
+
+    # 創建callback列表
+    callbacks = [checkpoint_EM, checkpoint_EM_encoder]
+
+    history_CAE_FC = train_with_gradient_accumulation(cae_EM, train_data, val_data, epochs=train_epochs, accumulation_steps=steps_gradient_accumulate, callbacks=callbacks)    
 
 plt.plot(history_CAE_EM.history['loss'], label='train')
 plt.plot(history_CAE_EM.history['val_loss'], label='valid')
 plt.legend()
 plt.title('CAE_EM')
-plt.savefig('./CAE_EM/EM_CAE01.png', dpi=150, bbox_inches="tight")
+plt.savefig('./CAE_EM/EM_CAE02.png', dpi=150, bbox_inches="tight")
 # plt.show()
 plt.close('all')
 
