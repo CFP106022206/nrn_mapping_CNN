@@ -28,6 +28,7 @@ import random
 # 在 Mode 3 下, 輸出的分割數據集檔案編號採用特殊編號 99
 
 mode = 3
+mode_csv_path = './data/D2+D5_nblast_test.csv'  #指定測試集檔案位置
 
 use_new_label = False        # 使用日期為01-13的label table, 這項標注中將人類信心50%的標注視為Negative
 
@@ -139,7 +140,7 @@ if mode == 1:
         label_table_train.to_csv('./data/train_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
 
 elif mode == 2:
-    test_table = pd.read_csv('./data/D2+D5_nblast_test.csv')
+    test_table = pd.read_csv(mode_csv_path)
     test_table.drop_duplicates(subset=['fc_id', 'em_id'], inplace=True) # 删除重复
 
     # 使用label_table_all的列名来筛选label_table中的列

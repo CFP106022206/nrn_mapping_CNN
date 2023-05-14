@@ -25,7 +25,7 @@ from sklearn.model_selection import KFold
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
 
 mode = 2
-mode2_file_path = './data/D5_230503.csv'
+mode2_file_path = './data/nblast_label_D2+D5.csv'
 
 cross_validation_num = 5
 
@@ -122,3 +122,5 @@ elif mode == 2:
         label_table_test.to_csv('./data/test_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
         label_table_cleaned.to_csv('./data/train_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
         i += 1
+
+# %%

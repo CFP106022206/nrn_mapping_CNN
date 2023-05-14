@@ -20,7 +20,7 @@ from util import load_pkl
 
 # %% 读取三个阶段结果档案：annotator, first stage, second stage
 
-cross_fold_num = 5
+cross_fold_num = 3
 data_range = 'D5'
 
 annotator_model_name = 'Annotator_D1-' + data_range + '_'
@@ -160,13 +160,22 @@ conf_average_second_stage = integrate_conf_matrix(conf_matrixs_second_stage)
 conf_average_final_stage = integrate_conf_matrix(conf_matrixs_final_stage)
 
 print('\nAverage conf_matrix: Annotator\n', np.round(conf_average_annotator))
-print('Average Precision, Recall, F1: Annotator\n', np.round(np.mean(Precisions_annotator),2), np.round(np.mean(Recalls_annotator), 2), np.round(np.mean(F1_pos_annotator), 2))
+total_precision = conf_average_annotator[0,0]/(conf_average_annotator[0,0] + conf_average_annotator[1,0])
+total_recall = conf_average_annotator[0,0]/(conf_average_annotator[0,0] + conf_average_annotator[0,1])
+total_f1 = 2*total_recall*total_precision/(total_precision+total_recall)
+print('Average Precision, Recall, F1: Annotator\n', np.round(total_precision,2), np.round(total_recall, 2), np.round(total_f1, 2))
 
 print('\nAverage conf_matrix: Second_stage\n', np.round(conf_average_second_stage))
-print('Average Precision, Recall, F1: Second_stage\n', np.round(np.mean(Precisions_second_stage), 2), np.round(np.mean(Recalls_second_stage), 2), np.round(np.mean(F1_pos_second_stage), 2))
+total_precision = conf_average_second_stage[0,0]/(conf_average_second_stage[0,0] + conf_average_second_stage[1,0])
+total_recall = conf_average_second_stage[0,0]/(conf_average_second_stage[0,0] + conf_average_second_stage[0,1])
+total_f1 = 2*total_recall*total_precision/(total_precision+total_recall)
+print('Average Precision, Recall, F1: Second_stage\n', np.round(total_precision,2), np.round(total_recall, 2), np.round(total_f1, 2))
 
 print('\nAverage conf_matrix: Final_stage\n', np.round(conf_average_final_stage))
-print('Average Precision, Recall, F1: Final_stage\n', np.round(np.mean(Precisions_final_stage), 2), np.round(np.mean(Recalls_final_stage), 2), np.round(np.mean(F1_pos_final_stage), 2))
+total_precision = conf_average_final_stage[0,0]/(conf_average_final_stage[0,0] + conf_average_final_stage[1,0])
+total_recall = conf_average_final_stage[0,0]/(conf_average_final_stage[0,0] + conf_average_final_stage[0,1])
+total_f1 = 2*total_recall*total_precision/(total_precision+total_recall)
+print('Average Precision, Recall, F1: Final_stage\n', np.round(total_precision,2), np.round(total_recall, 2), np.round(total_f1, 2))
 
 # calculate F1 score
 def calculate_f1(conf_matrix):
@@ -281,3 +290,32 @@ generate_cross_loss_curve(val_losses_df, '#3C5283', 'Final_Stage_Val')
 
 
 # %%
+# 標準差分析Annotator標注結果的統一程度
+label_csv_path = './result/label_df_with_Annotator_D1-D5_'
+for i in range(cross_fold_num):
+    model_label = pd.read_csv(label_csv_path+str(i)+'.csv')['label']
+    if i == 0:
+        #初始化儲存每一次標注結果的數組
+        label_np = np.zeros((len(model_label), cross_fold_num))
+    
+    label_np[:,i] = model_label
+
+# 计算每行的标准差
+row_std_devs = np.std(label_np, axis=1)
+
+# 绘制直方图
+plt.figure(figsize=(10, 5))
+plt.hist(row_std_devs, bins=70, edgecolor='k', alpha=1)
+
+# 添加标题和标签
+plt.title("Histogram of Standard Deviations")
+plt.xlabel("Standard Deviation")
+plt.ylabel("Frequency")
+plt.savefig('./Figure/Annotator_label_histogram.png', dpi=150, bbox_inches='tight')
+# 显示图像
+plt.show()
+
+#熱力圖
+plt.figure(figsize=(20, 300))
+sns.heatmap(label_np, annot=False, cmap="coolwarm", cbar=False)
+plt.savefig('./Figure/Annotator_label_HeatMap.png', dpi=150, bbox_inches='tight')

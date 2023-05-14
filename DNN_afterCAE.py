@@ -34,7 +34,7 @@ from tqdm import tqdm
 
 
 # %%
-num_splits = 1 #0~9, or 99 for whole nBLAST testing set
+num_splits = 4 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D5'   #D4 or D5
 
 '''
@@ -46,10 +46,10 @@ grid75_path = './data/D1-D5_grid75_sn'
 
 encoder_mode = 'sep'    # 'mix' or 'separate'
 
-use_scheduler = True
-scheduler_exp = 1.5      #學習率調度器的約束力指數，越小約束越強
-initial_lr = 0.001
-train_epochs = 50
+
+scheduler_exp = 0      #學習率調度器的約束力指數，越大約束越強
+initial_lr = 0.0001
+train_epochs = 100
 
 add_low_score = False
 low_score_neg_rate = 2
@@ -671,7 +671,7 @@ dnn_classifier = dnn_classifier(input_shape=(x_train_lv.shape[1],))
 # Scheduler
 def scheduler(epoch, lr): 
 
-    min_lr=0.0000001
+    min_lr=0.00000001
     total_epoch = train_epochs
     epoch_lr = lr*((1-epoch/total_epoch)**scheduler_exp)
     if epoch_lr<min_lr:
@@ -760,7 +760,7 @@ pred_result_df['model_pred'] = y_pred
 pred_result_df['model_pred_binary'] = y_pred_binary
 
 # 将DataFrame存储为csv文件
-pred_result_df.to_csv('./DNN_Classifier/final_label_model_'+save_model_name+'.csv', index=False)
+pred_result_df.to_csv('./DNN_Classifier/test_label_Annotator_'+save_model_name+'.csv', index=False)
 print('\nSaved')
 
 
