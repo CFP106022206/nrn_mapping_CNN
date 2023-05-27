@@ -29,8 +29,12 @@ if use_final:
 else:
     label_csv_name = './result/test_label_Annotator_D1-'+data_range+'_'
 
-nblast_score_path = './data/D2p_nblast_score.csv'
-nblast_true_label_path = './data/D2_20221230.csv'
+if test_mode == 'nblast':
+    nblast_score_path = './data/D2p_nblast_score.csv'
+    nblast_true_label_path = './data/D2_20230523.csv'
+
+
+
 
 if test_mode == 'single':
     # load model predict test nrn set
@@ -63,14 +67,14 @@ elif test_mode == 'nblast':
 
     # nblast_score_merge = nblast_score.merge(test_nrn, on=['fc_id', 'em_id'], how='inner').drop(columns='score')
 
-    # 確認 label正確
-    nblast_score_correct = nblast_score.merge(nrn_true_label, on=['fc_id', 'em_id'], how='inner').drop(columns='score_y')
-    nblast_score_correct = nblast_score_correct.rename(columns={'score_x':'score'})
+    # 加上 label
+    nblast_score_labeled = nblast_score.merge(nrn_true_label, on=['fc_id', 'em_id'], how='inner').drop(columns='score_y')
+    nblast_score_labeled = nblast_score_labeled.rename(columns={'score_x':'score'})
 
-    y_pred = nblast_score_correct['score']
-    y_true = nblast_score_correct['label']
+    y_pred = nblast_score_labeled['score']
+    y_true = nblast_score_labeled['label']
 
-    nblast_score_correct.to_csv('./result/nblast_label_D2.csv', index=False)
+    nblast_score_labeled.to_csv('./result/nblast_label_D2.csv', index=False)
     roc_color='darkorange'
     kde_title = 'NBlast Score KDE Curve'
 

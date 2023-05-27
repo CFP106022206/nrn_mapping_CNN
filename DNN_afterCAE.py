@@ -45,7 +45,7 @@ use_KT_map = True
 grid75_path = './data/D1-D5_grid75_sn'
 
 encoder_mode = 'sep'    # 'mix' or 'separate'
-
+encoder_type = 'CCAE'   # 'CAE' or 'CCAE'
 
 scheduler_exp = 0      #學習率調度器的約束力指數，越大約束越強
 initial_lr = 0.0001
@@ -590,8 +590,8 @@ print('y_test shape:', len(y_test))
 
 # %% 使用編碼器獲取latent vector
 # load encoder
-encoder_FC = load_model('./CAE_FC/encoder_FC_best.h5')
-encoder_EM = load_model('./CAE_EM/encoder_EM_best.h5')
+encoder_FC = load_model('./'+encoder_type+'_FC/encoder_FC_best.h5')
+encoder_EM = load_model('./'+encoder_type+'_EM/encoder_EM_best.h5')
 
 if encoder_mode == 'mix':
     emcoder_mix = load_model('./CAE_mix/encoder_mix_best.h5')

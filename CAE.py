@@ -396,10 +396,10 @@ class CustomSaveModelCallback(Callback):
 
 # 設定模型儲存條件(儲存最佳模型)
 checkpoint_FC_encoder = SaveEncoderCallback(encoder_FC, './CAE_FC/encoder_FC_best.h5', monitor='val_loss', mode='min')
-checkpoint_FC = ModelCheckpoint('./CAE_FC/FC_CAE01.h5', verbose=1, monitor='val_loss', save_best_only=True, save_weight_only=False, mode='min')
+checkpoint_FC = ModelCheckpoint('./CAE_FC/FC_CAE02.h5', verbose=1, monitor='val_loss', save_best_only=True, save_weight_only=False, mode='min')
 
 checkpoint_EM_encoder = SaveEncoderCallback(encoder_EM, './CAE_EM/encoder_EM_best.h5', monitor='val_loss', mode='min')
-checkpoint_EM = ModelCheckpoint('./CAE_EM/EM_CAE01.h5', verbose=1, monitor='val_loss', save_best_only=True, save_weight_only=False, mode='min')
+checkpoint_EM = ModelCheckpoint('./CAE_EM/EM_CAE02.h5', verbose=1, monitor='val_loss', save_best_only=True, save_weight_only=False, mode='min')
 
 
 
@@ -411,6 +411,14 @@ if steps_gradient_accumulate == 0:
             epochs=train_epochs, batch_size=cae_batch_size, shuffle=True, 
             validation_data=(fc_np_valid, fc_np_valid),
             callbacks = [checkpoint_FC, checkpoint_FC_encoder])
+
+
+    plt.plot(history_CAE_FC.history['loss'], label='train')
+    plt.plot(history_CAE_FC.history['val_loss'], label='valid')
+    plt.legend()
+    plt.title('CAE_FC')
+    plt.savefig('./CAE_FC/FC_CAE02.png', dpi=150, bbox_inches="tight")
+    # plt.show()
 
 
 else:
@@ -431,14 +439,12 @@ else:
 
     history_CAE_FC = train_with_gradient_accumulation(cae_FC, train_data, val_data, epochs=train_epochs, accumulation_steps=steps_gradient_accumulate, callbacks=callbacks)    
 
+    plt.plot(history_CAE_FC['loss'], label = 'loss')
+    plt.plot(history_CAE_FC['val_loss'], label='valid')
+    plt.legend()
+    plt.title('CAE_FC')
+    plt.sacefig('./CAE_FC/FC_CAE02.png', dpi=150, bbox_inches='tight')
 
-
-plt.plot(history_CAE_FC.history['loss'], label='train')
-plt.plot(history_CAE_FC.history['val_loss'], label='valid')
-plt.legend()
-plt.title('CAE_FC')
-plt.savefig('./CAE_FC/FC_CAE02.png', dpi=150, bbox_inches="tight")
-# plt.show()
 plt.close('all')
 
 print("Training EM CAE...")
@@ -447,6 +453,14 @@ if steps_gradient_accumulate == 0:
             epochs=train_epochs, batch_size=cae_batch_size, shuffle=True, 
             validation_data=(em_np_valid, em_np_valid),
             callbacks = [checkpoint_EM, checkpoint_EM_encoder])
+
+
+    plt.plot(history_CAE_EM.history['loss'], label='train')
+    plt.plot(history_CAE_EM.history['val_loss'], label='valid')
+    plt.legend()
+    plt.title('CAE_EM')
+    plt.savefig('./CAE_EM/EM_CAE02.png', dpi=150, bbox_inches="tight")
+    # plt.show()
 
 else:
     checkpoint_EM = CustomSaveModelCallback(model=cae_EM, filepath='./CAE_EM/EM_CAE02.h5', monitor='val_loss', mode='min')
@@ -462,14 +476,14 @@ else:
     # 創建callback列表
     callbacks = [checkpoint_EM, checkpoint_EM_encoder]
 
-    history_CAE_FC = train_with_gradient_accumulation(cae_EM, train_data, val_data, epochs=train_epochs, accumulation_steps=steps_gradient_accumulate, callbacks=callbacks)    
+    history_CAE_EM = train_with_gradient_accumulation(cae_EM, train_data, val_data, epochs=train_epochs, accumulation_steps=steps_gradient_accumulate, callbacks=callbacks)    
 
-plt.plot(history_CAE_EM.history['loss'], label='train')
-plt.plot(history_CAE_EM.history['val_loss'], label='valid')
-plt.legend()
-plt.title('CAE_EM')
-plt.savefig('./CAE_EM/EM_CAE02.png', dpi=150, bbox_inches="tight")
-# plt.show()
+    plt.plot(history_CAE_EM['loss'], label='train')
+    plt.plot(history_CAE_EM['val_loss'], label='valid')
+    plt.legend()
+    plt.title('CAE_EM')
+    plt.savefig('./CAE_EM/EM_CAE02.png', dpi=150, bbox_inches='tight')
+
 plt.close('all')
 
 
@@ -504,9 +518,19 @@ if encoder_mode == 'mix':
 # 驗證CAE成果
 test_num = 5
 
-cae_FC = models.load_model('./CAE_FC/FC_CAE01.h5')
-cae_EM = models.load_model('./CAE_EM/EM_CAE01.h5')
-# cae_mix = models.load_model('./CAE_mix/mix_CAE01.h5')
+if steps_gradient_accumulate == 0:
+    cae_FC = models.load_model('./CAE_FC/FC_CAE02.h5')
+    cae_EM = models.load_model('./CAE_EM/EM_CAE02.h5')
+    # cae_mix = models.load_model('./CAE_mix/mix_CAE01.h5')
+
+else:
+
+    # 创建一个包含你的自定义损失函数的字典
+    custom_objects = {'loss': tf.keras.losses.MeanSquaredError()}
+
+    cae_FC = models.load_model('./CAE_FC/FC_CAE02.h5', custom_objects=custom_objects)
+    cae_EM = models.load_model('./CAE_EM/EM_CAE02.h5', custom_objects=custom_objects)
+
 
 
 def plot_CAE_predict(cae_model, test_num, np_train, save_path):
