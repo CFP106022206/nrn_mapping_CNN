@@ -20,7 +20,7 @@ test_set_num = 98       # 指定test_set 的特殊編號, 只有在 test_mode ==
 
 cross_fold_num = 5      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
-data_range = 'D5'
+data_range = 'D6'
 
 use_final = False      # 如果True，使用最後階段的預測結果，如果False，使用第一階段的預測結果
 
@@ -29,12 +29,7 @@ if use_final:
 else:
     label_csv_name = './result/test_label_Annotator_D1-'+data_range+'_'
 
-if test_mode == 'nblast':
-    nblast_score_path = './data/D2p_nblast_score.csv'
-    nblast_true_label_path = './data/D2_20230523.csv'
-
-
-
+nblast_correct_path = './data/nblast_D2_D5_correct.csv'
 
 if test_mode == 'single':
     # load model predict test nrn set
@@ -58,27 +53,14 @@ elif test_mode == 'cross':
     kde_title = 'CNN Score KDE Curve'
 
 elif test_mode == 'nblast':
-    # test_nrn = pd.read_csv('./data/test_split_99_D1-D5.csv')
-    nblast_score = pd.read_csv(nblast_score_path)
-    nrn_true_label = pd.read_csv(nblast_true_label_path)
+    nblast_score_correct = pd.read_csv(nblast_correct_path)
 
-    # 對齊名單label name
-    nblast_score = nblast_score.rename(columns={'fc': 'fc_id', 'em': 'em_id', 'similarity_score':'score'})
+    y_pred = nblast_score_correct['score']
+    y_true = nblast_score_correct['label']
 
-    # nblast_score_merge = nblast_score.merge(test_nrn, on=['fc_id', 'em_id'], how='inner').drop(columns='score')
-
-    # 加上 label
-    nblast_score_labeled = nblast_score.merge(nrn_true_label, on=['fc_id', 'em_id'], how='inner').drop(columns='score_y')
-    nblast_score_labeled = nblast_score_labeled.rename(columns={'score_x':'score'})
-
-    y_pred = nblast_score_labeled['score']
-    y_true = nblast_score_labeled['label']
-
-    nblast_score_labeled.to_csv('./result/nblast_label_D2.csv', index=False)
     roc_color='darkorange'
     kde_title = 'NBlast Score KDE Curve'
 
-# 畫密度圖
 # 提取预测值中属于每个类别的部分
 y_pred_label0 = y_pred[y_true == 0]
 y_pred_label1 = y_pred[y_true == 1]
@@ -86,6 +68,50 @@ y_pred_label1 = y_pred[y_true == 1]
 # 设置Seaborn样式
 plt.style.use('default')
 sns.set(style="whitegrid")
+
+
+
+# 繪製 violinplot
+
+
+fig, ax = plt.subplots(figsize=(7, 7))
+
+sns.violinplot(data=[y_pred_label0, y_pred_label1], inner="box", palette=['#001BC2', '#E90132']) # 箱線圖
+        
+# 设置透明度
+for violin in ax.collections[::2]:
+    violin.set_alpha(0.6)
+
+
+# # 獲取自動設置的繪圖邊界
+x_lim = ax.get_xlim()
+y_lim = ax.get_ylim()
+
+
+# 畫原始數據點(有抖動)
+sns.stripplot(data=[y_pred_label0, y_pred_label1], jitter=0.05, size=4, zorder=1, palette=['#001BC2', '#E90132'])
+plt.xticks([0, 1], ['Label = 0', 'Label = 1'])
+
+# 计算平均数
+averages = [np.mean(p) for p in [y_pred_label0, y_pred_label1]]
+
+# 在小提琴图上标注平均数
+for i, avg in enumerate(averages):
+    # ax.scatter(i, avg, marker='o', color='yellow', s=15, zorder=3)
+    ax.text(i, y_lim[0]+0.02, f"Avg = {avg:.2f}", horizontalalignment='center', fontsize=12, color='black')
+
+# 重新設置繪圖邊界 (默認設置會被stripplot帶偏)
+ax.set_ylim(y_lim)
+ax.set_xlim(x_lim)
+
+# 添加标题和轴标签
+plt.title('Result of D1-'+data_range+' models')
+plt.ylabel('Score')
+
+plt.savefig('./Figure/Violin.png', dpi=150, bbox_inches="tight")
+# 显示图像
+plt.show()
+
 
 # 绘制密度曲线
 # sns.kdeplot 用于绘制核密度估计（Kernel Density Estimation, KDE）图
@@ -161,10 +187,20 @@ plt.plot(threshold_lst,f1_lst,'*-', label='F1')
 plt.legend()
 plt.xlabel('Threshold')
 plt.ylabel('Score')
+plt.savefig('./Figure/Threshold_Curve', dpi=150, bbox_inches='tight')
 plt.show()
 
-# threshold=0.5
-print(gen_conf_matrix(y_true, y_pred, threshold=0.5)[1])
+
+# Find Best F1 score
+
+best_result_idx = f1_lst.index(max(f1_lst))
+threshold = threshold_lst[best_result_idx]
+print('Best F1 at threshold = ', threshold)
+
+print('Precision: ', precision_lst[best_result_idx])
+print('Recall: ', recall_lst[best_result_idx])
+print('F1: ', f1_lst[best_result_idx])
+print(gen_conf_matrix(y_true, y_pred, threshold=threshold)[1])
 
 # %% 混淆矩陣分析
 if test_mode == 'single':
