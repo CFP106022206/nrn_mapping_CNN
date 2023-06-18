@@ -32,11 +32,10 @@ from util import load_pkl
 from tqdm import tqdm
 
 
-
 # %%
 # %%
-num_splits = 2 #0~9, or 99 for whole nBLAST testing set
-data_range = 'D5'   #D4 or D5
+num_splits = 4 #0~9, or 99 for whole nBLAST testing set
+data_range = 'D6'   #D4 or D5
 
 '''
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
@@ -47,7 +46,7 @@ grid75_path = './data/D1-D5_grid75_sn'
 
 
 scheduler_exp = 1.5      #學習率調度器的約束力指數，越小約束越強
-# initial_lr = 0.00005
+initial_lr = 0.00005
 train_epochs = 50
 
 add_low_score = False
@@ -141,11 +140,71 @@ if use_KT_map:
 
         return data_np, pair_df
 
+    def data_preprocess_folder(file_path, pair_nrn):
 
+            print('\nCollecting 3-View Data Numpy Array..')
+
+            data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
+            FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
+
+
+            # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
+            file_list = [file_name for file_name in os.listdir(file_path) if file_name.endswith('.pkl')]
+
+            #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
+            data_dict = {}
+            for file_name in file_list:
+                pkl_path = os.path.join(file_path, file_name)
+                data_lst = load_pkl(pkl_path)
+                for data in data_lst:
+                    key = f"{data[0]}_{data[1]}"
+                    data_dict[key] = data
+
+            # 依訓練名單從已有三視圖名單中查找是否存在
+            for i, row in tqdm(enumerate(pair_nrn), total=len(pair_nrn)):
+                
+                key = f"{row[0]}_{row[1]}"
+
+                if key in data_dict:
+                    data = data_dict[key]   # 找出data的所有信息
+                    # 三視圖填入 data_np
+                    for k in range(3):
+                        data_np[i, 0, :, :, k] = data[3][k] # FC Image
+                        data_np[i, 1, :, :, k] = data[4][k] # EM Image
+                    # 其餘信息填入list
+                    FC_nrn_lst.append(data[0])
+                    EM_nrn_lst.append(data[1])
+                    score_lst.append(data[2])
+                    label_lst.append(row[2])
+            
+
+
+            # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
+            not_found_data = []
+            for i, data in enumerate(data_np):
+                if not(np.any(data)):
+                    not_found_data.append(i)
+            data_np = np.delete(data_np, not_found_data, axis=0)
+
+            if not_found_data:
+                print('Not Found in map_data: ')
+                for i in not_found_data:
+                    print(pair_nrn[i])
+
+
+            # Normalization : x' = x - min(x) / max(x) - min(x)
+            data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
+
+            pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+
+            return data_np, pair_df
 
     data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
     data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
 
+
+    # data_np_test, nrn_pair_test = data_preprocess_folder('./data/all_pkl', test_pair_nrn)
+    # data_np_train, nrn_pair_train = data_preprocess_folder('./data/all_pkl', train_pair_nrn)
 
 
 
@@ -219,7 +278,7 @@ else:
 
 
 # Train Validation Split
-data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.2, random_state=seed)
+data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.1, random_state=seed)
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
 
@@ -597,8 +656,8 @@ from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
 cnn = CNN_shared((resolutions[1],resolutions[2],3))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
-
-# cnn.compile(optimizer=Adam(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])
+if not scheduler_exp:
+    cnn.compile(optimizer=Adam(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])
 
 # Scheduler
 def scheduler(epoch, lr): 
@@ -626,6 +685,13 @@ checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5', ver
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
 
 
+if scheduler_exp:
+    callbacks = [checkpoint, reduce_lr]
+else:
+    callbacks = [checkpoint]
+print('\nUse Callbacks:', callbacks)
+
+
 # Model.fit
 
 Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, 
@@ -634,22 +700,17 @@ Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM},
                             validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), 
                             epochs=train_epochs, 
                             shuffle=True, 
-                            callbacks = [checkpoint, reduce_lr], verbose=2)
+                            callbacks = callbacks, verbose=2)
                             # class_weight=class_weights)
 
 
 
-
-
-
-
-
-plt.plot(Annotator_history.history['loss'], label='loss')
-plt.plot(Annotator_history.history['val_loss'], label='val_loss')
-plt.legend()
+# plt.plot(Annotator_history.history['loss'], label='loss')
+# plt.plot(Annotator_history.history['val_loss'], label='val_loss')
+# plt.legend()
 # plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
-plt.show()
-plt.close('all')
+# plt.show()
+# plt.close('all')
 
 # cnn_train_loss = history.history['loss']
 # cnn_valid_loss = history.history['val_loss']
@@ -660,7 +721,7 @@ with open('./result/Train_History_'+save_model_name+'.pkl', 'wb') as f:
 
 
 model = load_model('./Annotator_Model/' + save_model_name + '.h5')
-y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM})
+y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM}, verbose=2)
 pred_test_compare = np.hstack((y_pred, y_test.reshape(len(y_test), 1)))
 y_pred_binary = []
 for ans in y_pred:
@@ -712,57 +773,64 @@ pred_result_df['model_pred_binary'] = y_pred_binary
 pred_result_df.to_csv('./result/test_label_'+save_model_name+'.csv', index=False)
 print('\nSaved')
 
-# # %% 对新数据集进行标注
-# unlabel_path = './data/mapping_data_0.7+'
 
-# # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
-# file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]
+# %% 对新数据集进行标注
+unlabel_path = './data/all_pkl'
 
-# # 计算label
-# model = load_model('./Annotator_Model/' + save_model_name + '.h5')
+# 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
+file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]
 
-# def annotator(model,fc_img, em_img):
-#     # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
-#     fc_img = np.transpose(fc_img, (1, 2, 0))
-#     em_img = np.transpose(em_img, (1, 2, 0))
+# 计算label
+model = load_model('./Annotator_Model/' + save_model_name + '.h5')
 
-#     # 将数据维度扩展至4维（符合CNN输入）
-#     fc_img = np.expand_dims(fc_img, axis=0)
-#     em_img = np.expand_dims(em_img, axis=0)
-#     label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
-#     # binary label
-#     if label > 0.5:
-#         label_b = 1
-#     else:
-#         label_b = 0
-#     return label, label_b
+def annotator(model,fc_img, em_img):
+    # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
+    fc_img = np.transpose(fc_img, (1, 2, 0))
+    em_img = np.transpose(em_img, (1, 2, 0))
+
+    # 将数据维度扩展至4维（符合CNN输入）
+    fc_img = np.expand_dims(fc_img, axis=0)
+    em_img = np.expand_dims(em_img, axis=0)
+    label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
+
+    label = label.flatten()[0]  #因為模型輸出是一個 numpy array
+
+    # binary label
+    if label > 0.5:
+        label_b = 1
+    else:
+        label_b = 0
+    return label, label_b
 
 
 
-# # 初始化一个空lst，用于存储文件名和计算结果
-# new_data_lst = []
+# 初始化一个空lst，用于存储文件名和计算结果
+new_data_lst = []
 
-# print('\nLabeling..')
-# # 遍历母文件夹下的所有条目
-# for file_name in tqdm(file_list, total=len(file_list)):
-#     # 创建完整文件路径
-#     file_path = os.path.join(unlabel_path, file_name)
+print('\nLabeling..')
+# 遍历母文件夹下的所有条目
+for file_name in tqdm(file_list, total=len(file_list)):
+# for file_name in file_list:     # No tqdm version
 
-#     # 读取pkl文件
-#     data_lst = load_pkl(file_path)
-#     for data in data_lst:
-#         # 计算结果
-#         result, result_b = annotator(model, data[3], data[4])
+    # 创建完整文件路径
+    file_path = os.path.join(unlabel_path, file_name)
 
-#         # 将文件名和计算结果添加到DataFrame
-#         new_data = {'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label_c': result, 'label': result_b}
+    # 读取pkl文件
+    data_lst = load_pkl(file_path)
+    for data in data_lst:
+        # 计算结果
+        result, result_b = annotator(model, data[3], data[4])
 
-#         new_data_lst.append(new_data)
+        # 将文件名和计算结果添加到DataFrame
+        new_data = {'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label_c': result, 'label': result_b}
 
-# label_df = pd.DataFrame(new_data_lst)
+        new_data_lst.append(new_data)
 
-# # 将DataFrame存储为csv文件
-# label_df.to_csv('./result/label_df_with_'+save_model_name+'.csv', index=False)
-# print('\nSaved')
+label_df = pd.DataFrame(new_data_lst)
+
+# 将DataFrame存储为csv文件
+label_df.to_csv('./result/label_df_with_'+save_model_name+'.csv', index=False)
+print('\nSaved')
+print('Program Completed.')
 
 # %%

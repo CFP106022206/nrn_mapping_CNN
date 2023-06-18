@@ -35,7 +35,7 @@ from tqdm import tqdm
 
 # %%
 num_splits = 4 #0~9, or 99 for whole nBLAST testing set
-data_range = 'D5'   #D4 or D5
+data_range = 'D6'   #D4 or D5
 
 '''
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
@@ -45,11 +45,12 @@ use_KT_map = True
 grid75_path = './data/D1-D5_grid75_sn'
 
 encoder_mode = 'sep'    # 'mix' or 'separate'
-encoder_type = 'CCAE'   # 'CAE' or 'CCAE'
+
+use_ccae = True
 
 scheduler_exp = 0      #學習率調度器的約束力指數，越大約束越強
 initial_lr = 0.0001
-train_epochs = 100
+train_epochs = 200
 
 add_low_score = False
 low_score_neg_rate = 2
@@ -220,7 +221,7 @@ else:
 
 
 # Train Validation Split
-data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.2, random_state=seed)
+data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.1, random_state=seed)
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
 
@@ -590,8 +591,12 @@ print('y_test shape:', len(y_test))
 
 # %% 使用編碼器獲取latent vector
 # load encoder
-encoder_FC = load_model('./'+encoder_type+'_FC/encoder_FC_best.h5')
-encoder_EM = load_model('./'+encoder_type+'_EM/encoder_EM_best.h5')
+if use_ccae:
+    encoder_FC = load_model('./CCAE_FC/encoder_FC_best.h5')
+    encoder_EM = load_model('./CCAE_EM/encoder_EM_best.h5')
+else:
+    encoder_FC = load_model('./CAE_FC/encoder_FC_best.h5')
+    encoder_EM = load_model('./CAE_EM/encoder_EM_best.h5')
 
 if encoder_mode == 'mix':
     emcoder_mix = load_model('./CAE_mix/encoder_mix_best.h5')
@@ -625,14 +630,14 @@ if encoder_mode == 'mix':
     x_test_em_lv = emcoder_mix.predict(X_test_EM)
 
 else:
-    x_train_fc_lv = encoder_FC.predict(X_train_FC)
-    x_train_em_lv = encoder_EM.predict(X_train_EM)
+    x_train_fc_lv = encoder_FC.predict(X_train_FC, verbose=0)
+    x_train_em_lv = encoder_EM.predict(X_train_EM, verbose=0)
 
-    x_val_fc_lv = encoder_FC.predict(X_val_FC)
-    x_val_em_lv = encoder_EM.predict(X_val_EM)
+    x_val_fc_lv = encoder_FC.predict(X_val_FC, verbose=0)
+    x_val_em_lv = encoder_EM.predict(X_val_EM, verbose=0)
 
-    x_test_fc_lv = encoder_FC.predict(X_test_FC)
-    x_test_em_lv = encoder_EM.predict(X_test_EM)
+    x_test_fc_lv = encoder_FC.predict(X_test_FC, verbose=0)
+    x_test_em_lv = encoder_EM.predict(X_test_EM, verbose=0)
 
 x_train_lv = np.concatenate((x_train_em_lv, x_train_fc_lv), axis=1)
 x_val_lv = np.concatenate((x_val_em_lv, x_val_fc_lv), axis=1)
@@ -650,7 +655,7 @@ def dnn_classifier(input_shape):
     dense = BatchNormalization()(dense)
     dense = Activation("relu")(dense)
 
-    # dense = Dropout(0.5)(dense)
+    # dense = Dropout(0.3)(dense)
     # dense = Dense(128)(dense)
     # dense = BatchNormalization()(dense)
     # dense = Activation("relu")(dense)
@@ -659,7 +664,7 @@ def dnn_classifier(input_shape):
 
     # 构建和编译模型
     model = Model(inputs=input_layer, outputs=output_layer)
-    model.compile(optimizer=RMSprop(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
+    model.compile(optimizer=Adam(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")])
     model.summary()
 
     return model
@@ -682,10 +687,15 @@ def scheduler(epoch, lr):
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
 # 設定模型儲存條件(儲存最佳模型)
-checkpoint = ModelCheckpoint('./DNN_Classifier/dnn_01.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
+checkpoint = ModelCheckpoint('./DNN_Classifier/dnn_'+str(num_splits)+'.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
 
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
 
+if scheduler_exp:
+    callbacks = [checkpoint, reduce_lr]
+else:
+    callbacks = [checkpoint]
+print('\nUse Callbacks:', callbacks)
 
 # Model.fit
 dnn_history = dnn_classifier.fit(x_train_lv, 
@@ -695,7 +705,7 @@ dnn_history = dnn_classifier.fit(x_train_lv,
                                 epochs=train_epochs, 
                                 shuffle=True,
                                 class_weight=class_weights, 
-                                callbacks = [checkpoint, reduce_lr], verbose=2)
+                                callbacks = callbacks, verbose=2)
 
 plt.plot(dnn_history.history['loss'], label='loss')
 plt.plot(dnn_history.history['val_loss'], label='val_loss')
@@ -712,8 +722,8 @@ with open('./DNN_Classifier/Train_History_Annotator_'+save_model_name+'.pkl', 'w
     pickle.dump(dnn_history.history, f)
 
 
-model = load_model('./DNN_Classifier/dnn_01.h5')
-y_pred = model.predict(x_test_lv)
+model = load_model('./DNN_Classifier/dnn_'+str(num_splits)+'.h5')
+y_pred = model.predict(x_test_lv, verbose=2)
 pred_test_compare = np.hstack((y_pred, y_test.reshape(len(y_test), 1)))
 y_pred_binary = []
 for ans in y_pred:

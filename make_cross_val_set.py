@@ -25,7 +25,8 @@ from sklearn.model_selection import KFold
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
 
 mode = 2
-mode2_file_path = './data/D2+D5_nblast_test.csv'
+mode2_file_path = './data/nblast_D2+D5+D6_60as1.csv'
+label_threshold = 0.6   # 50%信心 or 60%信心
 
 cross_validation_num = 5
 
@@ -42,12 +43,20 @@ train_range_to = 'D6'   # 'D5' or 'D6'
 
 
 # Load labeled csv
-label_csv_D1 = './data/D1_20221230.csv'
-label_csv_D2 = './data/D2_20221230.csv'
-label_csv_D3 = './data/D3_20221230.csv'
-label_csv_D4 = './data/D4_20221230.csv'
-label_csv_D5 = './data/D5_20221230.csv'
-label_csv_D6 = './data/D6_20230523.csv'
+if label_threshold == 0.5:
+    label_csv_D1 = './data/D1_20221230.csv'
+    label_csv_D2 = './data/D2_20221230.csv'
+    label_csv_D3 = './data/D3_20221230.csv'
+    label_csv_D4 = './data/D4_20221230.csv'
+    label_csv_D5 = './data/D5_20221230.csv'
+    label_csv_D6 = './data/D6_20230523.csv'
+elif label_threshold == 0.6:
+    label_csv_D1 = './data/D1_20230113.csv'
+    label_csv_D2 = './data/D2_60as1.csv'
+    label_csv_D3 = './data/D3_20230113.csv'
+    label_csv_D4 = './data/D4_60as1.csv'
+    label_csv_D5 = './data/D5_60as1.csv'
+    label_csv_D6 = './data/D6_60as1.csv'
 
 D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
 D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复

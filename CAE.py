@@ -17,6 +17,7 @@ from sklearn.metrics import confusion_matrix, f1_score, recall_score, precision_
 from util import load_pkl
 from tqdm import tqdm
 from keras import layers, models
+from keras.layers import Input, Conv2D, concatenate, MaxPooling2D, Lambda, Flatten
 from keras.utils import plot_model
 
 
@@ -29,7 +30,8 @@ map_path = './data/all_pkl'
 data_aug = False
 encoder_mode = 'sep'
 
-use_contractive_loss = True # 打開會使得相似的輸入擁有相似的lv。注意此功能內部有調整權重的超參數
+use_unet = True     #使用具有跳躍連接的Unet結構，若True則下面contractive_loss要是False
+use_contractive_loss = False # 打開會使得相似的輸入擁有相似的lv。注意此功能內部有調整權重的超參數
 
 cae_batch_size = 2     # 如果GPU內存不足，調小
 
@@ -271,9 +273,44 @@ def create_cae(input_shape=(48, 48, 3)):
 
     return autoencoder, encoder
 
+
+def upsample_bilinear(inputs, scale):
+    # 使用 tf.image.resize 创建一个上采样层
+    # 'bilinear' 是双线性插值
+    # 注意，tf.image.resize 要求输入的尺寸是 (batch_size, height, width, channels)，并且要求尺寸是浮点数
+    return Lambda(lambda x: tf.image.resize(x, tf.cast(tf.shape(x)[1:3] * scale, tf.int32), method='bilinear'))(inputs)
+
+
+def unet(input_size=(48,48,3)):
+    inputs = Input(input_size)
+    conv1 = Conv2D(32, 3, activation='relu', padding='same')(inputs)
+    pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
+    
+    conv2 = Conv2D(64, 3, activation='relu', padding='same')(pool1)
+    pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
+
+    conv3 = Conv2D(128, 3, activation='relu', padding='same')(pool2)
+    encoded = Flatten()(conv3)
+
+    up4 = concatenate([upsample_bilinear(conv3, 2), conv2], axis=3)  # 使用双线性上采样层
+    conv4 = Conv2D(64, 3, activation='relu', padding='same')(up4)
+
+    up5 = concatenate([upsample_bilinear(conv4, 2), conv1], axis=3)  # 使用双线性上采样层
+    conv5 = Conv2D(32, 3, activation='relu', padding='same')(up5)
+
+    conv6 = Conv2D(1, 1, activation='sigmoid')(conv5)
+
+    unet = models.Model(inputs=inputs, outputs=conv6)
+    encoder = models.Model(inputs=inputs, outputs=encoded)
+    return unet, encoder
+
 # 创建模型
-cae_FC, encoder_FC = create_cae(input_shape=(48, 48, 3))
-cae_EM, encoder_EM = create_cae(input_shape=(48, 48, 3))
+if use_unet:
+    cae_FC, encoder_FC = unet(input_size=(48,48,3))
+    cae_EM, encoder_EM = unet(input_size=(48,48,3))
+else:
+    cae_FC, encoder_FC = create_cae(input_shape=(48, 48, 3))
+    cae_EM, encoder_EM = create_cae(input_shape=(48, 48, 3))
 
 #在損失函數加上針對輸入的雅可比矩陣，做到將相似的輸入擁有相似的lv
 def contractive_loss(encoder):
