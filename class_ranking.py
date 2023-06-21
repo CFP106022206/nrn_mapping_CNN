@@ -360,6 +360,47 @@ class NrnRanking:
         else:
             print("  Done!")
 
+    def batch_matching_process_note(self, overwrite, target_list=["FC"], candidate_list=["EM"],
+                               threshold_I=0.4, threshold_dis=100.0, threshold_in=np.cos(np.pi*50/180)):
+        # 定義批量匹配過程的方法。包含一些參數，包括是否覆寫以前的匹配結果（overwrite）、目標文件列表（target_list）、
+        # 候選文件列表（candidate_list）、以及三個閾值。
+
+        # process begins
+        time.sleep(0.5)  # 等待一段時間，這可能是為了確保同步運行或為其他操作留出時間
+        print("Matching Processor : ")  # 打印提示信息
+        time.sleep(0.5)  # 再次等待一段時間
+
+        # define matching groups
+        with open(self.path["stats"] + "group_dict.pkl", "rb") as file:
+            group_dict = pickle.load(file)  # 加載group_dict文件，這是一個已經保存好的分組信息
+        for key in target_list:
+            self.file_list += group_dict[key]  # 將目標文件列表添加到現有的文件列表中
+        for key in candidate_list:
+            self.file_list2 += group_dict[key]  # 將候選文件列表添加到現有的第二文件列表中
+
+        if overwrite:  # 如果選擇覆寫現有的匹配結果
+            matching_dict = {}  # 初始化一個空字典來保存匹配結果
+
+            for key in self.weight_keys:  # 對於每一種權重鍵
+                matching_dict[key] = {}  # 在匹配字典中創建一個新的子字典
+                for key_id in self.file_list:  # 對於文件列表中的每一個文件
+                    matching_dict[key][key_id] = []  # 在子字典中創建一個新的空列表
+
+                num_rep = 0  # 初始化計數器
+                for data in self.generate_dataset(key):  # 對於生成的每一個數據集
+                    res = self.match(data, threshold_I, threshold_dis, threshold_in)  # 使用match方法對數據集進行匹配
+                    for i in range(len(res[0])):  # 對於匹配結果的每一個元素
+                        # 將匹配結果添加到相應的列表中
+                        matching_dict[key][self.file_list[res[0][i]+num_rep*self.batch_num]].append(self.file_list2[res[1][i]])
+                    num_rep += 1  # 更新計數器
+
+                print("  Done!")  # 打印完成的信息
+
+            with open(self.path["stats"] + "match_dict.pkl", "wb") as file:
+                pickle.dump(matching_dict, file)  # 保存匹配結果到檔案中
+        else:  # 如果不選擇覆寫現有的匹配結果
+            print("  Done!")  # 直接打印完成的信息
+
     def morphological_ranking_fix(self, key_g, c_lst, saving, plot, shift_delta=30):
         # target nrn information
         coor_target = self.coord[key_g][self.name]
