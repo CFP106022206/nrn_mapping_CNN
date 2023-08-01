@@ -350,7 +350,7 @@ def CNN_shared(input_size=(50, 50, 3)):
     concat_layer = concatenate(flattened_layers, axis=1)
 
     output = Dropout(0.5)(concat_layer)
-    output = Dense(256)(output)
+    output = Dense(128)(output)
     output = BatchNormalization()(output)
     output = Activation("relu")(output)
     # output = Dropout(0.2)(output)

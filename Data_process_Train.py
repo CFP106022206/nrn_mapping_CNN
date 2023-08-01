@@ -33,20 +33,21 @@ from tqdm import tqdm
 
 
 # %%
-# %%
-num_splits = 4 #0~9, or 99 for whole nBLAST testing set
+num_splits = 2 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D6'   #D4 or D5
 
 '''
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
 新寫法是使用和data_preprocess_annotator 相同的方法。
 '''
-use_KT_map = True
+use_map_from = 'yf' #'kt': map_data 冠廷, 'yf': map_folder from 懿凡
+map_dict_folder = './data/labeled_sn'
+
 grid75_path = './data/D1-D5_grid75_sn'
 
 
-scheduler_exp = 1.5      #學習率調度器的約束力指數，越小約束越強
-initial_lr = 0.00005
+scheduler_exp = 0#1.5      #學習率調度器的約束力指數，越小約束越強
+initial_lr = 0.001
 train_epochs = 50
 
 add_low_score = False
@@ -81,8 +82,8 @@ train_pair_nrn = label_table_train[['fc_id','em_id','label']].to_numpy()
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
 新寫法是使用和data_preprocess_annotator 相同的方法。
 '''
-if use_KT_map:
-    # 讀神經三視圖資料
+if use_map_from == 'kt':
+    # # 讀神經三視圖資料
     map_data_D1toD4 = load_pkl('./data/mapping_data_sn.pkl')
     # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
 
@@ -96,7 +97,7 @@ if use_KT_map:
 
     def data_preprocess(map_data, pair_nrn):
         data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
-        FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
+        fc_nrn_lst, em_nrn_lst, score_lst, label_lst = [], [], [], []
 
         #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
         data_dict = {}
@@ -115,8 +116,8 @@ if use_KT_map:
                     data_np[i, 1, :, :, k] = data[4][k] # EM Image
                 
                 # 其餘信息填入
-                FC_nrn_lst.append(data[0])
-                EM_nrn_lst.append(data[1])
+                fc_nrn_lst.append(data[0])
+                em_nrn_lst.append(data[1])
                 score_lst.append(data[2]) 
                 label_lst.append(row[2])
 
@@ -127,98 +128,30 @@ if use_KT_map:
                 not_found_data.append(i)
         data_np = np.delete(data_np, not_found_data, axis=0)
 
+        not_found_df = []
         if not_found_data:
-            print('Not Found in map_data: ')
+            print('How many pairs Not Found in map_data: ')
             for i in not_found_data:
-                print(pair_nrn[i])
-
+                not_found_df.append(pair_nrn[i])
+            print(len(not_found_df))
+            not_found_df = pd.DataFrame(not_found_df, columns=['fc_id', 'em_id', 'label'])
 
         # Normalization : x' = x - min(x) / max(x) - min(x)
         data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
 
-        pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+        pair_df = pd.DataFrame({'fc_id':fc_nrn_lst, 'em_id':em_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
 
-        return data_np, pair_df
+        return data_np, pair_df, not_found_df
 
-    def data_preprocess_folder(file_path, pair_nrn):
-
-            print('\nCollecting 3-View Data Numpy Array..')
-
-            data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
-            FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
+    data_np_test, nrn_pair_test, test_not_found = data_preprocess(map_data, test_pair_nrn)
+    data_np_train, nrn_pair_train, train_not_found = data_preprocess(map_data, train_pair_nrn)
 
 
-            # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
-            file_list = [file_name for file_name in os.listdir(file_path) if file_name.endswith('.pkl')]
-
-            #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
-            data_dict = {}
-            for file_name in file_list:
-                pkl_path = os.path.join(file_path, file_name)
-                data_lst = load_pkl(pkl_path)
-                for data in data_lst:
-                    key = f"{data[0]}_{data[1]}"
-                    data_dict[key] = data
-
-            # 依訓練名單從已有三視圖名單中查找是否存在
-            for i, row in tqdm(enumerate(pair_nrn), total=len(pair_nrn)):
-                
-                key = f"{row[0]}_{row[1]}"
-
-                if key in data_dict:
-                    data = data_dict[key]   # 找出data的所有信息
-                    # 三視圖填入 data_np
-                    for k in range(3):
-                        data_np[i, 0, :, :, k] = data[3][k] # FC Image
-                        data_np[i, 1, :, :, k] = data[4][k] # EM Image
-                    # 其餘信息填入list
-                    FC_nrn_lst.append(data[0])
-                    EM_nrn_lst.append(data[1])
-                    score_lst.append(data[2])
-                    label_lst.append(row[2])
-            
-
-
-            # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
-            not_found_data = []
-            for i, data in enumerate(data_np):
-                if not(np.any(data)):
-                    not_found_data.append(i)
-            data_np = np.delete(data_np, not_found_data, axis=0)
-
-            if not_found_data:
-                print('Not Found in map_data: ')
-                for i in not_found_data:
-                    print(pair_nrn[i])
-
-
-            # Normalization : x' = x - min(x) / max(x) - min(x)
-            data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
-
-            pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
-
-            return data_np, pair_df
-
-    data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
-    data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
-
-
-    # data_np_test, nrn_pair_test = data_preprocess_folder('./data/all_pkl', test_pair_nrn)
-    # data_np_train, nrn_pair_train = data_preprocess_folder('./data/all_pkl', train_pair_nrn)
-
-
-
-else:
-    resolutions = (3, 75, 75)
+elif use_map_from == 'yf':
 
     def data_preprocess(file_path, pair_nrn):
 
         print('\nCollecting 3-View Data Numpy Array..')
-
-        data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
-        FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
-
-
         # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
         file_list = [file_name for file_name in os.listdir(file_path) if file_name.endswith('.pkl')]
 
@@ -231,8 +164,14 @@ else:
                 key = f"{data[0]}_{data[1]}"
                 data_dict[key] = data
 
+        resolutions = data[3].shape
+        print('\n Resolutions:', resolutions)
+
+        data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
+        fc_nrn_lst, em_nrn_lst, score_lst, label_lst = [], [], [], []
+
         # 依訓練名單從已有三視圖名單中查找是否存在
-        for i, row in tqdm(enumerate(pair_nrn), total=len(pair_nrn)):
+        for i, row in enumerate(pair_nrn):
             
             key = f"{row[0]}_{row[1]}"
 
@@ -243,8 +182,8 @@ else:
                     data_np[i, 0, :, :, k] = data[3][k] # FC Image
                     data_np[i, 1, :, :, k] = data[4][k] # EM Image
                 # 其餘信息填入list
-                FC_nrn_lst.append(data[0])
-                EM_nrn_lst.append(data[1])
+                fc_nrn_lst.append(data[0])
+                em_nrn_lst.append(data[1])
                 score_lst.append(data[2])
                 label_lst.append(row[2])
         
@@ -257,27 +196,30 @@ else:
                 not_found_data.append(i)
         data_np = np.delete(data_np, not_found_data, axis=0)
 
+        not_found_df = []
         if not_found_data:
-            print('Not Found in map_data: ')
+            print('How many pairs Not Found in map_data: ')
             for i in not_found_data:
-                print(pair_nrn[i])
+                not_found_df.append(pair_nrn[i])
+            print(len(not_found_df))
+            not_found_df = pd.DataFrame(not_found_df, columns=['fc_id', 'em_id', 'label'])
+
 
 
         # Normalization : x' = x - min(x) / max(x) - min(x)
         data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
 
-        pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+        pair_df = pd.DataFrame({'fc_id':fc_nrn_lst, 'em_id':em_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
 
-        return data_np, pair_df
-
-
-    data_np_test, nrn_pair_test = data_preprocess(grid75_path, test_pair_nrn)
-    data_np_train, nrn_pair_train = data_preprocess(grid75_path, train_pair_nrn)
+        return data_np, pair_df, not_found_df
 
 
+    data_np_test, nrn_pair_test, test_not_found = data_preprocess(map_dict_folder, test_pair_nrn)
+    data_np_train, nrn_pair_train, train_not_found = data_preprocess(map_dict_folder, train_pair_nrn)
 
 
-# Train Validation Split
+
+# %% Train Validation Split
 data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.1, random_state=seed)
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
@@ -287,6 +229,51 @@ X_val = data_np_valid
 X_test = data_np_test
 y_val = np.array(nrn_pair_valid['label'],dtype=np.int32)
 y_test = np.array(nrn_pair_test['label'],dtype=np.int32)
+
+
+
+
+# %% 画图预览 map data
+def imshow_pred_pair(predict_pair_df, pred_data_np):
+
+    # 检查保存路径文件夹是否存在
+    if not os.path.exists('./Figure/predict_3view/label_1'):
+        os.makedirs('./Figure/predict_3view/label_1')
+    
+    if not os.path.exists('./Figure/predict_3view/label_0'):
+        os.makedirs('./Figure/predict_3view/label_0')
+
+    for p in range(len(predict_pair_df)):
+        fc_img = pred_data_np[p,0,:]
+        em_img = pred_data_np[p,1,:]
+
+        fc_id = predict_pair_df.iloc[p]['fc_id']
+        em_id = predict_pair_df.iloc[p]['em_id']
+        label = predict_pair_df.iloc[p]['label']
+
+        plt.figure(figsize=(9,6))
+        for i in range(3):
+            plt.subplot(2,3,i+1)
+            plt.imshow(fc_img[:,:,i], cmap='magma')
+            plt.xticks([])
+            plt.yticks([])      # 隱藏刻度線
+            plt.subplot(2,3,i+4)
+            plt.imshow(em_img[:,:,i], cmap='magma')
+            plt.xticks([])
+            plt.yticks([])      # 隱藏刻度線
+
+        plt.suptitle(f'{fc_id}_{em_id}     Label={label}')
+
+        if label == 1:
+            plt.savefig(f'./Figure/predict_3view/label_1/{fc_id}_{em_id}.png', dpi=150, bbox_inches='tight')
+        elif label == 0:
+            plt.savefig(f'./Figure/predict_3view/label_0/{fc_id}_{em_id}.png', dpi=150, bbox_inches='tight')
+        plt.close('all')
+
+# imshow_pred_pair(nrn_pair_train, data_np_train)
+# imshow_pred_pair(nrn_pair_test, data_np_test)
+
+
 
 # %% Data Augmentation: cross expand(Truned off)
 
@@ -434,32 +421,32 @@ class_weights = {0:weight[0]*100, 1:weight[1]}
 print('Balanced Weight in: \n', np.unique(y_train),'\n', weight)
 
 
-if add_low_score and pos >= neg:
-    X_train_add = np.zeros((low_score_neg_rate*(pos-neg), X_train.shape[1], X_train.shape[2], X_train.shape[3], X_train.shape[4]))   # 製作需要增加的x_train 量
-    y_train_add = np.zeros(X_train_add.shape[0], dtype=np.int64)
+# if add_low_score and pos >= neg:
+#     X_train_add = np.zeros((low_score_neg_rate*(pos-neg), X_train.shape[1], X_train.shape[2], X_train.shape[3], X_train.shape[4]))   # 製作需要增加的x_train 量
+#     y_train_add = np.zeros(X_train_add.shape[0], dtype=np.int64)
     
-    nrn_pair_test_np = nrn_pair_test[['fc_id','em_id']].to_numpy()    # 以np格式獲取test中pair的神經名稱
+#     nrn_pair_test_np = nrn_pair_test[['fc_id','em_id']].to_numpy()    # 以np格式獲取test中pair的神經名稱
     
-    k=0
-    for i in range(X_train_add.shape[0]):
-        for j in range(k, len(map_data)):
-            in_test = 0 # 檢查擴增的資料組是否出現在test中
-            for row in range(nrn_pair_test_np.shape[0]):
-                if str(map_data[j][0]) == str(nrn_pair_test_np[row,0]) and str(map_data[j][1]) == str(nrn_pair_test_np[row,1]):
-                    in_test = 1
-                    break
+#     k=0
+#     for i in range(X_train_add.shape[0]):
+#         for j in range(k, len(map_data)):
+#             in_test = 0 # 檢查擴增的資料組是否出現在test中
+#             for row in range(nrn_pair_test_np.shape[0]):
+#                 if str(map_data[j][0]) == str(nrn_pair_test_np[row,0]) and str(map_data[j][1]) == str(nrn_pair_test_np[row,1]):
+#                     in_test = 1
+#                     break
             
-            if in_test == 0 and map_data[j][2] < 0.4:
+#             if in_test == 0 and map_data[j][2] < 0.4:
 
-                for n in range(3):
-                    X_train_add[i, 0, :, :, n] = map_data[j][3][n] # FC Image
-                    X_train_add[i, 1, :, :, n] = map_data[j][4][n] # EM Image
+#                 for n in range(3):
+#                     X_train_add[i, 0, :, :, n] = map_data[j][3][n] # FC Image
+#                     X_train_add[i, 1, :, :, n] = map_data[j][4][n] # EM Image
 
-                k=j+1
-                break
+#                 k=j+1
+#                 break
 
-    X_train = np.vstack((X_train, X_train_add))
-    y_train = np.hstack((y_train, y_train_add))
+#     X_train = np.vstack((X_train, X_train_add))
+#     y_train = np.hstack((y_train, y_train_add))
 
 
 
@@ -650,10 +637,12 @@ print('y_test shape:', len(y_test))
 from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
 # from tensorflow.keras.utils import plot_model
 
+resolutions = X_train_FC.shape[1:]
+
 # cnn = CNN_L2shared((resolutions[1],resolutions[2],3))
 # cnn = CNN_best((resolutions[1],resolutions[2],3))
 # cnn = CNN_deep((resolutions[1],resolutions[2],3))
-cnn = CNN_shared((resolutions[1],resolutions[2],3))
+cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
 if not scheduler_exp:
@@ -705,11 +694,11 @@ Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM},
 
 
 
-# plt.plot(Annotator_history.history['loss'], label='loss')
-# plt.plot(Annotator_history.history['val_loss'], label='val_loss')
-# plt.legend()
+plt.plot(Annotator_history.history['loss'], label='loss')
+plt.plot(Annotator_history.history['val_loss'], label='val_loss')
+plt.legend()
 # plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
-# plt.show()
+plt.show()
 # plt.close('all')
 
 # cnn_train_loss = history.history['loss']
@@ -775,62 +764,62 @@ print('\nSaved')
 
 
 # %% 对新数据集进行标注
-unlabel_path = './data/all_pkl'
+# unlabel_path = './data/all_pkl'
 
-# 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
-file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]
+# # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
+# file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]
 
-# 计算label
-model = load_model('./Annotator_Model/' + save_model_name + '.h5')
+# # 计算label
+# model = load_model('./Annotator_Model/' + save_model_name + '.h5')
 
-def annotator(model,fc_img, em_img):
-    # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
-    fc_img = np.transpose(fc_img, (1, 2, 0))
-    em_img = np.transpose(em_img, (1, 2, 0))
+# def annotator(model,fc_img, em_img):
+#     # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
+#     fc_img = np.transpose(fc_img, (1, 2, 0))
+#     em_img = np.transpose(em_img, (1, 2, 0))
 
-    # 将数据维度扩展至4维（符合CNN输入）
-    fc_img = np.expand_dims(fc_img, axis=0)
-    em_img = np.expand_dims(em_img, axis=0)
-    label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
+#     # 将数据维度扩展至4维（符合CNN输入）
+#     fc_img = np.expand_dims(fc_img, axis=0)
+#     em_img = np.expand_dims(em_img, axis=0)
+#     label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
 
-    label = label.flatten()[0]  #因為模型輸出是一個 numpy array
+#     label = label.flatten()[0]  #因為模型輸出是一個 numpy array
 
-    # binary label
-    if label > 0.5:
-        label_b = 1
-    else:
-        label_b = 0
-    return label, label_b
+#     # binary label
+#     if label > 0.5:
+#         label_b = 1
+#     else:
+#         label_b = 0
+#     return label, label_b
 
 
 
-# 初始化一个空lst，用于存储文件名和计算结果
-new_data_lst = []
+# # 初始化一个空lst，用于存储文件名和计算结果
+# new_data_lst = []
 
-print('\nLabeling..')
-# 遍历母文件夹下的所有条目
-for file_name in tqdm(file_list, total=len(file_list)):
-# for file_name in file_list:     # No tqdm version
+# print('\nLabeling..')
+# # 遍历母文件夹下的所有条目
+# for file_name in tqdm(file_list, total=len(file_list)):
+# # for file_name in file_list:     # No tqdm version
 
-    # 创建完整文件路径
-    file_path = os.path.join(unlabel_path, file_name)
+#     # 创建完整文件路径
+#     file_path = os.path.join(unlabel_path, file_name)
 
-    # 读取pkl文件
-    data_lst = load_pkl(file_path)
-    for data in data_lst:
-        # 计算结果
-        result, result_b = annotator(model, data[3], data[4])
+#     # 读取pkl文件
+#     data_lst = load_pkl(file_path)
+#     for data in data_lst:
+#         # 计算结果
+#         result, result_b = annotator(model, data[3], data[4])
 
-        # 将文件名和计算结果添加到DataFrame
-        new_data = {'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label_c': result, 'label': result_b}
+#         # 将文件名和计算结果添加到DataFrame
+#         new_data = {'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label_c': result, 'label': result_b}
 
-        new_data_lst.append(new_data)
+#         new_data_lst.append(new_data)
 
-label_df = pd.DataFrame(new_data_lst)
+# label_df = pd.DataFrame(new_data_lst)
 
-# 将DataFrame存储为csv文件
-label_df.to_csv('./result/label_df_with_'+save_model_name+'.csv', index=False)
-print('\nSaved')
-print('Program Completed.')
+# # 将DataFrame存储为csv文件
+# label_df.to_csv('./result/label_df_with_'+save_model_name+'.csv', index=False)
+# print('\nSaved')
+# print('Program Completed.')
 
 # %%

@@ -27,7 +27,7 @@ import random
 # 在 Mode 2 下, 輸出的分割數據集檔案編號採用特殊編號 98
 # 在 Mode 3 下, 輸出的分割數據集檔案編號採用特殊編號 99
 
-mode = 3
+mode = 2
 mode_csv_path = './data/D2+D5_nblast_test.csv'  #指定測試集檔案位置
 
 use_new_label = False        # 使用日期為01-13的label table, 這項標注中將人類信心50%的標注視為Negative

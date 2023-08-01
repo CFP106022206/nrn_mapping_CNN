@@ -24,14 +24,14 @@ normalization_of_sn = True  # 是否将2D地图中的Strahler number归一化到
 normalization_of_moi = True  # 是否将惯性矩的特征值归一化到其最大值
 
 # Step 3 Match pairs of neurons
-weighting_keys_m = ["unit"]  # 定义神经元配对的权重关键词
+weighting_keys_m = ["unit", "sn", "rsn"]  # 定义神经元配对的权重关键词
 coordinate_selection = "target-orientation"  # 定义坐标选择方法
 target_list = ["FC"]
 candidate_list = ["EM"]
 threshold_of_exchange = 0.0  # 定义考虑交换主轴的阈值
-threshold_of_nI = 0.4  # 定义通过惯性矩的阈值来选择神经元配对
-threshold_in = np.cos(np.pi*50/180)  # 定义内积的阈值
-threshold_of_distance = 100  # 定义EM数据和FC数据之间的距离阈值
+threshold_of_nI = 400  # 定义通过惯性矩的阈值来选择神经元配对
+threshold_in = np.cos(np.pi*90/180)  # 定义内积的阈值
+threshold_of_distance = 10000  # 定义EM数据和FC数据之间的距离阈值
 
 # Step 4 Score and rank the selected pairs
 cluster = False  # 是否简化Strahler number

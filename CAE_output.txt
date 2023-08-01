@@ -1,0 +1,952 @@
+2023-06-28 07:27:36.119941: I tensorflow/core/util/util.cc:169] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2023-06-28 07:29:21.109002: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:975] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-28 07:29:21.373717: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:975] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-28 07:29:21.373866: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:975] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-28 07:29:21.386159: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX_VNNI FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-06-28 07:29:21.390086: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:975] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-28 07:29:21.390169: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:975] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-28 07:29:21.390214: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:975] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-28 07:29:23.332883: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:975] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-28 07:29:23.332986: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:975] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-28 07:29:23.333036: I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:975] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+2023-06-28 07:29:23.333157: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1532] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 22119 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 4090, pci bus id: 0000:01:00.0, compute capability: 8.9
+2023-06-28 07:29:32.197269: I tensorflow/stream_executor/cuda/cuda_dnn.cc:384] Loaded cuDNN version 8400
+2023-06-28 07:29:36.282947: W tensorflow/stream_executor/gpu/asm_compiler.cc:230] Falling back to the CUDA driver for PTX compilation; ptxas does not support CC 8.9
+2023-06-28 07:29:36.283021: W tensorflow/stream_executor/gpu/asm_compiler.cc:233] Used ptxas at ptxas
+2023-06-28 07:29:36.287000: W tensorflow/stream_executor/gpu/redzone_allocator.cc:314] UNIMPLEMENTED: ptxas ptxas too old. Falling back to the driver to compile.
+Relying on driver to perform ptx compilation. 
+Modify $PATH to customize ptxas location.
+This message will be only logged once.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+
+Collecting 3-View Data Numpy Array..
+Data shape for model input
+FC after aug (50000, 48, 48, 3)
+Training FC CAE...
+Start of epoch 1
+loss at epoch=  0 : 0.009073136
+va_loss at epoch=  0 : 0.007815041
+Start of epoch 2
+loss at epoch=  1 : 0.0071976143
+va_loss at epoch=  1 : 0.0070968154
+Start of epoch 3
+loss at epoch=  2 : 0.0064839465
+va_loss at epoch=  2 : 0.0066567836
+Start of epoch 4
+loss at epoch=  3 : 0.0064392225
+va_loss at epoch=  3 : 0.0062783044
+Start of epoch 5
+loss at epoch=  4 : 0.005961326
+va_loss at epoch=  4 : 0.0059396285
+Start of epoch 6
+loss at epoch=  5 : 0.0057858787
+va_loss at epoch=  5 : 0.0058588847
+Start of epoch 7
+loss at epoch=  6 : 0.0058169677
+va_loss at epoch=  6 : 0.005666799
+Start of epoch 8
+loss at epoch=  7 : 0.0055930866
+va_loss at epoch=  7 : 0.005619863
+Start of epoch 9
+loss at epoch=  8 : 0.0053121196
+va_loss at epoch=  8 : 0.005460615
+Start of epoch 10
+loss at epoch=  9 : 0.0055294377
+va_loss at epoch=  9 : 0.0053360686
+Start of epoch 11
+loss at epoch=  10 : 0.0052171554
+va_loss at epoch=  10 : 0.005392947
+Start of epoch 12
+loss at epoch=  11 : 0.0052356687
+va_loss at epoch=  11 : 0.005413401
+Start of epoch 13
+loss at epoch=  12 : 0.005181445
+va_loss at epoch=  12 : 0.005294941
+Start of epoch 14
+loss at epoch=  13 : 0.004995453
+va_loss at epoch=  13 : 0.005159736
+Start of epoch 15
+loss at epoch=  14 : 0.004976143
+va_loss at epoch=  14 : 0.0049787536
+Start of epoch 16
+loss at epoch=  15 : 0.005009505
+va_loss at epoch=  15 : 0.0051407074
+Start of epoch 17
+loss at epoch=  16 : 0.00488369
+va_loss at epoch=  16 : 0.004954856
+Start of epoch 18
+loss at epoch=  17 : 0.0050049787
+va_loss at epoch=  17 : 0.00499683
+Start of epoch 19
+loss at epoch=  18 : 0.004922401
+va_loss at epoch=  18 : 0.0048088375
+Start of epoch 20
+loss at epoch=  19 : 0.004816583
+va_loss at epoch=  19 : 0.0047984854
+Start of epoch 21
+loss at epoch=  20 : 0.0047204695
+va_loss at epoch=  20 : 0.0051626367
+Start of epoch 22
+loss at epoch=  21 : 0.0046747644
+va_loss at epoch=  21 : 0.0046566525
+Start of epoch 23
+loss at epoch=  22 : 0.0047822455
+va_loss at epoch=  22 : 0.0046746694
+Start of epoch 24
+loss at epoch=  23 : 0.00461958
+va_loss at epoch=  23 : 0.004584196
+Start of epoch 25
+loss at epoch=  24 : 0.004495718
+va_loss at epoch=  24 : 0.0046125543
+Start of epoch 26
+loss at epoch=  25 : 0.00452152
+va_loss at epoch=  25 : 0.004551698
+Start of epoch 27
+loss at epoch=  26 : 0.0045768255
+va_loss at epoch=  26 : 0.0045395656
+Start of epoch 28
+loss at epoch=  27 : 0.00455748
+va_loss at epoch=  27 : 0.0046289116
+Start of epoch 29
+loss at epoch=  28 : 0.0044164127
+va_loss at epoch=  28 : 0.0044855583
+Start of epoch 30
+loss at epoch=  29 : 0.0043583005
+va_loss at epoch=  29 : 0.0044356375
+Start of epoch 31
+loss at epoch=  30 : 0.0043407744
+va_loss at epoch=  30 : 0.0044063325
+Start of epoch 32
+loss at epoch=  31 : 0.0043687187
+va_loss at epoch=  31 : 0.0046390523
+Start of epoch 33
+loss at epoch=  32 : 0.004493453
+va_loss at epoch=  32 : 0.004396048
+Start of epoch 34
+loss at epoch=  33 : 0.004417268
+va_loss at epoch=  33 : 0.0043044793
+Start of epoch 35
+loss at epoch=  34 : 0.004346713
+va_loss at epoch=  34 : 0.004350593
+Start of epoch 36
+loss at epoch=  35 : 0.0042620455
+va_loss at epoch=  35 : 0.0043067457
+Start of epoch 37
+loss at epoch=  36 : 0.0041500474
+va_loss at epoch=  36 : 0.004329587
+Start of epoch 38
+loss at epoch=  37 : 0.0042315884
+va_loss at epoch=  37 : 0.0042882487
+Start of epoch 39
+loss at epoch=  38 : 0.004244066
+va_loss at epoch=  38 : 0.0041710846
+Start of epoch 40
+loss at epoch=  39 : 0.0039770855
+va_loss at epoch=  39 : 0.004278723
+Start of epoch 41
+loss at epoch=  40 : 0.004157454
+va_loss at epoch=  40 : 0.0041667107
+Start of epoch 42
+loss at epoch=  41 : 0.004285763
+va_loss at epoch=  41 : 0.0042659747
+Start of epoch 43
+loss at epoch=  42 : 0.0042734663
+va_loss at epoch=  42 : 0.0041854484
+Start of epoch 44
+loss at epoch=  43 : 0.004057905
+va_loss at epoch=  43 : 0.0040587652
+Start of epoch 45
+loss at epoch=  44 : 0.004129694
+va_loss at epoch=  44 : 0.0041470225
+Start of epoch 46
+loss at epoch=  45 : 0.004036826
+va_loss at epoch=  45 : 0.004146782
+Start of epoch 47
+loss at epoch=  46 : 0.004151315
+va_loss at epoch=  46 : 0.0040280395
+Start of epoch 48
+loss at epoch=  47 : 0.0040499675
+va_loss at epoch=  47 : 0.0040868316
+Start of epoch 49
+loss at epoch=  48 : 0.003878369
+va_loss at epoch=  48 : 0.003987213
+Start of epoch 50
+loss at epoch=  49 : 0.0039458117
+va_loss at epoch=  49 : 0.0039974484
+Start of epoch 51
+loss at epoch=  50 : 0.0039432477
+va_loss at epoch=  50 : 0.0040753023
+Start of epoch 52
+loss at epoch=  51 : 0.0040041236
+va_loss at epoch=  51 : 0.004004374
+Start of epoch 53
+loss at epoch=  52 : 0.003892801
+va_loss at epoch=  52 : 0.003953599
+Start of epoch 54
+loss at epoch=  53 : 0.00387258
+va_loss at epoch=  53 : 0.0040132757
+Start of epoch 55
+loss at epoch=  54 : 0.003814662
+va_loss at epoch=  54 : 0.0038511893
+Start of epoch 56
+loss at epoch=  55 : 0.003927676
+va_loss at epoch=  55 : 0.0039035373
+Start of epoch 57
+loss at epoch=  56 : 0.0039812136
+va_loss at epoch=  56 : 0.003893419
+Start of epoch 58
+loss at epoch=  57 : 0.0039840555
+va_loss at epoch=  57 : 0.003877683
+Start of epoch 59
+loss at epoch=  58 : 0.0039056651
+va_loss at epoch=  58 : 0.0038459743
+Start of epoch 60
+loss at epoch=  59 : 0.003824854
+va_loss at epoch=  59 : 0.0038909991
+Start of epoch 61
+loss at epoch=  60 : 0.0038403904
+va_loss at epoch=  60 : 0.0038091817
+Start of epoch 62
+loss at epoch=  61 : 0.0037706026
+va_loss at epoch=  61 : 0.0037875746
+Start of epoch 63
+loss at epoch=  62 : 0.0037969043
+va_loss at epoch=  62 : 0.0037797717
+Start of epoch 64
+loss at epoch=  63 : 0.0037340063
+va_loss at epoch=  63 : 0.0038437163
+Start of epoch 65
+loss at epoch=  64 : 0.0038103906
+va_loss at epoch=  64 : 0.0037693495
+Start of epoch 66
+loss at epoch=  65 : 0.0037640196
+va_loss at epoch=  65 : 0.0037764946
+Start of epoch 67
+loss at epoch=  66 : 0.0036939606
+va_loss at epoch=  66 : 0.0038005193
+Start of epoch 68
+loss at epoch=  67 : 0.0037786332
+va_loss at epoch=  67 : 0.0037511506
+Start of epoch 69
+loss at epoch=  68 : 0.0037011027
+va_loss at epoch=  68 : 0.00372023
+Start of epoch 70
+loss at epoch=  69 : 0.0036862053
+va_loss at epoch=  69 : 0.003781205
+Start of epoch 71
+loss at epoch=  70 : 0.0038276636
+va_loss at epoch=  70 : 0.0036733635
+Start of epoch 72
+loss at epoch=  71 : 0.0037127484
+va_loss at epoch=  71 : 0.00375273
+Start of epoch 73
+loss at epoch=  72 : 0.003628199
+va_loss at epoch=  72 : 0.0036857866
+Start of epoch 74
+loss at epoch=  73 : 0.0036821654
+va_loss at epoch=  73 : 0.003650401
+Start of epoch 75
+loss at epoch=  74 : 0.0037279238
+va_loss at epoch=  74 : 0.0037828684
+Start of epoch 76
+loss at epoch=  75 : 0.003711526
+va_loss at epoch=  75 : 0.0036493146
+Start of epoch 77
+loss at epoch=  76 : 0.0036658254
+va_loss at epoch=  76 : 0.003660235
+Start of epoch 78
+loss at epoch=  77 : 0.0035760363
+va_loss at epoch=  77 : 0.003741572
+Start of epoch 79
+loss at epoch=  78 : 0.0036049539
+va_loss at epoch=  78 : 0.0037125307
+Start of epoch 80
+loss at epoch=  79 : 0.0036081714
+va_loss at epoch=  79 : 0.0036127479
+Start of epoch 81
+loss at epoch=  80 : 0.003685286
+va_loss at epoch=  80 : 0.0036657387
+Start of epoch 82
+loss at epoch=  81 : 0.0035552636
+va_loss at epoch=  81 : 0.0035819013
+Start of epoch 83
+loss at epoch=  82 : 0.003702685
+va_loss at epoch=  82 : 0.0036046521
+Start of epoch 84
+loss at epoch=  83 : 0.003594251
+va_loss at epoch=  83 : 0.0036012225
+Start of epoch 85
+loss at epoch=  84 : 0.0035100929
+va_loss at epoch=  84 : 0.0035993175
+Start of epoch 86
+loss at epoch=  85 : 0.0036130503
+va_loss at epoch=  85 : 0.0036093576
+Start of epoch 87
+loss at epoch=  86 : 0.0036460694
+va_loss at epoch=  86 : 0.0036888616
+Start of epoch 88
+loss at epoch=  87 : 0.0036049034
+va_loss at epoch=  87 : 0.0036077795
+Start of epoch 89
+loss at epoch=  88 : 0.0035186443
+va_loss at epoch=  88 : 0.0035962309
+Start of epoch 90
+loss at epoch=  89 : 0.0036862702
+va_loss at epoch=  89 : 0.003601898
+Start of epoch 91
+loss at epoch=  90 : 0.0035132936
+va_loss at epoch=  90 : 0.003598376
+Start of epoch 92
+loss at epoch=  91 : 0.0035091015
+va_loss at epoch=  91 : WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+0.0034918266
+Start of epoch 93
+loss at epoch=  92 : 0.0034287812
+va_loss at epoch=  92 : 0.0034801012
+Start of epoch 94
+loss at epoch=  93 : 0.0035444568
+va_loss at epoch=  93 : 0.003635211
+Start of epoch 95
+loss at epoch=  94 : 0.0035069808
+va_loss at epoch=  94 : 0.0035599368
+Start of epoch 96
+loss at epoch=  95 : 0.0035236003
+va_loss at epoch=  95 : 0.0036175456
+Start of epoch 97
+loss at epoch=  96 : 0.0033591727
+va_loss at epoch=  96 : 0.003481008
+Start of epoch 98
+loss at epoch=  97 : 0.003546578
+va_loss at epoch=  97 : 0.0034840866
+Start of epoch 99
+loss at epoch=  98 : 0.0034827555
+va_loss at epoch=  98 : 0.0034611612
+Start of epoch 100
+loss at epoch=  99 : 0.0033846425
+va_loss at epoch=  99 : 0.0034954387
+Start of epoch 101
+loss at epoch=  100 : 0.003266164
+va_loss at epoch=  100 : 0.0035490713
+Start of epoch 102
+loss at epoch=  101 : 0.003527529
+va_loss at epoch=  101 : 0.0035123904
+Start of epoch 103
+loss at epoch=  102 : 0.0034308312
+va_loss at epoch=  102 : 0.003513615
+Start of epoch 104
+loss at epoch=  103 : 0.0033870651
+va_loss at epoch=  103 : 0.0033946387
+Start of epoch 105
+loss at epoch=  104 : 0.0033941558
+va_loss at epoch=  104 : 0.0034814654
+Start of epoch 106
+loss at epoch=  105 : 0.0034904492
+va_loss at epoch=  105 : 0.00344811
+Start of epoch 107
+loss at epoch=  106 : 0.0034694986
+va_loss at epoch=  106 : 0.0034528668
+Start of epoch 108
+loss at epoch=  107 : 0.0034231665
+va_loss at epoch=  107 : 0.0034281032
+Start of epoch 109
+loss at epoch=  108 : 0.003361417
+va_loss at epoch=  108 : 0.0034055985
+Start of epoch 110
+loss at epoch=  109 : 0.0034784502
+va_loss at epoch=  109 : 0.0034429498
+Start of epoch 111
+loss at epoch=  110 : 0.0034417438
+va_loss at epoch=  110 : 0.0033809755
+Start of epoch 112
+loss at epoch=  111 : 0.0033817084
+va_loss at epoch=  111 : 0.0034212826
+Start of epoch 113
+loss at epoch=  112 : 0.0033641283
+va_loss at epoch=  112 : 0.0033551648
+Start of epoch 114
+loss at epoch=  113 : 0.0033221787
+va_loss at epoch=  113 : 0.0034504174
+Start of epoch 115
+loss at epoch=  114 : 0.0033425249
+va_loss at epoch=  114 : 0.0033597697
+Start of epoch 116
+loss at epoch=  115 : 0.0032336889
+va_loss at epoch=  115 : 0.0033878703
+Start of epoch 117
+loss at epoch=  116 : 0.0032994254
+va_loss at epoch=  116 : 0.0033431614
+Start of epoch 118
+loss at epoch=  117 : 0.0033132406
+va_loss at epoch=  117 : 0.0032956765
+Start of epoch 119
+loss at epoch=  118 : 0.0033741167
+va_loss at epoch=  118 : 0.003477145
+Start of epoch 120
+loss at epoch=  119 : 0.003379161
+va_loss at epoch=  119 : 0.0033821308
+Start of epoch 121
+loss at epoch=  120 : 0.0033099323
+va_loss at epoch=  120 : 0.0033416313
+Start of epoch 122
+loss at epoch=  121 : 0.0033959232
+va_loss at epoch=  121 : 0.0033504292
+Start of epoch 123
+loss at epoch=  122 : 0.0033020168
+va_loss at epoch=  122 : 0.003328921
+Start of epoch 124
+loss at epoch=  123 : 0.003380587
+va_loss at epoch=  123 : 0.0035042688
+Start of epoch 125
+loss at epoch=  124 : 0.0034429266
+va_loss at epoch=  124 : 0.0034478651
+Start of epoch 126
+loss at epoch=  125 : 0.003240001
+va_loss at epoch=  125 : 0.003362693
+Start of epoch 127
+loss at epoch=  126 : 0.0033746632
+va_loss at epoch=  126 : 0.0033187831
+Start of epoch 128
+loss at epoch=  127 : 0.003409388
+va_loss at epoch=  127 : 0.0033066855
+Start of epoch 129
+loss at epoch=  128 : 0.0032563857
+va_loss at epoch=  128 : 0.0033123319
+Start of epoch 130
+loss at epoch=  129 : 0.0033227107
+va_loss at epoch=  129 : 0.0033139617
+Start of epoch 131
+loss at epoch=  130 : 0.0033949597
+va_loss at epoch=  130 : 0.003285609
+Start of epoch 132
+loss at epoch=  131 : 0.0032535368
+va_loss at epoch=  131 : 0.0032927217
+Start of epoch 133
+loss at epoch=  132 : 0.0033360817
+va_loss at epoch=  132 : 0.0033394315
+Start of epoch 134
+loss at epoch=  133 : 0.0031856496
+va_loss at epoch=  133 : 0.0033118075
+Start of epoch 135
+loss at epoch=  134 : 0.0032045941
+va_loss at epoch=  134 : 0.0035014658
+Start of epoch 136
+loss at epoch=  135 : 0.0033399586
+va_loss at epoch=  135 : 0.003263462
+Start of epoch 137
+loss at epoch=  136 : 0.0033753498
+va_loss at epoch=  136 : 0.0032664489
+Start of epoch 138
+loss at epoch=  137 : 0.003193384
+va_loss at epoch=  137 : 0.003283557
+Start of epoch 139
+loss at epoch=  138 : 0.0032534178
+va_loss at epoch=  138 : 0.0032085497
+Start of epoch 140
+loss at epoch=  139 : 0.003227084
+va_loss at epoch=  139 : 0.0032741288
+Start of epoch 141
+loss at epoch=  140 : 0.0032629143
+va_loss at epoch=  140 : 0.0032420477
+Start of epoch 142
+loss at epoch=  141 : 0.0033555604
+va_loss at epoch=  141 : 0.003315057
+Start of epoch 143
+loss at epoch=  142 : 0.0032629382
+va_loss at epoch=  142 : 0.0031959615
+Start of epoch 144
+loss at epoch=  143 : 0.003191549
+va_loss at epoch=  143 : 0.0032190853
+Start of epoch 145
+loss at epoch=  144 : 0.0031791548
+va_loss at epoch=  144 : 0.0032779537
+Start of epoch 146
+loss at epoch=  145 : 0.0032265424
+va_loss at epoch=  145 : 0.0031812477
+Start of epoch 147
+loss at epoch=  146 : 0.003244737
+va_loss at epoch=  146 : 0.003189794
+Start of epoch 148
+loss at epoch=  147 : 0.0031845765
+va_loss at epoch=  147 : 0.003225465
+Start of epoch 149
+loss at epoch=  148 : 0.0033118234
+va_loss at epoch=  148 : 0.0033242896
+Start of epoch 150
+loss at epoch=  149 : 0.003168787
+va_loss at epoch=  149 : 0.0031887793
+Start of epoch 151
+loss at epoch=  150 : 0.003212105
+va_loss at epoch=  150 : 0.0032223647
+Start of epoch 152
+loss at epoch=  151 : 0.0031742312
+va_loss at epoch=  151 : 0.0032335918
+Start of epoch 153
+loss at epoch=  152 : 0.0032263445
+va_loss at epoch=  152 : 0.0032432466
+Start of epoch 154
+loss at epoch=  153 : 0.0032588053
+va_loss at epoch=  153 : 0.0032152692
+Start of epoch 155
+loss at epoch=  154 : 0.0031279628
+va_loss at epoch=  154 : 0.0031958548
+Start of epoch 156
+loss at epoch=  155 : 0.0031355706
+va_loss at epoch=  155 : 0.00314979
+Start of epoch 157
+loss at epoch=  156 : 0.0031707103
+va_loss at epoch=  156 : 0.0031759753
+Start of epoch 158
+loss at epoch=  157 : 0.0032193838
+va_loss at epoch=  157 : 0.0031838582
+Start of epoch 159
+loss at epoch=  158 : 0.0031875996
+va_loss at epoch=  158 : 0.0031439834
+Start of epoch 160
+loss at epoch=  159 : 0.0031815483
+va_loss at epoch=  159 : 0.0032168357
+Start of epoch 161
+loss at epoch=  160 : 0.00313808
+va_loss at epoch=  160 : 0.0031276215
+Start of epoch 162
+loss at epoch=  161 : 0.0031749147
+va_loss at epoch=  161 : 0.0031996942
+Start of epoch 163
+loss at epoch=  162 : 0.0032269482
+va_loss at epoch=  162 : 0.003121644
+Start of epoch 164
+loss at epoch=  163 : 0.003074785
+va_loss at epoch=  163 : 0.0031488666
+Start of epoch 165
+loss at epoch=  164 : 0.0032002542
+va_loss at epoch=  164 : 0.0031500496
+Start of epoch 166
+loss at epoch=  165 : 0.0031118991
+va_loss at epoch=  165 : 0.0031233556
+Start of epoch 167
+loss at epoch=  166 : 0.0030755545
+va_loss at epoch=  166 : 0.0031266867
+Start of epoch 168
+loss at epoch=  167 : 0.0031280604
+va_loss at epoch=  167 : 0.0031340383
+Start of epoch 169
+loss at epoch=  168 : 0.0030366064
+va_loss at epoch=  168 : 0.0030982643
+Start of epoch 170
+loss at epoch=  169 : 0.0031398563
+va_loss at epoch=  169 : 0.0031210037
+Start of epoch 171
+loss at epoch=  170 : 0.0031266115
+va_loss at epoch=  170 : 0.0031066574
+Start of epoch 172
+loss at epoch=  171 : 0.003097639
+va_loss at epoch=  171 : 0.0031172128
+Start of epoch 173
+loss at epoch=  172 : 0.003036415
+va_loss at epoch=  172 : 0.0030935213
+Start of epoch 174
+loss at epoch=  173 : 0.003073866
+va_loss at epoch=  173 : 0.003111516
+Start of epoch 175
+loss at epoch=  174 : 0.0030254982
+va_loss at epoch=  174 : 0.0031102353
+Start of epoch 176
+loss at epoch=  175 : 0.0031745574
+va_loss at epoch=  175 : 0.003164657
+Start of epoch 177
+loss at epoch=  176 : 0.0030237702
+va_loss at epoch=  176 : 0.003081712
+Start of epoch 178
+loss at epoch=  177 : 0.0031550035
+va_loss at epoch=  177 : 0.0031051512
+Start of epoch 179
+loss at epoch=  178 : 0.0030906743
+va_loss at epoch=  178 : 0.0031841274
+Start of epoch 180
+loss at epoch=  179 : 0.0030154923
+va_loss at epoch=  179 : 0.0031002103
+Start of epoch 181
+loss at epoch=  180 : 0.0032203896
+va_loss at epoch=  180 : 0.003100198
+Start of epoch 182
+loss at epoch=  181 : 0.0031696989
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+va_loss at epoch=  181 : 0.0031771434
+Start of epoch 183
+loss at epoch=  182 : 0.0030432683
+va_loss at epoch=  182 : 0.0030656394
+Start of epoch 184
+loss at epoch=  183 : 0.003128783
+va_loss at epoch=  183 : 0.0031019384
+Start of epoch 185
+loss at epoch=  184 : 0.003086487
+va_loss at epoch=  184 : 0.0031072663
+Start of epoch 186
+loss at epoch=  185 : 0.002986444
+va_loss at epoch=  185 : 0.0031143364
+Start of epoch 187
+loss at epoch=  186 : 0.0030400702
+va_loss at epoch=  186 : 0.0031064076
+Start of epoch 188
+loss at epoch=  187 : 0.0030689447
+va_loss at epoch=  187 : 0.0031073103
+Start of epoch 189
+loss at epoch=  188 : 0.0030761918
+va_loss at epoch=  188 : 0.003232732
+Start of epoch 190
+loss at epoch=  189 : 0.0030432711
+va_loss at epoch=  189 : 0.0030995624
+Start of epoch 191
+loss at epoch=  190 : 0.0030472798
+va_loss at epoch=  190 : 0.0030518908
+Start of epoch 192
+loss at epoch=  191 : 0.0030226146
+va_loss at epoch=  191 : 0.0030293432
+Start of epoch 193
+loss at epoch=  192 : 0.0030512665
+va_loss at epoch=  192 : 0.0030439137
+Start of epoch 194
+loss at epoch=  193 : 0.003062485
+va_loss at epoch=  193 : 0.0030690709
+Start of epoch 195
+loss at epoch=  194 : 0.0030511334
+va_loss at epoch=  194 : 0.003123289
+Start of epoch 196
+loss at epoch=  195 : 0.003011383
+va_loss at epoch=  195 : 0.0030348352
+Start of epoch 197
+loss at epoch=  196 : 0.002970649
+va_loss at epoch=  196 : 0.0030259546
+Start of epoch 198
+loss at epoch=  197 : 0.0029490408
+va_loss at epoch=  197 : 0.00305821
+Start of epoch 199
+loss at epoch=  198 : 0.0030096278
+va_loss at epoch=  198 : 0.0030495808
+Start of epoch 200
+loss at epoch=  199 : 0.0029529775
+va_loss at epoch=  199 : 0.0030608438
+Start of epoch 201
+loss at epoch=  200 : 0.0030205338
+va_loss at epoch=  200 : 0.0030253835
+Start of epoch 202
+loss at epoch=  201 : 0.0029261813
+va_loss at epoch=  201 : 0.0030496228
+Start of epoch 203
+loss at epoch=  202 : 0.0029381316
+va_loss at epoch=  202 : 0.0030481573
+Start of epoch 204
+loss at epoch=  203 : 0.0030027183
+va_loss at epoch=  203 : 0.0030978683
+Start of epoch 205
+loss at epoch=  204 : 0.0030517126
+va_loss at epoch=  204 : 0.0029726608
+Start of epoch 206
+loss at epoch=  205 : 0.0029577056
+va_loss at epoch=  205 : 0.002992656
+Start of epoch 207
+loss at epoch=  206 : 0.0029481964
+va_loss at epoch=  206 : 0.003012359
+Start of epoch 208
+loss at epoch=  207 : 0.0029874942
+va_loss at epoch=  207 : 0.0030403503
+Start of epoch 209
+loss at epoch=  208 : 0.0030390923
+va_loss at epoch=  208 : 0.003025177
+Start of epoch 210
+loss at epoch=  209 : 0.0029766164
+va_loss at epoch=  209 : 0.0030375514
+Start of epoch 211
+loss at epoch=  210 : 0.0029725907
+va_loss at epoch=  210 : 0.0030211245
+Start of epoch 212
+loss at epoch=  211 : 0.0029728843
+va_loss at epoch=  211 : 0.0030309202
+Start of epoch 213
+loss at epoch=  212 : 0.0030510053
+va_loss at epoch=  212 : 0.0030317851
+Start of epoch 214
+loss at epoch=  213 : 0.0029798313
+va_loss at epoch=  213 : 0.002970607
+Start of epoch 215
+loss at epoch=  214 : 0.0029515908
+va_loss at epoch=  214 : 0.003021508
+Start of epoch 216
+loss at epoch=  215 : 0.0029957874
+va_loss at epoch=  215 : 0.0030080532
+Start of epoch 217
+loss at epoch=  216 : 0.0029088103
+va_loss at epoch=  216 : 0.0030011549
+Start of epoch 218
+loss at epoch=  217 : 0.003024011
+va_loss at epoch=  217 : 0.00299772
+Start of epoch 219
+loss at epoch=  218 : 0.0029835976
+va_loss at epoch=  218 : 0.0029970224
+Start of epoch 220
+loss at epoch=  219 : 0.0029843254
+va_loss at epoch=  219 : 0.0029725274
+Start of epoch 221
+loss at epoch=  220 : 0.0028936693
+va_loss at epoch=  220 : 0.0030043598
+Start of epoch 222
+loss at epoch=  221 : 0.002979345
+va_loss at epoch=  221 : 0.003001649
+Start of epoch 223
+loss at epoch=  222 : 0.00288306
+va_loss at epoch=  222 : 0.002959341
+Start of epoch 224
+loss at epoch=  223 : 0.0029063371
+va_loss at epoch=  223 : 0.0030265583
+Start of epoch 225
+loss at epoch=  224 : 0.0029499049
+va_loss at epoch=  224 : 0.0029519484
+Start of epoch 226
+loss at epoch=  225 : 0.0029286228
+va_loss at epoch=  225 : 0.0030101808
+Start of epoch 227
+loss at epoch=  226 : 0.0029711814
+va_loss at epoch=  226 : 0.002996376
+Start of epoch 228
+loss at epoch=  227 : 0.0029124848
+va_loss at epoch=  227 : 0.0029524835
+Start of epoch 229
+loss at epoch=  228 : 0.0029616985
+va_loss at epoch=  228 : 0.002945701
+Start of epoch 230
+loss at epoch=  229 : 0.0028907838
+va_loss at epoch=  229 : 0.0029422794
+Start of epoch 231
+loss at epoch=  230 : 0.0028928265
+va_loss at epoch=  230 : 0.0029688957
+Start of epoch 232
+loss at epoch=  231 : 0.002863401
+va_loss at epoch=  231 : 0.0029314058
+Start of epoch 233
+loss at epoch=  232 : 0.003060756
+va_loss at epoch=  232 : 0.002960393
+Start of epoch 234
+loss at epoch=  233 : 0.0029698657
+va_loss at epoch=  233 : 0.0029272044
+Start of epoch 235
+loss at epoch=  234 : 0.0029101528
+va_loss at epoch=  234 : 0.0028860928
+Start of epoch 236
+loss at epoch=  235 : 0.0029115654
+va_loss at epoch=  235 : 0.0029598034
+Start of epoch 237
+loss at epoch=  236 : 0.0029512227
+va_loss at epoch=  236 : 0.0029358435
+Start of epoch 238
+loss at epoch=  237 : 0.0028595645
+va_loss at epoch=  237 : 0.0029353534
+Start of epoch 239
+loss at epoch=  238 : 0.0028517046
+va_loss at epoch=  238 : 0.0029979788
+Start of epoch 240
+loss at epoch=  239 : 0.0029018288
+va_loss at epoch=  239 : 0.0029404925
+Start of epoch 241
+loss at epoch=  240 : 0.0029110524
+va_loss at epoch=  240 : 0.0029195761
+Start of epoch 242
+loss at epoch=  241 : 0.002938304
+va_loss at epoch=  241 : 0.0029390953
+Start of epoch 243
+loss at epoch=  242 : 0.0029068193
+va_loss at epoch=  242 : 0.0029534274
+Start of epoch 244
+loss at epoch=  243 : 0.002900614
+va_loss at epoch=  243 : 0.0028973033
+Start of epoch 245
+loss at epoch=  244 : 0.002910567
+va_loss at epoch=  244 : 0.0029350147
+Start of epoch 246
+loss at epoch=  245 : 0.002802024
+va_loss at epoch=  245 : 0.0029204886
+Start of epoch 247
+loss at epoch=  246 : 0.002859018
+va_loss at epoch=  246 : 0.003038656
+Start of epoch 248
+loss at epoch=  247 : 0.002901434
+va_loss at epoch=  247 : 0.0029769228
+Start of epoch 249
+loss at epoch=  248 : 0.0028720128
+va_loss at epoch=  248 : 0.0028857228
+Start of epoch 250
+loss at epoch=  249 : 0.0029483421
+va_loss at epoch=  249 : 0.0029969614
+Training EM CAE...
+Start of epoch 1
+loss at epoch=  0 : 0.010174922
+va_loss at epoch=  0 : 0.00887472
+Start of epoch 2
+loss at epoch=  1 : 0.0077592083
+va_loss at epoch=  1 : 0.0074223243
+Start of epoch 3
+loss at epoch=  2 : 0.0073235417
+va_loss at epoch=  2 : 0.00697191
+Start of epoch 4
+loss at epoch=  3 : 0.0069391113
+va_loss at epoch=  3 : 0.0068619745
+Start of epoch 5
+loss at epoch=  4 : 0.0066142976
+va_loss at epoch=  4 : 0.0064997207
+Start of epoch 6
+loss at epoch=  5 : 0.006395657
+va_loss at epoch=  5 : 0.006344337
+Start of epoch 7
+loss at epoch=  6 : 0.006257818
+va_loss at epoch=  6 : 0.0063764476
+Start of epoch 8
+loss at epoch=  7 : 0.0063600065
+va_loss at epoch=  7 : 0.0060910974
+Start of epoch 9
+loss at epoch=  8 : 0.0060635684
+va_loss at epoch=  8 : 0.005972438
+Start of epoch 10
+loss at epoch=  9 : 0.005921779
+va_loss at epoch=  9 : 0.0059256977
+Start of epoch 11
+loss at epoch=  10 : 0.0059070187
+va_loss at epoch=  10 : 0.0058367886
+Start of epoch 12
+loss at epoch=  11 : 0.0057836794
+va_loss at epoch=  11 : 0.0057194657
+Start of epoch 13
+loss at epoch=  12 : 0.005761048
+va_loss at epoch=  12 : 0.00587551
+Start of epoch 14
+loss at epoch=  13 : 0.0056712963
+va_loss at epoch=  13 : 0.0057130065
+Start of epoch 15
+loss at epoch=  14 : 0.0057835495
+va_loss at epoch=  14 : 0.005817656
+Start of epoch 16
+loss at epoch=  15 : 0.0056686597
+va_loss at epoch=  15 : 0.005582763
+Start of epoch 17
+loss at epoch=  16 : 0.0055477126
+va_loss at epoch=  16 : 0.005555147
+Start of epoch 18
+loss at epoch=  17 : 0.005405679
+va_loss at epoch=  17 : 0.0055257804
+Start of epoch 19
+loss at epoch=  18 : 0.005465805
+va_loss at epoch=  18 : 0.0054847314
+Start of epoch 20
+loss at epoch=  19 : 0.0054049115
+va_loss at epoch=  19 : 0.005602996
+Start of epoch 21
+loss at epoch=  20 : 0.0055102035
+va_loss at epoch=  20 : 0.005297559
+Start of epoch 22
+loss at epoch=  21 : 0.005281167
+va_loss at epoch=  21 : 0.0053814775
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.

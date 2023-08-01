@@ -348,7 +348,7 @@ class NrnRanking:
 
                 num_rep = 0
                 for data in self.generate_dataset(key):
-                    res = self.match(data, threshold_I, threshold_dis, threshold_in)
+                    res = self.match(data, threshold_I, threshold_dis, threshold_in, gate='or')
                     for i in range(len(res[0])):
                         matching_dict[key][self.file_list[res[0][i]+num_rep*self.batch_num]].append(self.file_list2[res[1][i]])
                     num_rep += 1

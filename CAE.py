@@ -30,14 +30,14 @@ map_path = './data/all_pkl'
 data_aug = False
 encoder_mode = 'sep'
 
-use_unet = True     #使用具有跳躍連接的Unet結構，若True則下面contractive_loss要是False
+use_unet = False     #使用具有跳躍連接的Unet結構，若True則下面contractive_loss要是False
 use_contractive_loss = False # 打開會使得相似的輸入擁有相似的lv。注意此功能內部有調整權重的超參數
 
 cae_batch_size = 2     # 如果GPU內存不足，調小
 
 steps_gradient_accumulate = 64 #是否使用梯度累加，通常在極小batch size中使用. 設為0如果不使用
 
-train_epochs = 400
+train_epochs = 250
 
 seed = 10
 os.environ['PYTHONHASHSEED'] = str(seed)
@@ -239,30 +239,37 @@ print('FC after aug', fc_np_train.shape)
 # %%print('EM after aug', em_np_train.shape)
 
 
+# 定義可平行計算的上採樣方法
+def upsample_bilinear(inputs, scale):
+    # 使用 tf.image.resize 创建一个上采样层
+    # 'bilinear' 是双线性插值
+    # 注意，tf.image.resize 要求输入的尺寸是 (batch_size, height, width, channels)，并且要求尺寸是浮点数
+    return Lambda(lambda x: tf.image.resize(x, tf.cast(tf.shape(x)[1:3] * scale, tf.int32), method='bilinear'))(inputs)
+
 # 定义卷积自编码器
 def create_cae(input_shape=(48, 48, 3)):
     # 编码器
     encoder_input = layers.Input(shape=input_shape)
-    x = layers.Conv2D(128, (3, 3), activation='relu', padding='same')(encoder_input)
+    x = layers.Conv2D(32, (3, 3), activation='relu', padding='same')(encoder_input)
     x = layers.MaxPooling2D((2, 2), padding='same')(x)
     x = layers.Conv2D(64, (3, 3), activation='relu', padding='same')(x)
     x = layers.MaxPooling2D((2, 2), padding='same')(x)
-    x = layers.Conv2D(32, (3, 3), activation='relu', padding='same')(x)
+    x = layers.Conv2D(128, (3, 3), activation='relu', padding='same')(x)
     x = layers.MaxPooling2D((2, 2), padding='same')(x)
     encoded = layers.Flatten(name='encode_output')(x)
 
     # 解码器
-    x = layers.Conv2D(32, (3, 3), padding='same')(x)
+    x = layers.Conv2D(128, (3, 3), padding='same')(x)
     x = layers.LeakyReLU(alpha=0.1)(x)
-    x = layers.Conv2DTranspose(32, (2, 2), strides=(2, 2), padding='valid')(x)
+    x = upsample_bilinear(x, 2)
     x = layers.LeakyReLU(alpha=0.1)(x)
     x = layers.Conv2D(64, (3, 3), padding='same')(x)
     x = layers.LeakyReLU(alpha=0.1)(x)
-    x = layers.Conv2DTranspose(64, (2, 2), strides=(2, 2), padding='valid')(x)
+    x = upsample_bilinear(x, 2)
     x = layers.LeakyReLU(alpha=0.1)(x)
-    x = layers.Conv2D(128, (3, 3), padding='same')(x)
+    x = layers.Conv2D(32, (3, 3), padding='same')(x)
     x = layers.LeakyReLU(alpha=0.1)(x)
-    x = layers.Conv2DTranspose(128, (2, 2), strides=(2, 2), padding='valid')(x)
+    x = upsample_bilinear(x, 2)
     x = layers.LeakyReLU(alpha=0.1)(x)
 
     decoded = layers.Conv2D(3, (3, 3), activation='relu', padding='same')(x)
@@ -274,33 +281,32 @@ def create_cae(input_shape=(48, 48, 3)):
     return autoencoder, encoder
 
 
-def upsample_bilinear(inputs, scale):
-    # 使用 tf.image.resize 创建一个上采样层
-    # 'bilinear' 是双线性插值
-    # 注意，tf.image.resize 要求输入的尺寸是 (batch_size, height, width, channels)，并且要求尺寸是浮点数
-    return Lambda(lambda x: tf.image.resize(x, tf.cast(tf.shape(x)[1:3] * scale, tf.int32), method='bilinear'))(inputs)
-
-
 def unet(input_size=(48,48,3)):
     inputs = Input(input_size)
-    conv1 = Conv2D(32, 3, activation='relu', padding='same')(inputs)
+    conv1 = Conv2D(16, 3, activation='relu', padding='same')(inputs)
     pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
     
-    conv2 = Conv2D(64, 3, activation='relu', padding='same')(pool1)
+    conv2 = Conv2D(32, 3, activation='relu', padding='same')(pool1)
     pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
 
-    conv3 = Conv2D(128, 3, activation='relu', padding='same')(pool2)
-    encoded = Flatten()(conv3)
+    conv3 = Conv2D(64, 3, activation='relu', padding='same')(pool2)
+    pool3 = MaxPooling2D(pool_size=(2, 2))(conv3)
 
-    up4 = concatenate([upsample_bilinear(conv3, 2), conv2], axis=3)  # 使用双线性上采样层
-    conv4 = Conv2D(64, 3, activation='relu', padding='same')(up4)
+    conv4 = Conv2D(128, 3, activation='relu', padding='same')(pool3)
+    encoded = Flatten()(conv4)
 
-    up5 = concatenate([upsample_bilinear(conv4, 2), conv1], axis=3)  # 使用双线性上采样层
-    conv5 = Conv2D(32, 3, activation='relu', padding='same')(up5)
+    up5 = concatenate([upsample_bilinear(conv4, 2), conv3], axis=3)  # 使用双线性上采样层
+    conv5 = Conv2D(64, 3, activation='relu', padding='same')(up5)
 
-    conv6 = Conv2D(1, 1, activation='sigmoid')(conv5)
+    up6 = concatenate([upsample_bilinear(conv5, 2), conv2], axis=3)  # 使用双线性上采样层
+    conv6 = Conv2D(32, 3, activation='relu', padding='same')(up6)
 
-    unet = models.Model(inputs=inputs, outputs=conv6)
+    up7 = concatenate([upsample_bilinear(conv6, 2), conv1], axis=3)  # 使用双线性上采样层
+    conv7 = Conv2D(16, 3, activation='relu', padding='same')(up7)
+    
+    conv8 = Conv2D(3, 1, activation='relu')(conv7)
+
+    unet = models.Model(inputs=inputs, outputs=conv8)
     encoder = models.Model(inputs=inputs, outputs=encoded)
     return unet, encoder
 
@@ -480,7 +486,7 @@ else:
     plt.plot(history_CAE_FC['val_loss'], label='valid')
     plt.legend()
     plt.title('CAE_FC')
-    plt.sacefig('./CAE_FC/FC_CAE02.png', dpi=150, bbox_inches='tight')
+    plt.savefig('./CAE_FC/FC_CAE02.png', dpi=150, bbox_inches='tight')
 
 plt.close('all')
 
