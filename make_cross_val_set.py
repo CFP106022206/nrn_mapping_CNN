@@ -26,9 +26,9 @@ from sklearn.model_selection import KFold
 
 mode = 2
 mode2_file_path = './data/nblast_D2+D5+D6_60as1.csv'
-label_threshold = 0.6   # 50%信心 or 60%信心
+label_threshold = 0.5   # 50%信心 or 60%信心
 
-cross_validation_num = 5
+cross_validation_num = 3
 
 
 seed = 10                       # Random Seed
@@ -45,9 +45,9 @@ train_range_to = 'D6'   # 'D5' or 'D6'
 # Load labeled csv
 if label_threshold == 0.5:
     label_csv_D1 = './data/D1_20221230.csv'
-    label_csv_D2 = './data/D2_20221230.csv'
+    label_csv_D2 = './data/D2_20230710.csv'
     label_csv_D3 = './data/D3_20221230.csv'
-    label_csv_D4 = './data/D4_20221230.csv'
+    label_csv_D4 = './data/D4_20230710.csv'
     label_csv_D5 = './data/D5_20221230.csv'
     label_csv_D6 = './data/D6_20230523.csv'
 elif label_threshold == 0.6:

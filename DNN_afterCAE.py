@@ -34,23 +34,26 @@ from tqdm import tqdm
 
 
 # %%
-num_splits = 4 #0~9, or 99 for whole nBLAST testing set
+num_splits = 2 #0~9, or 99 for whole nBLAST testing set
 data_range = 'D6'   #D4 or D5
 
 '''
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
 新寫法是使用和data_preprocess_annotator 相同的方法。
 '''
-use_KT_map = True
+use_map_from = 'yf' #'kt': map_data 冠廷, 'yf': map_folder from 懿凡
+map_dict_folder = './data/labeled_sn'
+
+
 grid75_path = './data/D1-D5_grid75_sn'
 
 encoder_mode = 'sep'    # 'mix' or 'separate'
 
-use_ccae = True
+use_ccae = False
 
 scheduler_exp = 0      #學習率調度器的約束力指數，越大約束越強
-initial_lr = 0.0001
-train_epochs = 200
+initial_lr = 0.001
+train_epochs = 100
 
 add_low_score = False
 low_score_neg_rate = 2
@@ -84,8 +87,8 @@ train_pair_nrn = label_table_train[['fc_id','em_id','label']].to_numpy()
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
 新寫法是使用和data_preprocess_annotator 相同的方法。
 '''
-if use_KT_map:
-    # 讀神經三視圖資料
+if use_map_from == 'kt':
+    # # 讀神經三視圖資料
     map_data_D1toD4 = load_pkl('./data/mapping_data_sn.pkl')
     # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
 
@@ -99,7 +102,7 @@ if use_KT_map:
 
     def data_preprocess(map_data, pair_nrn):
         data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
-        FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
+        fc_nrn_lst, em_nrn_lst, score_lst, label_lst = [], [], [], []
 
         #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
         data_dict = {}
@@ -118,8 +121,8 @@ if use_KT_map:
                     data_np[i, 1, :, :, k] = data[4][k] # EM Image
                 
                 # 其餘信息填入
-                FC_nrn_lst.append(data[0])
-                EM_nrn_lst.append(data[1])
+                fc_nrn_lst.append(data[0])
+                em_nrn_lst.append(data[1])
                 score_lst.append(data[2]) 
                 label_lst.append(row[2])
 
@@ -139,29 +142,19 @@ if use_KT_map:
         # Normalization : x' = x - min(x) / max(x) - min(x)
         data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
 
-        pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+        pair_df = pd.DataFrame({'fc_id':fc_nrn_lst, 'em_id':em_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
 
         return data_np, pair_df
-
-
 
     data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
     data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
 
 
-
-
-else:
-    resolutions = (3, 75, 75)
+elif use_map_from == 'yf':
 
     def data_preprocess(file_path, pair_nrn):
 
         print('\nCollecting 3-View Data Numpy Array..')
-
-        data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
-        FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
-
-
         # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
         file_list = [file_name for file_name in os.listdir(file_path) if file_name.endswith('.pkl')]
 
@@ -174,8 +167,14 @@ else:
                 key = f"{data[0]}_{data[1]}"
                 data_dict[key] = data
 
+        resolutions = data[3].shape
+        print('\n Resolutions:', resolutions)
+
+        data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
+        fc_nrn_lst, em_nrn_lst, score_lst, label_lst = [], [], [], []
+
         # 依訓練名單從已有三視圖名單中查找是否存在
-        for i, row in tqdm(enumerate(pair_nrn), total=len(pair_nrn)):
+        for i, row in enumerate(pair_nrn):
             
             key = f"{row[0]}_{row[1]}"
 
@@ -186,8 +185,8 @@ else:
                     data_np[i, 0, :, :, k] = data[3][k] # FC Image
                     data_np[i, 1, :, :, k] = data[4][k] # EM Image
                 # 其餘信息填入list
-                FC_nrn_lst.append(data[0])
-                EM_nrn_lst.append(data[1])
+                fc_nrn_lst.append(data[0])
+                em_nrn_lst.append(data[1])
                 score_lst.append(data[2])
                 label_lst.append(row[2])
         
@@ -200,23 +199,26 @@ else:
                 not_found_data.append(i)
         data_np = np.delete(data_np, not_found_data, axis=0)
 
+        not_found_df = []
         if not_found_data:
-            print('Not Found in map_data: ')
+            print('How many pairs Not Found in map_data: ')
             for i in not_found_data:
-                print(pair_nrn[i])
+                not_found_df.append(pair_nrn[i])
+            print(len(not_found_df))
+            not_found_df = pd.DataFrame(not_found_df, columns=['fc_id', 'em_id', 'label'])
+
 
 
         # Normalization : x' = x - min(x) / max(x) - min(x)
         data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
 
-        pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+        pair_df = pd.DataFrame({'fc_id':fc_nrn_lst, 'em_id':em_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
 
-        return data_np, pair_df
+        return data_np, pair_df, not_found_df
 
 
-    data_np_test, nrn_pair_test = data_preprocess(grid75_path, test_pair_nrn)
-    data_np_train, nrn_pair_train = data_preprocess(grid75_path, train_pair_nrn)
-
+    data_np_test, nrn_pair_test, test_not_found = data_preprocess(map_dict_folder, test_pair_nrn)
+    data_np_train, nrn_pair_train, train_not_found = data_preprocess(map_dict_folder, train_pair_nrn)
 
 
 
@@ -651,12 +653,12 @@ def dnn_classifier(input_shape):
     input_layer = Input(shape=input_shape)
     # 定义分类器
     dense = Dropout(0.5)(input_layer)
-    dense = Dense(256)(dense)
+    dense = Dense(100)(dense)
     dense = BatchNormalization()(dense)
     dense = Activation("relu")(dense)
 
     # dense = Dropout(0.3)(dense)
-    # dense = Dense(128)(dense)
+    # dense = Dense(40)(dense)
     # dense = BatchNormalization()(dense)
     # dense = Activation("relu")(dense)
 
@@ -700,7 +702,7 @@ print('\nUse Callbacks:', callbacks)
 # Model.fit
 dnn_history = dnn_classifier.fit(x_train_lv, 
                                 y_train, 
-                                batch_size=128, 
+                                batch_size=64, 
                                 validation_data=(x_val_lv, y_val), 
                                 epochs=train_epochs, 
                                 shuffle=True,

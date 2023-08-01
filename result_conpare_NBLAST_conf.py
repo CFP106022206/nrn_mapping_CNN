@@ -43,14 +43,14 @@ test_mode = 'cross'    #single: 指定單一 test data, cross: 使用cross valid
 
 test_set_num = 98       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
-cross_fold_num = 3      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
+cross_fold_num = 5      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 data_range = 'D6'
 
 use_final = False      # 如果True，使用最後階段的預測結果，如果False，使用第一階段的預測結果
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = './data/nblast_D5_50as1.csv'
+selected_test_set = False# './data/nblast_D5_correct_60as1.csv'
 
 if use_final:
     label_csv_name = './result/final_label_model_D1-'+data_range+'_'
@@ -130,10 +130,21 @@ pred_min = np.min(y_pred)
 pred_max = np.max(y_pred)
 y_pred = (y_pred - pred_min)/(pred_max - pred_min)
 
+# 二元化 人工標籤
+def continuous_to_binary(y_pred, threshold):
+    y_pred_binary = []
+    for ans in y_pred:
+        if ans >= threshold:
+            y_pred_binary.append(1)
+        else:
+            y_pred_binary.append(0)
+    return y_pred_binary
+
+y_true = continuous_to_binary(y_true, 0.5)
 
 # 提取预测值中属于每个类别的部分
-y_pred_label0 = y_pred[y_true == 0]
-y_pred_label1 = y_pred[y_true == 1]
+y_pred_label0 = y_pred[np.array(y_true) == 0]
+y_pred_label1 = y_pred[np.array(y_true) == 1]
 
 
 # 繪製 violinplot
@@ -219,14 +230,9 @@ threshold_lst = np.arange(0,1,0.05)
 # threshold = 0.30
 def gen_conf_matrix(y_true, y_pred, threshold):
 
-    y_pred_binary = []
-    for score in y_pred:
-        if score > threshold:
-            y_pred_binary.append(1)
-        else:
-            y_pred_binary.append(0)
+    y_pred_binary = continuous_to_binary(y_pred, threshold)
 
-    conf_matrix = confusion_matrix(y_true.tolist(), y_pred_binary, labels=[1,0])
+    conf_matrix = confusion_matrix(y_true, y_pred_binary, labels=[1,0])
     return y_pred_binary, conf_matrix
 
 precision_lst, recall_lst, f1_lst = [],[],[]
@@ -235,13 +241,10 @@ for threshold in threshold_lst:
     # Precision and recall
     precision = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0])
     recall = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[0,1])
-    # print("Precision:", precision)
-    # print("Recall:", recall)
 
     # F1 Score
     result_f1_score = f1_score(y_true, y_pred_binary, average=None)
-    # print('F1 Score for Neg:', result_f1_score[0])
-    # print('F1 Score for Pos:', result_f1_score[1])
+
     precision_lst.append(precision)
     recall_lst.append(recall)
     f1_lst.append(result_f1_score[1])
