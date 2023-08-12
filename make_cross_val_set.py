@@ -25,7 +25,7 @@ from sklearn.model_selection import KFold
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
 
 mode = 2
-mode2_file_path = './data/nblast_D2+D5+D6_60as1.csv'
+mode2_file_path = './data/nblast_D2+D5+D6_50as1.csv'
 label_threshold = 0.5   # 50%信心 or 60%信心
 
 cross_validation_num = 3
@@ -114,10 +114,31 @@ elif mode == 2:
     test_table = test_table.merge(label_table_all, on=['fc_id', 'em_id'], how='inner')
     test_table = test_table.rename(columns={'score_y':'score', 'label_y':'label'}).drop(columns=['score_x','label_x'])
 
-    # 使用 KFold 分出test data, train data會是label_table_all 剔除 test data
-    for train_index, test_index in kf.split(test_table):
-        label_table_test = test_table.iloc[test_index]
-    
+    test_table.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+
+    #2023/8/12 添加, 分離出D2和D5的test data, 保證在做KFold時均勻
+    test_table_D2 = test_table.merge(pd.concat([D2,D6], ignore_index=True), on=['fc_id', 'em_id'], how='inner')
+    test_table_D5 = test_table.merge(D5, on=['fc_id', 'em_id'], how='inner')
+
+
+    def kfold_split(test_table):
+
+        test_table_lst = []
+
+        # 使用 KFold 分出test data, train data會是label_table_all 剔除 test data
+        for train_index, test_index in kf.split(test_table):
+            test_table_lst.append(test_table.iloc[test_index])
+
+        return test_table_lst
+
+    # 分開處理D2和D5 將他們分別分成三份
+    D2_test_lst = kfold_split(test_table_D2)
+    D5_test_lst = kfold_split(test_table_D5)
+
+    # 將分別分好三份的D2和D5的test data合併
+    for i in range(len(D2_test_lst)):
+        label_table_test = pd.concat([D2_test_lst[i], D5_test_lst[i]], ignore_index=True)
+
         # 創建一個輔助列'Merge', 表示是僅 label_table_all 原有的還是同時在test_tabl中也出現
         label_table_merged = label_table_all.merge(label_table_test, on=['fc_id', 'em_id'], how='left', indicator=True)
         # 从csv2中删除交集'Both'的行, 刪除新增的輔助列label
@@ -132,6 +153,6 @@ elif mode == 2:
         # save as csv
         label_table_test.to_csv('./data/test_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
         label_table_cleaned.to_csv('./data/train_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
-        i += 1
+
 
 # %%
