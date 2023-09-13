@@ -31,7 +31,7 @@ label_threshold = 0.5   # 50%信心 or 60%信心
 cross_validation_num = 3
 
 
-seed = 10                       # Random Seed
+seed = 37                       # Random Seed
 
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
@@ -91,9 +91,9 @@ label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除
 kf = KFold(n_splits=cross_validation_num, shuffle=True, random_state=seed)
 
 # 分割数据集并执行交叉验证
-i = 0
-
 if mode == 1:
+    i = 0
+
     for train_index, test_index in kf.split(label_table_all):
         label_table_train = label_table_all.iloc[train_index]
         label_table_test = label_table_all.iloc[test_index]
@@ -118,7 +118,10 @@ elif mode == 2:
 
     #2023/8/12 添加, 分離出D2和D5的test data, 保證在做KFold時均勻
     test_table_D2 = test_table.merge(pd.concat([D2,D6], ignore_index=True), on=['fc_id', 'em_id'], how='inner')
+    test_table_D2 = test_table_D2.rename(columns={'score_x':'score', 'label_x':'label'}).drop(columns=['score_y','label_y'])
+
     test_table_D5 = test_table.merge(D5, on=['fc_id', 'em_id'], how='inner')
+    test_table_D5 = test_table_D5.rename(columns={'score_x':'score', 'label_x':'label'}).drop(columns=['score_y','label_y'])
 
 
     def kfold_split(test_table):
