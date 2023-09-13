@@ -53,7 +53,7 @@ train_epochs = 50
 add_low_score = False
 low_score_neg_rate = 2
 
-seed = 10
+seed = 12
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
 np.random.seed(seed)
@@ -697,9 +697,9 @@ Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM},
 plt.plot(Annotator_history.history['loss'], label='loss')
 plt.plot(Annotator_history.history['val_loss'], label='val_loss')
 plt.legend()
-# plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
-plt.show()
-# plt.close('all')
+plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
+# plt.show()
+plt.close('all')
 
 # cnn_train_loss = history.history['loss']
 # cnn_valid_loss = history.history['val_loss']

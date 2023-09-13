@@ -32,51 +32,6 @@ from util import load_pkl
 from tqdm import tqdm
 from numba import jit, prange
 
-def data_preprocess(map_data, pair_nrn):
-    data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
-    FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
-
-    #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
-    data_dict = {}
-    for data in map_data:
-        key = f"{data[0]}_{data[1]}"
-        data_dict[key] = data
-
-    for i, row in enumerate(pair_nrn):
-        key = f'{row[0]}_{row[1]}'
-        if key in data_dict:
-            data = data_dict[key]   # 找出data的所有信息              
-
-            # 三視圖填入data_np
-            for k in range(3):
-                data_np[i, 0, :, :, k] = data[3][k] # FC Image
-                data_np[i, 1, :, :, k] = data[4][k] # EM Image
-            
-            # 其餘信息填入
-            FC_nrn_lst.append(data[0])
-            EM_nrn_lst.append(data[1])
-            score_lst.append(data[2]) 
-            label_lst.append(row[2])
-
-    # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
-    not_found_data = []
-    for i, data in enumerate(data_np):
-        if not(np.any(data)):
-            not_found_data.append(i)
-    data_np = np.delete(data_np, not_found_data, axis=0)
-
-    if not_found_data:
-        print('Not Found in map_data: ')
-        for i in not_found_data:
-            print(pair_nrn[i])
-
-
-    # Normalization : x' = x - min(x) / max(x) - min(x)
-    data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
-
-    pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
-
-    return data_np, pair_df
 
 def data_preprocess_annotator(unlabel_path, pair_nrn):
 
@@ -117,7 +72,7 @@ def data_preprocess_annotator(unlabel_path, pair_nrn):
             EM_nrn_lst.append(data[1])
             score_lst.append(data[2])
             label_lst.append(row[2])
-    
+
 
 
     # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
@@ -143,10 +98,10 @@ def data_preprocess_annotator(unlabel_path, pair_nrn):
 
 resolutions = [3,50,50]
 
-num_splits = 4 #0~9
-data_range = 'D5'   #D4 or D5
+num_splits = 2 #0~9
+data_range = 'D6'   #D4 or D5
 
-fix_kernel = False  # 微調時是否凍結參數
+fix_kernel = True  # 微調時是否凍結參數
 use_scheduler = False #是否使用scheduler 控制學習率
 scheduler_exp = 1      #學習率調度器的約束力指數，越小約束越強
 # initial_lr = 0.00005
@@ -154,6 +109,9 @@ train_epochs = 50
 
 add_low_score = False
 low_score_neg_rate = 2
+
+use_map_from = 'yf' #'kt': map_data 冠廷, 'yf': map_folder from 懿凡
+map_dict_folder = './data/labeled_sn'
 
 
 seed = 10
@@ -555,7 +513,7 @@ early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=2, mode=
 if use_scheduler:
     second_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint, reduce_lr], verbose=2)
 else:
-    cnn.compile(optimizer=Adam(learning_rate=0.0001), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-acc')])
+    cnn.compile(optimizer=Adam(learning_rate=0.001), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-acc')])
     second_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, y_train, batch_size=128, validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), epochs=train_epochs, shuffle=True, callbacks = [checkpoint], verbose=2)
 
 plt.plot(second_history.history['loss'], label='loss')
@@ -572,28 +530,149 @@ with open('./result/Train_History_Second_stage_'+save_model_name+'.pkl', 'wb') a
 
 # %% Testing 1
 
-# 讀神經三視圖資料
-map_data_D1toD4 = load_pkl('./data/mapping_data_sn.pkl')
-# map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
-
-map_data_D5 = load_pkl('./data/mapping_data_sn_D5_old.pkl')
-
-map_data = map_data_D1toD4 + map_data_D5
-del map_data_D1toD4, map_data_D5
-
-
 # turn to numpy array
 test_pair_nrn = label_table_test[['fc_id','em_id','label']].to_numpy()
 
 
-data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
+if use_map_from == 'kt':
+    # 讀神經三視圖資料
+    map_data_D1toD4 = load_pkl('./data/mapping_data_sn.pkl')
+    # map_data(lst) 中每一项内容为: 'FC nrn','EM nrn ', Score, FC Array, EM Array
+
+    map_data_D5 = load_pkl('./data/mapping_data_sn_D5_old.pkl')
+
+    map_data = map_data_D1toD4 + map_data_D5
+    del map_data_D1toD4, map_data_D5
+
+
+    def data_preprocess(map_data, pair_nrn):
+        data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
+        FC_nrn_lst, EM_nrn_lst, score_lst, label_lst = [], [], [], []
+
+        #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
+        data_dict = {}
+        for data in map_data:
+            key = f"{data[0]}_{data[1]}"
+            data_dict[key] = data
+
+        for i, row in enumerate(pair_nrn):
+            key = f'{row[0]}_{row[1]}'
+            if key in data_dict:
+                data = data_dict[key]   # 找出data的所有信息              
+
+                # 三視圖填入data_np
+                for k in range(3):
+                    data_np[i, 0, :, :, k] = data[3][k] # FC Image
+                    data_np[i, 1, :, :, k] = data[4][k] # EM Image
+                
+                # 其餘信息填入
+                FC_nrn_lst.append(data[0])
+                EM_nrn_lst.append(data[1])
+                score_lst.append(data[2]) 
+                label_lst.append(row[2])
+
+        # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
+        not_found_data = []
+        for i, data in enumerate(data_np):
+            if not(np.any(data)):
+                not_found_data.append(i)
+        data_np = np.delete(data_np, not_found_data, axis=0)
+
+        if not_found_data:
+            print('Not Found in map_data: ')
+            for i in not_found_data:
+                print(pair_nrn[i])
+
+
+        # Normalization : x' = x - min(x) / max(x) - min(x)
+        data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
+
+        pair_df = pd.DataFrame({'fc_id':FC_nrn_lst, 'em_id':EM_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+
+        return data_np, pair_df
+    
+    
+    data_np_test, nrn_pair_test = data_preprocess(map_data, test_pair_nrn)
+
+
+
+elif use_map_from == 'yf':
+
+    def data_preprocess(file_path, pair_nrn):
+
+        print('\nCollecting 3-View Data Numpy Array..')
+        # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
+        file_list = [file_name for file_name in os.listdir(file_path) if file_name.endswith('.pkl')]
+
+        #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
+        data_dict = {}
+        for file_name in file_list:
+            pkl_path = os.path.join(file_path, file_name)
+            data_lst = load_pkl(pkl_path)
+            for data in data_lst:
+                key = f"{data[0]}_{data[1]}"
+                data_dict[key] = data
+
+        resolutions = data[3].shape
+        print('\n Resolutions:', resolutions)
+
+        data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
+        fc_nrn_lst, em_nrn_lst, score_lst, label_lst = [], [], [], []
+
+        # 依訓練名單從已有三視圖名單中查找是否存在
+        for i, row in enumerate(pair_nrn):
+            
+            key = f"{row[0]}_{row[1]}"
+
+            if key in data_dict:
+                data = data_dict[key]   # 找出data的所有信息
+                # 三視圖填入 data_np
+                for k in range(3):
+                    data_np[i, 0, :, :, k] = data[3][k] # FC Image
+                    data_np[i, 1, :, :, k] = data[4][k] # EM Image
+                # 其餘信息填入list
+                fc_nrn_lst.append(data[0])
+                em_nrn_lst.append(data[1])
+                score_lst.append(data[2])
+                label_lst.append(row[2])
+        
+
+
+        # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
+        not_found_data = []
+        for i, data in enumerate(data_np):
+            if not(np.any(data)):
+                not_found_data.append(i)
+        data_np = np.delete(data_np, not_found_data, axis=0)
+
+        not_found_df = []
+        if not_found_data:
+            print('How many pairs Not Found in map_data: ')
+            for i in not_found_data:
+                not_found_df.append(pair_nrn[i])
+            print(len(not_found_df))
+            not_found_df = pd.DataFrame(not_found_df, columns=['fc_id', 'em_id', 'label'])
+
+
+
+        # Normalization : x' = x - min(x) / max(x) - min(x)
+        data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
+
+        pair_df = pd.DataFrame({'fc_id':fc_nrn_lst, 'em_id':em_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
+
+        return data_np, pair_df, not_found_df
+
+
+    data_np_test, nrn_pair_test, test_not_found = data_preprocess(map_dict_folder, test_pair_nrn)
+
+
+
+
 X_test = data_np_test
 y_test = np.array(nrn_pair_test['label'],dtype=np.int32)
 
 X_test_FC = X_test[:,0,:]
 X_test_EM = X_test[:,1,:]
-
-
 
 
 
@@ -661,7 +740,10 @@ else:
 
 # 准备人工标注的train data
 train_pair_nrn = label_table_train[['fc_id','em_id','label']].to_numpy()
-data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
+if use_map_from == 'kt':
+    data_np_train, nrn_pair_train = data_preprocess(map_data, train_pair_nrn)
+elif use_map_from == 'yf':
+    data_np_train, nrn_pair_train, train_not_found = data_preprocess(map_dict_folder, train_pair_nrn)
 
 
 # Train Validation Split
