@@ -50,7 +50,7 @@ data_range = 'D6'
 use_final = False      # 如果True，使用最後階段的預測結果，如果False，使用第一階段的預測結果
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = './data/nblast_D2+D6_50as1.csv'
+selected_test_set = './data/nblast_D5_50as1.csv'
 
 if use_final:
     label_csv_name = './result/final_label_model_D1-'+data_range+'_'

@@ -1,0 +1,320 @@
+Matplotlib created a temporary config/cache directory at /tmp/matplotlib-097mrh1l because the default path (/home/ynjuan/.config/matplotlib) is not a writable directory; it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+
+Collecting 3-View Data Numpy Array..
+
+ Resolutions: (3, 50, 50)
+
+Collecting 3-View Data Numpy Array..
+
+ Resolutions: (3, 50, 50)
+
+Train data: 994 
+Valid data: 111 
+Test data: 114
+Total: 994
+Positive: 509 (51.21% of total)
+
+Balanced Weight in: 
+ [0 1] 
+ [1.02474227 0.97642436]
+UpSampling: After Augmentation:
+True Label/Total in X_train:
+ 509 / 1018
+X_train shape: (32576, 50, 50, 3) (32576, 50, 50, 3)
+y_train shape: 32576
+X_val shape: (111, 50, 50, 3) (111, 50, 50, 3)
+y_val shape: 111
+X_test shape: (114, 50, 50, 3) (114, 50, 50, 3)
+y_test shape: 114
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ EM (InputLayer)                [(None, 50, 50, 3)]  0           []                               
+                                                                                                  
+ FC (InputLayer)                [(None, 50, 50, 3)]  0           []                               
+                                                                                                  
+ Shared_Conv1 (Conv2D)          (None, 48, 48, 16)   448         ['EM[0][0]',                     
+                                                                  'FC[0][0]']                     
+                                                                                                  
+ Shared_BN1 (BatchNormalization  (None, 48, 48, 16)  64          ['Shared_Conv1[0][0]',           
+ )                                                                'Shared_Conv1[1][0]']           
+                                                                                                  
+ Shared_Activation1 (Activation  (None, 48, 48, 16)  0           ['Shared_BN1[0][0]',             
+ )                                                                'Shared_BN1[1][0]']             
+                                                                                                  
+ max_pooling2d (MaxPooling2D)   (None, 24, 24, 16)   0           ['Shared_Activation1[0][0]']     
+                                                                                                  
+ max_pooling2d_1 (MaxPooling2D)  (None, 24, 24, 16)  0           ['Shared_Activation1[1][0]']     
+                                                                                                  
+ Shared_Conv2 (Conv2D)          (None, 22, 22, 32)   4640        ['max_pooling2d[0][0]',          
+                                                                  'max_pooling2d_1[0][0]']        
+                                                                                                  
+ Shared_BN2 (BatchNormalization  (None, 22, 22, 32)  128         ['Shared_Conv2[0][0]',           
+ )                                                                'Shared_Conv2[1][0]']           
+                                                                                                  
+ Shared_Activation2 (Activation  (None, 22, 22, 32)  0           ['Shared_BN2[0][0]',             
+ )                                                                'Shared_BN2[1][0]']             
+                                                                                                  
+ Shared_pool1 (MaxPooling2D)    (None, 11, 11, 32)   0           ['Shared_Activation2[0][0]',     
+                                                                  'Shared_Activation2[1][0]']     
+                                                                                                  
+ Shared_Conv3 (Conv2D)          (None, 9, 9, 48)     13872       ['Shared_pool1[0][0]',           
+                                                                  'Shared_pool1[1][0]']           
+                                                                                                  
+ Shared_BN3 (BatchNormalization  (None, 9, 9, 48)    192         ['Shared_Conv3[0][0]',           
+ )                                                                'Shared_Conv3[1][0]']           
+                                                                                                  
+ Shared_Activation3 (Activation  (None, 9, 9, 48)    0           ['Shared_BN3[0][0]',             
+ )                                                                'Shared_BN3[1][0]']             
+                                                                                                  
+ Shared_Conv4 (Conv2D)          (None, 7, 7, 64)     27712       ['Shared_Activation3[0][0]',     
+                                                                  'Shared_Activation3[1][0]']     
+                                                                                                  
+ Shared_BN4 (BatchNormalization  (None, 7, 7, 64)    256         ['Shared_Conv4[0][0]',           
+ )                                                                'Shared_Conv4[1][0]']           
+                                                                                                  
+ Shared_Activation4 (Activation  (None, 7, 7, 64)    0           ['Shared_BN4[0][0]',             
+ )                                                                'Shared_BN4[1][0]']             
+                                                                                                  
+ Shared_pool2 (MaxPooling2D)    (None, 3, 3, 64)     0           ['Shared_Activation4[0][0]',     
+                                                                  'Shared_Activation4[1][0]']     
+                                                                                                  
+ flatten (Flatten)              (None, 576)          0           ['Shared_pool2[0][0]']           
+                                                                                                  
+ flatten_1 (Flatten)            (None, 576)          0           ['Shared_pool2[1][0]']           
+                                                                                                  
+ concatenate (Concatenate)      (None, 1152)         0           ['flatten[0][0]',                
+                                                                  'flatten_1[0][0]']              
+                                                                                                  
+ dropout (Dropout)              (None, 1152)         0           ['concatenate[0][0]']            
+                                                                                                  
+ dense (Dense)                  (None, 128)          147584      ['dropout[0][0]']                
+                                                                                                  
+ batch_normalization (BatchNorm  (None, 128)         512         ['dense[0][0]']                  
+ alization)                                                                                       
+                                                                                                  
+ activation (Activation)        (None, 128)          0           ['batch_normalization[0][0]']    
+                                                                                                  
+ dense_1 (Dense)                (None, 1)            129         ['activation[0][0]']             
+                                                                                                  
+==================================================================================================
+Total params: 195,537
+Trainable params: 194,961
+Non-trainable params: 576
+__________________________________________________________________________________________________
+
+Use Callbacks: [<keras.callbacks.ModelCheckpoint object at 0x7f189b1cdd20>]
+Epoch 1/50
+
+Epoch 1: val_loss improved from inf to 0.17268, saving model to ./Annotator_Model/Annotator_D1-D6_2.h5
+255/255 - 5s - loss: 0.1846 - Bi-Acc: 0.6176 - val_loss: 0.1727 - val_Bi-Acc: 0.5495 - 5s/epoch - 21ms/step
+Epoch 2/50
+
+Epoch 2: val_loss improved from 0.17268 to 0.15727, saving model to ./Annotator_Model/Annotator_D1-D6_2.h5
+255/255 - 2s - loss: 0.1416 - Bi-Acc: 0.7102 - val_loss: 0.1573 - val_Bi-Acc: 0.7027 - 2s/epoch - 8ms/step
+Epoch 3/50
+
+Epoch 3: val_loss improved from 0.15727 to 0.11899, saving model to ./Annotator_Model/Annotator_D1-D6_2.h5
+255/255 - 2s - loss: 0.1250 - Bi-Acc: 0.7601 - val_loss: 0.1190 - val_Bi-Acc: 0.7297 - 2s/epoch - 8ms/step
+Epoch 4/50
+
+Epoch 4: val_loss did not improve from 0.11899
+255/255 - 2s - loss: 0.1112 - Bi-Acc: 0.7936 - val_loss: 0.1434 - val_Bi-Acc: 0.7477 - 2s/epoch - 8ms/step
+Epoch 5/50
+
+Epoch 5: val_loss did not improve from 0.11899
+255/255 - 2s - loss: 0.0993 - Bi-Acc: 0.8192 - val_loss: 0.1406 - val_Bi-Acc: 0.7748 - 2s/epoch - 8ms/step
+Epoch 6/50
+
+Epoch 6: val_loss did not improve from 0.11899
+255/255 - 2s - loss: 0.0917 - Bi-Acc: 0.8380 - val_loss: 0.1730 - val_Bi-Acc: 0.7387 - 2s/epoch - 8ms/step
+Epoch 7/50
+
+Epoch 7: val_loss did not improve from 0.11899
+255/255 - 2s - loss: 0.0838 - Bi-Acc: 0.8555 - val_loss: 0.1269 - val_Bi-Acc: 0.8198 - 2s/epoch - 8ms/step
+Epoch 8/50
+
+Epoch 8: val_loss did not improve from 0.11899
+255/255 - 2s - loss: 0.0766 - Bi-Acc: 0.8683 - val_loss: 0.1864 - val_Bi-Acc: 0.7658 - 2s/epoch - 8ms/step
+Epoch 9/50
+
+Epoch 9: val_loss did not improve from 0.11899
+255/255 - 2s - loss: 0.0732 - Bi-Acc: 0.8782 - val_loss: 0.1387 - val_Bi-Acc: 0.8108 - 2s/epoch - 8ms/step
+Epoch 10/50
+
+Epoch 10: val_loss did not improve from 0.11899
+255/255 - 2s - loss: 0.0668 - Bi-Acc: 0.8881 - val_loss: 0.1286 - val_Bi-Acc: 0.8108 - 2s/epoch - 8ms/step
+Epoch 11/50
+
+Epoch 11: val_loss did not improve from 0.11899
+255/255 - 2s - loss: 0.0636 - Bi-Acc: 0.8964 - val_loss: 0.1711 - val_Bi-Acc: 0.8108 - 2s/epoch - 8ms/step
+Epoch 12/50
+
+Epoch 12: val_loss did not improve from 0.11899
+255/255 - 2s - loss: 0.0585 - Bi-Acc: 0.9039 - val_loss: 0.1594 - val_Bi-Acc: 0.8198 - 2s/epoch - 8ms/step
+Epoch 13/50
+
+Epoch 13: val_loss improved from 0.11899 to 0.10379, saving model to ./Annotator_Model/Annotator_D1-D6_2.h5
+255/255 - 2s - loss: 0.0559 - Bi-Acc: 0.9084 - val_loss: 0.1038 - val_Bi-Acc: 0.8739 - 2s/epoch - 8ms/step
+Epoch 14/50
+
+Epoch 14: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0540 - Bi-Acc: 0.9145 - val_loss: 0.1126 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 15/50
+
+Epoch 15: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0486 - Bi-Acc: 0.9216 - val_loss: 0.2400 - val_Bi-Acc: 0.7568 - 2s/epoch - 8ms/step
+Epoch 16/50
+
+Epoch 16: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0467 - Bi-Acc: 0.9263 - val_loss: 0.1862 - val_Bi-Acc: 0.8468 - 2s/epoch - 8ms/step
+Epoch 17/50
+
+Epoch 17: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0442 - Bi-Acc: 0.9293 - val_loss: 0.2130 - val_Bi-Acc: 0.8378 - 2s/epoch - 8ms/step
+Epoch 18/50
+
+Epoch 18: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0439 - Bi-Acc: 0.9330 - val_loss: 0.2351 - val_Bi-Acc: 0.8288 - 2s/epoch - 8ms/step
+Epoch 19/50
+
+Epoch 19: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0405 - Bi-Acc: 0.9385 - val_loss: 0.1514 - val_Bi-Acc: 0.8468 - 2s/epoch - 8ms/step
+Epoch 20/50
+
+Epoch 20: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0387 - Bi-Acc: 0.9395 - val_loss: 0.2624 - val_Bi-Acc: 0.7928 - 2s/epoch - 8ms/step
+Epoch 21/50
+
+Epoch 21: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0360 - Bi-Acc: 0.9454 - val_loss: 0.1922 - val_Bi-Acc: 0.8468 - 2s/epoch - 8ms/step
+Epoch 22/50
+
+Epoch 22: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0354 - Bi-Acc: 0.9450 - val_loss: 0.2184 - val_Bi-Acc: 0.8378 - 2s/epoch - 8ms/step
+Epoch 23/50
+
+Epoch 23: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0348 - Bi-Acc: 0.9462 - val_loss: 0.2293 - val_Bi-Acc: 0.8198 - 2s/epoch - 8ms/step
+Epoch 24/50
+
+Epoch 24: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0332 - Bi-Acc: 0.9487 - val_loss: 0.2630 - val_Bi-Acc: 0.8378 - 2s/epoch - 8ms/step
+Epoch 25/50
+
+Epoch 25: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0321 - Bi-Acc: 0.9524 - val_loss: 0.2551 - val_Bi-Acc: 0.8378 - 2s/epoch - 8ms/step
+Epoch 26/50
+
+Epoch 26: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0297 - Bi-Acc: 0.9569 - val_loss: 0.2261 - val_Bi-Acc: 0.8378 - 2s/epoch - 8ms/step
+Epoch 27/50
+
+Epoch 27: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0303 - Bi-Acc: 0.9548 - val_loss: 0.2235 - val_Bi-Acc: 0.8468 - 2s/epoch - 8ms/step
+Epoch 28/50
+
+Epoch 28: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0299 - Bi-Acc: 0.9543 - val_loss: 0.2123 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 29/50
+
+Epoch 29: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0275 - Bi-Acc: 0.9596 - val_loss: 0.2668 - val_Bi-Acc: 0.8649 - 2s/epoch - 8ms/step
+Epoch 30/50
+
+Epoch 30: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0248 - Bi-Acc: 0.9627 - val_loss: 0.2531 - val_Bi-Acc: 0.8468 - 2s/epoch - 8ms/step
+Epoch 31/50
+
+Epoch 31: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0259 - Bi-Acc: 0.9611 - val_loss: 0.2420 - val_Bi-Acc: 0.8378 - 2s/epoch - 8ms/step
+Epoch 32/50
+
+Epoch 32: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0249 - Bi-Acc: 0.9637 - val_loss: 0.2433 - val_Bi-Acc: 0.8649 - 2s/epoch - 8ms/step
+Epoch 33/50
+
+Epoch 33: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0248 - Bi-Acc: 0.9643 - val_loss: 0.2579 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 34/50
+
+Epoch 34: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0246 - Bi-Acc: 0.9637 - val_loss: 0.3034 - val_Bi-Acc: 0.8468 - 2s/epoch - 8ms/step
+Epoch 35/50
+
+Epoch 35: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0219 - Bi-Acc: 0.9684 - val_loss: 0.2193 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 36/50
+
+Epoch 36: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0222 - Bi-Acc: 0.9674 - val_loss: 0.2168 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 37/50
+
+Epoch 37: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0220 - Bi-Acc: 0.9673 - val_loss: 0.2358 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 38/50
+
+Epoch 38: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0210 - Bi-Acc: 0.9699 - val_loss: 0.2384 - val_Bi-Acc: 0.9009 - 2s/epoch - 8ms/step
+Epoch 39/50
+
+Epoch 39: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0212 - Bi-Acc: 0.9685 - val_loss: 0.2785 - val_Bi-Acc: 0.8649 - 2s/epoch - 8ms/step
+Epoch 40/50
+
+Epoch 40: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0201 - Bi-Acc: 0.9712 - val_loss: 0.2701 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 41/50
+
+Epoch 41: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0192 - Bi-Acc: 0.9720 - val_loss: 0.2952 - val_Bi-Acc: 0.8378 - 2s/epoch - 8ms/step
+Epoch 42/50
+
+Epoch 42: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0190 - Bi-Acc: 0.9731 - val_loss: 0.2583 - val_Bi-Acc: 0.8288 - 2s/epoch - 8ms/step
+Epoch 43/50
+
+Epoch 43: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0184 - Bi-Acc: 0.9741 - val_loss: 0.2842 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 44/50
+
+Epoch 44: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0187 - Bi-Acc: 0.9731 - val_loss: 0.2800 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 45/50
+
+Epoch 45: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0174 - Bi-Acc: 0.9751 - val_loss: 0.2868 - val_Bi-Acc: 0.8739 - 2s/epoch - 8ms/step
+Epoch 46/50
+
+Epoch 46: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0178 - Bi-Acc: 0.9747 - val_loss: 0.1979 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+Epoch 47/50
+
+Epoch 47: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0176 - Bi-Acc: 0.9743 - val_loss: 0.2453 - val_Bi-Acc: 0.8829 - 2s/epoch - 8ms/step
+Epoch 48/50
+
+Epoch 48: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0183 - Bi-Acc: 0.9734 - val_loss: 0.2631 - val_Bi-Acc: 0.8649 - 2s/epoch - 8ms/step
+Epoch 49/50
+
+Epoch 49: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0173 - Bi-Acc: 0.9762 - val_loss: 0.2447 - val_Bi-Acc: 0.8649 - 2s/epoch - 8ms/step
+Epoch 50/50
+
+Epoch 50: val_loss did not improve from 0.10379
+255/255 - 2s - loss: 0.0175 - Bi-Acc: 0.9753 - val_loss: 0.2416 - val_Bi-Acc: 0.8559 - 2s/epoch - 8ms/step
+4/4 - 0s - 193ms/epoch - 48ms/step
+
+Confusion Matrix for 0
+True Pos False Neg
+[44 12]
+False Pos True Neg
+[ 6 52]
+Precision: 0.88
+Recall: 0.7857142857142857
+F1 Score for Neg: 0.8524590163934426
+F1 Score for Pos: 0.830188679245283
+
+Saved
