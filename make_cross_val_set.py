@@ -31,7 +31,7 @@ label_threshold = 0.5   # 50%信心 or 60%信心
 cross_validation_num = 3
 
 
-seed = 37                       # Random Seed
+seed = 6                       # Random Seed
 
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
