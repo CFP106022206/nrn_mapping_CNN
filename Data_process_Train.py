@@ -64,8 +64,8 @@ tf.random.set_seed(seed)
 save_model_name  = 'Annotator_D1-' + data_range + '_' +str(num_splits)
 
 # load train, test
-label_table_train = pd.read_csv('./data/train_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
-label_table_test = pd.read_csv('./data/test_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
+label_table_train = pd.read_csv('./train_test_info/train_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
+label_table_test = pd.read_csv('./train_test_info/test_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
 
 
 # turn to numpy array

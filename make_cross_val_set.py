@@ -23,9 +23,10 @@ from sklearn.model_selection import KFold
 # %% 此档案目的为 load 最佳参数模型, 然后对yifan那边画出的未标注三视图进行标注
 # Mode 1: 用所有標注data做cross validation
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
+# Mode 3: 选同一条fc有对应到比较多em的pair作为testing data, 这样做的目的是为了评估时在评估几率从高到低排序时前n名中是否有正确答案
 
 mode = 2
-mode2_file_path = './data/nblast_D2+D5+D6_50as1.csv'
+mode2_file_path = './labeled_info/nblast_D2+D5+D6_50as1.csv'
 label_threshold = 0.5   # 50%信心 or 60%信心
 
 cross_validation_num = 3
@@ -44,19 +45,19 @@ train_range_to = 'D6'   # 'D5' or 'D6'
 
 # Load labeled csv
 if label_threshold == 0.5:
-    label_csv_D1 = './data/D1_20221230.csv'
-    label_csv_D2 = './data/D2_20230710.csv'
-    label_csv_D3 = './data/D3_20221230.csv'
-    label_csv_D4 = './data/D4_20230710.csv'
-    label_csv_D5 = './data/D5_20221230.csv'
-    label_csv_D6 = './data/D6_20230523.csv'
+    label_csv_D1 = './labeled_info/D1_20221230.csv'
+    label_csv_D2 = './labeled_info/D2_20230710.csv'
+    label_csv_D3 = './labeled_info/D3_20221230.csv'
+    label_csv_D4 = './labeled_info/D4_20230710.csv'
+    label_csv_D5 = './labeled_info/D5_20221230.csv'
+    label_csv_D6 = './labeled_info/D6_20230523.csv'
 elif label_threshold == 0.6:
-    label_csv_D1 = './data/D1_20230113.csv'
-    label_csv_D2 = './data/D2_60as1.csv'
-    label_csv_D3 = './data/D3_20230113.csv'
-    label_csv_D4 = './data/D4_60as1.csv'
-    label_csv_D5 = './data/D5_60as1.csv'
-    label_csv_D6 = './data/D6_60as1.csv'
+    label_csv_D1 = './labeled_info/D1_20230113.csv'
+    label_csv_D2 = './labeled_info/D2_60as1.csv'
+    label_csv_D3 = './labeled_info/D3_20230113.csv'
+    label_csv_D4 = './labeled_info/D4_60as1.csv'
+    label_csv_D5 = './labeled_info/D5_60as1.csv'
+    label_csv_D6 = './labeled_info/D6_60as1.csv'
 
 D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
 D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
@@ -99,8 +100,8 @@ if mode == 1:
         label_table_test = label_table_all.iloc[test_index]
 
         # save as csv
-        label_table_test.to_csv('./data/test_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
-        label_table_train.to_csv('./data/train_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
+        label_table_test.to_csv('./train_test_info/test_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
+        label_table_train.to_csv('./train_test_info/train_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
         i += 1
 
 elif mode == 2:
@@ -154,8 +155,27 @@ elif mode == 2:
         label_table_cleaned = label_table_cleaned.drop(columns=['score_y', 'label_y'])
 
         # save as csv
-        label_table_test.to_csv('./data/test_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
-        label_table_cleaned.to_csv('./data/train_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
+        label_table_test.to_csv('./train_test_info/test_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
+        label_table_cleaned.to_csv('./train_test_info/train_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
 
 
+elif mode == 3:
+    # 针对label_table_all中的pair，将相同的fc_id整理成字典
+    fc_id_dict = {}
+
+    for index, row in label_table_all.iterrows():
+        if row['fc_id'] in fc_id_dict:
+            fc_id_dict[row['fc_id']].append([row['em_id'], row['label']])
+        else:
+            fc_id_dict[row['fc_id']] = [[row['em_id'], row['label']]]
+
+
+    # 依value长短对fc_id_dict排序
+    fc_id_dict = dict(sorted(fc_id_dict.items(), key=lambda item: len(item[1]),reverse=True))
+
+    # 将fc_id_dict中每个key对应的value长度print出
+    for key in fc_id_dict:
+        print(key, len(fc_id_dict[key]))
+    
+    # 分离出 test data，大约是一百一十多条
 # %%
