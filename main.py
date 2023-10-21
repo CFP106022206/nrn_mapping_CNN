@@ -32,14 +32,15 @@ normalization_of_moi = True  # normalizing the eigenvalues of moment of inertia 
 
 # Step 3 Match pairs of neurons
 weighting_keys_m = ["unit"]  # unit, sn, rsn --> "unit"
-coordinate_selection = "target-orientation"  # "coordinate-orientation", "MOI-orientation", "target-orientation"
-target_list = ["FC"]
-candidate_list = ["EM"]
+coordinate_selection = "coordinate-orientation" # "coordinate-orientation"(标准脑坐标), "MOI-orientation", "target-orientation"
+target_list = ["FC"]    #当coordinate selection 为 'coordinate-orientation'时填同一个资料夹 'EM_Cluster'
+candidate_list = ["EM"] #当coordinate selection 为 'coordinate-orientation'时填同一个资料夹 'EM_Cluster'
 threshold_of_exchange = 0.0  # threshold of considering the exchange of principal axes
 threshold_of_nI = 0.4  # threshold of choosing pairs of neurons by normalized inertia of moment
 threshold_in = np.cos(np.pi*50/180)  # threshold of inner product
 threshold_of_distance = 100  # threshold of distance between wrapping EM data and FC data
 
+# %%
 # Step 4 Score and rank the selected pairs
 cluster = False  # simplify the Strahler number
 cluster_num = 3  # the number of clusters which we group neuron nodes into
