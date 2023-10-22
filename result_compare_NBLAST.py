@@ -45,19 +45,19 @@ test_set_num = 98       # 指定test_set 的特殊編號, 只有在 test_mode ==
 
 cross_fold_num = 3      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
-data_range = 'D6'
+D6 = 'D6'
 
 use_final = False      # 如果True，使用最後階段的預測結果，如果False，使用第一階段的預測結果
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = './data/nblast_D5_50as1.csv'
+selected_test_set = './labeled_info/nblast_D5_50as1.csv'
 
 if use_final:
-    label_csv_name = './result/final_label_model_D1-'+data_range+'_'
+    label_csv_name = './result/final_label_model_D1-D6_'
 else:
-    label_csv_name = './result/test_label_Annotator_D1-'+data_range+'_'
+    label_csv_name = './result/test_label_Annotator_D1-D6_'
 
-nblast_correct_path = './data/nblast_D5_correct.csv'
+nblast_correct_path = './labeled_info/nblast_D5_correct.csv'
 
 if test_mode == 'single':
     # load model predict test nrn set
@@ -79,7 +79,7 @@ elif test_mode == 'cross':
         y_true += nrn_pair['label'].tolist()
 
         # 加载训练和验证历史记录
-        history = load_pkl('./result/Train_History_Annotator_D1-'+data_range+'_'+str(i)+'.pkl')
+        history = load_pkl('./result/Train_History_Annotator_D1-D6_'+str(i)+'.pkl')
         train_losses.append(history['loss'])
         val_losses.append(history['val_loss'])
 
@@ -270,8 +270,8 @@ print(gen_conf_matrix(y_true, y_pred, threshold=threshold)[1])
 
 # %% 混淆矩陣分析
 if test_mode == 'single':
-    annotator_result = load_pkl('./result/Test_Result_Annotator_D1-'+data_range+'_'+str(test_set_num)+'.pkl')
-    final_result = load_pkl('./result/Final_stage_Result_model_D1-'+data_range+'_'+str(test_set_num)+'.pkl')
+    annotator_result = load_pkl('./result/Test_Result_Annotator_D1-D6_'+str(test_set_num)+'.pkl')
+    final_result = load_pkl('./result/Final_stage_Result_model_D1-D6_'+str(test_set_num)+'.pkl')
     
     print('Annotator Confusion Matrix\n', annotator_result['conf_matrix'])
     print('Annotator Precision, Recall, F1-Score\n', np.round(annotator_result['Precision'],2), np.round(annotator_result['Recall'],2), np.round(annotator_result['F1_pos'],2))

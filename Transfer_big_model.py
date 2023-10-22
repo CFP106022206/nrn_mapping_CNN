@@ -99,7 +99,6 @@ def data_preprocess_annotator(unlabel_path, pair_nrn):
 resolutions = [3,50,50]
 
 num_splits = 2 #0~9
-data_range = 'D6'   #D4 or D5
 
 fix_kernel = True  # 微調時是否凍結參數
 use_scheduler = False #是否使用scheduler 控制學習率
@@ -121,7 +120,7 @@ np.random.seed(seed)
 os.environ['TF_DITERMINISTIC_OPS'] = '1'
 tf.random.set_seed(seed)
 
-save_model_name  = 'model_D1-'+data_range+'_'+str(num_splits)
+save_model_name  = 'model_D1-D6_'+str(num_splits)
 
 def scheduler(epoch, lr): 
 
@@ -134,12 +133,12 @@ def scheduler(epoch, lr):
     return epoch_lr
 
 # load annotator data
-label_annotator = pd.read_csv('./result/label_df_with_Annotator_D1-'+ data_range +'_' + str(num_splits)+'.csv')
+label_annotator = pd.read_csv('./result/label_df_with_Annotator_D1-D6_' + str(num_splits)+'.csv')
 # TODO: 比較10個不同分割下的annotator表現差異性
 
 # load train, test
-label_table_train = pd.read_csv('./data/train_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
-label_table_test = pd.read_csv('./data/test_split_' + str(num_splits) +'_D1-' + data_range + '.csv')
+label_table_train = pd.read_csv('./train_test_split/train_split_' + str(num_splits) +'_D1-D6.csv')
+label_table_test = pd.read_csv('./train_test_split/test_split_' + str(num_splits) +'_D1-D6.csv')
 
 
 # %% 刪除label_annotator 中與人工標註重複的部分
