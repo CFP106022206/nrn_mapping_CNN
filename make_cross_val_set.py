@@ -25,7 +25,7 @@ from sklearn.model_selection import KFold
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
 # Mode 3: 选同一条fc有对应到比较多em的pair作为testing data, 这样做的目的是为了评估时在评估几率从高到低排序时前n名中是否有正确答案
 
-mode = 2
+mode = 3
 mode2_file_path = './labeled_info/nblast_D2+D5+D6_50as1.csv'
 label_threshold = 0.5   # 50%信心 or 60%信心
 
@@ -38,9 +38,6 @@ os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
 np.random.seed(seed)
 os.environ['TF_DITERMINISTIC_OPS'] = '1'
-
-
-train_range_to = 'D6'   # 'D5' or 'D6'
 
 
 # Load labeled csv
@@ -74,24 +71,18 @@ D4.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 D5 = pd.read_csv(label_csv_D5)     # FC, EM, label
 D5.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-if train_range_to == 'D6':
-    D6 = pd.read_csv(label_csv_D6)     # FC, EM, label
-    D6.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-    label_table_all = pd.concat([D1, D2, D3, D4, D5, D6])   # fc_id, em_id, score, rank, label
-
-else:
-    label_table_all = pd.concat([D1, D2, D3, D4, D5])   # fc_id, em_id, score, rank, label
+D6 = pd.read_csv(label_csv_D6)     # FC, EM, label
+D6.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
 
-
+label_table_all = pd.concat([D1, D2, D3, D4, D5, D6])   # fc_id, em_id, score, rank, label
 label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
 
 # 设置 KFold 参数
 kf = KFold(n_splits=cross_validation_num, shuffle=True, random_state=seed)
 
-# 分割数据集并执行交叉验证
+# %% 分割数据集并执行交叉验证
 if mode == 1:
     i = 0
 
@@ -100,8 +91,8 @@ if mode == 1:
         label_table_test = label_table_all.iloc[test_index]
 
         # save as csv
-        label_table_test.to_csv('./train_test_info/test_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
-        label_table_train.to_csv('./train_test_info/train_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
+        label_table_test.to_csv('./train_test_split/test_split_' + str(i) +'_D1-D6.csv', index=False)
+        label_table_train.to_csv('./train_test_split/train_split_' + str(i) +'_D1-D6.csv', index=False)
         i += 1
 
 elif mode == 2:
@@ -155,27 +146,47 @@ elif mode == 2:
         label_table_cleaned = label_table_cleaned.drop(columns=['score_y', 'label_y'])
 
         # save as csv
-        label_table_test.to_csv('./train_test_info/test_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
-        label_table_cleaned.to_csv('./train_test_info/train_split_' + str(i) +'_D1-' + train_range_to + '.csv', index=False)
+        label_table_test.to_csv('./train_test_split/test_split_' + str(i) +'_D1-D6.csv', index=False)
+        label_table_cleaned.to_csv('./train_test_split/train_split_' + str(i) +'_D1-D6.csv', index=False)
 
 
 elif mode == 3:
-    # 针对label_table_all中的pair，将相同的fc_id整理成字典
+    # 针对label_table_all中的pair，統計相同的fc_id有多少個pair
     fc_id_dict = {}
 
     for index, row in label_table_all.iterrows():
         if row['fc_id'] in fc_id_dict:
-            fc_id_dict[row['fc_id']].append([row['em_id'], row['label']])
+            fc_id_dict[row['fc_id']] += 1   # 如果fc_id已经在字典中，就在对应的value(pair數量)上加1
         else:
-            fc_id_dict[row['fc_id']] = [[row['em_id'], row['label']]]
+            fc_id_dict[row['fc_id']] = 1
 
 
-    # 依value长短对fc_id_dict排序
-    fc_id_dict = dict(sorted(fc_id_dict.items(), key=lambda item: len(item[1]),reverse=True))
+    # 依value 大小排序
+    fc_id_dict = dict(sorted(fc_id_dict.items(), key=lambda item: item[1], reverse=True))
 
-    # 将fc_id_dict中每个key对应的value长度print出
+    # 篩選出約 100 條 test data
+    print("Test set's fc_id:")
+    num = 0
+    test_table_lst= []
     for key in fc_id_dict:
-        print(key, len(fc_id_dict[key]))
+        print(key, fc_id_dict[key])   # 将fc_id_dict中每个key对应的value长度print出
+        test_tabel = label_table_all[label_table_all['fc_id'] == key]
+        # 檢查test_tabel中是否有label=1
+        if 1 in test_tabel['label'].tolist():
+            test_table_lst.append(test_tabel)
+            num += len(test_tabel)
+        
+        if num > 100:
+            break
     
-    # 分离出 test data，大约是一百一十多条
+    # 將test_table_lst合併
+    label_table_test = pd.concat(test_table_lst, ignore_index=True)
+    # 分离出 train data
+    label_table_train = label_table_all.merge(label_table_test, on=['fc_id', 'em_id'], how='left', indicator=True)
+    label_table_train = label_table_train[label_table_train['_merge'] == 'left_only'].drop(columns=['score_y', 'label_y', '_merge'])
+    label_table_train = label_table_train.rename(columns={'score_x': 'score', 'label_x': 'label'})
+
+    # save as csv
+    label_table_test.to_csv('./train_test_split/test_split_0_D1-D6.csv', index=False)
+    label_table_train.to_csv('./train_test_split/train_split_0_D1-D6.csv', index=False)
 # %%
