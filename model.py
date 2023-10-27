@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import tensorflow as tf
 # import tensorflow_addons as tfa
 # import keras_tuner as kt
 from keras.regularizers import l2
