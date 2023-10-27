@@ -52,7 +52,7 @@ train_epochs = 50
 add_low_score = False
 low_score_neg_rate = 2
 
-seed = 10
+seed = 18
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
 np.random.seed(seed)
@@ -516,25 +516,6 @@ def rotate_and_pad(image, angle, border_value=(0, 0, 0)):
     return rotated_image
 
 
-# def resize_and_pad(image, scale_factor):
-#     augmented_image = cv2.resize(image, None, fx=scale_factor, fy=scale_factor)
-
-#     # 裁剪或填充缩放后的图像以保持原始尺寸
-#     height, width = image.shape[:2]
-#     if scale_factor > 1:
-#         y_offset = (augmented_image.shape[0] - height) // 2
-#         x_offset = (augmented_image.shape[1] - width) // 2
-#         augmented_image = augmented_image[y_offset:y_offset+height, x_offset:x_offset+width]
-#     else:
-#         y_padding_top = (height - augmented_image.shape[0]) // 2
-#         y_padding_bottom = height - augmented_image.shape[0] - y_padding_top
-#         x_padding_left = (width - augmented_image.shape[1]) // 2
-#         x_padding_right = width - augmented_image.shape[1] - x_padding_left
-#         augmented_image = cv2.copyMakeBorder(augmented_image, y_padding_top, y_padding_bottom, x_padding_left, x_padding_right, cv2.BORDER_CONSTANT, value=0)
-    
-#     return augmented_image
-
-
 def augment_data(X_train, y_train, angle_range, resize_range, aug_seed):
     X_augmented, y_augmented = [], []
 
@@ -548,13 +529,9 @@ def augment_data(X_train, y_train, angle_range, resize_range, aug_seed):
         resize_pair = np.zeros(X_train.shape[1:])
         for j in range(X_train.shape[1]):
             rotate_pair[j] = rotate_and_pad(X_train[i, j], angle)
-            # resize_pair[j] = resize_and_pad(X_train[i, j], scale)
-        
-        X_augmented.append(rotate_pair)
-        # X_augmented.append(resize_pair)
 
+        X_augmented.append(rotate_pair)
         y_augmented.append(y_train[i])
-        # y_augmented.append(y_train[i])
 
     return np.array(X_augmented), np.array(y_augmented)
 
@@ -664,11 +641,6 @@ reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 # 設定模型儲存條件(儲存最佳模型)
 checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
 
-# 按照 val_f1 保存模型
-# checkpoint = tf.keras.callbacks.ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5',
-#                                                  monitor='val_f1', 
-#                                                  mode='max', verbose=2,
-#                                                  save_best_only=True)
 
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
 
@@ -709,16 +681,7 @@ with open('./result/Train_History_'+save_model_name+'.pkl', 'wb') as f:
 
 
 model = load_model('./Annotator_Model/' + save_model_name + '.h5')
-y_pred = model.predict({'FC':X_test_FC, 'EM':X_test_EM}, verbose=2)
-pred_test_compare = np.hstack((y_pred, y_test.reshape(len(y_test), 1)))
-y_pred_binary = []
-for ans in y_pred:
-    if ans > 0.5:
-        y_pred_binary.append(1)
-    else:
-        y_pred_binary.append(0)
 
-conf_matrix = confusion_matrix(y_test.tolist(), y_pred_binary, labels=[1,0])# 統一標籤格式
 
 def print_conf_martix(conf_matrix, name='0'):
 
@@ -728,34 +691,57 @@ def print_conf_martix(conf_matrix, name='0'):
     print('False Pos','True Neg')
     print(conf_matrix[1])
 
-print_conf_martix(conf_matrix)
+def reesult_analysis(y_pred, y_test):
+    y_pred_binary = []
+    for ans in y_pred:
+        if ans > 0.5:
+            y_pred_binary.append(1)
+        else:
+            y_pred_binary.append(0)
+
+    conf_matrix = confusion_matrix(y_test.tolist(), y_pred_binary, labels=[1,0])# 統一標籤格式
+
+    print_conf_martix(conf_matrix)
+
+    # Precision and recall
+    precision = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0])
+    recall = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[0,1])
+    print("Precision:", precision)
+    print("Recall:", recall)
+
+    # F1 Score
+    result_f1_score = f1_score(y_test, y_pred_binary, average=None)
+    print('F1 Score for Neg:', result_f1_score[0])
+    print('F1 Score for Pos:', result_f1_score[1])
+
+    # save results
+    result = {'conf_matrix': conf_matrix, 'Precision': precision, 'Recall': recall, 'F1_pos':result_f1_score[1]}
+    return result, y_pred_binary
 
 
+# predict validation dataset result
+y_pred_val = model.predict({'FC':X_val_FC, 'EM':X_val_EM}, verbose=2)
+pred_test_compare = np.hstack((y_pred_val, y_val.reshape(len(y_val), 1)))
 
-# Precision and recall
-precision = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0])
-recall = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[0,1])
-print("Precision:", precision)
-print("Recall:", recall)
+val_result, val_pred_bin = reesult_analysis(y_pred_val, y_val)
 
-# F1 Score
-result_f1_score = f1_score(y_test, y_pred_binary, average=None)
-print('F1 Score for Neg:', result_f1_score[0])
-print('F1 Score for Pos:', result_f1_score[1])
 
-# save results
-result = {'conf_matrix': conf_matrix, 'Precision': precision, 'Recall': recall, 'F1_pos':result_f1_score[1]}
+# predict test dataset result
+y_pred_test = model.predict({'FC':X_test_FC, 'EM':X_test_EM}, verbose=2)
+pred_test_compare = np.hstack((y_pred_test, y_test.reshape(len(y_test), 1)))
+
+test_result, test_pred_binary = reesult_analysis(y_pred_test, y_test)
 
 with open('./result/Test_Result_'+save_model_name+'.pkl', 'wb') as f:
-    pickle.dump(result, f)
+    pickle.dump(test_result, f)
 
 
 # 保存對Testing data的label情況
 
 # Save model prediction csv
 pred_result_df = nrn_pair_test.copy()
-pred_result_df['model_pred'] = y_pred
-pred_result_df['model_pred_binary'] = y_pred_binary
+pred_result_df['model_pred'] = y_pred_test
+pred_result_df['model_pred_binary'] = test_pred_binary
 
 # 将DataFrame存储为csv文件
 pred_result_df.to_csv('./result/test_label_'+save_model_name+'.csv', index=False)
