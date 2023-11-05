@@ -170,11 +170,21 @@ elif mode == 3:
     test_table_lst= []
     for key in fc_id_dict:
         print(key, fc_id_dict[key])   # 将fc_id_dict中每个key对应的value长度print出
-        test_tabel = label_table_all[label_table_all['fc_id'] == key]
+        test_table = label_table_all[label_table_all['fc_id'] == key]
         # 檢查test_tabel中是否有label=1
-        if 1 in test_tabel['label'].tolist():
-            test_table_lst.append(test_tabel)
-            num += len(test_tabel)
+        if 1 in test_table['label'].tolist():
+            
+            # 找到 1 所在的那一行，這一步是為了保證test_tabel中至少有一個positive
+            test_tabel_pos = test_table[test_table['label'] == 1]
+            # 將剩下的一半隨機放進test_tabel
+            test_table = test_table[:len(test_table)//2]
+            # 加回test_tabel_pos
+            test_table = pd.concat([test_table, test_tabel_pos], ignore_index=True)
+
+            test_table.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
+
+            test_table_lst.append(test_table)
+            num += len(test_table)
         
         if num > 100:
             break
