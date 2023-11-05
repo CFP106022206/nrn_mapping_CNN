@@ -39,9 +39,9 @@ sns.set(style="whitegrid")
 
 # %% load model
 
-test_mode = 'cross'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
+test_mode = 'single'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
 
-test_set_num = 98       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
+test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
 cross_fold_num = 3      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
@@ -65,6 +65,9 @@ if test_mode == 'single':
 
     y_pred = nrn_pair['model_pred']
     y_true = nrn_pair['label']
+
+    roc_color='darkorange'
+    plot_title = 'NBlast Score'
 
 elif test_mode == 'cross':
     train_losses, val_losses = [], []
@@ -268,15 +271,18 @@ print('Recall: ', recall_lst[best_result_idx])
 print('F1: ', f1_lst[best_result_idx])
 print(gen_conf_matrix(y_true, y_pred, threshold=threshold)[1])
 
-# %% 混淆矩陣分析
-if test_mode == 'single':
-    annotator_result = load_pkl('./result/Test_Result_Annotator_D1-D6_'+str(test_set_num)+'.pkl')
-    final_result = load_pkl('./result/Final_stage_Result_model_D1-D6_'+str(test_set_num)+'.pkl')
-    
-    print('Annotator Confusion Matrix\n', annotator_result['conf_matrix'])
-    print('Annotator Precision, Recall, F1-Score\n', np.round(annotator_result['Precision'],2), np.round(annotator_result['Recall'],2), np.round(annotator_result['F1_pos'],2))
+# %% Ranking analysis
+grouped = nrn_pair.groupby('fc_id')
 
-    print('Final Confusion Matrix\n', final_result['conf_matrix'])
-    print('Final Precision, Recall, F1-Score\n', np.round(final_result['Precision'],2), np.round(final_result['Recall'],2), np.round(final_result['F1_pos'],2))
+# 创建一个空字典来保存每个分组的新 DataFrame
+dfs = {}
+
+for name, group in grouped:
+    sorted_group = group.sort_values(by='model_pred', ascending=False)
+    dfs[name] = sorted_group
+
+for key in dfs:
+    print(dfs[key].head(10))
+
 
 # %%
