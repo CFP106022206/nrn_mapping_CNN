@@ -177,7 +177,7 @@ elif mode == 3:
             # 找到 1 所在的那一行，這一步是為了保證test_tabel中至少有一個positive
             test_tabel_pos = test_table[test_table['label'] == 1]
             # 將剩下的一半隨機放進test_tabel
-            test_table = test_table[:len(test_table)//2]
+            test_table = test_table[:len(test_table)//1]
             # 加回test_tabel_pos
             test_table = pd.concat([test_table, test_tabel_pos], ignore_index=True)
 

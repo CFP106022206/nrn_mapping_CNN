@@ -203,7 +203,6 @@ plot/*
 # plot result
 3D_Plot
 3D_Plot/*
-Figure/*
 .history/*
 .history
 
@@ -219,7 +218,6 @@ CNN_Tuner/*
 mnist_kt_test
 
 # Result
-result/*
 Final_Model/*
 Second_Stage_Model/*
 Annotator_Model/*

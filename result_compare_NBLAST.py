@@ -39,7 +39,7 @@ sns.set(style="whitegrid")
 
 # %% load model
 
-test_mode = 'single'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
+test_mode = 'cross'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
