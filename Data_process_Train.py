@@ -723,6 +723,7 @@ def reesult_analysis(y_pred, y_test):
 y_pred_val = model.predict({'FC':X_val_FC, 'EM':X_val_EM}, verbose=2)
 pred_test_compare = np.hstack((y_pred_val, y_val.reshape(len(y_val), 1)))
 
+print('Validation:')
 val_result, val_pred_bin = reesult_analysis(y_pred_val, y_val)
 
 
@@ -730,6 +731,7 @@ val_result, val_pred_bin = reesult_analysis(y_pred_val, y_val)
 y_pred_test = model.predict({'FC':X_test_FC, 'EM':X_test_EM}, verbose=2)
 pred_test_compare = np.hstack((y_pred_test, y_test.reshape(len(y_test), 1)))
 
+print('Test:')
 test_result, test_pred_binary = reesult_analysis(y_pred_test, y_test)
 
 with open('./result/Test_Result_'+save_model_name+'.pkl', 'wb') as f:

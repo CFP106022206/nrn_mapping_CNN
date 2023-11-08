@@ -1,0 +1,351 @@
+2023-11-06 19:46:07.696697: I tensorflow/core/util/port.cc:111] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2023-11-06 19:46:07.697955: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2023-11-06 19:46:07.720894: E tensorflow/compiler/xla/stream_executor/cuda/cuda_dnn.cc:9342] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2023-11-06 19:46:07.720924: E tensorflow/compiler/xla/stream_executor/cuda/cuda_fft.cc:609] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2023-11-06 19:46:07.720942: E tensorflow/compiler/xla/stream_executor/cuda/cuda_blas.cc:1518] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-11-06 19:46:07.725061: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2023-11-06 19:46:07.725194: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-11-06 19:46:09.153870: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2023-11-06 19:46:15.774761: E tensorflow/compiler/xla/stream_executor/cuda/cuda_driver.cc:268] failed call to cuInit: CUDA_ERROR_COMPAT_NOT_SUPPORTED_ON_DEVICE: forward compatibility was attempted on non supported HW
+2023-11-06 19:46:15.774802: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:168] retrieving CUDA diagnostic information for host: c03
+2023-11-06 19:46:15.774805: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:175] hostname: c03
+2023-11-06 19:46:15.774930: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:199] libcuda reported version is: 535.129.3
+2023-11-06 19:46:15.774945: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:203] kernel reported version is: 535.104.12
+2023-11-06 19:46:15.774947: E tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:312] kernel version 535.104.12 does not match DSO version 535.129.3 -- cannot find working devices in this configuration
+
+Collecting 3-View Data Numpy Array..
+
+ Resolutions: (3, 50, 50)
+
+Collecting 3-View Data Numpy Array..
+
+ Resolutions: (3, 50, 50)
+
+Train data: 1003 
+Valid data: 112 
+Test data: 104
+Total: 1003
+Positive: 512 (51.05% of total)
+
+Balanced Weight in: 
+ [0 1] 
+ [1.02138493 0.97949219]
+UpSampling: After Augmentation:
+True Label/Total in X_train:
+ 512 / 1024
+X_train shape: (32768, 50, 50, 3) (32768, 50, 50, 3)
+y_train shape: 32768
+X_val shape: (112, 50, 50, 3) (112, 50, 50, 3)
+y_val shape: 112
+X_test shape: (104, 50, 50, 3) (104, 50, 50, 3)
+y_test shape: 104
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                Output Shape                 Param #   Connected to                  
+==================================================================================================
+ EM (InputLayer)             [(None, 50, 50, 3)]          0         []                            
+                                                                                                  
+ FC (InputLayer)             [(None, 50, 50, 3)]          0         []                            
+                                                                                                  
+ Shared_Conv1 (Conv2D)       (None, 48, 48, 16)           448       ['EM[0][0]',                  
+                                                                     'FC[0][0]']                  
+                                                                                                  
+ Shared_BN1 (BatchNormaliza  (None, 48, 48, 16)           64        ['Shared_Conv1[0][0]',        
+ tion)                                                               'Shared_Conv1[1][0]']        
+                                                                                                  
+ Shared_Activation1 (Activa  (None, 48, 48, 16)           0         ['Shared_BN1[0][0]',          
+ tion)                                                               'Shared_BN1[1][0]']          
+                                                                                                  
+ max_pooling2d (MaxPooling2  (None, 24, 24, 16)           0         ['Shared_Activation1[0][0]']  
+ D)                                                                                               
+                                                                                                  
+ max_pooling2d_1 (MaxPoolin  (None, 24, 24, 16)           0         ['Shared_Activation1[1][0]']  
+ g2D)                                                                                             
+                                                                                                  
+ Shared_Conv2 (Conv2D)       (None, 22, 22, 32)           4640      ['max_pooling2d[0][0]',       
+                                                                     'max_pooling2d_1[0][0]']     
+                                                                                                  
+ Shared_BN2 (BatchNormaliza  (None, 22, 22, 32)           128       ['Shared_Conv2[0][0]',        
+ tion)                                                               'Shared_Conv2[1][0]']        
+                                                                                                  
+ Shared_Activation2 (Activa  (None, 22, 22, 32)           0         ['Shared_BN2[0][0]',          
+ tion)                                                               'Shared_BN2[1][0]']          
+                                                                                                  
+ Shared_pool1 (MaxPooling2D  (None, 11, 11, 32)           0         ['Shared_Activation2[0][0]',  
+ )                                                                   'Shared_Activation2[1][0]']  
+                                                                                                  
+ Shared_Conv3 (Conv2D)       (None, 9, 9, 48)             13872     ['Shared_pool1[0][0]',        
+                                                                     'Shared_pool1[1][0]']        
+                                                                                                  
+ Shared_BN3 (BatchNormaliza  (None, 9, 9, 48)             192       ['Shared_Conv3[0][0]',        
+ tion)                                                               'Shared_Conv3[1][0]']        
+                                                                                                  
+ Shared_Activation3 (Activa  (None, 9, 9, 48)             0         ['Shared_BN3[0][0]',          
+ tion)                                                               'Shared_BN3[1][0]']          
+                                                                                                  
+ Shared_Conv4 (Conv2D)       (None, 7, 7, 64)             27712     ['Shared_Activation3[0][0]',  
+                                                                     'Shared_Activation3[1][0]']  
+                                                                                                  
+ Shared_BN4 (BatchNormaliza  (None, 7, 7, 64)             256       ['Shared_Conv4[0][0]',        
+ tion)                                                               'Shared_Conv4[1][0]']        
+                                                                                                  
+ Shared_Activation4 (Activa  (None, 7, 7, 64)             0         ['Shared_BN4[0][0]',          
+ tion)                                                               'Shared_BN4[1][0]']          
+                                                                                                  
+ Shared_pool2 (MaxPooling2D  (None, 3, 3, 64)             0         ['Shared_Activation4[0][0]',  
+ )                                                                   'Shared_Activation4[1][0]']  
+                                                                                                  
+ flatten (Flatten)           (None, 576)                  0         ['Shared_pool2[0][0]']        
+                                                                                                  
+ flatten_1 (Flatten)         (None, 576)                  0         ['Shared_pool2[1][0]']        
+                                                                                                  
+ concatenate (Concatenate)   (None, 1152)                 0         ['flatten[0][0]',             
+                                                                     'flatten_1[0][0]']           
+                                                                                                  
+ dropout (Dropout)           (None, 1152)                 0         ['concatenate[0][0]']         
+                                                                                                  
+ dense (Dense)               (None, 128)                  147584    ['dropout[0][0]']             
+                                                                                                  
+ batch_normalization (Batch  (None, 128)                  512       ['dense[0][0]']               
+ Normalization)                                                                                   
+                                                                                                  
+ activation (Activation)     (None, 128)                  0         ['batch_normalization[0][0]'] 
+                                                                                                  
+ dense_1 (Dense)             (None, 1)                    129       ['activation[0][0]']          
+                                                                                                  
+==================================================================================================
+Total params: 195537 (763.82 KB)
+Trainable params: 194961 (761.57 KB)
+Non-trainable params: 576 (2.25 KB)
+__________________________________________________________________________________________________
+
+Use Callbacks: [<keras.src.callbacks.ModelCheckpoint object at 0x7f67e276a3e0>]
+Epoch 1/50
+
+Epoch 1: val_loss improved from inf to 0.22954, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+/cluster/home/ming/.local/lib/python3.10/site-packages/keras/src/engine/training.py:3079: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+256/256 - 14s - loss: 0.1757 - Bi-Acc: 0.6277 - val_loss: 0.2295 - val_Bi-Acc: 0.5446 - 14s/epoch - 54ms/step
+Epoch 2/50
+
+Epoch 2: val_loss improved from 0.22954 to 0.13176, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+256/256 - 13s - loss: 0.1288 - Bi-Acc: 0.7469 - val_loss: 0.1318 - val_Bi-Acc: 0.7054 - 13s/epoch - 50ms/step
+Epoch 3/50
+
+Epoch 3: val_loss did not improve from 0.13176
+256/256 - 13s - loss: 0.1143 - Bi-Acc: 0.7852 - val_loss: 0.1382 - val_Bi-Acc: 0.7679 - 13s/epoch - 50ms/step
+Epoch 4/50
+
+Epoch 4: val_loss improved from 0.13176 to 0.12668, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+256/256 - 13s - loss: 0.1023 - Bi-Acc: 0.8157 - val_loss: 0.1267 - val_Bi-Acc: 0.7768 - 13s/epoch - 50ms/step
+Epoch 5/50
+
+Epoch 5: val_loss improved from 0.12668 to 0.11056, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+256/256 - 13s - loss: 0.0920 - Bi-Acc: 0.8426 - val_loss: 0.1106 - val_Bi-Acc: 0.7946 - 13s/epoch - 50ms/step
+Epoch 6/50
+
+Epoch 6: val_loss did not improve from 0.11056
+256/256 - 13s - loss: 0.0833 - Bi-Acc: 0.8586 - val_loss: 0.1151 - val_Bi-Acc: 0.8214 - 13s/epoch - 50ms/step
+Epoch 7/50
+
+Epoch 7: val_loss did not improve from 0.11056
+256/256 - 13s - loss: 0.0768 - Bi-Acc: 0.8730 - val_loss: 0.1480 - val_Bi-Acc: 0.7768 - 13s/epoch - 50ms/step
+Epoch 8/50
+
+Epoch 8: val_loss did not improve from 0.11056
+256/256 - 13s - loss: 0.0713 - Bi-Acc: 0.8829 - val_loss: 0.1291 - val_Bi-Acc: 0.7946 - 13s/epoch - 50ms/step
+Epoch 9/50
+
+Epoch 9: val_loss did not improve from 0.11056
+256/256 - 13s - loss: 0.0655 - Bi-Acc: 0.8950 - val_loss: 0.1226 - val_Bi-Acc: 0.8482 - 13s/epoch - 50ms/step
+Epoch 10/50
+
+Epoch 10: val_loss did not improve from 0.11056
+256/256 - 13s - loss: 0.0605 - Bi-Acc: 0.9023 - val_loss: 0.1546 - val_Bi-Acc: 0.7589 - 13s/epoch - 50ms/step
+Epoch 11/50
+
+Epoch 11: val_loss did not improve from 0.11056
+256/256 - 13s - loss: 0.0569 - Bi-Acc: 0.9103 - val_loss: 0.1143 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 12/50
+
+Epoch 12: val_loss improved from 0.11056 to 0.10395, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+256/256 - 13s - loss: 0.0536 - Bi-Acc: 0.9142 - val_loss: 0.1040 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 13/50
+
+Epoch 13: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0508 - Bi-Acc: 0.9198 - val_loss: 0.1447 - val_Bi-Acc: 0.8214 - 13s/epoch - 50ms/step
+Epoch 14/50
+
+Epoch 14: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0467 - Bi-Acc: 0.9274 - val_loss: 0.1623 - val_Bi-Acc: 0.7857 - 13s/epoch - 50ms/step
+Epoch 15/50
+
+Epoch 15: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0457 - Bi-Acc: 0.9269 - val_loss: 0.1652 - val_Bi-Acc: 0.8036 - 13s/epoch - 50ms/step
+Epoch 16/50
+
+Epoch 16: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0420 - Bi-Acc: 0.9363 - val_loss: 0.1415 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 17/50
+
+Epoch 17: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0405 - Bi-Acc: 0.9364 - val_loss: 0.1290 - val_Bi-Acc: 0.8482 - 13s/epoch - 50ms/step
+Epoch 18/50
+
+Epoch 18: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0382 - Bi-Acc: 0.9396 - val_loss: 0.1450 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
+Epoch 19/50
+
+Epoch 19: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0353 - Bi-Acc: 0.9459 - val_loss: 0.1704 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 20/50
+
+Epoch 20: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0336 - Bi-Acc: 0.9478 - val_loss: 0.1936 - val_Bi-Acc: 0.7946 - 13s/epoch - 50ms/step
+Epoch 21/50
+
+Epoch 21: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0335 - Bi-Acc: 0.9501 - val_loss: 0.1498 - val_Bi-Acc: 0.8839 - 13s/epoch - 50ms/step
+Epoch 22/50
+
+Epoch 22: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0305 - Bi-Acc: 0.9542 - val_loss: 0.1829 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 23/50
+
+Epoch 23: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0293 - Bi-Acc: 0.9565 - val_loss: 0.2697 - val_Bi-Acc: 0.8036 - 13s/epoch - 50ms/step
+Epoch 24/50
+
+Epoch 24: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0297 - Bi-Acc: 0.9557 - val_loss: 0.1776 - val_Bi-Acc: 0.8304 - 13s/epoch - 50ms/step
+Epoch 25/50
+
+Epoch 25: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0288 - Bi-Acc: 0.9577 - val_loss: 0.1884 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
+Epoch 26/50
+
+Epoch 26: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0269 - Bi-Acc: 0.9616 - val_loss: 0.1973 - val_Bi-Acc: 0.8304 - 13s/epoch - 50ms/step
+Epoch 27/50
+
+Epoch 27: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0248 - Bi-Acc: 0.9632 - val_loss: 0.2208 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 28/50
+
+Epoch 28: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0248 - Bi-Acc: 0.9622 - val_loss: 0.1795 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 29/50
+
+Epoch 29: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0239 - Bi-Acc: 0.9643 - val_loss: 0.1792 - val_Bi-Acc: 0.8482 - 13s/epoch - 50ms/step
+Epoch 30/50
+
+Epoch 30: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0231 - Bi-Acc: 0.9653 - val_loss: 0.1913 - val_Bi-Acc: 0.8304 - 13s/epoch - 50ms/step
+Epoch 31/50
+
+Epoch 31: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0223 - Bi-Acc: 0.9662 - val_loss: 0.1998 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
+Epoch 32/50
+
+Epoch 32: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0210 - Bi-Acc: 0.9691 - val_loss: 0.2269 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
+Epoch 33/50
+
+Epoch 33: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0232 - Bi-Acc: 0.9664 - val_loss: 0.2118 - val_Bi-Acc: 0.8839 - 13s/epoch - 50ms/step
+Epoch 34/50
+
+Epoch 34: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0199 - Bi-Acc: 0.9702 - val_loss: 0.2044 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 35/50
+
+Epoch 35: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0204 - Bi-Acc: 0.9702 - val_loss: 0.1698 - val_Bi-Acc: 0.8929 - 13s/epoch - 50ms/step
+Epoch 36/50
+
+Epoch 36: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0194 - Bi-Acc: 0.9720 - val_loss: 0.2742 - val_Bi-Acc: 0.8214 - 13s/epoch - 50ms/step
+Epoch 37/50
+
+Epoch 37: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0197 - Bi-Acc: 0.9717 - val_loss: 0.2232 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 38/50
+
+Epoch 38: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0175 - Bi-Acc: 0.9748 - val_loss: 0.2011 - val_Bi-Acc: 0.8750 - 13s/epoch - 50ms/step
+Epoch 39/50
+
+Epoch 39: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0176 - Bi-Acc: 0.9745 - val_loss: 0.1910 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
+Epoch 40/50
+
+Epoch 40: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0167 - Bi-Acc: 0.9765 - val_loss: 0.2008 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
+Epoch 41/50
+
+Epoch 41: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0177 - Bi-Acc: 0.9746 - val_loss: 0.2043 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
+Epoch 42/50
+
+Epoch 42: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0165 - Bi-Acc: 0.9753 - val_loss: 0.2630 - val_Bi-Acc: 0.8214 - 13s/epoch - 50ms/step
+Epoch 43/50
+
+Epoch 43: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0182 - Bi-Acc: 0.9738 - val_loss: 0.1921 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
+Epoch 44/50
+
+Epoch 44: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0166 - Bi-Acc: 0.9760 - val_loss: 0.2144 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
+Epoch 45/50
+
+Epoch 45: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0153 - Bi-Acc: 0.9787 - val_loss: 0.2517 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
+Epoch 46/50
+
+Epoch 46: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0161 - Bi-Acc: 0.9782 - val_loss: 0.2021 - val_Bi-Acc: 0.8839 - 13s/epoch - 50ms/step
+Epoch 47/50
+
+Epoch 47: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0140 - Bi-Acc: 0.9809 - val_loss: 0.2459 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
+Epoch 48/50
+
+Epoch 48: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0140 - Bi-Acc: 0.9795 - val_loss: 0.2274 - val_Bi-Acc: 0.8482 - 13s/epoch - 50ms/step
+Epoch 49/50
+
+Epoch 49: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0156 - Bi-Acc: 0.9788 - val_loss: 0.2154 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
+Epoch 50/50
+
+Epoch 50: val_loss did not improve from 0.10395
+256/256 - 13s - loss: 0.0153 - Bi-Acc: 0.9778 - val_loss: 0.3162 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
+4/4 - 0s - 120ms/epoch - 30ms/step
+Validation:
+
+Confusion Matrix for 0
+True Pos False Neg
+[50 12]
+False Pos True Neg
+[ 4 46]
+Precision: 0.9259259259259259
+Recall: 0.8064516129032258
+F1 Score for Neg: 0.851851851851852
+F1 Score for Pos: 0.8620689655172414
+4/4 - 0s - 37ms/epoch - 9ms/step
+Test:
+
+Confusion Matrix for 0
+True Pos False Neg
+[20 30]
+False Pos True Neg
+[ 2 52]
+Precision: 0.9090909090909091
+Recall: 0.4
+F1 Score for Neg: 0.7647058823529412
+F1 Score for Pos: 0.5555555555555556
+
+Saved
