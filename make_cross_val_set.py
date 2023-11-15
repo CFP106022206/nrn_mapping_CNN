@@ -165,7 +165,7 @@ elif mode == 3:
     fc_id_dict = dict(sorted(fc_id_dict.items(), key=lambda item: item[1], reverse=True))
 
     # 篩選出約 100 條 test data
-    print("Test set's fc_id:")
+    print("\nTest set's fc_id / Number of pairs")
     num = 0
     test_table_lst= []
     for key in fc_id_dict:
@@ -174,12 +174,16 @@ elif mode == 3:
         # 檢查test_tabel中是否有label=1
         if 1 in test_table['label'].tolist():
             
-            # 找到 1 所在的那一行，這一步是為了保證test_tabel中至少有一個positive
-            test_tabel_pos = test_table[test_table['label'] == 1]
-            # 將剩下的一半隨機放進test_tabel
-            test_table = test_table[:len(test_table)//1]
-            # 加回test_tabel_pos
-            test_table = pd.concat([test_table, test_tabel_pos], ignore_index=True)
+            # 找到 有1 所在的那一行，這一步是為了保證test_tabel中至少有一個positive
+            test_table_pos = test_table[test_table['label'] == 1]
+            # 保留第一個
+            test_table_pos = test_table_pos.iloc[0:1]
+            #shuffle test_table
+            test_table_shuffle = test_table.sample(frac=1, random_state=seed)
+            # 將一半隨機放進test_tabel
+            test_table = test_table_shuffle[:len(test_table)//2]
+            # 加回test_tabel_pos，保證至少有一個positive在test中
+            test_table = pd.concat([test_table, test_table_pos], ignore_index=True)
 
             test_table.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
 

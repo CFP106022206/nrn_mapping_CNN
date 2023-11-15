@@ -39,7 +39,7 @@ sns.set(style="whitegrid")
 
 # %% load model
 
-test_mode = 'cross'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
+test_mode = 'single'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
@@ -284,5 +284,27 @@ for name, group in grouped:
 for key in dfs:
     print(dfs[key].head(10))
 
+# top k accuracy
+top_k_accuracy = []
+for k in range(5,0,-1):
+    correct = 0
+    for key in dfs:
+        # 只要前k個裡面有一個positive就算正確
+        if dfs[key].iloc[0:k]['label'].sum() > 0:
+            correct += 1
+    print('Top', k, 'Accuracy:', correct/len(dfs))
+    
+    top_k_accuracy.append(correct/len(dfs))
+# bar plot top k accuracy
+plt.figure(figsize=(6,4))
+plt.bar(['Top 5', 'Top 4', 'Top 3', 'Top 2', 'Top 1'], top_k_accuracy, color='lightseagreen',linewidth=0)
+# 加上數字標籤，以百分比形式
+for x,y in enumerate(top_k_accuracy):
+    plt.text(x, y+0.01, '{:.1%}'.format(y), ha='center', color='black', fontsize=12)
+plt.grid(axis='x')
+plt.ylabel('Accuracy')
+plt.title('Top k Accuracy')
+plt.savefig('./Figure/Top_k_Accuracy', dpi=300, bbox_inches='tight')
+plt.show()
 
 # %%
