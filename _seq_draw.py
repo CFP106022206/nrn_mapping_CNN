@@ -5,13 +5,13 @@ import pytz
 import pandas as pd
 
 # Primary params
-FILE_PATH = "data/test.csv" # CSV to read and run, with full path from the root folder
-NEW_DIR = 'abc/' # !!! Save pkls in 'statistical_results/' + NEW_DIR. Need to add '/' at the end
+FILE_PATH = "data/selected_data/test.csv" # CSV to read and run, with full path from the root folder
+NEW_DIR = 'three_view_pic/' # !!! Save pkls in 'statistical_results/' + NEW_DIR. Need to add '/' at the end
 W_KEY = 'sn' # Weighting keys: unit, sn, rsn. Choose ONE for per run
 
 # Not necessary to change
 PREFIX = '_' # Saved filename: 'mapping_data_' + W_KEY + PREFIX + fc_id + '.pkl'
-CALL_PY = 'main_all.py'
+CALL_PY = 'main_draw.py'
 
 def get_time():
     tz = pytz.timezone("Asia/Taipei") 
@@ -98,7 +98,7 @@ for p in pairs:
             continue # Go to next em_id
 
     # Call 'main_all.py'
-    s = ['python -u', CALL_PY, W_KEY]
+    s = ['python3 -u', CALL_PY, W_KEY]
     os.system(' '.join(s))
 
     ### Current path: '/' (the root)
