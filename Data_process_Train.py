@@ -47,7 +47,7 @@ grid75_path = './data/D1-D5_grid75_sn'
 
 scheduler_exp = 0#1.5      #學習率調度器的約束力指數，越小約束越強
 initial_lr = 0.001
-train_epochs = 50
+train_epochs = 40
 
 add_low_score = False
 low_score_neg_rate = 2
@@ -615,9 +615,6 @@ from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
 
 resolutions = X_train_FC.shape[1:]
 
-# cnn = CNN_L2shared((resolutions[1],resolutions[2],3))
-# cnn = CNN_best((resolutions[1],resolutions[2],3))
-# cnn = CNN_deep((resolutions[1],resolutions[2],3))
 cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
@@ -639,7 +636,7 @@ def scheduler(epoch, lr):
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
 # 設定模型儲存條件(儲存最佳模型)
-checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
+checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '-epoch{epoch:02d}.h5', verbose=1, monitor='val_loss', save_best_only=False, mode='min')
 
 
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
@@ -680,7 +677,8 @@ with open('./result/Train_History_'+save_model_name+'.pkl', 'wb') as f:
     pickle.dump(Annotator_history.history, f)
 
 
-model = load_model('./Annotator_Model/' + save_model_name + '.h5')
+# %%
+model = load_model('./Annotator_Model/' + save_model_name + '-epoch12.h5')
 
 
 def print_conf_martix(conf_matrix, name='0'):

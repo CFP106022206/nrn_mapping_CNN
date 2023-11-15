@@ -1,18 +1,18 @@
-2023-11-06 19:46:07.696697: I tensorflow/core/util/port.cc:111] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
-2023-11-06 19:46:07.697955: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
-2023-11-06 19:46:07.720894: E tensorflow/compiler/xla/stream_executor/cuda/cuda_dnn.cc:9342] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-2023-11-06 19:46:07.720924: E tensorflow/compiler/xla/stream_executor/cuda/cuda_fft.cc:609] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
-2023-11-06 19:46:07.720942: E tensorflow/compiler/xla/stream_executor/cuda/cuda_blas.cc:1518] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
-2023-11-06 19:46:07.725061: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
-2023-11-06 19:46:07.725194: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+2023-11-15 13:51:00.469960: I tensorflow/core/util/port.cc:111] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2023-11-15 13:51:00.471459: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2023-11-15 13:51:00.494347: E tensorflow/compiler/xla/stream_executor/cuda/cuda_dnn.cc:9342] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2023-11-15 13:51:00.494396: E tensorflow/compiler/xla/stream_executor/cuda/cuda_fft.cc:609] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2023-11-15 13:51:00.494416: E tensorflow/compiler/xla/stream_executor/cuda/cuda_blas.cc:1518] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-11-15 13:51:00.498900: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
+2023-11-15 13:51:00.499066: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
 To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2023-11-06 19:46:09.153870: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
-2023-11-06 19:46:15.774761: E tensorflow/compiler/xla/stream_executor/cuda/cuda_driver.cc:268] failed call to cuInit: CUDA_ERROR_COMPAT_NOT_SUPPORTED_ON_DEVICE: forward compatibility was attempted on non supported HW
-2023-11-06 19:46:15.774802: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:168] retrieving CUDA diagnostic information for host: c03
-2023-11-06 19:46:15.774805: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:175] hostname: c03
-2023-11-06 19:46:15.774930: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:199] libcuda reported version is: 535.129.3
-2023-11-06 19:46:15.774945: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:203] kernel reported version is: 535.104.12
-2023-11-06 19:46:15.774947: E tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:312] kernel version 535.104.12 does not match DSO version 535.129.3 -- cannot find working devices in this configuration
+2023-11-15 13:51:01.837939: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2023-11-15 13:51:08.674479: E tensorflow/compiler/xla/stream_executor/cuda/cuda_driver.cc:268] failed call to cuInit: CUDA_ERROR_COMPAT_NOT_SUPPORTED_ON_DEVICE: forward compatibility was attempted on non supported HW
+2023-11-15 13:51:08.674515: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:168] retrieving CUDA diagnostic information for host: c03
+2023-11-15 13:51:08.674521: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:175] hostname: c03
+2023-11-15 13:51:08.674661: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:199] libcuda reported version is: 535.129.3
+2023-11-15 13:51:08.675377: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:203] kernel reported version is: 535.104.12
+2023-11-15 13:51:08.675383: E tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:312] kernel version 535.104.12 does not match DSO version 535.129.3 -- cannot find working devices in this configuration
 
 Collecting 3-View Data Numpy Array..
 
@@ -120,232 +120,195 @@ Trainable params: 194961 (761.57 KB)
 Non-trainable params: 576 (2.25 KB)
 __________________________________________________________________________________________________
 
-Use Callbacks: [<keras.src.callbacks.ModelCheckpoint object at 0x7f67e276a3e0>]
-Epoch 1/50
+Use Callbacks: [<keras.src.callbacks.ModelCheckpoint object at 0x7fe413fa6440>]
+Epoch 1/40
 
-Epoch 1: val_loss improved from inf to 0.22954, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+Epoch 1: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch01.h5
 /cluster/home/ming/.local/lib/python3.10/site-packages/keras/src/engine/training.py:3079: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
   saving_api.save_model(
-256/256 - 14s - loss: 0.1757 - Bi-Acc: 0.6277 - val_loss: 0.2295 - val_Bi-Acc: 0.5446 - 14s/epoch - 54ms/step
-Epoch 2/50
+256/256 - 14s - loss: 0.1757 - Bi-Acc: 0.6277 - val_loss: 0.2295 - val_Bi-Acc: 0.5446 - 14s/epoch - 53ms/step
+Epoch 2/40
 
-Epoch 2: val_loss improved from 0.22954 to 0.13176, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+Epoch 2: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch02.h5
 256/256 - 13s - loss: 0.1288 - Bi-Acc: 0.7469 - val_loss: 0.1318 - val_Bi-Acc: 0.7054 - 13s/epoch - 50ms/step
-Epoch 3/50
+Epoch 3/40
 
-Epoch 3: val_loss did not improve from 0.13176
+Epoch 3: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch03.h5
 256/256 - 13s - loss: 0.1143 - Bi-Acc: 0.7852 - val_loss: 0.1382 - val_Bi-Acc: 0.7679 - 13s/epoch - 50ms/step
-Epoch 4/50
+Epoch 4/40
 
-Epoch 4: val_loss improved from 0.13176 to 0.12668, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+Epoch 4: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch04.h5
 256/256 - 13s - loss: 0.1023 - Bi-Acc: 0.8157 - val_loss: 0.1267 - val_Bi-Acc: 0.7768 - 13s/epoch - 50ms/step
-Epoch 5/50
+Epoch 5/40
 
-Epoch 5: val_loss improved from 0.12668 to 0.11056, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+Epoch 5: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch05.h5
 256/256 - 13s - loss: 0.0920 - Bi-Acc: 0.8426 - val_loss: 0.1106 - val_Bi-Acc: 0.7946 - 13s/epoch - 50ms/step
-Epoch 6/50
+Epoch 6/40
 
-Epoch 6: val_loss did not improve from 0.11056
+Epoch 6: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch06.h5
 256/256 - 13s - loss: 0.0833 - Bi-Acc: 0.8586 - val_loss: 0.1151 - val_Bi-Acc: 0.8214 - 13s/epoch - 50ms/step
-Epoch 7/50
+Epoch 7/40
 
-Epoch 7: val_loss did not improve from 0.11056
+Epoch 7: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch07.h5
 256/256 - 13s - loss: 0.0768 - Bi-Acc: 0.8730 - val_loss: 0.1480 - val_Bi-Acc: 0.7768 - 13s/epoch - 50ms/step
-Epoch 8/50
+Epoch 8/40
 
-Epoch 8: val_loss did not improve from 0.11056
+Epoch 8: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch08.h5
 256/256 - 13s - loss: 0.0713 - Bi-Acc: 0.8829 - val_loss: 0.1291 - val_Bi-Acc: 0.7946 - 13s/epoch - 50ms/step
-Epoch 9/50
+Epoch 9/40
 
-Epoch 9: val_loss did not improve from 0.11056
+Epoch 9: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch09.h5
 256/256 - 13s - loss: 0.0655 - Bi-Acc: 0.8950 - val_loss: 0.1226 - val_Bi-Acc: 0.8482 - 13s/epoch - 50ms/step
-Epoch 10/50
+Epoch 10/40
 
-Epoch 10: val_loss did not improve from 0.11056
+Epoch 10: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch10.h5
 256/256 - 13s - loss: 0.0605 - Bi-Acc: 0.9023 - val_loss: 0.1546 - val_Bi-Acc: 0.7589 - 13s/epoch - 50ms/step
-Epoch 11/50
+Epoch 11/40
 
-Epoch 11: val_loss did not improve from 0.11056
+Epoch 11: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch11.h5
 256/256 - 13s - loss: 0.0569 - Bi-Acc: 0.9103 - val_loss: 0.1143 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 12/50
+Epoch 12/40
 
-Epoch 12: val_loss improved from 0.11056 to 0.10395, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+Epoch 12: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch12.h5
 256/256 - 13s - loss: 0.0536 - Bi-Acc: 0.9142 - val_loss: 0.1040 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 13/50
+Epoch 13/40
 
-Epoch 13: val_loss did not improve from 0.10395
+Epoch 13: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch13.h5
 256/256 - 13s - loss: 0.0508 - Bi-Acc: 0.9198 - val_loss: 0.1447 - val_Bi-Acc: 0.8214 - 13s/epoch - 50ms/step
-Epoch 14/50
+Epoch 14/40
 
-Epoch 14: val_loss did not improve from 0.10395
+Epoch 14: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch14.h5
 256/256 - 13s - loss: 0.0467 - Bi-Acc: 0.9274 - val_loss: 0.1623 - val_Bi-Acc: 0.7857 - 13s/epoch - 50ms/step
-Epoch 15/50
+Epoch 15/40
 
-Epoch 15: val_loss did not improve from 0.10395
+Epoch 15: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch15.h5
 256/256 - 13s - loss: 0.0457 - Bi-Acc: 0.9269 - val_loss: 0.1652 - val_Bi-Acc: 0.8036 - 13s/epoch - 50ms/step
-Epoch 16/50
+Epoch 16/40
 
-Epoch 16: val_loss did not improve from 0.10395
+Epoch 16: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch16.h5
 256/256 - 13s - loss: 0.0420 - Bi-Acc: 0.9363 - val_loss: 0.1415 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 17/50
+Epoch 17/40
 
-Epoch 17: val_loss did not improve from 0.10395
+Epoch 17: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch17.h5
 256/256 - 13s - loss: 0.0405 - Bi-Acc: 0.9364 - val_loss: 0.1290 - val_Bi-Acc: 0.8482 - 13s/epoch - 50ms/step
-Epoch 18/50
+Epoch 18/40
 
-Epoch 18: val_loss did not improve from 0.10395
+Epoch 18: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch18.h5
 256/256 - 13s - loss: 0.0382 - Bi-Acc: 0.9396 - val_loss: 0.1450 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
-Epoch 19/50
+Epoch 19/40
 
-Epoch 19: val_loss did not improve from 0.10395
+Epoch 19: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch19.h5
 256/256 - 13s - loss: 0.0353 - Bi-Acc: 0.9459 - val_loss: 0.1704 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 20/50
+Epoch 20/40
 
-Epoch 20: val_loss did not improve from 0.10395
+Epoch 20: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch20.h5
 256/256 - 13s - loss: 0.0336 - Bi-Acc: 0.9478 - val_loss: 0.1936 - val_Bi-Acc: 0.7946 - 13s/epoch - 50ms/step
-Epoch 21/50
+Epoch 21/40
 
-Epoch 21: val_loss did not improve from 0.10395
+Epoch 21: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch21.h5
 256/256 - 13s - loss: 0.0335 - Bi-Acc: 0.9501 - val_loss: 0.1498 - val_Bi-Acc: 0.8839 - 13s/epoch - 50ms/step
-Epoch 22/50
+Epoch 22/40
 
-Epoch 22: val_loss did not improve from 0.10395
+Epoch 22: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch22.h5
 256/256 - 13s - loss: 0.0305 - Bi-Acc: 0.9542 - val_loss: 0.1829 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 23/50
+Epoch 23/40
 
-Epoch 23: val_loss did not improve from 0.10395
+Epoch 23: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch23.h5
 256/256 - 13s - loss: 0.0293 - Bi-Acc: 0.9565 - val_loss: 0.2697 - val_Bi-Acc: 0.8036 - 13s/epoch - 50ms/step
-Epoch 24/50
+Epoch 24/40
 
-Epoch 24: val_loss did not improve from 0.10395
+Epoch 24: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch24.h5
 256/256 - 13s - loss: 0.0297 - Bi-Acc: 0.9557 - val_loss: 0.1776 - val_Bi-Acc: 0.8304 - 13s/epoch - 50ms/step
-Epoch 25/50
+Epoch 25/40
 
-Epoch 25: val_loss did not improve from 0.10395
+Epoch 25: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch25.h5
 256/256 - 13s - loss: 0.0288 - Bi-Acc: 0.9577 - val_loss: 0.1884 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
-Epoch 26/50
+Epoch 26/40
 
-Epoch 26: val_loss did not improve from 0.10395
+Epoch 26: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch26.h5
 256/256 - 13s - loss: 0.0269 - Bi-Acc: 0.9616 - val_loss: 0.1973 - val_Bi-Acc: 0.8304 - 13s/epoch - 50ms/step
-Epoch 27/50
+Epoch 27/40
 
-Epoch 27: val_loss did not improve from 0.10395
+Epoch 27: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch27.h5
 256/256 - 13s - loss: 0.0248 - Bi-Acc: 0.9632 - val_loss: 0.2208 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 28/50
+Epoch 28/40
 
-Epoch 28: val_loss did not improve from 0.10395
+Epoch 28: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch28.h5
 256/256 - 13s - loss: 0.0248 - Bi-Acc: 0.9622 - val_loss: 0.1795 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 29/50
+Epoch 29/40
 
-Epoch 29: val_loss did not improve from 0.10395
+Epoch 29: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch29.h5
 256/256 - 13s - loss: 0.0239 - Bi-Acc: 0.9643 - val_loss: 0.1792 - val_Bi-Acc: 0.8482 - 13s/epoch - 50ms/step
-Epoch 30/50
+Epoch 30/40
 
-Epoch 30: val_loss did not improve from 0.10395
+Epoch 30: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch30.h5
 256/256 - 13s - loss: 0.0231 - Bi-Acc: 0.9653 - val_loss: 0.1913 - val_Bi-Acc: 0.8304 - 13s/epoch - 50ms/step
-Epoch 31/50
+Epoch 31/40
 
-Epoch 31: val_loss did not improve from 0.10395
+Epoch 31: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch31.h5
 256/256 - 13s - loss: 0.0223 - Bi-Acc: 0.9662 - val_loss: 0.1998 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
-Epoch 32/50
+Epoch 32/40
 
-Epoch 32: val_loss did not improve from 0.10395
+Epoch 32: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch32.h5
 256/256 - 13s - loss: 0.0210 - Bi-Acc: 0.9691 - val_loss: 0.2269 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
-Epoch 33/50
+Epoch 33/40
 
-Epoch 33: val_loss did not improve from 0.10395
+Epoch 33: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch33.h5
 256/256 - 13s - loss: 0.0232 - Bi-Acc: 0.9664 - val_loss: 0.2118 - val_Bi-Acc: 0.8839 - 13s/epoch - 50ms/step
-Epoch 34/50
+Epoch 34/40
 
-Epoch 34: val_loss did not improve from 0.10395
+Epoch 34: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch34.h5
 256/256 - 13s - loss: 0.0199 - Bi-Acc: 0.9702 - val_loss: 0.2044 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 35/50
+Epoch 35/40
 
-Epoch 35: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0204 - Bi-Acc: 0.9702 - val_loss: 0.1698 - val_Bi-Acc: 0.8929 - 13s/epoch - 50ms/step
-Epoch 36/50
+Epoch 35: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch35.h5
+256/256 - 13s - loss: 0.0204 - Bi-Acc: 0.9702 - val_loss: 0.1698 - val_Bi-Acc: 0.8929 - 13s/epoch - 51ms/step
+Epoch 36/40
 
-Epoch 36: val_loss did not improve from 0.10395
+Epoch 36: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch36.h5
 256/256 - 13s - loss: 0.0194 - Bi-Acc: 0.9720 - val_loss: 0.2742 - val_Bi-Acc: 0.8214 - 13s/epoch - 50ms/step
-Epoch 37/50
+Epoch 37/40
 
-Epoch 37: val_loss did not improve from 0.10395
+Epoch 37: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch37.h5
 256/256 - 13s - loss: 0.0197 - Bi-Acc: 0.9717 - val_loss: 0.2232 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 38/50
+Epoch 38/40
 
-Epoch 38: val_loss did not improve from 0.10395
+Epoch 38: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch38.h5
 256/256 - 13s - loss: 0.0175 - Bi-Acc: 0.9748 - val_loss: 0.2011 - val_Bi-Acc: 0.8750 - 13s/epoch - 50ms/step
-Epoch 39/50
+Epoch 39/40
 
-Epoch 39: val_loss did not improve from 0.10395
+Epoch 39: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch39.h5
 256/256 - 13s - loss: 0.0176 - Bi-Acc: 0.9745 - val_loss: 0.1910 - val_Bi-Acc: 0.8571 - 13s/epoch - 50ms/step
-Epoch 40/50
+Epoch 40/40
 
-Epoch 40: val_loss did not improve from 0.10395
+Epoch 40: saving model to ./Annotator_Model/Annotator_D1-D6_0-epoch40.h5
 256/256 - 13s - loss: 0.0167 - Bi-Acc: 0.9765 - val_loss: 0.2008 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
-Epoch 41/50
-
-Epoch 41: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0177 - Bi-Acc: 0.9746 - val_loss: 0.2043 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
-Epoch 42/50
-
-Epoch 42: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0165 - Bi-Acc: 0.9753 - val_loss: 0.2630 - val_Bi-Acc: 0.8214 - 13s/epoch - 50ms/step
-Epoch 43/50
-
-Epoch 43: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0182 - Bi-Acc: 0.9738 - val_loss: 0.1921 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
-Epoch 44/50
-
-Epoch 44: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0166 - Bi-Acc: 0.9760 - val_loss: 0.2144 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
-Epoch 45/50
-
-Epoch 45: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0153 - Bi-Acc: 0.9787 - val_loss: 0.2517 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
-Epoch 46/50
-
-Epoch 46: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0161 - Bi-Acc: 0.9782 - val_loss: 0.2021 - val_Bi-Acc: 0.8839 - 13s/epoch - 50ms/step
-Epoch 47/50
-
-Epoch 47: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0140 - Bi-Acc: 0.9809 - val_loss: 0.2459 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
-Epoch 48/50
-
-Epoch 48: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0140 - Bi-Acc: 0.9795 - val_loss: 0.2274 - val_Bi-Acc: 0.8482 - 13s/epoch - 50ms/step
-Epoch 49/50
-
-Epoch 49: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0156 - Bi-Acc: 0.9788 - val_loss: 0.2154 - val_Bi-Acc: 0.8661 - 13s/epoch - 50ms/step
-Epoch 50/50
-
-Epoch 50: val_loss did not improve from 0.10395
-256/256 - 13s - loss: 0.0153 - Bi-Acc: 0.9778 - val_loss: 0.3162 - val_Bi-Acc: 0.8393 - 13s/epoch - 50ms/step
-4/4 - 0s - 120ms/epoch - 30ms/step
+4/4 - 0s - 128ms/epoch - 32ms/step
 Validation:
 
 Confusion Matrix for 0
 True Pos False Neg
-[50 12]
+[51 11]
 False Pos True Neg
-[ 4 46]
-Precision: 0.9259259259259259
-Recall: 0.8064516129032258
-F1 Score for Neg: 0.851851851851852
-F1 Score for Pos: 0.8620689655172414
-4/4 - 0s - 37ms/epoch - 9ms/step
+[ 7 43]
+Precision: 0.8793103448275862
+Recall: 0.8225806451612904
+F1 Score for Neg: 0.826923076923077
+F1 Score for Pos: 0.8500000000000001
+4/4 - 0s - 36ms/epoch - 9ms/step
 Test:
 
 Confusion Matrix for 0
 True Pos False Neg
-[20 30]
+[21 29]
 False Pos True Neg
 [ 2 52]
-Precision: 0.9090909090909091
-Recall: 0.4
-F1 Score for Neg: 0.7647058823529412
-F1 Score for Pos: 0.5555555555555556
+Precision: 0.9130434782608695
+Recall: 0.42
+F1 Score for Neg: 0.7703703703703703
+F1 Score for Pos: 0.5753424657534246
 
 Saved
+
+loss min: epoch-12
+Bi-Acc max: epoch-35
