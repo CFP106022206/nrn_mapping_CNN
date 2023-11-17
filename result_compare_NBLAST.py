@@ -63,8 +63,8 @@ if test_mode == 'single':
     # load model predict test nrn set
     nrn_pair = pd.read_csv(label_csv_name+str(test_set_num)+'.csv')
 
-    y_pred = nrn_pair['model_pred']
-    y_true = nrn_pair['label']
+    y_pred = np.array(nrn_pair['model_pred'])
+    y_true = np.array(nrn_pair['label'])
 
     roc_color='darkorange'
     plot_title = 'NBlast Score'
