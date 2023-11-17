@@ -276,129 +276,8 @@ def imshow_pred_pair(predict_pair_df, pred_data_np):
 
 # %% Data Augmentation: cross expand(Truned off)
 
-#   以下說明增加資料方法，大寫字母表示 FC id, 小寫表示 EM id
-#   已知 A -> a
-#       B -> a
-#       B -> b  
-#   則可以推論出    [不行，因為無法保證三視圖在同個角度拍攝，只能回到冠廷程序那邊重做圖]
-#       A -> b
-#   
-#   實現：利用Dictionary，建立 A:[a], B:[a,b]
-#   遍歷每個key中的元素，尋找其他key中此元素是否存在，若有，則將其他key中的所有元素添加進次key中
-#   A:[a](Found in B) -> A:[a]+[a,b](in B) -> A:list(set([a]+[a,b])) 去重
-
-#   相似的，
-#   已知 A != b
-#       B == c
-#   可以推出
-#       A != b,c
-#   
-#   實現方式類似，建立 label=0 的 Dictionary，遍歷每個 keys 中的值，尋找在擴增的label=1 Dict 中
-#   與此元素同組的其他元素，將其他元素添加進 label=0 的 Dictionary 中
-cross_expand = False
-
-if cross_expand:
-    true_label_pair_df = nrn_pair_train.loc[nrn_pair_train['label']==1]
-    false_label_pair_df = nrn_pair_train.loc[nrn_pair_train['label']==0]
-
-    def cluster_expansion(pair_df_pos, pair_df_neg):
-
-        label_dict = {}
-        for _, row in pair_df_pos.iterrows():
-            if row['fc_id'] in label_dict:
-                label_dict[row['fc_id']].append(row['em_id'])
-            else:
-                label_dict[row['fc_id']] = [row['em_id']]
-
-        # 以FC為key的dictionary建立完成，接下來搜索可擴張項
-        label_dict_new = label_dict.copy()
-        for k in label_dict.keys():
-            for v in label_dict[k]:
-                for i in label_dict.keys():
-                    if v in label_dict[i] and i != k:
-                        label_dict_new[k] = list(set(label_dict[k]+label_dict[i]))
-
-        pair_df_pos_expand = pd.DataFrame({'fc_id':[], 'em_id':[], 'label':[]})
-        for k in label_dict_new.keys():
-            for v in label_dict_new[k]:
-                pair_df_pos_expand = pair_df_pos_expand.append({'fc_id':k, 'em_id':v, 'label':1}, ignore_index=True)
-
-
-        # label=1資料擴張完畢，現在製造label=0的pair使資料量平衡  
-        neg_dict = {}
-        for _, row in pair_df_neg.iterrows():
-            if row['fc_id'] in neg_dict:
-                neg_dict[row['fc_id']].append(row['em_id'])
-            else:
-                neg_dict[row['fc_id']] = [row['em_id']]
-
-
-        #擴張
-        neg_dict_new = neg_dict.copy()
-        for k in neg_dict.keys():
-            for v in neg_dict[k]:
-                for i in label_dict_new.keys():
-                    if v in label_dict_new[i]:
-                        neg_dict_new[k] = list(set(neg_dict_new[k]+label_dict_new[i]))
-
-
-        # 從字典建立擴張後的 pair df
-        pair_df_neg_expand = pd.DataFrame({'fc_id':[], 'em_id':[], 'label':[]})
-        for k in neg_dict_new.keys():
-            for v in neg_dict_new[k]:
-                pair_df_neg_expand = pair_df_neg_expand.append({'fc_id':k, 'em_id':v, 'label':0}, ignore_index=True)
-
-
-        return pair_df_pos_expand, pair_df_neg_expand
-
-    pair_df_pos_expand, pair_df_neg_expand = cluster_expansion(true_label_pair_df, false_label_pair_df)
-
-    def image_expand(data_np, pair_df_neg_expand, pair_df):
-        # 增加 data_np, 更新 label lst
-        data_np_add = np.zeros((len(pair_df_neg_expand), data_np.shape[1],data_np.shape[2], data_np.shape[3], data_np.shape[4]))
-        for i in range(len(data_np_add)):
-            fc_id = pair_df_neg_expand['fc_id'][i]
-            em_id = pair_df_neg_expand['em_id'][i]
-            for j in range(len(data_np)):
-                if pair_df['fc_id'][j] == fc_id:
-                    data_np_add[i,0,:] = data_np[j,0,:]
-                    break
-            for k in range(len(data_np)):
-                if pair_df['em_id'][k] == em_id:
-                    data_np_add[i,1,:] = data_np[k,1,:]
-                    break
-
-        data_np = np.concatenate((data_np, data_np_add))
-        label_lst = np.array(pair_df['label'].append(pair_df_neg_expand['label']),dtype=np.int32)
-        return data_np, label_lst
-
-    # expand negative data
-    data_np_train, label_lst_train = image_expand(data_np_train, pair_df_neg_expand, nrn_pair_train)
-
-    def image_expand2(data_np, pair_df_neg_expand, pair_df, label_lst):
-        # 增加 data_np, 更新 label lst
-        data_np_add = np.zeros((len(pair_df_neg_expand), data_np.shape[1],data_np.shape[2], data_np.shape[3], data_np.shape[4]))
-        for i in range(len(data_np_add)):
-            fc_id = pair_df_neg_expand['fc_id'][i]
-            em_id = pair_df_neg_expand['em_id'][i]
-            for j in range(len(data_np)):
-                if pair_df['fc_id'][j] == fc_id:
-                    data_np_add[i,0,:] = data_np[j,0,:]
-                    break
-            for k in range(len(data_np)):
-                if pair_df['em_id'][k] == em_id:
-                    data_np_add[i,1,:] = data_np[k,1,:]
-                    break
-
-        data_np = np.concatenate((data_np, data_np_add))
-        label_lst = np.concatenate((label_lst, np.array(pair_df_neg_expand['label'],dtype=np.int32)))
-        return data_np, label_lst
-
-    # expand positive data
-    X_train, y_train = image_expand2(data_np_train, pair_df_pos_expand, nrn_pair_train, label_lst_train)
-else:
-    X_train = data_np_train
-    y_train = np.array(nrn_pair_train['label'],dtype=np.int32)
+X_train = data_np_train
+y_train = np.array(nrn_pair_train['label'],dtype=np.int32)
 
 
 
@@ -418,34 +297,6 @@ print('Total: {}\nPositive: {} ({:.2f}% of total)\n'.format(neg + pos, pos, 100 
 weight = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
 class_weights = {0:weight[0]*100, 1:weight[1]}
 print('Balanced Weight in: \n', np.unique(y_train),'\n', weight)
-
-
-# if add_low_score and pos >= neg:
-#     X_train_add = np.zeros((low_score_neg_rate*(pos-neg), X_train.shape[1], X_train.shape[2], X_train.shape[3], X_train.shape[4]))   # 製作需要增加的x_train 量
-#     y_train_add = np.zeros(X_train_add.shape[0], dtype=np.int64)
-    
-#     nrn_pair_test_np = nrn_pair_test[['fc_id','em_id']].to_numpy()    # 以np格式獲取test中pair的神經名稱
-    
-#     k=0
-#     for i in range(X_train_add.shape[0]):
-#         for j in range(k, len(map_data)):
-#             in_test = 0 # 檢查擴增的資料組是否出現在test中
-#             for row in range(nrn_pair_test_np.shape[0]):
-#                 if str(map_data[j][0]) == str(nrn_pair_test_np[row,0]) and str(map_data[j][1]) == str(nrn_pair_test_np[row,1]):
-#                     in_test = 1
-#                     break
-            
-#             if in_test == 0 and map_data[j][2] < 0.4:
-
-#                 for n in range(3):
-#                     X_train_add[i, 0, :, :, n] = map_data[j][3][n] # FC Image
-#                     X_train_add[i, 1, :, :, n] = map_data[j][4][n] # EM Image
-
-#                 k=j+1
-#                 break
-
-#     X_train = np.vstack((X_train, X_train_add))
-#     y_train = np.hstack((y_train, y_train_add))
 
 
 
@@ -636,7 +487,7 @@ def scheduler(epoch, lr):
 reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
 # 設定模型儲存條件(儲存最佳模型)
-checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '-epoch{epoch:02d}.h5', verbose=1, monitor='val_loss', save_best_only=False, mode='min')
+checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
 
 
 early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
@@ -678,7 +529,7 @@ with open('./result/Train_History_'+save_model_name+'.pkl', 'wb') as f:
 
 
 # %%
-model = load_model('./Annotator_Model/' + save_model_name + '-epoch12.h5')
+model = load_model('./Annotator_Model/' + save_model_name + '.h5')
 
 
 def print_conf_martix(conf_matrix, name='0'):
