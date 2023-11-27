@@ -6,12 +6,10 @@ draw = pd.read_csv('data/selected_data/FCxEM_all_0_rk100.csv')
 # 修改列名稱
 draw.columns = ['fc_id', 'em_id', 'score', 'rank']
 # %%
-selected_row = draw[draw['fc_id'] == '104198-F-000000']
-# 確認排序正確
-selected_row = selected_row.sort_values(by=['rank'])
-# 取前n
-selected_row = selected_row.iloc[:10]
-# %%
+# 保留第 rank>10 and rank<21 的資料 
+# selected_row = draw[(draw['rank'] < 21) & (draw['rank'] > 10)]
+selected_row = draw[draw['rank'] < 21]
+
 selected_row.to_csv('data/selected_data/test.csv', index=False)
 # %% 測試畫圖
 import pickle

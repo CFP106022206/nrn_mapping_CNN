@@ -29,8 +29,7 @@ interpolate_length = {tar: 2.5, can: 2.5}  # 0.5 for FC data, 50 for original EM
 weighting_keys_c = ["unit", "sn", "rsn"]  # unit, sn, rsn
 max_sn = np.inf  # the maximum acceptable value of Strahler number will appear in mapping
 # the number of grids on each side of map
-# grid_num = 50
-grid_num = 75
+grid_num = 50
 ignore_soma = False  # ignore the soma branch
 normalization_of_sn = True  # normalizing the Strahler number in 2D-maps to 1
 normalization_of_moi = True  # normalizing the eigenvalues of moment of inertia with its maximum value
@@ -41,9 +40,9 @@ coordinate_selection = "target-orientation"  # "coordinate-orientation", "MOI-or
 target_list = [tar]
 candidate_list = [can]
 threshold_of_exchange = 0.0  # threshold of considering the exchange of principal axes
-threshold_of_nI = 0.4  # threshold of choosing pairs of neurons by normalized inertia of moment
-threshold_in = np.cos(np.pi*50/180)  # threshold of inner product
-threshold_of_distance = 100  # threshold of distance between wrapping EM data and FC data
+threshold_of_nI = np.inf  # threshold of choosing pairs of neurons by normalized inertia of moment
+threshold_in = np.cos(np.pi*90/180)  # threshold of inner product
+threshold_of_distance = np.inf  # threshold of distance between wrapping EM data and FC data
 
 # Step 4 Score and rank the selected pairs
 cluster = False  # simplify the Strahler number
