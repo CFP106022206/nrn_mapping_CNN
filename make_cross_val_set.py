@@ -21,11 +21,12 @@ import random
 from sklearn.model_selection import KFold
 
 # %% 此档案目的为 load 最佳参数模型, 然后对yifan那边画出的未标注三视图进行标注
+# Mode 0: 不做cross validation
 # Mode 1: 用所有標注data做cross validation
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
 # Mode 3: 选同一条fc有对应到比较多em的pair作为testing data, 这样做的目的是为了评估时在评估几率从高到低排序时前n名中是否有正确答案
 
-mode = 3
+mode = 0
 mode2_file_path = './labeled_info/nblast_D2+D5+D6_50as1.csv'
 label_threshold = 0.5   # 50%信心 or 60%信心
 
@@ -83,7 +84,24 @@ label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除
 kf = KFold(n_splits=cross_validation_num, shuffle=True, random_state=seed)
 
 # %% 分割数据集并执行交叉验证
-if mode == 1:
+if mode == 0:
+
+    # shuffle label_table_all 
+    label_table_all = label_table_all.sample(frac=1, random_state=seed).reset_index(drop=True)
+
+    # 将 label_table_all 分成两份: train and test
+    test_ratio = 0.1
+    test_size = int(label_table_all.shape[0]*test_ratio)
+
+    label_table_test = label_table_all.iloc[:test_size]
+    label_table_train = label_table_all.iloc[test_size:]
+
+    # save as csv
+    label_table_test.to_csv('./train_test_split/test_split_0_D1-D6.csv', index=False)
+    label_table_train.to_csv('./train_test_split/train_split_0_D1-D6.csv', index=False)
+
+
+elif mode == 1:
     i = 0
 
     for train_index, test_index in kf.split(label_table_all):

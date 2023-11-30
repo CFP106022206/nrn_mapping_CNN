@@ -27,7 +27,7 @@ import random
 # 在 Mode 2 下, 輸出的分割數據集檔案編號採用特殊編號 98
 # 在 Mode 3 下, 輸出的分割數據集檔案編號採用特殊編號 99
 
-mode = 2
+mode = 1
 mode_csv_path = './data/D2+D5_nblast_test.csv'  #指定測試集檔案位置
 
 use_new_label = False        # 使用日期為01-13的label table, 這項標注中將人類信心50%的標注視為Negative
@@ -47,77 +47,42 @@ train_range_to = 'D5'   # 'D4' or 'D5'
 
 
 # Load labeled csv
-if use_new_label:
-    label_csv_D1 = './data/D1_20230113.csv'
-    label_csv_D2 = './data/D2_20230113.csv'
-    label_csv_D3 = './data/D3_20230113.csv'
-    label_csv_D4_1 = './data/D4-1_20230113.csv'
-    label_csv_D4_2 = './data/D4-2_20230113.csv'
-    label_csv_D5 = './data/D5_20230113.csv'
+
+label_csv_D1 = './data/D1_20230113.csv'
+label_csv_D2 = './data/D2_20230113.csv'
+label_csv_D3 = './data/D3_20230113.csv'
+label_csv_D4_1 = './data/D4-1_20230113.csv'
+label_csv_D4_2 = './data/D4-2_20230113.csv'
+label_csv_D5 = './data/D5_20230113.csv'
 
 
-    D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
-    D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
+D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-    D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
-    D2.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
+D2.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-    D3 = pd.read_csv(label_csv_D3)     # FC, EM, label
-    D3.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+D3 = pd.read_csv(label_csv_D3)     # FC, EM, label
+D3.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-    D4_1 = pd.read_csv(label_csv_D4_1)     # FC, EM, label
-    D4_1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+D4_1 = pd.read_csv(label_csv_D4_1)     # FC, EM, label
+D4_1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-    D4_2 = pd.read_csv(label_csv_D4_2)
-    D4_2.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
+D4_2 = pd.read_csv(label_csv_D4_2)
+D4_2.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
 
-    if train_range_to == 'D5':
-        D5 = pd.read_csv(label_csv_D5)     # FC, EM, label
-        D5.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+if train_range_to == 'D5':
+    D5 = pd.read_csv(label_csv_D5)     # FC, EM, label
+    D5.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-        label_table_all = pd.concat([D1, D2, D3, D4_1, D4_2, D5])   # fc_id, em_id, score, rank, label
-
-    else:
-        label_table_all = pd.concat([D1, D2, D3, D4_1, D4_2])   # fc_id, em_id, score, rank, label
-
-
-
-    label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
+    label_table_all = pd.concat([D1, D2, D3, D4_1, D4_2, D5])   # fc_id, em_id, score, rank, label
 
 else:
-    label_csv_D1 = './data/D1_20221230.csv'
-    label_csv_D2 = './data/D2_20221230.csv'
-    label_csv_D3 = './data/D3_20221230.csv'
-    label_csv_D4 = './data/D4_20221230.csv'
-    label_csv_D5 = './data/D5_20221230.csv'
-
-
-    D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
-    D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-    D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
-    D2.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-    D3 = pd.read_csv(label_csv_D3)     # FC, EM, label
-    D3.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-    D4 = pd.read_csv(label_csv_D4)     # FC, EM, label
-    D4.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-
-    if train_range_to == 'D5':
-        D5 = pd.read_csv(label_csv_D5)     # FC, EM, label
-        D5.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-        label_table_all = pd.concat([D1, D2, D3, D4, D5])   # fc_id, em_id, score, rank, label
-
-    else:
-        label_table_all = pd.concat([D1, D2, D3, D4])   # fc_id, em_id, score, rank, label
+    label_table_all = pd.concat([D1, D2, D3, D4_1, D4_2])   # fc_id, em_id, score, rank, label
 
 
 
-    label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
 
 if mode == 1:
@@ -129,7 +94,7 @@ if mode == 1:
         label_table_all = label_table_all.sample(frac=1, random_state=seed).reset_index(drop=True)
 
         # 将 label_table_all 分成两份: train and test
-        test_ratio = 0.2
+        test_ratio = 0.1
         test_size = int(label_table_all.shape[0]*test_ratio)
 
         label_table_test = label_table_all.iloc[:test_size]
