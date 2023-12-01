@@ -5,8 +5,8 @@ import pytz
 import pandas as pd
 
 # Primary params
-FILE_PATH = "data/selected_data/test.csv" # CSV to read and run, with full path from the root folder
-NEW_DIR = 'three_view_pic_20/' # !!! Save pkls in 'statistical_results/' + NEW_DIR. Need to add '/' at the end
+FILE_PATH = "data/selected_data/test_10to20.csv" # CSV to read and run, with full path from the root folder
+NEW_DIR = 'three_view_pic_rk10to20/' # !!! Save pkls in 'statistical_results/' + NEW_DIR. Need to add '/' at the end
 W_KEY = 'sn' # Weighting keys: unit, sn, rsn. Choose ONE for per run
 
 # Not necessary to change

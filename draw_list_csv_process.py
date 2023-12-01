@@ -7,10 +7,10 @@ draw = pd.read_csv('data/selected_data/FCxEM_all_0_rk100.csv')
 draw.columns = ['fc_id', 'em_id', 'score', 'rank']
 # %%
 # 保留第 rank>10 and rank<21 的資料 
-# selected_row = draw[(draw['rank'] < 21) & (draw['rank'] > 10)]
-selected_row = draw[draw['rank'] < 21]
+selected_row = draw[(draw['rank'] < 21) & (draw['rank'] > 10)]
+# selected_row = draw[draw['rank'] < 21]
 
-selected_row.to_csv('data/selected_data/test.csv', index=False)
+selected_row.to_csv('data/selected_data/test_10to20.csv', index=False)
 # %% 測試畫圖
 import pickle
 
