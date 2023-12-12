@@ -33,7 +33,7 @@ from tqdm import tqdm
 
 
 # %%
-num_splits = 0 #0~9, or 99 for whole nBLAST testing set
+num_splits = 2 #0~9, or 99 for whole nBLAST testing set
 
 '''
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
@@ -52,7 +52,7 @@ train_epochs = 40
 add_low_score = False
 low_score_neg_rate = 2
 
-seed = 18
+seed = 3407
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
 np.random.seed(seed)
@@ -226,8 +226,8 @@ print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\
 
 X_val = data_np_valid
 X_test = data_np_test
-y_val = np.array(nrn_pair_valid['label'],dtype=np.int32)
-y_test = np.array(nrn_pair_test['label'],dtype=np.int32)
+y_val = np.array(nrn_pair_valid['label'])
+y_test = np.array(nrn_pair_test['label'])
 
 
 
@@ -277,7 +277,8 @@ def imshow_pred_pair(predict_pair_df, pred_data_np):
 # %% Data Augmentation: cross expand(Truned off)
 
 X_train = data_np_train
-y_train = np.array(nrn_pair_train['label'],dtype=np.int32)
+y_train = np.array(nrn_pair_train['label'])
+y_train_bin = np.array([1 if y > 0.5 else 0 for y in y_train])
 
 
 
@@ -285,42 +286,39 @@ y_train = np.array(nrn_pair_train['label'],dtype=np.int32)
 
 # %% 找出 label為1的 X_train
 true_label_idx, false_label_idx = [], []
-for i in range(y_train.shape[0]):
-    if y_train[i] == 1:
+for i in range(y_train_bin.shape[0]):
+    if y_train_bin[i] == 1:
         true_label_idx.append(i)
     else:
         false_label_idx.append(i)
 
 # Balanced Weight
-neg, pos = np.bincount(y_train)     #label為0, label為1
+neg, pos = np.bincount(y_train_bin)     #label為0, label為1
 print('Total: {}\nPositive: {} ({:.2f}% of total)\n'.format(neg + pos, pos, 100 * pos / (neg + pos)))
-weight = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
+weight = compute_class_weight('balanced', classes=np.unique(y_train_bin), y=y_train_bin)
 class_weights = {0:weight[0]*100, 1:weight[1]}
-print('Balanced Weight in: \n', np.unique(y_train),'\n', weight)
+print('Balanced Weight in: \n', np.unique(y_train_bin),'\n', weight)
 
 
-
-neg, pos = np.bincount(y_train)     #label為0, label為1
-
-# UpSampling: Augmentation label為1的 X_train(旋轉)
+# UpSampling
 X_train_add = np.zeros((abs(neg-pos), X_train.shape[1], X_train.shape[2], X_train.shape[3], X_train.shape[4]))   # 製作需要增加的x_train 量
+y_train_add = np.zeros(abs(neg-pos))
 
 if neg > pos:
-    x_add_idx = true_label_idx
-    y_train_add = np.ones(X_train_add.shape[0], dtype=np.int64)
-
+    add_idx = true_label_idx
 else:
-    x_add_idx = false_label_idx
-    y_train_add = np.zeros(X_train_add.shape[0], dtype=np.int64)
+    add_idx = false_label_idx
 
 
 k=0
 for i in range(X_train_add.shape[0]):
     rotation_angle = 1  # 1*90 度旋轉
-    X_train_add[i,0,:] = np.rot90(X_train[x_add_idx[k],0,:],rotation_angle) # FC img
-    X_train_add[i,1,:] = np.rot90(X_train[x_add_idx[k],1,:],rotation_angle) # EM img
+    X_train_add[i,0,:] = np.rot90(X_train[add_idx[k],0,:],rotation_angle) # FC img
+    X_train_add[i,1,:] = np.rot90(X_train[add_idx[k],1,:],rotation_angle) # EM img
 
-    if k >= len(x_add_idx)-1:
+    y_train_add[i] = y_train[add_idx[k]]
+
+    if k >= len(add_idx)-1:
         k=0
         rotation_angle += 1
     else:
@@ -330,7 +328,7 @@ for i in range(X_train_add.shape[0]):
 X_train = np.vstack((X_train, X_train_add))
 y_train = np.hstack((y_train, y_train_add))
 
-print('UpSampling: After Augmentation:\nTrue Label/Total in X_train:\n',np.sum(y_train),'/', len(X_train))
+print('UpSampling: After Augmentation:\nTrue Label/Total in X_train:\n',np.sum(y_train_bin),'/', len(X_train))
 
 # 圖片旋轉任一角度
 def rotate_and_pad(image, angle, border_value=(0, 0, 0)):
@@ -467,6 +465,7 @@ from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
 resolutions = X_train_FC.shape[1:]
 
 cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
+# cnn = CNN_deep((resolutions[0],resolutions[1],resolutions[2]))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
 if not scheduler_exp:
@@ -531,6 +530,14 @@ with open('./result/Train_History_'+save_model_name+'.pkl', 'wb') as f:
 # %%
 model = load_model('./Annotator_Model/' + save_model_name + '.h5')
 
+def binary(y_lst):
+    y_binary = []
+    for y in y_lst:
+        if y > 0.5:
+            y_binary.append(1)
+        else:
+            y_binary.append(0)
+    return y_binary
 
 def print_conf_martix(conf_matrix, name='0'):
 
@@ -540,15 +547,11 @@ def print_conf_martix(conf_matrix, name='0'):
     print('False Pos','True Neg')
     print(conf_matrix[1])
 
-def reesult_analysis(y_pred, y_test):
-    y_pred_binary = []
-    for ans in y_pred:
-        if ans > 0.5:
-            y_pred_binary.append(1)
-        else:
-            y_pred_binary.append(0)
+def result_analysis(y_pred, y_test):
+    y_pred_binary = binary(y_pred)
+    y_test = binary(y_test) # for 软标签，统一格式
 
-    conf_matrix = confusion_matrix(y_test.tolist(), y_pred_binary, labels=[1,0])# 統一標籤格式
+    conf_matrix = confusion_matrix(y_test, y_pred_binary, labels=[1,0])# 統一標籤格式
 
     print_conf_martix(conf_matrix)
 
@@ -570,18 +573,16 @@ def reesult_analysis(y_pred, y_test):
 
 # predict validation dataset result
 y_pred_val = model.predict({'FC':X_val_FC, 'EM':X_val_EM}, verbose=2)
-pred_test_compare = np.hstack((y_pred_val, y_val.reshape(len(y_val), 1)))
 
 print('Validation:')
-val_result, val_pred_bin = reesult_analysis(y_pred_val, y_val)
+val_result, val_pred_bin = result_analysis(y_pred_val, y_val)
 
 
 # predict test dataset result
 y_pred_test = model.predict({'FC':X_test_FC, 'EM':X_test_EM}, verbose=2)
-pred_test_compare = np.hstack((y_pred_test, y_test.reshape(len(y_test), 1)))
 
 print('Test:')
-test_result, test_pred_binary = reesult_analysis(y_pred_test, y_test)
+test_result, test_pred_binary = result_analysis(y_pred_test, y_test)
 
 with open('./result/Test_Result_'+save_model_name+'.pkl', 'wb') as f:
     pickle.dump(test_result, f)

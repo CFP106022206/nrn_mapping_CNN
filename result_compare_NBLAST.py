@@ -39,7 +39,7 @@ sns.set(style="whitegrid")
 
 # %% load model
 
-test_mode = 'single'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
+test_mode = 'cross'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
@@ -50,14 +50,14 @@ D6 = 'D6'
 use_final = False      # 如果True，使用最後階段的預測結果，如果False，使用第一階段的預測結果
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = './labeled_info/nblast_D5_50as1.csv'
+selected_test_set = './labeled_info/nblast_D2+D6_50as1.csv'
 
 if use_final:
     label_csv_name = './result/final_label_model_D1-D6_'
 else:
     label_csv_name = './result/test_label_Annotator_D1-D6_'
 
-nblast_correct_path = './labeled_info/nblast_D5_correct.csv'
+nblast_correct_path = './labeled_info/nblast_D2+D5+D6_50as1.csv'
 
 if test_mode == 'single':
     # load model predict test nrn set
@@ -127,6 +127,9 @@ elif test_mode == 'nblast':
 
     roc_color='darkorange'
     plot_title = 'NBlast Score'
+
+# binary label in y_true(for soft label)
+y_true = np.array([1 if y > 0.5 else 0 for y in y_true])
 
 # Normalized
 pred_min = np.min(y_pred)  
