@@ -16,7 +16,7 @@ if not os.path.exists(save_folder_path):
 
 
 # %% 对新数据集进行标注
-unlabel_path = './data/statistical_results/three_view_pic/'
+unlabel_path = './data/statistical_results/three_view_pic_rk10to20/'
 
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
 file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]
@@ -51,7 +51,7 @@ sub_length = 2000
 
 if len(file_list) > sub_length:
     
-    num = 10
+    num = 0
     while num * sub_length < len(file_list):
         start_idx = int(num * sub_length)
         end_idx = int(min((num + 1) * sub_length, len(file_list)))

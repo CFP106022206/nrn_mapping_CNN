@@ -26,14 +26,15 @@ from sklearn.model_selection import KFold
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
 # Mode 3: 选同一条fc有对应到比较多em的pair作为testing data, 这样做的目的是为了评估时在评估几率从高到低排序时前n名中是否有正确答案
 
-mode = 0
+mode = 2
 mode2_file_path = './labeled_info/nblast_D2+D5+D6_50as1.csv'
-label_threshold = 0.5   # 50%信心 or 60%信心
-
 cross_validation_num = 3
 
 
-seed = 6                       # Random Seed
+used_label = 'soft_label'   # thres0.5(confidence>0.5 label as 1), thres0.6(confidence>0.6 label as 1), soft_label(keep confidence)
+
+
+seed = 3407                       # Random Seed
 
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
@@ -42,20 +43,30 @@ os.environ['TF_DITERMINISTIC_OPS'] = '1'
 
 
 # Load labeled csv
-if label_threshold == 0.5:
+if used_label == 'thres0.5':
     label_csv_D1 = './labeled_info/D1_20221230.csv'
     label_csv_D2 = './labeled_info/D2_20230710.csv'
     label_csv_D3 = './labeled_info/D3_20221230.csv'
     label_csv_D4 = './labeled_info/D4_20230710.csv'
     label_csv_D5 = './labeled_info/D5_20221230.csv'
     label_csv_D6 = './labeled_info/D6_20230523.csv'
-elif label_threshold == 0.6:
+
+elif used_label == 'thres0.6':
     label_csv_D1 = './labeled_info/D1_20230113.csv'
     label_csv_D2 = './labeled_info/D2_60as1.csv'
     label_csv_D3 = './labeled_info/D3_20230113.csv'
     label_csv_D4 = './labeled_info/D4_60as1.csv'
     label_csv_D5 = './labeled_info/D5_60as1.csv'
     label_csv_D6 = './labeled_info/D6_60as1.csv'
+
+elif used_label == 'soft_label':
+    label_csv_D1 = './labeled_info/D1_conf.csv'
+    label_csv_D2 = './labeled_info/D2_conf.csv'
+    label_csv_D3 = './labeled_info/D3_conf.csv'
+    label_csv_D4 = './labeled_info/D4_conf.csv'
+    label_csv_D5 = './labeled_info/D5_conf.csv'
+    label_csv_D6 = './labeled_info/D6_conf.csv'
+
 
 D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
 D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
