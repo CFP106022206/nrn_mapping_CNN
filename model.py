@@ -261,37 +261,41 @@ def CNN_best(input_size=(50,50,3)):
 
 
 def CNN_deep(input_size=(50,50,3)):
-    inputs = [Input(shape=input_size, name='EM'), Input(shape=input_size, name='FC')]
+    inputs = [Input(shape=input_size, name='FC'), Input(shape=input_size, name='EM')]
+    part_lst = ['fc', 'em']
     flattened_layers = []
-    for input in inputs:
-        conv_layer = Conv2D(16, (3,3))(input)
+    for i, input in enumerate(inputs):
+        conv_layer = Conv2D(16, (3,3), padding='same')(input)
         conv_layer = BatchNormalization()(conv_layer)
-        conv_layer = Activation('gelu')(conv_layer)
+        conv_layer = Activation('gelu', name=part_lst[i]+'_ac1')(conv_layer)
 
-        conv_layer = Conv2D(32, (3,3))(conv_layer)
+        conv_layer = Conv2D(16, (3,3), padding='same')(conv_layer)
         conv_layer = BatchNormalization()(conv_layer)
-        conv_layer = Activation('gelu')(conv_layer)
+        conv_layer = Activation('gelu', name=part_lst[i]+'_ac2')(conv_layer)
         conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
+        # conv_layer = Dropout(0.2)(conv_layer)
 
-        conv_layer = Conv2D(48, (3,3))(conv_layer)
+        conv_layer = Conv2D(32, (3,3), padding='same')(conv_layer)
         conv_layer = BatchNormalization()(conv_layer)
-        conv_layer = Activation('gelu')(conv_layer)
+        conv_layer = Activation('gelu', name=part_lst[i]+'_ac3')(conv_layer)
 
-        conv_layer = Conv2D(64, (3,3))(conv_layer)
+        conv_layer = Conv2D(32, (3,3), padding='same')(conv_layer)
         conv_layer = BatchNormalization()(conv_layer)
-        conv_layer = Activation('gelu')(conv_layer)
+        conv_layer = Activation('gelu', name=part_lst[i]+'_ac4')(conv_layer)
         conv_layer = MaxPool2D(pool_size=(2,2))(conv_layer)
-
+        
+        conv_layer = Dropout(0.3)(conv_layer)
+        
         flattened_layers.append(Flatten()(conv_layer))
     
     concat_layer = concatenate(flattened_layers, axis=1)
 
     output = Dropout(0.5)(concat_layer)
-    output = Dense(128)(output)
-    output = BatchNormalization()(output)
-    output = Activation('gelu')(output)
+    # output = Dense(128)(output)
+    # output = BatchNormalization()(output)
+    # output = Activation('gelu')(output)
 
-    # output = Dropout(0.5)(output)
+    # output = Dropout(0.2)(output)
     # output = Dense(4)(output)
     # output = BatchNormalization()(output)
     # output = Activation('relu')(output)
@@ -306,31 +310,31 @@ def CNN_deep(input_size=(50,50,3)):
 
 
 def CNN_shared(input_size=(50, 50, 3)):
-    inputs = [Input(shape=input_size, name="EM"), Input(shape=input_size, name="FC")]
+    inputs = [Input(shape=input_size, name="FC"), Input(shape=input_size, name="EM")]
 
     # 定义共享卷积层和池化层
-    shared_conv1 = Conv2D(16, (3, 3), name="Shared_Conv1")
-    shared_bn1 = BatchNormalization(name="Shared_BN1")
-    shared_act1 = Activation("gelu", name="Shared_Activation1")
-    shared_conv2 = Conv2D(32, (3, 3), name="Shared_Conv2")
-    shared_bn2 = BatchNormalization(name='Shared_BN2')
-    shared_act2 = Activation("gelu", name='Shared_Activation2')
-    shared_pool1 = MaxPool2D(pool_size=(2, 2), name='Shared_pool1')
+    shared_conv1 = Conv2D(32, (3, 3), padding='same', name="conv1")
+    shared_bn1 = BatchNormalization(name="bn1")
+    shared_act1 = Activation("gelu", name="ac1")
+    shared_conv2 = Conv2D(32, (3, 3), padding='same', name="conv2")
+    shared_bn2 = BatchNormalization(name='bn2')
+    shared_act2 = Activation("gelu", name='ac2')
+    shared_pool1 = MaxPool2D(pool_size=(2, 2), name='pool1')
     
-    shared_conv3 = Conv2D(48, (3, 3), name='Shared_Conv3')
-    shared_bn3 = BatchNormalization(name='Shared_BN3')
-    shared_act3 = Activation("gelu", name='Shared_Activation3')
-    shared_conv4 = Conv2D(64, (3, 3), name='Shared_Conv4')
-    shared_bn4 = BatchNormalization(name='Shared_BN4')
-    shared_act4 = Activation("gelu", name='Shared_Activation4')
-    shared_pool2 = MaxPool2D(pool_size=(2, 2), name='Shared_pool2')
+    shared_conv3 = Conv2D(64, (3, 3), padding='same', name='conv3')
+    shared_bn3 = BatchNormalization(name='bn3')
+    shared_act3 = Activation("gelu", name='ac3')
+    shared_conv4 = Conv2D(64, (3, 3), padding='same', name='conv4')
+    shared_bn4 = BatchNormalization(name='bn4')
+    shared_act4 = Activation("gelu", name='ac4')
+    shared_pool2 = MaxPool2D(pool_size=(2, 2), name='pool2')
 
     flattened_layers = []
     for input in inputs:
         conv_layer = shared_conv1(input)
         conv_layer = shared_bn1(conv_layer)
         conv_layer = shared_act1(conv_layer)
-        conv_layer = MaxPool2D(pool_size=(2, 2))(conv_layer)
+        # conv_layer = MaxPool2D(pool_size=(2, 2))(conv_layer)
 
         conv_layer = shared_conv2(conv_layer)
         conv_layer = shared_bn2(conv_layer)
@@ -346,6 +350,8 @@ def CNN_shared(input_size=(50, 50, 3)):
         conv_layer = shared_act4(conv_layer)
         conv_layer = shared_pool2(conv_layer)
 
+        conv_layer = Dropout(0.5)(conv_layer)
+
         flattened_layers.append(Flatten()(conv_layer))
 
     concat_layer = concatenate(flattened_layers, axis=1)
@@ -354,7 +360,7 @@ def CNN_shared(input_size=(50, 50, 3)):
     output = Dense(128)(output)
     output = BatchNormalization()(output)
     output = Activation("gelu")(output)
-    # output = Dropout(0.2)(output)
+    # output = Dropout(0.5)(output)
 
     output = Dense(1, activation="sigmoid")(output)
 

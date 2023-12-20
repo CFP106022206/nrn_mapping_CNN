@@ -225,6 +225,8 @@ DNN_Classifier/*
 CAE_FC/*
 CAE_EM/*
 CAE_mix/*
+result/*
+result
 
 Iterative_Figure/*
 Iterative_result/*

@@ -16,10 +16,17 @@ if not os.path.exists(save_folder_path):
 
 
 # %% 对新数据集进行标注
-unlabel_path = './data/statistical_results/three_view_pic_rk10to20/'
+unlabel_path_01 = './data/statistical_results/three_view_pic_rk10/'
+unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20/'
 
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
-file_list = [file_name for file_name in os.listdir(unlabel_path) if file_name.endswith('.pkl')]
+file_list_01 = [file_name for file_name in os.listdir(unlabel_path_01) if file_name.endswith('.pkl')]
+file_list_02 = [file_name for file_name in os.listdir(unlabel_path_02) if file_name.endswith('.pkl')]
+
+file_path_01 = [os.path.join(unlabel_path_01, file_name) for file_name in file_list_01]
+file_path_02 = [os.path.join(unlabel_path_02, file_name) for file_name in file_list_02]
+file_path = file_path_01 + file_path_02
+
 
 # 计算label
 model = load_model('./Annotator_Model/' + save_model_name + '.h5')
@@ -49,24 +56,21 @@ def annotator(model,fc_img, em_img):
 # 分段完成
 sub_length = 2000
 
-if len(file_list) > sub_length:
+if len(file_path) > sub_length:
     
     num = 0
-    while num * sub_length < len(file_list):
+    while num * sub_length < len(file_path):
         start_idx = int(num * sub_length)
-        end_idx = int(min((num + 1) * sub_length, len(file_list)))
+        end_idx = int(min((num + 1) * sub_length, len(file_path)))
 
-        file_list_predict = file_list[start_idx:end_idx]
+        file_path_predict = file_path[start_idx:end_idx]
         print('\nProcess on Num.', start_idx, '~', end_idx)
 
         new_data_lst = []
         # 遍历母文件夹下的所有条目
-        for file_name in tqdm(file_list_predict, total=len(file_list_predict)):
-            # 创建完整文件路径
-            file_path = os.path.join(unlabel_path, file_name)
-
+        for pkl_file in tqdm(file_path_predict, total=len(file_path_predict)):
             # 读取pkl文件
-            data_lst = load_pkl(file_path)
+            data_lst = load_pkl(pkl_file)
             for data in data_lst:
                 # 计算结果
                 result, result_b = annotator(model, data[3], data[4])
@@ -79,14 +83,12 @@ if len(file_list) > sub_length:
 
         # 将DataFrame存储为csv文件
         label_df.to_csv(save_folder_path+'labeled_'+str(num)+'_'+save_model_name+'.csv', index=False)
-        print('\nSave Num.:', num)
+        print('\nSave Num:', num)
 
         num += 1
-        del label_df, data_lst, new_data_lst
+        # del label_df, data_lst, new_data_lst
     
     print('Program Completed.')
-
-
 
 else:
     print('\nLabeling..')
@@ -95,13 +97,10 @@ else:
     new_data_lst = []
 
     # 遍历母文件夹下的所有条目
-    for file_name in tqdm(file_list, total=len(file_list)):
+    for pkl_file in tqdm(file_path, total=len(file_path)):
     # for file_name in file_list:     # No tqdm version
-        # 创建完整文件路径
-        file_path = os.path.join(unlabel_path, file_name)
-
         # 读取pkl文件
-        data_lst = load_pkl(file_path)
+        data_lst = load_pkl(pkl_file)
         for data in data_lst:
             # 计算结果
             result, result_b = annotator(model, data[3], data[4])

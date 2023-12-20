@@ -46,8 +46,8 @@ grid75_path = './data/D1-D5_grid75_sn'
 
 
 scheduler_exp = 0#1.5      #學習率調度器的約束力指數，越小約束越強
-initial_lr = 0.001
-train_epochs = 40
+initial_lr = 0.00001
+train_epochs = 300
 
 add_low_score = False
 low_score_neg_rate = 2
@@ -284,15 +284,7 @@ y_train_bin = np.array([1 if y > 0.5 else 0 for y in y_train])
 
 
 
-# %% 找出 label為1的 X_train
-true_label_idx, false_label_idx = [], []
-for i in range(y_train_bin.shape[0]):
-    if y_train_bin[i] == 1:
-        true_label_idx.append(i)
-    else:
-        false_label_idx.append(i)
-
-# Balanced Weight
+# %% Balanced Weight
 neg, pos = np.bincount(y_train_bin)     #label為0, label為1
 print('Total: {}\nPositive: {} ({:.2f}% of total)\n'.format(neg + pos, pos, 100 * pos / (neg + pos)))
 weight = compute_class_weight('balanced', classes=np.unique(y_train_bin), y=y_train_bin)
@@ -305,9 +297,10 @@ X_train_add = np.zeros((abs(neg-pos), X_train.shape[1], X_train.shape[2], X_trai
 y_train_add = np.zeros(abs(neg-pos))
 
 if neg > pos:
-    add_idx = true_label_idx
+    add_idx = np.where(y_train_bin == 1)[0] #數據擴增在 label為1的 X_train
+
 else:
-    add_idx = false_label_idx
+    add_idx = np.where(y_train_bin == 0)[0]#數據擴增在 label為0的 X_train
 
 
 k=0
@@ -318,7 +311,7 @@ for i in range(X_train_add.shape[0]):
 
     y_train_add[i] = y_train[add_idx[k]]
 
-    if k >= len(add_idx)-1:
+    if k >= len(add_idx):
         k=0
         rotation_angle += 1
     else:
@@ -398,6 +391,19 @@ X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_rang
 X_train = np.vstack((X_train, X_train_augmented))
 y_train = np.hstack((y_train, y_train_augmented))
 
+# # 再做一次
+# X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range, seed+10000)
+
+# X_train = np.vstack((X_train, X_train_augmented))
+# y_train = np.hstack((y_train, y_train_augmented))
+
+
+# # 再做一次
+# X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range, seed+10000)
+
+# X_train = np.vstack((X_train, X_train_augmented))
+# y_train = np.hstack((y_train, y_train_augmented))
+
 
 # 翻倍  All train data augmentation
 
@@ -469,7 +475,7 @@ cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
 if not scheduler_exp:
-    cnn.compile(optimizer=Adam(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])
+    cnn.compile(optimizer=AdamW(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])
 
 # Scheduler
 def scheduler(epoch, lr): 
@@ -516,7 +522,7 @@ plt.plot(Annotator_history.history['loss'], label='loss')
 plt.plot(Annotator_history.history['val_loss'], label='val_loss')
 plt.legend()
 plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
-# plt.show()
+plt.show()
 plt.close('all')
 
 # cnn_train_loss = history.history['loss']
@@ -601,5 +607,64 @@ print('\nSaved')
 
 
 
+# %% 查詢特定層輸出情況
+fmap1_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac1').output)
+fmap1_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac1').output)
+
+fmap2_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac2').output)
+fmap2_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac2').output)
+
+fmap3_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac3').output)
+fmap3_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac3').output)
+
+fmap4_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac4').output)
+fmap4_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac4').output)
+
+fmap1_test_FC = fmap1_FC.predict({'FC':X_test_FC}, verbose=2)
+fmap1_test_EM = fmap1_EM.predict({'EM':X_test_EM}, verbose=2)
+fmap1_val_FC = fmap1_FC.predict({'FC':X_val_FC}, verbose=2)
+fmap1_val_EM = fmap1_EM.predict({'EM':X_val_EM}, verbose=2)
+# fmap1_train_FC = fmap1_FC.predict({'FC':X_train_FC}, verbose=2)
+# fmap1_train_EM = fmap1_EM.predict({'EM':X_train_EM}, verbose=2)
+
+fmap2_test_FC = fmap2_FC.predict({'FC':X_test_FC}, verbose=2)
+fmap2_test_EM = fmap2_EM.predict({'EM':X_test_EM}, verbose=2)
+fmap2_val_FC = fmap2_FC.predict({'FC':X_val_FC}, verbose=2)
+fmap2_val_EM = fmap2_EM.predict({'EM':X_val_EM}, verbose=2)
+# fmap2_train_FC = fmap2_FC.predict({'FC':X_train_FC}, verbose=2)
+# fmap2_train_EM = fmap2_EM.predict({'EM':X_train_EM}, verbose=2)
+
+fmap3_test_FC = fmap3_FC.predict({'FC':X_test_FC}, verbose=2)
+fmap3_test_EM = fmap3_EM.predict({'EM':X_test_EM}, verbose=2)
+fmap3_val_FC = fmap3_FC.predict({'FC':X_val_FC}, verbose=2)
+fmap3_val_EM = fmap3_EM.predict({'EM':X_val_EM}, verbose=2)
+# fmap3_train_FC = fmap3_FC.predict({'FC':X_train_FC}, verbose=2)
+# fmap3_train_EM = fmap3_EM.predict({'EM':X_train_EM}, verbose=2)
+
+fmap4_test_FC = fmap4_FC.predict({'FC':X_test_FC}, verbose=2)
+fmap4_test_EM = fmap4_EM.predict({'EM':X_test_EM}, verbose=2)
+fmap4_val_FC = fmap4_FC.predict({'FC':X_val_FC}, verbose=2)
+fmap4_val_EM = fmap4_EM.predict({'EM':X_val_EM}, verbose=2)
+# fmap4_train_FC = fmap4_FC.predict({'FC':X_train_FC}, verbose=2)
+# fmap4_train_EM = fmap4_EM.predict({'EM':X_train_EM}, verbose=2)
+
+
+
+
+def plot_feature(fmap):
+    f_num = fmap.shape[2]
+    while f_num > 0:
+        plt.figure(figsize=(20,5))
+        for i in range(min(4, fmap.shape[2])):
+            plt.subplot(1,4,i+1)
+            plt.imshow(fmap[:,:,-f_num+i], cmap='magma')
+            plt.xticks([])
+            plt.yticks([])
+        plt.show()
+        f_num -= 4
+
+
+# plot_feature(fmap4_test_FC[3])
+# plot_feature(fmap4_test_EM[3])
 
 # %%
