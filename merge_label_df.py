@@ -6,6 +6,8 @@ import os
 # %%
 file_path = './result/unlabel_data_predict'
 file_list = os.listdir(file_path)
+# 只保留csv檔案
+file_list = [f for f in file_list if f.endswith('.csv')]
 
 df_lst = []
 
@@ -19,5 +21,5 @@ for file_name in file_list:
 
 # 合并所有df
 df = pd.concat(df_lst, ignore_index=True)
-df.to_csv('./result/unlabel_data_predict/merge_predict_Rank10to20.csv', index=False)
+df.to_csv('./result/unlabel_data_predict/merge_predict_Rank20.csv', index=False)
 # %%
