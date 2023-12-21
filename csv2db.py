@@ -6,8 +6,8 @@ import sqlite3
 import pandas as pd
 
 PATH = 'result/unlabel_data_predict/hard_label_model_prediction/' # Path of csv file
-CSV_FILE = 'Merge_Rank20.csv' # Results from model
-DB_FILE = 'DB_Rank20.db' # Target DB filename
+CSV_FILE = 'Merge_Rank10.csv' # Results from model
+DB_FILE = 'DB_Rank10.db' # Target DB filename
 
 df = pd.read_csv(PATH + CSV_FILE)
 
