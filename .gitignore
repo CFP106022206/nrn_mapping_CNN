@@ -203,3 +203,9 @@ plot/*
 # sandbox
 test
 test/*
+
+result
+result/*
+
+Annotator_Model
+Annotator_Model/*
