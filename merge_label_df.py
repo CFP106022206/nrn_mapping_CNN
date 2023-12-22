@@ -26,5 +26,8 @@ df = df.sort_values(by=['fc_id', 'model_predict'], ascending=[True, False])
 # 添加排名, 整数
 df['rank'] = df.groupby('fc_id')['model_predict'].rank(ascending=False).astype(int)
 
-df.to_csv('./result/unlabel_data_predict/merge_predict_Rank20.csv', index=False)
+# 保留排名前5的数据
+df = df[df['rank'] <= 5]
+
+df.to_csv('./result/unlabel_data_predict/merge_predict_Rank5.csv', index=False)
 # %%
