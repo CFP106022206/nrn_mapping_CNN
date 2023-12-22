@@ -6,7 +6,7 @@ import sqlite3
 import pandas as pd
 
 PATH = 'result/unlabel_data_predict/hard_label_model_prediction/' # Path of csv file
-CSV_FILE = 'Merge_Rank10.csv' # Results from model
+CSV_FILE = 'Merge_Rank5.csv' # Results from model
 DB_FILE = 'DB_Rank10.db' # Target DB filename
 
 df = pd.read_csv(PATH + CSV_FILE)
@@ -30,3 +30,5 @@ conn.execute('CREATE TABLE PAIRS (id int primary key, fc_id varchar(20), em_id v
 df.to_sql('PAIRS', conn, if_exists='replace')
 
 conn.close()
+
+# %%
