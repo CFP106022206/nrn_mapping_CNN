@@ -2,10 +2,61 @@
 # %%
 import numpy as np
 import tensorflow as tf
-import keras_tuner as kt
+# import keras_tuner as kt
 from tensorflow import keras
 from keras.models import Sequential, load_model, Model
 from keras.layers import Dense, Input
+# %%
+import matplotlib.pyplot as plt
+import seaborn as sns
+from numba import prange
+
+def sigmoid(x):
+    return 1/(1+np.exp(-x))
+
+def nonlinear(x,wx):
+    return sigmoid(wx*x)
+
+def gen_model(input_size):
+    input_layer =  Input(input_size)
+    dense = Dense(1, activation='sigmoid')(input_layer)
+
+    model = Model(inputs=input_layer, outputs=dense)
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    return model
+
+# feature map 輸出空間(座標矩陣)
+feature_map = np.zeros((50,50,50,50,50))
+
+model = gen_model(len(feature_map.shape))
+
+# feature map偏置
+bias = -20
+
+def feature_output(coor_lst):
+    flatten_embad = np.array([coor_lst])
+    return model.predict(flatten_embad, verbose=2)
+
+result = np.zeros((50,50))
+for i in prange(50):
+    for j in prange(50):
+        k, l, m = 2,3,5
+        result[i,j] = feature_output([i,j,k,l,m])[0][0]
+
+n=250
+# heat map 繪製
+sns.heatmap(result)
+#計算中間值
+threshold = np.median(result)
+# 畫出等高線 = threshold
+# plt.contour(feature_map, levels=[threshold])
+plt.contour(result)
+plt.show()
+
+
+
+
+# %%
 
 # def build_model(hp):
 #     units = hp.Int(name="units", min_value=16, max_value=32, step=16)
