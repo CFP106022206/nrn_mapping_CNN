@@ -1,10 +1,11 @@
-
 # %%
 import sys
 sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+
 import seaborn as sns
 import pandas as pd
 from util import load_pkl
@@ -34,7 +35,7 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
 
 # 设置Seaborn样式
 plt.style.use('default')
-sns.set(style="whitegrid")
+# sns.set(style="whitegrid")    # 背景灰色格線
 
 
 # %% load model
@@ -43,19 +44,12 @@ test_mode = 'cross'    #single: 指定單一 test data, cross: 使用cross valid
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
-cross_fold_num = 3      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
-
-D6 = 'D6'
-
-use_final = False      # 如果True，使用最後階段的預測結果，如果False，使用第一階段的預測結果
+cross_fold_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = './labeled_info/nblast_D2+D6_50as1.csv'
+selected_test_set = 0 #'./labeled_info/nblast_D2+D6_50as1.csv'
 
-if use_final:
-    label_csv_name = './result/final_label_model_D1-D6_'
-else:
-    label_csv_name = './result/test_label_Annotator_D1-D6_'
+label_csv_name = './result/test_label_Annotator_D1-D6_'
 
 nblast_correct_path = './labeled_info/nblast_D2+D5+D6_50as1.csv'
 
@@ -67,24 +61,27 @@ if test_mode == 'single':
     y_true = np.array(nrn_pair['label'])
 
     roc_color='darkorange'
-    plot_title = 'NBlast Score'
+    plot_title = 'Model Prediction'
 
 elif test_mode == 'cross':
     train_losses, val_losses = [], []
-    fc_lst, em_lst, y_pred, y_true = [], [], [], []
+    predict_result_lst = []
     for i in range(cross_fold_num):
-        nrn_pair = pd.read_csv(label_csv_name+str(i)+'.csv')
-
-        fc_lst += nrn_pair['fc_id'].tolist()
-        em_lst += nrn_pair['em_id'].tolist()
-
-        y_pred += nrn_pair['model_pred'].tolist()
-        y_true += nrn_pair['label'].tolist()
+        predict_result = pd.read_csv(label_csv_name+str(i)+'.csv')
+        predict_result_lst.append(predict_result)
 
         # 加载训练和验证历史记录
         history = load_pkl('./result/Train_History_Annotator_D1-D6_'+str(i)+'.pkl')
         train_losses.append(history['loss'])
         val_losses.append(history['val_loss'])
+
+    # 組合所有結果
+    predict_df = pd.concat(predict_result_lst, ignore_index=True)
+    fc_lst = predict_df['fc_id'].tolist()
+    em_lst = predict_df['em_id'].tolist()
+
+    y_pred = predict_df['model_pred'].tolist()
+    y_true = predict_df['label'].tolist()
 
     # 将历史记录转换为DataFrames
     train_losses_df = pd.DataFrame(train_losses)
@@ -100,21 +97,19 @@ elif test_mode == 'cross':
         selected_test_set_df = pd.read_csv(selected_test_set)[['fc_id', 'em_id']]
         selected_test_set_df.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
 
-        test_set_df = pd.DataFrame({'fc_id': fc_lst, 'em_id': em_lst, 'label': y_true, 'model_pred': y_pred})
-        
         # 只保留selected_test_set_df中的nrn pair
-        test_set_df = test_set_df.merge(selected_test_set_df, on=['fc_id', 'em_id'], how='inner')
+        predict_df = predict_df.merge(selected_test_set_df, on=['fc_id', 'em_id'], how='inner')
 
         # 更新篩選後的y_pred, y_true
-        y_pred = test_set_df['model_pred'].tolist()
-        y_true = test_set_df['label'].tolist()
+        y_pred = predict_df['model_pred'].tolist()
+        y_true = predict_df['label'].tolist()
 
     # 將列表轉換為numpy 數組以完成後續條件篩選操作
     y_pred = np.array(y_pred)
     y_true = np.array(y_true)
 
     roc_color = 'lightseagreen'
-    plot_title = 'CNN Score'
+    plot_title = 'Model Prediction'
 
 
 elif test_mode == 'nblast':
@@ -143,15 +138,13 @@ y_pred_label1 = y_pred[y_true == 1]
 
 
 # 繪製 violinplot
-
-
 fig, ax = plt.subplots(figsize=(5, 5))
 
 sns.violinplot(data=[y_pred_label0, y_pred_label1], inner="box", palette=['#001BC2', '#E90132']) # 箱線圖
         
 # 设置透明度
-for violin in ax.collections[::2]:
-    violin.set_alpha(0.6)
+for violin in ax.collections:
+    violin.set_alpha(0.5)
 
 
 # # 獲取自動設置的繪圖邊界
@@ -160,7 +153,7 @@ y_lim = ax.get_ylim()
 
 
 # 畫原始數據點(有抖動)
-sns.stripplot(data=[y_pred_label0, y_pred_label1], jitter=0.04, size=4, zorder=1, palette=['#001BC2', '#E90132'])
+sns.stripplot(data=[y_pred_label0, y_pred_label1], jitter=0.06, size=2, zorder=1, palette=['#001BC2', '#E90132'])
 plt.xticks([0, 1], ['Label = 0', 'Label = 1'])
 
 # 计算平均数
@@ -184,15 +177,34 @@ plt.savefig('./Figure/Violin.png', dpi=150, bbox_inches="tight")
 plt.show()
 
 
-# 绘制密度曲线
-# sns.kdeplot 用于绘制核密度估计（Kernel Density Estimation, KDE）图
-sns.kdeplot(y_pred_label0, label="Label 0", color="blue", lw=2)
-sns.kdeplot(y_pred_label1, label="Label 1", color="red", lw=2)
+# # 绘制密度曲线
+# # sns.kdeplot 用于绘制核密度估计（Kernel Density Estimation, KDE）图
+# sns.kdeplot(y_pred_label0, label="Label 0", color="blue", lw=2)
+# sns.kdeplot(y_pred_label1, label="Label 1", color="red", lw=2)
+
+# # 设置图标题和坐标轴标签
+# plt.title(plot_title)
+# plt.xlabel("Score (Normalized)")
+# plt.ylabel("Density")
+
+# # 显示图例
+# plt.legend()
+
+# # 保存
+# plt.savefig('./Figure/Density_Curve', dpi=150, bbox_inches="tight")
+# # 显示图
+# plt.show()
+
+# histogram (因為核密度曲線平滑處理，0～1範圍以外的部分)
+sns.histplot(y_pred_label0, label="Label 0", color="blue", lw=0.5, alpha=0.6, bins=50)   
+sns.histplot(y_pred_label1, label="Label 1", color="red", lw=0.5, alpha=0.6, bins=50)
 
 # 设置图标题和坐标轴标签
+plt.tick_params(axis='both', which='major', labelsize=12)
+
 plt.title(plot_title)
 plt.xlabel("Score (Normalized)")
-plt.ylabel("Density")
+plt.ylabel("Number")
 
 # 显示图例
 plt.legend()
@@ -274,8 +286,20 @@ print('Recall: ', recall_lst[best_result_idx])
 print('F1: ', f1_lst[best_result_idx])
 print(gen_conf_matrix(y_true, y_pred, threshold=threshold)[1])
 
+
+
+
+
+
 # %% Ranking analysis
-grouped = nrn_pair.groupby('fc_id')
+
+top_k = 5
+
+predict_df_clear = predict_df[['fc_id', 'em_id', 'label', 'model_pred']].copy()
+# 二元化label(for soft label)
+predict_df_clear['bi_label'] = [1 if x > 0.5 else 0 for x in predict_df['label']]
+
+grouped = predict_df_clear.groupby('fc_id')
 
 # 创建一个空字典来保存每个分组的新 DataFrame
 dfs = {}
@@ -284,30 +308,61 @@ for name, group in grouped:
     sorted_group = group.sort_values(by='model_pred', ascending=False)
     dfs[name] = sorted_group
 
-for key in dfs:
-    print(dfs[key].head(10))
+# 挑出dfs中值長度大於5
+filtered_dfs = {k:v for k,v in dfs.items() if len(v) > top_k and 1 in v['bi_label'].values}
 
 # top k accuracy
 top_k_accuracy = []
-for k in range(5,0,-1):
+for k in range(top_k,0,-1):
     correct = 0
-    for key in dfs:
+    for key in filtered_dfs:
         # 只要前k個裡面有一個positive就算正確
-        if dfs[key].iloc[0:k]['label'].sum() > 0:
+        if filtered_dfs[key].iloc[0:k]['label'].sum() > 0:
             correct += 1
-    print('Top', k, 'Accuracy:', correct/len(dfs))
+    print('Top', k, 'Accuracy:', correct/len(filtered_dfs))
     
-    top_k_accuracy.append(correct/len(dfs))
+    top_k_accuracy.append(correct/len(filtered_dfs))
 # bar plot top k accuracy
 plt.figure(figsize=(6,4))
 plt.bar(['Top 5', 'Top 4', 'Top 3', 'Top 2', 'Top 1'], top_k_accuracy, color='lightseagreen',linewidth=0)
+
 # 加上數字標籤，以百分比形式
 for x,y in enumerate(top_k_accuracy):
     plt.text(x, y+0.01, '{:.1%}'.format(y), ha='center', color='black', fontsize=12)
 plt.grid(axis='x')
 plt.ylabel('Accuracy')
 plt.title('Top k Accuracy')
-plt.savefig('./Figure/Top_k_Accuracy', dpi=300, bbox_inches='tight')
+plt.savefig('./Figure/Top_k_Accuracy', dpi=150, bbox_inches='tight')
 plt.show()
 
+# %%
+# Training Label 分佈分析
+fig, ax1 = plt.subplots()
+
+# kde plot for human label
+sns.kdeplot(predict_df_clear['label'], label="KDE plot (Left y-axis)", lw=2, c='#28428A', ax=ax1)
+ax1.set_ylabel('Density (KDE)')
+ax1.set_ylim(0,2)
+# Turn off vertical grid
+ax1.grid(False)
+
+
+# Create a second y-axis that shares the same x-axis
+ax2 = ax1.twinx()
+
+# Plot the histogram on the second y-axis
+# sns.histplot(predict_df_clear['label'], bins=25, color='#75fbd2', label='histogram (Right y-axis)', ax=ax2)
+ax2.hist(predict_df_clear['label'], bins=50, color='lightseagreen', label='histogram (Right y-axis)')
+ax2.set_ylabel('Number')
+ax2.set_ylim(0,800)
+
+# Get the lines and labels for legend
+lines, labels = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+
+# Create the legend
+plt.legend(lines + lines2, labels + labels2, loc='upper right')
+
+plt.title('Soft Label Distribution')
+plt.savefig('./Figure/Soft_Label_Distribution', dpi=150, bbox_inches='tight')
 # %%
