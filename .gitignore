@@ -226,7 +226,7 @@ CAE_FC/*
 CAE_EM/*
 CAE_mix/*
 result/*
-result
+Figure/*
 
 Iterative_Figure/*
 Iterative_result/*
@@ -235,3 +235,7 @@ Iterative_Second_Stage_Model/*
 
 # 虚拟环境
 CZ_01
+
+# 临时文件
+yichen
+yichen/*
