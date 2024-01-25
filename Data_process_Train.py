@@ -33,7 +33,7 @@ from tqdm import tqdm
 
 
 # %%
-num_splits = 2 #0~9, or 99 for whole nBLAST testing set
+num_splits = 9 #0~9, or 99 for whole nBLAST testing set
 
 '''
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
@@ -219,7 +219,7 @@ elif use_map_from == 'yf':
 
 
 # %% Train Validation Split
-data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.1, random_state=seed)
+data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.15, random_state=7)
 
 print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
 
@@ -607,61 +607,61 @@ print('\nSaved')
 
 
 
-# %% 查詢特定層輸出情況
-fmap1_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac1').output)
-fmap1_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac1').output)
+# # %% 查詢特定層輸出情況
+# fmap1_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac1').output)
+# fmap1_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac1').output)
 
-fmap2_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac2').output)
-fmap2_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac2').output)
+# fmap2_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac2').output)
+# fmap2_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac2').output)
 
-fmap3_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac3').output)
-fmap3_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac3').output)
+# fmap3_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac3').output)
+# fmap3_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac3').output)
 
-fmap4_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac4').output)
-fmap4_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac4').output)
+# fmap4_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac4').output)
+# fmap4_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac4').output)
 
-fmap1_test_FC = fmap1_FC.predict({'FC':X_test_FC}, verbose=2)
-fmap1_test_EM = fmap1_EM.predict({'EM':X_test_EM}, verbose=2)
-fmap1_val_FC = fmap1_FC.predict({'FC':X_val_FC}, verbose=2)
-fmap1_val_EM = fmap1_EM.predict({'EM':X_val_EM}, verbose=2)
-# fmap1_train_FC = fmap1_FC.predict({'FC':X_train_FC}, verbose=2)
-# fmap1_train_EM = fmap1_EM.predict({'EM':X_train_EM}, verbose=2)
+# fmap1_test_FC = fmap1_FC.predict({'FC':X_test_FC}, verbose=2)
+# fmap1_test_EM = fmap1_EM.predict({'EM':X_test_EM}, verbose=2)
+# fmap1_val_FC = fmap1_FC.predict({'FC':X_val_FC}, verbose=2)
+# fmap1_val_EM = fmap1_EM.predict({'EM':X_val_EM}, verbose=2)
+# # fmap1_train_FC = fmap1_FC.predict({'FC':X_train_FC}, verbose=2)
+# # fmap1_train_EM = fmap1_EM.predict({'EM':X_train_EM}, verbose=2)
 
-fmap2_test_FC = fmap2_FC.predict({'FC':X_test_FC}, verbose=2)
-fmap2_test_EM = fmap2_EM.predict({'EM':X_test_EM}, verbose=2)
-fmap2_val_FC = fmap2_FC.predict({'FC':X_val_FC}, verbose=2)
-fmap2_val_EM = fmap2_EM.predict({'EM':X_val_EM}, verbose=2)
-# fmap2_train_FC = fmap2_FC.predict({'FC':X_train_FC}, verbose=2)
-# fmap2_train_EM = fmap2_EM.predict({'EM':X_train_EM}, verbose=2)
+# fmap2_test_FC = fmap2_FC.predict({'FC':X_test_FC}, verbose=2)
+# fmap2_test_EM = fmap2_EM.predict({'EM':X_test_EM}, verbose=2)
+# fmap2_val_FC = fmap2_FC.predict({'FC':X_val_FC}, verbose=2)
+# fmap2_val_EM = fmap2_EM.predict({'EM':X_val_EM}, verbose=2)
+# # fmap2_train_FC = fmap2_FC.predict({'FC':X_train_FC}, verbose=2)
+# # fmap2_train_EM = fmap2_EM.predict({'EM':X_train_EM}, verbose=2)
 
-fmap3_test_FC = fmap3_FC.predict({'FC':X_test_FC}, verbose=2)
-fmap3_test_EM = fmap3_EM.predict({'EM':X_test_EM}, verbose=2)
-fmap3_val_FC = fmap3_FC.predict({'FC':X_val_FC}, verbose=2)
-fmap3_val_EM = fmap3_EM.predict({'EM':X_val_EM}, verbose=2)
-# fmap3_train_FC = fmap3_FC.predict({'FC':X_train_FC}, verbose=2)
-# fmap3_train_EM = fmap3_EM.predict({'EM':X_train_EM}, verbose=2)
+# fmap3_test_FC = fmap3_FC.predict({'FC':X_test_FC}, verbose=2)
+# fmap3_test_EM = fmap3_EM.predict({'EM':X_test_EM}, verbose=2)
+# fmap3_val_FC = fmap3_FC.predict({'FC':X_val_FC}, verbose=2)
+# fmap3_val_EM = fmap3_EM.predict({'EM':X_val_EM}, verbose=2)
+# # fmap3_train_FC = fmap3_FC.predict({'FC':X_train_FC}, verbose=2)
+# # fmap3_train_EM = fmap3_EM.predict({'EM':X_train_EM}, verbose=2)
 
-fmap4_test_FC = fmap4_FC.predict({'FC':X_test_FC}, verbose=2)
-fmap4_test_EM = fmap4_EM.predict({'EM':X_test_EM}, verbose=2)
-fmap4_val_FC = fmap4_FC.predict({'FC':X_val_FC}, verbose=2)
-fmap4_val_EM = fmap4_EM.predict({'EM':X_val_EM}, verbose=2)
-# fmap4_train_FC = fmap4_FC.predict({'FC':X_train_FC}, verbose=2)
-# fmap4_train_EM = fmap4_EM.predict({'EM':X_train_EM}, verbose=2)
-
-
+# fmap4_test_FC = fmap4_FC.predict({'FC':X_test_FC}, verbose=2)
+# fmap4_test_EM = fmap4_EM.predict({'EM':X_test_EM}, verbose=2)
+# fmap4_val_FC = fmap4_FC.predict({'FC':X_val_FC}, verbose=2)
+# fmap4_val_EM = fmap4_EM.predict({'EM':X_val_EM}, verbose=2)
+# # fmap4_train_FC = fmap4_FC.predict({'FC':X_train_FC}, verbose=2)
+# # fmap4_train_EM = fmap4_EM.predict({'EM':X_train_EM}, verbose=2)
 
 
-def plot_feature(fmap):
-    f_num = fmap.shape[2]
-    while f_num > 0:
-        plt.figure(figsize=(20,5))
-        for i in range(min(4, fmap.shape[2])):
-            plt.subplot(1,4,i+1)
-            plt.imshow(fmap[:,:,-f_num+i], cmap='magma')
-            plt.xticks([])
-            plt.yticks([])
-        plt.show()
-        f_num -= 4
+
+
+# def plot_feature(fmap):
+#     f_num = fmap.shape[2]
+#     while f_num > 0:
+#         plt.figure(figsize=(20,5))
+#         for i in range(min(4, fmap.shape[2])):
+#             plt.subplot(1,4,i+1)
+#             plt.imshow(fmap[:,:,-f_num+i], cmap='magma')
+#             plt.xticks([])
+#             plt.yticks([])
+#         plt.show()
+#         f_num -= 4
 
 
 # plot_feature(fmap4_test_FC[3])

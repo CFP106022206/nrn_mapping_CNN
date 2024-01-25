@@ -26,15 +26,15 @@ from sklearn.model_selection import KFold
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
 # Mode 3: 选同一条fc有对应到比较多em的pair作为testing data, 这样做的目的是为了评估时在评估几率从高到低排序时前n名中是否有正确答案
 
-mode = 0
+mode = 1
 mode2_file_path = './labeled_info/nblast_D2+D5+D6_50as1.csv'
-cross_validation_num = 3
+cross_validation_num = 10
 
 
 used_label = 'soft_label'   # thres0.5(confidence>0.5 label as 1), thres0.6(confidence>0.6 label as 1), soft_label(keep confidence)
 
 
-seed = 18                        # Random Seed
+seed = 7                        # Random Seed
 
 os.environ['PYTHONHASHSEED'] = str(seed)
 random.seed(seed)
