@@ -5,6 +5,7 @@ sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import re
 
 import seaborn as sns
 import pandas as pd
@@ -153,7 +154,8 @@ y_lim = ax.get_ylim()
 
 
 # 畫原始數據點(有抖動)
-sns.stripplot(data=[y_pred_label0, y_pred_label1], jitter=0.06, size=2, zorder=1, palette=['#001BC2', '#E90132'])
+# sns.stripplot(data=[y_pred_label0, y_pred_label1], jitter=0.06, size=2, zorder=1, palette=['#001BC2', '#E90132'])
+sns.swarmplot(data=[y_pred_label0, y_pred_label1], size=2.5, zorder=1, palette=['#001BC2', '#E90132'])
 plt.xticks([0, 1], ['Label = 0', 'Label = 1'])
 
 # 计算平均数
@@ -365,4 +367,123 @@ plt.legend(lines + lines2, labels + labels2, loc='upper right')
 
 plt.title('Soft Label Distribution')
 plt.savefig('./Figure/Soft_Label_Distribution', dpi=150, bbox_inches='tight')
+
+
+
+
+
+
+# %% 添加人工標註神經腦區分佈
+fc_brain_info1 = pd.read_csv('./data/neuropil_Ver1.csv')
+fc_brain_info2 = pd.read_csv('./data/neuron1x1Coding_Ver2.csv')
+em_brain_info = pd.read_csv('./data/neuron1x1Coding_FlyEM.csv')
+
+def region_merge(region_name):
+    # 刪除數字
+    region_name = re.sub(r'\d+', '', region_name)
+    # 合併左右腦（只保留腦區名稱）
+    region_name = region_name.split('__')[0]
+    return region_name
+
+def rebuild_df(info_df):
+    region_lst = []
+    for region in info_df.columns:
+        region_name = region_merge(region)
+        if region_name not in region_lst:
+            region_lst.append(region_name)
+    
+    edit_df = pd.DataFrame(columns=region_lst)
+    for region in region_lst:
+        # 找到所有同名腦區並相加
+        region_value = info_df[info_df.columns[info_df.columns.str.contains(region)]].sum(axis=1)
+        edit_df[region] = region_value
+
+    return edit_df
+
+fc_brain_info2 = rebuild_df(fc_brain_info2)
+
+
+# Distribution of brain region in labeled fc
+distribution_df = pd.DataFrame(columns=['brain_region', 'count'])
+all_region_lst = fc_brain_info1.columns.tolist()
+# Add fc_brain_info2
+add_item = [x for x in fc_brain_info2.columns.tolist() if x not in all_region_lst]
+all_region_lst += add_item
+
+remove_item = ['nrn', 'neuron', 'volume', 'other']
+all_region_lst = [x for x in all_region_lst if x not in remove_item]
+
+distribution_df['brain_region'] = all_region_lst
+distribution_df['count'] = [0]*len(all_region_lst)
+
+fc_lst = predict_df['fc_id'].tolist()
+for fc in fc_lst:
+    fc_pass_region = fc_brain_info2[fc_brain_info2['neuron'] == fc]
+    
+    if len(fc_pass_region) == 0:
+        fc_pass_region = fc_brain_info1[fc_brain_info1['nrn'] == fc]
+        if len(fc_pass_region) == 0:
+            print(fc)
+
+    else:
+        # 找到大於0的腦區
+        for region in fc_pass_region.columns:
+            region_part = fc_pass_region[region].values[0]
+            # 排除非數字（nrn）和0
+            if type(region_part) != str and region_part > 0:
+                distribution_df.loc[distribution_df['brain_region'] == region, 'count'] += 1
+
+# # 完整dataset分佈
+# all_distribution = distribution_df.copy()
+# fc_lst = 
+
+# predict 準確率
+predict_df['label_binary'] = [1 if x >= 0.5 else 0 for x in predict_df['label']]
+predict_df['correct'] = predict_df['label_binary'] == predict_df['model_pred_binary']
+
+# 畫histogram
+plt.figure(figsize=(12,9))
+sns.barplot(y='brain_region', x='count', data=distribution_df, hue='count', palette='dark:#5A9_r', legend=False)
+# 加上數字標籤
+for x,y in enumerate(distribution_df['count']):
+    plt.text(5, x+0.2, '{:.0f}'.format(y), ha='left', color='#CFD2D2', fontsize=10)
+# x軸刻度調整
+plt.gca().xaxis.set_major_locator(ticker.MultipleLocator(100))
+plt.gca().xaxis.set_minor_locator(ticker.MultipleLocator(25))
+
+plt.savefig('./Figure/Labeled_Region_Distribution', dpi=300, bbox_inches='tight')
+plt.show()
+
+# %%  分析兩代資料差異
+# 整理fc_brain_info
+v1_region_lst = fc_brain_info1.columns.tolist()
+v2_region_lst = fc_brain_info2.columns.tolist()
+
+# 去除數字
+v2_region_lst = [re.sub(r'\d+', '', x) for x in v2_region_lst]
+# 合併左右腦
+v2_region_merge = []
+for region in v2_region_lst:
+    if '__' in region:
+        region_name = region.split('__')[0]  # 下劃線前的部分是腦區名稱
+        v2_region_merge.append(region_name)
+    else:
+        v2_region_merge.append(region)
+    
+# 去除重複元素
+v2_region_merge = [x for i, x in enumerate(v2_region_merge) if v2_region_merge.index(x) == i]
+# remove 'volumn' 'other'
+remove_item = ['neuron', 'volume', 'other']
+v2_region_merge = [x for x in v2_region_merge if x not in remove_item]
+v2_region_merge.insert(0,'nrn')
+
+# 檢查v1 v2是否一致
+for i in v2_region_merge:
+    if i not in v1_region_lst:
+        print(i)
+for i in v1_region_lst:
+    if i not in v2_region_merge:
+        print(i)
+
+
 # %%
