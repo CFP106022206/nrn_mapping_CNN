@@ -9,27 +9,28 @@ from tqdm import tqdm
 
 num_splits = 0 #0~9
 
-save_model_name  = 'Annotator_D1-D6_' +str(num_splits)
+# model_name  = 'Annotator_D1-D6_' +str(num_splits)
+model_file = './Annotator_Model/'   #改成計算多個模型的平均值並分析標準差
 save_folder_path = './result/unlabel_data_predict/'
 if not os.path.exists(save_folder_path):
     os.makedirs(save_folder_path)
 
 
 # %% 对新数据集进行标注
-unlabel_path_01 = './data/statistical_results/three_view_pic_rk10/'
-unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20/'
+unlabel_path_01 = './data/statistical_results/EMxFC_rk0-20'
+# unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20/'
 
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
 file_list_01 = [file_name for file_name in os.listdir(unlabel_path_01) if file_name.endswith('.pkl')]
-file_list_02 = [file_name for file_name in os.listdir(unlabel_path_02) if file_name.endswith('.pkl')]
+# file_list_02 = [file_name for file_name in os.listdir(unlabel_path_02) if file_name.endswith('.pkl')]
 
 file_path_01 = [os.path.join(unlabel_path_01, file_name) for file_name in file_list_01]
-file_path_02 = [os.path.join(unlabel_path_02, file_name) for file_name in file_list_02]
-file_path = file_path_01 + file_path_02
+# file_path_02 = [os.path.join(unlabel_path_02, file_name) for file_name in file_list_02]
+file_path = file_path_01# + file_path_02
 
 
 # 计算label
-model = load_model('./Annotator_Model/' + save_model_name + '.h5')
+model = load_model('./Annotator_Model/' + model_name + '.h5')
 
 def annotator(model,fc_img, em_img):
     # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
@@ -82,7 +83,7 @@ if len(file_path) > sub_length:
         label_df = pd.DataFrame(new_data_lst)
 
         # 将DataFrame存储为csv文件
-        label_df.to_csv(save_folder_path+'labeled_'+str(num)+'_'+save_model_name+'.csv', index=False)
+        label_df.to_csv(save_folder_path+'labeled_'+str(num)+'_'+model_name+'.csv', index=False)
         print('\nSave Num:', num)
 
         num += 1
@@ -115,7 +116,7 @@ else:
     label_df = pd.DataFrame(new_data_lst)
 
     # 将DataFrame存储为csv文件
-    label_df.to_csv(save_folder_path+save_model_name+'.csv', index=False)
+    label_df.to_csv(save_folder_path+model_name+'.csv', index=False)
     print('\nSaved')
     print('Program Completed.')
 # %%
