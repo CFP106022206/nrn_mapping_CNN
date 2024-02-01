@@ -4,6 +4,8 @@ import os
 
 
 # %%
+find_from = 'em_id' # fc找em用'fc_id', em找fc用'em_id'
+
 file_path = './result/unlabel_data_predict'
 file_list = os.listdir(file_path)
 # 只保留csv檔案
@@ -20,14 +22,14 @@ for file_name in file_list:
 # 合并所有df
 df = pd.concat(df_lst, ignore_index=True)
 
-# 针对df['fc_id']相同者, 用['model_predict']列从大到小排
-df = df.sort_values(by=['fc_id', 'model_predict'], ascending=[True, False])
+# 针对df['fc_id']/['em_id']相同者, 用['model_predict']列从大到小排
+df = df.sort_values(by=[find_from, 'model_predict'], ascending=[True, False])
 
 # 添加排名, 整数
-df['rank'] = df.groupby('fc_id')['model_predict'].rank(ascending=False).astype(int)
+df['rank'] = df.groupby(find_from)['model_predict'].rank(ascending=False).astype(int)
 
 # 保留排名前5的数据
-df_reduced = df[df['rank'] <= 5]
+df_reduced = df[df['rank'] <= 10]
 
-df_reduced.to_csv('./result/unlabel_data_predict/merge_predict_Rank5.csv', index=False)
+df_reduced.to_csv('./result/unlabel_data_predict/merge_predict_Rank10.csv', index=False)
 # %%
