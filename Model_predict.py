@@ -7,7 +7,23 @@ from keras.models import *
 from tqdm import tqdm
 
 
-num_splits = 0 #0~9
+def annotator(model,fc_img, em_img):
+    # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
+    fc_img = np.transpose(fc_img, (1, 2, 0))
+    em_img = np.transpose(em_img, (1, 2, 0))
+
+    # 将数据维度扩展至4维 (1,50,50,3)（符合CNN输入）
+    fc_img = np.expand_dims(fc_img, axis=0)
+    em_img = np.expand_dims(em_img, axis=0)
+    label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
+
+    label = label.flatten()[0]  #因為模型輸出是一個 numpy array
+
+    return label
+
+
+
+cross_num = 10 #int, 用了幾個模型做cross 訓練0~9
 
 # model_name  = 'Annotator_D1-D6_' +str(num_splits)
 model_file = './Annotator_Model/'   #改成計算多個模型的平均值並分析標準差
@@ -30,26 +46,15 @@ file_path = file_path_01# + file_path_02
 
 
 # 计算label
-model = load_model('./Annotator_Model/' + model_name + '.h5')
 
-def annotator(model,fc_img, em_img):
-    # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
-    fc_img = np.transpose(fc_img, (1, 2, 0))
-    em_img = np.transpose(em_img, (1, 2, 0))
+model_lst = []
+for i in range(cross_num):
+    model_name = 'Annotator_D1-D6_' +str(i)
+    model = load_model('./Annotator_Model/' + model_name + '.h5')
+    model_lst.append(model)
 
-    # 将数据维度扩展至4维 (1,50,50,3)（符合CNN输入）
-    fc_img = np.expand_dims(fc_img, axis=0)
-    em_img = np.expand_dims(em_img, axis=0)
-    label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
 
-    label = label.flatten()[0]  #因為模型輸出是一個 numpy array
 
-    # binary label
-    if label > 0.5:
-        label_b = 1
-    else:
-        label_b = 0
-    return label, label_b
 
 
 # %%
@@ -74,10 +79,22 @@ if len(file_path) > sub_length:
             data_lst = load_pkl(pkl_file)
             for data in data_lst:
                 # 计算结果
-                result, result_b = annotator(model, data[3], data[4])
+                # 計算各模型結果
+                result_lst = []
+                for model in model_lst:
+                    result = annotator(model, data[3], data[4])
+                    result_lst.append(result)
+                # 計算平均值
+                result_avg = np.mean(result_lst)
+
+                # 計算二元標籤
+                result_bin = 1 if result_avg > 0.5 else 0
+
+                # 計算標準差
+                result_std = np.std(result_lst)
 
                 # 将文件名和计算结果添加到DataFrame
-                new_data = {'fc_id': data[0], 'em_id': data[1], 'KT_score': data[2], 'model_predict': result, 'binary_label': result_b}
+                new_data = {'fc_id': data[0], 'em_id': data[1], 'KT_score': data[2], 'model_predict': result_avg, 'binary_label': result_bin, 'pred_std': result_std}
                 new_data_lst.append(new_data)
 
         label_df = pd.DataFrame(new_data_lst)
@@ -99,19 +116,27 @@ else:
 
     # 遍历母文件夹下的所有条目
     for pkl_file in tqdm(file_path, total=len(file_path)):
-    # for file_name in file_list:     # No tqdm version
         # 读取pkl文件
         data_lst = load_pkl(pkl_file)
         for data in data_lst:
             # 计算结果
-            result, result_b = annotator(model, data[3], data[4])
+            # 計算各模型結果
+            result_lst = []
+            for model in model_lst:
+                result = annotator(model, data[3], data[4])
+                result_lst.append(result)
+            # 計算平均值
+            result_avg = np.mean(result_lst)
+
+            # 計算二元標籤
+            result_bin = 1 if result_avg > 0.5 else 0
+
+            # 計算標準差
+            result_std = np.std(result_lst)
 
             # 将文件名和计算结果添加到DataFrame
-            new_data = {'fc_id': data[0], 'em_id': data[1], 'score': data[2], 'label_c': result, 'label': result_b}
-
+            new_data = {'fc_id': data[0], 'em_id': data[1], 'KT_score': data[2], 'model_predict': result_avg, 'binary_label': result_bin, 'pred_std': result_std}
             new_data_lst.append(new_data)
-
-
 
     label_df = pd.DataFrame(new_data_lst)
 
