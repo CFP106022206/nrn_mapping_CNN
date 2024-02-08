@@ -5,13 +5,15 @@
 import sqlite3
 import pandas as pd
 
-PATH = 'result/unlabel_data_predict/hard_label_model_prediction/' # Path of csv file
-CSV_FILE = 'Merge_Rank5.csv' # Results from model
-DB_FILE = 'DB_Rank10.db' # Target DB filename
+csv_path = './result/unlabel_data_predict/2024-01-31_EMxFC/merge_predict_Rank5.csv' # Results from model
+DB_FILE = 'DB_Rank5.db' # Target DB filename
 
-df = pd.read_csv(PATH + CSV_FILE)
+df = pd.read_csv(csv_path)
+# 重命名列名
+df.rename(columns={'model_predict': 'score'}, inplace=True)
 
-### Add 'plot' column for plots filenames
+
+# %%## Add 'plot' column for plots filenames
 
 tmpFC = df['fc_id'].to_list()
 tmpEM = df['em_id'].to_list()
