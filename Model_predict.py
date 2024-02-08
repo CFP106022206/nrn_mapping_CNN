@@ -33,16 +33,16 @@ if not os.path.exists(save_folder_path):
 
 
 # %% 对新数据集进行标注
-unlabel_path_01 = './data/statistical_results/EMxFC_rk0-20'
-# unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20/'
+unlabel_path_01 = './data/statistical_results/three_view_pic_rk10'
+unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20/'
 
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
 file_list_01 = [file_name for file_name in os.listdir(unlabel_path_01) if file_name.endswith('.pkl')]
-# file_list_02 = [file_name for file_name in os.listdir(unlabel_path_02) if file_name.endswith('.pkl')]
+file_list_02 = [file_name for file_name in os.listdir(unlabel_path_02) if file_name.endswith('.pkl')]
 
 file_path_01 = [os.path.join(unlabel_path_01, file_name) for file_name in file_list_01]
-# file_path_02 = [os.path.join(unlabel_path_02, file_name) for file_name in file_list_02]
-file_path = file_path_01# + file_path_02
+file_path_02 = [os.path.join(unlabel_path_02, file_name) for file_name in file_list_02]
+file_path = file_path_01 + file_path_02
 
 
 # 计算label
