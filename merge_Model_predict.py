@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # %%
-find_from = 'em_id' # fc找em用'fc_id', em找fc用'em_id'
+find_from = 'fc_id' # fc找em用'fc_id', em找fc用'em_id'
 
 file_path = './result/unlabel_data_predict'
 file_list = os.listdir(file_path)
@@ -30,9 +30,9 @@ df = df.sort_values(by=[find_from, 'model_predict'], ascending=[True, False])
 df['rank'] = df.groupby(find_from)['model_predict'].rank(ascending=False).astype(int)
 
 # 保留排名前5的数据
-df_reduced = df[df['rank'] <= 10]
+df_reduced = df[df['rank'] <= 5]
 
-df_reduced.to_csv('./result/unlabel_data_predict/merge_predict_Rank10.csv', index=False)
+df_reduced.to_csv('./result/unlabel_data_predict/merge_predict_Rank5.csv', index=False)
 # %%
 # 分析冠廷分数和模型分数的相关性
 from scipy.stats import pearsonr
