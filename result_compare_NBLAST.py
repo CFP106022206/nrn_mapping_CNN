@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import re
-
 import seaborn as sns
 import pandas as pd
 from util import load_pkl
@@ -34,12 +33,11 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
     plt.savefig('./Figure/Loss_Curve_'+name+'.png', dpi=150, bbox_inches="tight")
     plt.show()
 
-# 设置Seaborn样式
-plt.style.use('default')
-# sns.set(style="whitegrid")    # 背景灰色格線
-
 
 # %% load model
+    
+# 设置Seaborn样式
+plt.style.use('default')
 
 test_mode = 'cross'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
 
@@ -67,7 +65,7 @@ if test_mode == 'single':
 elif test_mode == 'cross':
     train_losses, val_losses = [], []
     predict_result_lst = []
-    for i in range(cross_fold_num):
+    for i in range(9,10):#cross_fold_num):
         predict_result = pd.read_csv(label_csv_name+str(i)+'.csv')
         predict_result_lst.append(predict_result)
 
@@ -139,7 +137,8 @@ y_pred_label1 = y_pred[y_true == 1]
 
 
 # 繪製 violinplot
-fig, ax = plt.subplots(figsize=(5, 5))
+
+fig, ax = plt.subplots(figsize=(6, 5))
 
 sns.violinplot(data=[y_pred_label0, y_pred_label1], inner="box", palette=['#001BC2', '#E90132']) # 箱線圖
         
@@ -179,7 +178,10 @@ plt.savefig('./Figure/Violin.png', dpi=150, bbox_inches="tight")
 plt.show()
 
 
-# # 绘制密度曲线
+# --------- 绘制核函數密度曲线 ---------
+
+# 曲線版
+
 # # sns.kdeplot 用于绘制核密度估计（Kernel Density Estimation, KDE）图
 # sns.kdeplot(y_pred_label0, label="Label 0", color="blue", lw=2)
 # sns.kdeplot(y_pred_label1, label="Label 1", color="red", lw=2)
@@ -197,7 +199,7 @@ plt.show()
 # # 显示图
 # plt.show()
 
-# histogram (因為核密度曲線平滑處理，0～1範圍以外的部分)
+# histogram 版本 (因為核密度曲線平滑處理，0～1範圍以外的部分)
 sns.histplot(y_pred_label0, label="Label 0", color="blue", lw=0.5, alpha=0.6, bins=50)   
 sns.histplot(y_pred_label1, label="Label 1", color="red", lw=0.5, alpha=0.6, bins=50)
 
@@ -221,7 +223,7 @@ plt.show()
 fpr, tpr, thresholds = roc_curve(y_true, y_pred)
 roc_auc = auc(fpr, tpr)
 
-plt.figure(figsize=(4,4))
+plt.figure(figsize=(6,5))
 plt.plot(fpr, tpr, color=roc_color, label='ROC curve (area = %0.2f)' % roc_auc, linewidth=4)
 plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
 plt.xlim([0.0, 1.0])
@@ -266,13 +268,15 @@ for threshold in threshold_lst:
     recall_lst.append(recall)
     f1_lst.append(result_f1_score[1])
 
-plt.figure(figsize=(6,4))
+
+sns.set_theme(style="whitegrid")    # 背景灰色格線
+plt.figure(figsize=(4,4))
 plt.plot(threshold_lst,precision_lst,'*-',label='Precision',color='b')
 plt.plot(threshold_lst,recall_lst,'d-',label='Recall',color='y')
 plt.plot(threshold_lst,f1_lst,'o-', label='F1',color='r')
 plt.legend()
 plt.xlabel('Threshold')
-plt.ylabel('Score')
+# plt.ylabel('Score')
 plt.savefig('./Figure/Threshold_Curve', dpi=150, bbox_inches='tight')
 plt.show()
 
@@ -295,7 +299,7 @@ print(gen_conf_matrix(y_true, y_pred, threshold=threshold)[1])
 
 # %% Ranking analysis
 
-top_k = 5
+top_k = 1
 
 predict_df_clear = predict_df[['fc_id', 'em_id', 'label', 'model_pred']].copy()
 # 二元化label(for soft label)
@@ -325,17 +329,23 @@ for k in range(top_k,0,-1):
     
     top_k_accuracy.append(correct/len(filtered_dfs))
 # bar plot top k accuracy
-plt.figure(figsize=(6,4))
-plt.bar(['Top 5', 'Top 4', 'Top 3', 'Top 2', 'Top 1'], top_k_accuracy, color='lightseagreen',linewidth=0)
+plt.figure(figsize=(int(np.round(2.1+0.5*top_k)),4))
+plt.ylim([0,1.1])
+plt.grid(axis='y')
+x_axis_name = ['Top 5', 'Top 4', 'Top 3', 'Top 2', 'Top 1']
+x_axis_name_filt = x_axis_name[-top_k:]
+plt.bar(x_axis_name_filt, top_k_accuracy, color='lightseagreen',linewidth=0)
 
 # 加上數字標籤，以百分比形式
 for x,y in enumerate(top_k_accuracy):
     plt.text(x, y+0.01, '{:.1%}'.format(y), ha='center', color='black', fontsize=12)
-plt.grid(axis='x')
+
 plt.ylabel('Accuracy')
-plt.title('Top k Accuracy')
-plt.savefig('./Figure/Top_k_Accuracy', dpi=150, bbox_inches='tight')
+# plt.title('Top k Accuracy')
+plt.savefig('./Figure/Top_'+str(top_k)+'_Accuracy', dpi=150, bbox_inches='tight')
 plt.show()
+
+print('\nTotal:', len(filtered_dfs))
 
 # %%
 # Training Label 分佈分析
