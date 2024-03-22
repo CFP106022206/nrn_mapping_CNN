@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import re
+import os
 import seaborn as sns
 import pandas as pd
 from util import load_pkl
@@ -35,7 +36,7 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
 
 
 # %% load model
-    
+
 # 设置Seaborn样式
 plt.style.use('default')
 
@@ -43,10 +44,10 @@ test_mode = 'cross'    #single: 指定單一 test data, cross: 使用cross valid
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
-cross_fold_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
+cross_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = 0 #'./labeled_info/nblast_D2+D6_50as1.csv'
+selected_test_set = False #'./labeled_info/nblast_D2+D6_50as1.csv'
 
 label_csv_name = './result/test_label_Annotator_D1-D6_'
 
@@ -65,7 +66,7 @@ if test_mode == 'single':
 elif test_mode == 'cross':
     train_losses, val_losses = [], []
     predict_result_lst = []
-    for i in range(9,10):#cross_fold_num):
+    for i in range(cross_num):
         predict_result = pd.read_csv(label_csv_name+str(i)+'.csv')
         predict_result_lst.append(predict_result)
 
@@ -74,8 +75,8 @@ elif test_mode == 'cross':
         train_losses.append(history['loss'])
         val_losses.append(history['val_loss'])
 
-    # 組合所有結果
     predict_df = pd.concat(predict_result_lst, ignore_index=True)
+
     fc_lst = predict_df['fc_id'].tolist()
     em_lst = predict_df['em_id'].tolist()
 
@@ -86,7 +87,7 @@ elif test_mode == 'cross':
     train_losses_df = pd.DataFrame(train_losses)
     val_losses_df = pd.DataFrame(val_losses)
 
-
+    # 畫train loss 曲線
     generate_cross_loss_curve(train_losses_df, '#008367', 'Training')
     generate_cross_loss_curve(val_losses_df, '#467F7E', 'Validation')
 
@@ -299,7 +300,7 @@ print(gen_conf_matrix(y_true, y_pred, threshold=threshold)[1])
 
 # %% Ranking analysis
 
-top_k = 1
+top_k = 5
 
 predict_df_clear = predict_df[['fc_id', 'em_id', 'label', 'model_pred']].copy()
 # 二元化label(for soft label)
@@ -314,7 +315,7 @@ for name, group in grouped:
     sorted_group = group.sort_values(by='model_pred', ascending=False)
     dfs[name] = sorted_group
 
-# 挑出dfs中值長度大於5
+# 挑出dfs中值長度大於top_k的
 filtered_dfs = {k:v for k,v in dfs.items() if len(v) > top_k and 1 in v['bi_label'].values}
 
 # top k accuracy
@@ -495,5 +496,124 @@ for i in v1_region_lst:
     if i not in v2_region_merge:
         print(i)
 
+
+# %% 分析交換輸入的結果
+from util import load_pkl
+from keras.models import *
+from tqdm import tqdm
+
+cross_num = 1       #這裏為了快速分析，只調用一個模型來預測。
+test_path = './data/statistical_results/three_view_pic_rk10/'
+test_num = 1000     # 取1000個未標注資料測試
+model_path = './Annotator_Model/'   #'Annotator_Model_Uninverse'
+
+def annotator(model,fc_img, em_img):
+    # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
+    fc_img = np.transpose(fc_img, (1, 2, 0))
+    em_img = np.transpose(em_img, (1, 2, 0))
+
+    # 将数据维度扩展至4维 (1,50,50,3)（符合CNN输入）
+    fc_img = np.expand_dims(fc_img, axis=0)
+    em_img = np.expand_dims(em_img, axis=0)
+    label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
+
+    label = label.flatten()[0]  #因為模型輸出是一個 numpy array
+
+    return label
+
+model_lst = []
+for i in range(cross_num):
+    model_name = 'Annotator_D1-D6_' +str(i) +'.h5'
+    model = load_model(os.path.join(model_path, model_name))
+    model_lst.append(model)
+
+def gen_predict_df(file_path, model_lst, inverse=False):
+    new_data_lst = []
+
+    # 遍历母文件夹下的所有条目
+    for pkl_file in tqdm(file_path, total=len(file_path)):
+        # 读取pkl文件
+        data_lst = load_pkl(pkl_file)
+        for data in data_lst:
+            # 计算结果
+            # 計算各模型結果
+            result_lst = []
+            for model in model_lst:
+                if inverse:         # 測試顛倒輸入，對比結果
+                    result = annotator(model, data[4], data[3])
+                else:
+                    result = annotator(model, data[3], data[4])
+            
+                result_lst.append(result)
+
+            # 計算平均值
+            result_avg = np.mean(result_lst)
+
+            # 計算二元標籤
+            result_bin = 1 if result_avg > 0.5 else 0
+
+            # 計算標準差
+            result_std = np.std(result_lst)
+
+            # 将文件名和计算结果添加到DataFrame
+            new_data = {'fc_id': data[0], 'em_id': data[1], 'KT_score': data[2], 'model_predict': result_avg, 'binary_label': result_bin, 'pred_std': result_std}
+            new_data_lst.append(new_data)
+
+    label_df = pd.DataFrame(new_data_lst)
+
+    return label_df
+
+file_lst = [file_name for file_name in os.listdir(test_path) if file_name.endswith('.pkl')]
+file_lst = [os.path.join(test_path, file_name) for file_name in file_lst]
+file_lst = file_lst[:test_num]
+
+label_df = gen_predict_df(file_lst, model_lst)
+inv_label_df = gen_predict_df(file_lst, model_lst, inverse=True)
+
+pred_lst = label_df['model_predict'].to_numpy()
+inv_pred = inv_label_df['model_predict'].to_numpy()
+
+d_inv = np.abs(pred_lst - inv_pred)
+
+# 舊模型結果
+model_path = './Annotator_Model_Uninverse/'
+model_lst = []
+for i in range(cross_num):
+    model_name = 'Annotator_D1-D6_' +str(i) +'.h5'
+    model = load_model(os.path.join(model_path, model_name))
+    model_lst.append(model)
+
+
+old_label_df = gen_predict_df(file_lst, model_lst)
+old_inv_label_df = gen_predict_df(file_lst, model_lst, inverse=True)
+
+old_pred_lst = old_label_df['model_predict'].to_numpy()
+old_inv_pred = old_inv_label_df['model_predict'].to_numpy()
+
+old_d_inv = np.abs(old_pred_lst - old_inv_pred)
+
+# %% violin plot
+fig, ax = plt.subplots(figsize=(6, 5))
+
+sns.violinplot(data=[d_inv, old_d_inv], inner="box", palette=['#001BC2', '#E90132']) # 箱線圖
+        
+# 设置透明度
+for violin in ax.collections:
+    violin.set_alpha(0.8)
+
+# 计算平均数
+averages = [np.mean(p) for p in [d_inv, old_d_inv]]
+
+# 在小提琴图上标注平均数
+for i, avg in enumerate(averages):
+    ax.text(i, y_lim[0]+0.02, f"Avg = {avg:.2f}", horizontalalignment='center', fontsize=12, color='black')
+
+# 添加标题和轴标签
+plt.xticks([0, 1], ['New', 'Old'])
+plt.ylabel('Deviation')
+
+plt.savefig('./Figure/exchange_diviation.png', dpi=150, bbox_inches="tight")
+# 显示图像
+plt.show()
 
 # %%
