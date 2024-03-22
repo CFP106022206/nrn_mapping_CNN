@@ -33,7 +33,7 @@ from tqdm import tqdm
 
 
 # %%
-num_splits = 0 #0~9, or 99 for whole nBLAST testing set
+num_splits = 9 #0~9, or 99 for whole nBLAST testing set
 
 '''
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
@@ -221,10 +221,10 @@ elif use_map_from == 'yf':
 # %% Train Validation Split
 data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.15, random_state=7)
 
-print('\nTrain data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
+print('\nOriginal Train data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
 
 
-X_val = data_np_valid
+x_val = data_np_valid
 X_test = data_np_test
 y_val = np.array(nrn_pair_valid['label'])
 y_test = np.array(nrn_pair_test['label'])
@@ -274,10 +274,14 @@ def imshow_pred_pair(predict_pair_df, pred_data_np):
 
 
 
-# %% Data Augmentation: cross expand(Truned off)
-
-X_train = data_np_train
+# %% Data Augmentation: Exchange 'fc' and 'em' data
+x_train = data_np_train.copy()
 y_train = np.array(nrn_pair_train['label'])
+
+# 交換 FC/EM
+x_train = np.vstack((x_train, np.flip(x_train, axis=1)))
+y_train = np.hstack((y_train, y_train))
+
 y_train_bin = np.array([1 if y > 0.5 else 0 for y in y_train])
 
 
@@ -286,28 +290,28 @@ y_train_bin = np.array([1 if y > 0.5 else 0 for y in y_train])
 
 # %% Balanced Weight
 neg, pos = np.bincount(y_train_bin)     #label為0, label為1
-print('Total: {}\nPositive: {} ({:.2f}% of total)\n'.format(neg + pos, pos, 100 * pos / (neg + pos)))
+print('\nTotal(After exchange): {}\nPositive: {} ({:.2f}% of total)\n'.format(neg + pos, pos, 100 * pos / (neg + pos)))
 weight = compute_class_weight('balanced', classes=np.unique(y_train_bin), y=y_train_bin)
 class_weights = {0:weight[0]*100, 1:weight[1]}
-print('Balanced Weight in: \n', np.unique(y_train_bin),'\n', weight)
+print('Balanced Weight in:\n', weight)
 
 
 # UpSampling
-X_train_add = np.zeros((abs(neg-pos), X_train.shape[1], X_train.shape[2], X_train.shape[3], X_train.shape[4]))   # 製作需要增加的x_train 量
+X_train_add = np.zeros((abs(neg-pos), x_train.shape[1], x_train.shape[2], x_train.shape[3], x_train.shape[4]))   # 製作需要增加的x_train 量
 y_train_add = np.zeros(abs(neg-pos))
 
 if neg > pos:
-    add_idx = np.where(y_train_bin == 1)[0] #數據擴增在 label為1的 X_train
+    add_idx = np.where(y_train_bin == 1)[0] #數據擴增在 label為1的 x_train
 
 else:
-    add_idx = np.where(y_train_bin == 0)[0]#數據擴增在 label為0的 X_train
+    add_idx = np.where(y_train_bin == 0)[0]#數據擴增在 label為0的 x_train
 
 
 k=0
 for i in range(X_train_add.shape[0]):
     rotation_angle = 1  # 1*90 度旋轉
-    X_train_add[i,0,:] = np.rot90(X_train[add_idx[k],0,:],rotation_angle) # FC img
-    X_train_add[i,1,:] = np.rot90(X_train[add_idx[k],1,:],rotation_angle) # EM img
+    X_train_add[i,0,:] = np.rot90(x_train[add_idx[k],0,:],rotation_angle) # FC img
+    X_train_add[i,1,:] = np.rot90(x_train[add_idx[k],1,:],rotation_angle) # EM img
 
     y_train_add[i] = y_train[add_idx[k]]
 
@@ -318,10 +322,10 @@ for i in range(X_train_add.shape[0]):
         k+=1
 
 
-X_train = np.vstack((X_train, X_train_add))
+x_train = np.vstack((x_train, X_train_add))
 y_train = np.hstack((y_train, y_train_add))
 
-print('UpSampling: After Augmentation:\nTrue Label/Total in X_train:\n',np.sum(y_train_bin),'/', len(X_train))
+print('UpSampling: After label balancing:\nTrue Label/Total in x_train:\n',np.sum(y_train_bin),'/', len(x_train))
 
 # 圖片旋轉任一角度
 def rotate_and_pad(image, angle, border_value=(0, 0, 0)):
@@ -358,19 +362,19 @@ def rotate_and_pad(image, angle, border_value=(0, 0, 0)):
     return rotated_image
 
 
-def augment_data(X_train, y_train, angle_range, resize_range, aug_seed):
+def augment_data(x_train, y_train, angle_range, resize_range, aug_seed):
     X_augmented, y_augmented = [], []
 
-    for i in range(X_train.shape[0]):
+    for i in range(x_train.shape[0]):
         current_seed = aug_seed + i         #為每個循環定義一個種子。每張圖片旋轉角度因此不同
         rng = np.random.default_rng(current_seed)
         angle = rng.uniform(angle_range[0], angle_range[1])
         # scale = rng.random.uniform(resize_range[0], resize_range[1])
 
-        rotate_pair = np.zeros(X_train.shape[1:])   # shape=(2,50,50,3)
-        resize_pair = np.zeros(X_train.shape[1:])
-        for j in range(X_train.shape[1]):
-            rotate_pair[j] = rotate_and_pad(X_train[i, j], angle)
+        rotate_pair = np.zeros(x_train.shape[1:])   # shape=(2,50,50,3)
+        resize_pair = np.zeros(x_train.shape[1:])
+        for j in range(x_train.shape[1]):
+            rotate_pair[j] = rotate_and_pad(x_train[i, j], angle)
 
         X_augmented.append(rotate_pair)
         y_augmented.append(y_train[i])
@@ -380,85 +384,85 @@ def augment_data(X_train, y_train, angle_range, resize_range, aug_seed):
 # 示例用法
 angle_range = [-45, 45]  # 旋转角度范围（在 -10 到 10 之间）
 resize_range = [0.8, 1.2]   # 縮放範圍（在 0.8 到 1.2 之間）
-X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range, seed)
+X_train_augmented, y_train_augmented = augment_data(x_train, y_train, angle_range, resize_range, seed)
 
-X_train = np.vstack((X_train, X_train_augmented))
+x_train = np.vstack((x_train, X_train_augmented))
 y_train = np.hstack((y_train, y_train_augmented))
 
 # 再做一次
-X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range, seed+10000)
+X_train_augmented, y_train_augmented = augment_data(x_train, y_train, angle_range, resize_range, seed+10000)
 
-X_train = np.vstack((X_train, X_train_augmented))
+x_train = np.vstack((x_train, X_train_augmented))
 y_train = np.hstack((y_train, y_train_augmented))
 
 # # 再做一次
-# X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range, seed+10000)
+# X_train_augmented, y_train_augmented = augment_data(x_train, y_train, angle_range, resize_range, seed+10000)
 
-# X_train = np.vstack((X_train, X_train_augmented))
+# x_train = np.vstack((x_train, X_train_augmented))
 # y_train = np.hstack((y_train, y_train_augmented))
 
 
 # # 再做一次
-# X_train_augmented, y_train_augmented = augment_data(X_train, y_train, angle_range, resize_range, seed+10000)
+# X_train_augmented, y_train_augmented = augment_data(x_train, y_train, angle_range, resize_range, seed+10000)
 
-# X_train = np.vstack((X_train, X_train_augmented))
+# x_train = np.vstack((x_train, X_train_augmented))
 # y_train = np.hstack((y_train, y_train_augmented))
 
 
 # 翻倍  All train data augmentation
 
-X_train_aug1 = np.zeros_like(X_train)
+X_train_aug1 = np.zeros_like(x_train)
 for i in range(X_train_aug1.shape[0]):
-    X_train_aug1[i,0,:] = np.fliplr(X_train[i,0,:])
-    X_train_aug1[i,1,:] = np.fliplr(X_train[i,1,:])
+    X_train_aug1[i,0,:] = np.fliplr(x_train[i,0,:])
+    X_train_aug1[i,1,:] = np.fliplr(x_train[i,1,:])
 
-X_train = np.vstack((X_train, X_train_aug1))
+x_train = np.vstack((x_train, X_train_aug1))
 y_train = np.hstack((y_train, y_train))
 
 del X_train_aug1
 
 # 翻倍
-X_train_aug2 = np.zeros_like(X_train)
+X_train_aug2 = np.zeros_like(x_train)
 
 for i in range(X_train_aug2.shape[0]):
-    X_train_aug2[i,0,:] = np.flipud(X_train[i,0,:])
-    X_train_aug2[i,1,:] = np.flipud(X_train[i,1,:])
+    X_train_aug2[i,0,:] = np.flipud(x_train[i,0,:])
+    X_train_aug2[i,1,:] = np.flipud(x_train[i,1,:])
 
-X_train = np.vstack((X_train, X_train_aug2))
+x_train = np.vstack((x_train, X_train_aug2))
 y_train = np.hstack((y_train, y_train))
 
 del X_train_aug2
 
 # 翻倍
-X_train_aug3 = np.zeros_like(X_train)
+X_train_aug3 = np.zeros_like(x_train)
 
 for i in range(X_train_aug3.shape[0]):
-    X_train_aug3[i,0,:] = np.flipud(np.rot90(X_train[i,0,:],1))
-    X_train_aug3[i,1,:] = np.flipud(np.rot90(X_train[i,1,:],1))
+    X_train_aug3[i,0,:] = np.flipud(np.rot90(x_train[i,0,:],1))
+    X_train_aug3[i,1,:] = np.flipud(np.rot90(x_train[i,1,:],1))
 
-X_train = np.vstack((X_train, X_train_aug3))
+x_train = np.vstack((x_train, X_train_aug3))
 y_train = np.hstack((y_train, y_train))
 
 del X_train_aug3
 
 
 # FC/EM Split
-X_train_FC = X_train[:,0,:]
-X_train_EM = X_train[:,1,:]
+x_train_FC = x_train[:,0,:]
+x_train_EM = x_train[:,1,:]
 
-del X_train
+del x_train
 
-X_val_FC = X_val[:,0,:]
-X_val_EM = X_val[:,1,:]
+x_val_FC = x_val[:,0,:]
+x_val_EM = x_val[:,1,:]
 
-X_test_FC = X_test[:,0,:]
-X_test_EM = X_test[:,1,:]
+x_test_FC = X_test[:,0,:]
+x_test_EM = X_test[:,1,:]
 
-print('X_train shape:', X_train_FC.shape, X_train_EM.shape)
+print('x_train shape:', x_train_FC.shape, x_train_EM.shape)
 print('y_train shape:', len(y_train))
-print('X_val shape:', X_val_FC.shape, X_val_EM.shape)
+print('x_val shape:', x_val_FC.shape, x_val_EM.shape)
 print('y_val shape:', len(y_val))
-print('X_test shape:', X_test_FC.shape, X_test_EM.shape)
+print('X_test shape:', x_test_FC.shape, x_test_EM.shape)
 print('y_test shape:', len(y_test))
 
 
@@ -468,7 +472,7 @@ print('y_test shape:', len(y_test))
 from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
 # from tensorflow.keras.utils import plot_model
 
-resolutions = X_train_FC.shape[1:]
+resolutions = x_train_FC.shape[1:]
 
 cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
 # cnn = CNN_deep((resolutions[0],resolutions[1],resolutions[2]))
@@ -507,10 +511,10 @@ print('\nUse Callbacks:', callbacks)
 
 # Model.fit
 
-Annotator_history = cnn.fit({'FC':X_train_FC, 'EM':X_train_EM}, 
+Annotator_history = cnn.fit({'FC':x_train_FC, 'EM':x_train_EM}, 
                             y_train, 
                             batch_size=128, 
-                            validation_data=({'FC':X_val_FC, 'EM':X_val_EM}, y_val), 
+                            validation_data=({'FC':x_val_FC, 'EM':x_val_EM}, y_val), 
                             epochs=train_epochs, 
                             shuffle=True, 
                             callbacks = callbacks, verbose=2)
@@ -578,14 +582,14 @@ def result_analysis(y_pred, y_test):
 
 
 # predict validation dataset result
-y_pred_val = model.predict({'FC':X_val_FC, 'EM':X_val_EM}, verbose=2)
+y_pred_val = model.predict({'FC':x_val_FC, 'EM':x_val_EM}, verbose=2)
 
 print('Validation:')
 val_result, val_pred_bin = result_analysis(y_pred_val, y_val)
 
 
 # predict test dataset result
-y_pred_test = model.predict({'FC':X_test_FC, 'EM':X_test_EM}, verbose=2)
+y_pred_test = model.predict({'FC':x_test_FC, 'EM':x_test_EM}, verbose=2)
 
 print('Test:')
 test_result, test_pred_binary = result_analysis(y_pred_test, y_test)
@@ -620,33 +624,33 @@ print('\nSaved')
 # fmap4_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac4').output)
 # fmap4_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac4').output)
 
-# fmap1_test_FC = fmap1_FC.predict({'FC':X_test_FC}, verbose=2)
-# fmap1_test_EM = fmap1_EM.predict({'EM':X_test_EM}, verbose=2)
-# fmap1_val_FC = fmap1_FC.predict({'FC':X_val_FC}, verbose=2)
-# fmap1_val_EM = fmap1_EM.predict({'EM':X_val_EM}, verbose=2)
-# # fmap1_train_FC = fmap1_FC.predict({'FC':X_train_FC}, verbose=2)
-# # fmap1_train_EM = fmap1_EM.predict({'EM':X_train_EM}, verbose=2)
+# fmap1_test_FC = fmap1_FC.predict({'FC':x_test_FC}, verbose=2)
+# fmap1_test_EM = fmap1_EM.predict({'EM':x_test_EM}, verbose=2)
+# fmap1_val_FC = fmap1_FC.predict({'FC':x_val_FC}, verbose=2)
+# fmap1_val_EM = fmap1_EM.predict({'EM':x_val_EM}, verbose=2)
+# # fmap1_train_FC = fmap1_FC.predict({'FC':x_train_FC}, verbose=2)
+# # fmap1_train_EM = fmap1_EM.predict({'EM':x_train_EM}, verbose=2)
 
-# fmap2_test_FC = fmap2_FC.predict({'FC':X_test_FC}, verbose=2)
-# fmap2_test_EM = fmap2_EM.predict({'EM':X_test_EM}, verbose=2)
-# fmap2_val_FC = fmap2_FC.predict({'FC':X_val_FC}, verbose=2)
-# fmap2_val_EM = fmap2_EM.predict({'EM':X_val_EM}, verbose=2)
-# # fmap2_train_FC = fmap2_FC.predict({'FC':X_train_FC}, verbose=2)
-# # fmap2_train_EM = fmap2_EM.predict({'EM':X_train_EM}, verbose=2)
+# fmap2_test_FC = fmap2_FC.predict({'FC':x_test_FC}, verbose=2)
+# fmap2_test_EM = fmap2_EM.predict({'EM':x_test_EM}, verbose=2)
+# fmap2_val_FC = fmap2_FC.predict({'FC':x_val_FC}, verbose=2)
+# fmap2_val_EM = fmap2_EM.predict({'EM':x_val_EM}, verbose=2)
+# # fmap2_train_FC = fmap2_FC.predict({'FC':x_train_FC}, verbose=2)
+# # fmap2_train_EM = fmap2_EM.predict({'EM':x_train_EM}, verbose=2)
 
-# fmap3_test_FC = fmap3_FC.predict({'FC':X_test_FC}, verbose=2)
-# fmap3_test_EM = fmap3_EM.predict({'EM':X_test_EM}, verbose=2)
-# fmap3_val_FC = fmap3_FC.predict({'FC':X_val_FC}, verbose=2)
-# fmap3_val_EM = fmap3_EM.predict({'EM':X_val_EM}, verbose=2)
-# # fmap3_train_FC = fmap3_FC.predict({'FC':X_train_FC}, verbose=2)
-# # fmap3_train_EM = fmap3_EM.predict({'EM':X_train_EM}, verbose=2)
+# fmap3_test_FC = fmap3_FC.predict({'FC':x_test_FC}, verbose=2)
+# fmap3_test_EM = fmap3_EM.predict({'EM':x_test_EM}, verbose=2)
+# fmap3_val_FC = fmap3_FC.predict({'FC':x_val_FC}, verbose=2)
+# fmap3_val_EM = fmap3_EM.predict({'EM':x_val_EM}, verbose=2)
+# # fmap3_train_FC = fmap3_FC.predict({'FC':x_train_FC}, verbose=2)
+# # fmap3_train_EM = fmap3_EM.predict({'EM':x_train_EM}, verbose=2)
 
-# fmap4_test_FC = fmap4_FC.predict({'FC':X_test_FC}, verbose=2)
-# fmap4_test_EM = fmap4_EM.predict({'EM':X_test_EM}, verbose=2)
-# fmap4_val_FC = fmap4_FC.predict({'FC':X_val_FC}, verbose=2)
-# fmap4_val_EM = fmap4_EM.predict({'EM':X_val_EM}, verbose=2)
-# # fmap4_train_FC = fmap4_FC.predict({'FC':X_train_FC}, verbose=2)
-# # fmap4_train_EM = fmap4_EM.predict({'EM':X_train_EM}, verbose=2)
+# fmap4_test_FC = fmap4_FC.predict({'FC':x_test_FC}, verbose=2)
+# fmap4_test_EM = fmap4_EM.predict({'EM':x_test_EM}, verbose=2)
+# fmap4_val_FC = fmap4_FC.predict({'FC':x_val_FC}, verbose=2)
+# fmap4_val_EM = fmap4_EM.predict({'EM':x_val_EM}, verbose=2)
+# # fmap4_train_FC = fmap4_FC.predict({'FC':x_train_FC}, verbose=2)
+# # fmap4_train_EM = fmap4_EM.predict({'EM':x_train_EM}, verbose=2)
 
 
 

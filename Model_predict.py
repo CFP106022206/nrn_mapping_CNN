@@ -28,13 +28,14 @@ cross_num = 10 #int, 用了幾個模型做cross 訓練0~9
 # model_name  = 'Annotator_D1-D6_' +str(num_splits)
 model_file = './Annotator_Model/'   #改成計算多個模型的平均值並分析標準差
 save_folder_path = './result/unlabel_data_predict/'
+
 if not os.path.exists(save_folder_path):
     os.makedirs(save_folder_path)
 
 
 # %% 对新数据集进行标注
 unlabel_path_01 = './data/statistical_results/three_view_pic_rk10'
-unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20/'
+unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20'
 
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
 file_list_01 = [file_name for file_name in os.listdir(unlabel_path_01) if file_name.endswith('.pkl')]
@@ -50,9 +51,8 @@ file_path = file_path_01 + file_path_02
 model_lst = []
 for i in range(cross_num):
     model_name = 'Annotator_D1-D6_' +str(i)
-    model = load_model('./Annotator_Model/' + model_name + '.h5')
+    model = load_model(model_file + model_name + '.h5')
     model_lst.append(model)
-
 
 
 
