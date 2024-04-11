@@ -11,6 +11,9 @@ import seaborn as sns
 import pandas as pd
 from util import load_pkl
 from sklearn.metrics import confusion_matrix, f1_score, roc_curve, auc
+from util import load_pkl
+from keras.models import *
+from tqdm import tqdm
 
 def generate_cross_loss_curve(losses_df, curve_color, name):
 
@@ -498,10 +501,6 @@ for i in v1_region_lst:
 
 
 # %% 分析交換輸入的結果
-from util import load_pkl
-from keras.models import *
-from tqdm import tqdm
-
 cross_num = 1       #這裏為了快速分析，只調用一個模型來預測。
 test_path = './data/statistical_results/three_view_pic_rk10/'
 test_num = 1000     # 取1000個未標注資料測試
@@ -604,6 +603,8 @@ for violin in ax.collections:
 # 计算平均数
 averages = [np.mean(p) for p in [d_inv, old_d_inv]]
 
+
+
 # 在小提琴图上标注平均数
 for i, avg in enumerate(averages):
     ax.text(i, y_lim[0]+0.02, f"Avg = {avg:.2f}", horizontalalignment='center', fontsize=12, color='black')
@@ -616,4 +617,22 @@ plt.savefig('./Figure/exchange_diviation.png', dpi=150, bbox_inches="tight")
 # 显示图像
 plt.show()
 
+
+# 畫box plot
+plt.figure(figsize=(6,5))
+sns.boxplot(data=[d_inv, old_d_inv], palette=['#001BC2', '#E90132'])
+
+y_lim = ax.get_ylim()
+
+# 标注平均数
+for i, avg in enumerate(averages):
+    ax.text(i, y_lim[0]+0.02, f"Avg = {avg:.2f}", horizontalalignment='center', fontsize=12, color='black')
+
+plt.xticks([0, 1], ['Input permutation invariance', 'Before'])
+plt.ylabel('Deviation')
+plt.savefig('./Figure/exchange_diviation_box.png', dpi=150, bbox_inches="tight")
+plt.show()
 # %%
+# save d_inv to npy
+np.save('./result/d_inv.npy', d_inv)
+np.save('./result/old_d_inv.npy', old_d_inv)

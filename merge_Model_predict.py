@@ -3,11 +3,15 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import numpy as np
 # %%
-find_from = 'fc_id' # fc找em用'fc_id', em找fc用'em_id'
+find_from = 'em_id' # fc找em用'fc_id', em找fc用'em_id'
 
-file_path = './result/unlabel_data_predict'
+file_path = './result/unlabel_data_predict/'
+output_filename = '2024-04-01_EMxFC_rk20.csv'
+
+rank_n = 20 # 保留排名前n的数据
+
 file_list = os.listdir(file_path)
 # 只保留csv檔案
 file_list = [f for f in file_list if f.endswith('.csv')]
@@ -29,10 +33,38 @@ df = df.sort_values(by=[find_from, 'model_predict'], ascending=[True, False])
 # 添加排名, 整数
 df['rank'] = df.groupby(find_from)['model_predict'].rank(ascending=False).astype(int)
 
-# 保留排名前5的数据
-df_reduced = df[df['rank'] <= 5]
+# 保留排名前n的数据
+df_reduced = df[df['rank'] <= rank_n]
 
-df_reduced.to_csv('./result/unlabel_data_predict/merge_predict_Rank5.csv', index=False)
+df_reduced.to_csv(os.path.join(file_path, output_filename), index=False)
+
+
+
+
+# %% 分析模型排名和冠廷排名的差異
+df = df.sort_values(by=[find_from, 'KT_score'], ascending=[True, False])
+df['KT_rank'] = df.groupby(find_from)['KT_score'].rank(ascending=False).astype(int)
+
+fc_grouped = df.groupby(find_from)
+# 建立numpy array紀錄各FC對應排名
+rank_np = np.zeros((np.max(df['rank']), len(fc_grouped)))
+
+for j, (fc_id, group) in enumerate(fc_grouped):
+    rank_df = pd.DataFrame({'model_rank':group['rank'], 'KT_rank':group['KT_rank']})
+    rank_df.sort_values(by='model_rank', inplace=True)
+    rank_np[:len(rank_df), j] = rank_df['KT_rank']
+
+# 按排名繪製boxplot
+plt.style.use('default')
+plt.figure(figsize=(12, 8))
+boxplot_lst = [r for r in rank_np]
+
+plt.title('Model_rank vs KT_rank')
+sns.boxplot(data=boxplot_lst[:20], width=0.8)
+plt.xlabel('Model_rank')
+plt.ylabel('KT_rank')
+plt.savefig('./Figure/Model_rank_vs_KT_rank2.png', dpi=150, bbox_inches='tight')
+plt.show()
 # %%
 # 分析冠廷分数和模型分数的相关性
 from scipy.stats import pearsonr
