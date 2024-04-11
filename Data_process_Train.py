@@ -49,8 +49,6 @@ scheduler_exp = 0#1.5      #學習率調度器的約束力指數，越小約束�
 initial_lr = 0.00001
 train_epochs = 300
 
-add_low_score = False
-low_score_neg_rate = 2
 
 seed = 3407
 os.environ['PYTHONHASHSEED'] = str(seed)
@@ -278,7 +276,7 @@ def imshow_pred_pair(predict_pair_df, pred_data_np):
 x_train = data_np_train.copy()
 y_train = np.array(nrn_pair_train['label'])
 
-# 交換 FC/EM
+# 交換 FC/EM, enforcing symmetry in the input layer
 x_train = np.vstack((x_train, np.flip(x_train, axis=1)))
 y_train = np.hstack((y_train, y_train))
 
@@ -394,19 +392,6 @@ X_train_augmented, y_train_augmented = augment_data(x_train, y_train, angle_rang
 
 x_train = np.vstack((x_train, X_train_augmented))
 y_train = np.hstack((y_train, y_train_augmented))
-
-# # 再做一次
-# X_train_augmented, y_train_augmented = augment_data(x_train, y_train, angle_range, resize_range, seed+10000)
-
-# x_train = np.vstack((x_train, X_train_augmented))
-# y_train = np.hstack((y_train, y_train_augmented))
-
-
-# # 再做一次
-# X_train_augmented, y_train_augmented = augment_data(x_train, y_train, angle_range, resize_range, seed+10000)
-
-# x_train = np.vstack((x_train, X_train_augmented))
-# y_train = np.hstack((y_train, y_train_augmented))
 
 
 # 翻倍  All train data augmentation
