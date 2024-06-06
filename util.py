@@ -753,8 +753,7 @@ def tree_builder_original(path, name, length_th,
     return nrn_list
 
 
-def tree_builder(path, name, length_th,
-                 compress_list=True):
+def tree_builder(path, name, length_th, compress_list=True):
     # load the file and convert it into useful format
     recoTxt(path+name)
 

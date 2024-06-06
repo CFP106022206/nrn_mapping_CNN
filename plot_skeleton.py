@@ -116,7 +116,7 @@ def plot_neuron(df_neuron, output_folder, file_name='skeleton.mp4', plot_mode='n
     print('Complete.')
 
 
-def plot_pairs_neuron(df_neuron_lst, color_map, output_folder, file_name='skeleton.mp4', dot_size=0.2, interpolate=[0], show_axis=True):
+def plot_pairs_neuron(df_neuron_lst, color_map, output_folder, file_name='skeleton.mp4', dot_size=0.2, interpolate=[1], show_axis=True):
     if type(file_name) != str:
         file_name = str(file_name)
     if file_name[-4:] != '.mp4':
@@ -127,21 +127,17 @@ def plot_pairs_neuron(df_neuron_lst, color_map, output_folder, file_name='skelet
     # interpolate
     if interpolate:
         for i in interpolate:
-            interpolate_df = interpolate_points(df_neuron_lst[i][['x', 'y', 'z']].copy(), 4)
-            expand_columns = df_neuron_lst[i][['type', 'R', 'Parent']].copy()
-            new_index = interpolate_df.index
-            expand_columns = expand_columns.reindex(new_index)
-            expand_columns.ffill(inplace=True)
-
-            df_neuron_lst[i] = pd.concat([expand_columns, interpolate_df], axis=1)
-
-
+            df_neuron_lst[i] = interpolate_points(df_neuron_lst[i].copy(), 10)
 
     fig = plt.figure()
     ax = fig.add_subplot(projection='3d')
 
     for i, df_neuron in enumerate(df_neuron_lst):
         ax.scatter(df_neuron['x'], df_neuron['y'], df_neuron['z'], s = dot_size, linewidths = 0, c=color_map[i])
+        # plot soma
+        if -1 in df_neuron['Parent'].values.astype(int):
+            soma = df_neuron[df_neuron['Parent'].astype(int) == -1]
+            ax.scatter(soma['x'], soma['y'], soma['z'], s = dot_size*90, c=color_map[i], alpha=0.7, label='Soma')
 
     # Set axis equal 避免神經變形失真
     max_length = np.max([np.abs(ax.get_xlim()[0]-ax.get_xlim()[1]), np.abs(ax.get_ylim()[0]-ax.get_ylim()[1]), np.abs(ax.get_zlim()[0]-ax.get_zlim()[1])])
