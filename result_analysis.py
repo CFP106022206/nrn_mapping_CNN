@@ -43,14 +43,14 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
 # 设置Seaborn样式
 plt.style.use('default')
 
-test_mode = 'cross'    #single: 指定單一 test data, cross: 使用cross validation 覆蓋完整 test data, 'nblast': 讀取nblast分數
+test_mode = 'cross'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
 cross_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = False #'./labeled_info/nblast_D2+D6_50as1.csv'
+selected_test_set = './labeled_info/D2+D6_ID.csv'
 
 label_csv_name = './result/test_label_Annotator_D1-D6_'
 
@@ -231,7 +231,7 @@ plt.figure(figsize=(6,5))
 plt.plot(fpr, tpr, color=roc_color, label='ROC curve (area = %0.2f)' % roc_auc, linewidth=4)
 plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
 plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
+plt.ylim([0.0, 1.0])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title(plot_title+' ROC Curve')
@@ -302,6 +302,7 @@ print(gen_conf_matrix(y_true, y_pred, threshold=threshold)[1])
 
 
 # %% Ranking analysis
+plt.style.use('default')
 
 top_k = 5
 
@@ -318,8 +319,8 @@ for name, group in grouped:
     sorted_group = group.sort_values(by='model_pred', ascending=False)
     dfs[name] = sorted_group
 
-# 挑出dfs中值長度大於top_k的
-filtered_dfs = {k:v for k,v in dfs.items() if len(v) > top_k and 1 in v['bi_label'].values}
+# 挑出dfs中值長度大於top_k且包含模型預測為正的部分
+filtered_dfs = {k:v for k,v in dfs.items() if len(v) >= top_k and 1 in v['bi_label'].values}
 
 # top k accuracy
 top_k_accuracy = []
@@ -327,7 +328,7 @@ for k in range(top_k,0,-1):
     correct = 0
     for key in filtered_dfs:
         # 只要前k個裡面有一個positive就算正確
-        if filtered_dfs[key].iloc[0:k]['label'].sum() > 0:
+        if filtered_dfs[key].iloc[0:k]['bi_label'].sum() > 0:
             correct += 1
     print('Top', k, 'Accuracy:', correct/len(filtered_dfs))
     
