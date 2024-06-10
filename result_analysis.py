@@ -43,7 +43,7 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
 # 设置Seaborn样式
 plt.style.use('default')
 
-test_mode = 'cross'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
+test_mode = 'nblast'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
@@ -54,7 +54,7 @@ selected_test_set = './labeled_info/D2+D6_ID.csv'
 
 label_csv_name = './result/test_label_Annotator_D1-D6_'
 
-nblast_correct_path = './labeled_info/nblast_D2+D5+D6_50as1.csv'
+nblast_path = './labeled_info/nblast_all_list_D2_D5.csv'
 
 if test_mode == 'single':
     # load model predict test nrn set
@@ -116,12 +116,12 @@ elif test_mode == 'cross':
 
 
 elif test_mode == 'nblast':
-    nblast_score_correct = pd.read_csv(nblast_correct_path)
+    nblast_score = pd.read_csv(nblast_path)
 
-    nblast_score_correct.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+    nblast_score.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
 
-    y_pred = nblast_score_correct['score'].to_numpy()
-    y_true = nblast_score_correct['label'].to_numpy()
+    y_pred = nblast_score['score'].to_numpy()
+    y_true = nblast_score['label'].to_numpy()
 
     roc_color='darkorange'
     plot_title = 'NBlast Score'
