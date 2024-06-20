@@ -70,6 +70,8 @@ for pkl_file in file_path:
         new_data_lst.append(new_data)
 
 label_df = pd.DataFrame(new_data_lst)
+# 排序
+label_df = label_df.sort_values(by=['fc_id', 'score'], ascending=[True, False])
 
 # 将DataFrame存储为csv文件
 label_df.to_csv(save_folder_path+'model_predict.csv', index=False)
