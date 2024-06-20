@@ -116,7 +116,7 @@ def plot_neuron(df_neuron, output_folder, file_name='skeleton.mp4', plot_mode='n
     print('Complete.')
 
 
-def plot_pairs_neuron(df_neuron_lst, color_map, output_folder, file_name='skeleton.mp4', dot_size=0.2, interpolate=[1], show_axis=True):
+def plot_pairs_neuron(df_neuron_lst, label_lst, color_map, output_folder, file_name='skeleton.mp4', dot_size=0.2, interpolate=[0], show_axis=True):
     if type(file_name) != str:
         file_name = str(file_name)
     if file_name[-4:] != '.mp4':
@@ -137,8 +137,11 @@ def plot_pairs_neuron(df_neuron_lst, color_map, output_folder, file_name='skelet
         # plot soma
         if -1 in df_neuron['Parent'].values.astype(int):
             soma = df_neuron[df_neuron['Parent'].astype(int) == -1]
-            ax.scatter(soma['x'], soma['y'], soma['z'], s = dot_size*90, c=color_map[i], alpha=0.7, label='Soma')
-
+            if label_lst:
+                ax.scatter(soma['x'], soma['y'], soma['z'], s = dot_size*90, c=color_map[i], alpha=0.7, label=label_lst[i])
+            else:
+                ax.scatter(soma['x'], soma['y'], soma['z'], s = dot_size*90, c=color_map[i], alpha=0.7)
+    ax.legend()
     # Set axis equal 避免神經變形失真
     max_length = np.max([np.abs(ax.get_xlim()[0]-ax.get_xlim()[1]), np.abs(ax.get_ylim()[0]-ax.get_ylim()[1]), np.abs(ax.get_zlim()[0]-ax.get_zlim()[1])])
     ax.set_xlim([ax.get_xlim()[0], ax.get_xlim()[0]+max_length])
@@ -153,7 +156,7 @@ def plot_pairs_neuron(df_neuron_lst, color_map, output_folder, file_name='skelet
     def rotate(angle): 
         ax.view_init(azim=angle)
 
-    print('Saving...')
+    print('Drawing 3D Plot...')
     rot_animation = animation.FuncAnimation(fig, rotate, frames=np.arange(0,361,1),interval=100) 
     writer = animation.FFMpegWriter(fps=24, bitrate=1536)
     rot_animation.save(output_folder+file_name, dpi=400, writer=writer)
@@ -164,7 +167,7 @@ def plot_pairs_neuron(df_neuron_lst, color_map, output_folder, file_name='skelet
 
 # %%
 plt.style.use('default')
-plot_id = 'TH-F-200085'
+plot_id = 'TH-F-200026'
 plot_path = './data/selected_data/FC/'+ plot_id +'.swc'
 
 if os.path.exists(plot_path):
@@ -181,9 +184,10 @@ else:
     print('File not exists or wrong path')
 
 # %% pairs mode
+plt.style.use('default')
 
-em_id = '5813128323'
-fc_id = 'TH-F-200085'
+em_id = '5813009595'
+fc_id = 'TH-F-200026'
 
 em_path = './data/selected_data/EM/'+ em_id +'.swc'
 fc_path = './data/selected_data/FC/'+ fc_id +'.swc'
@@ -193,8 +197,11 @@ if os.path.exists(em_path) and os.path.exists(fc_path):
     em_df = pd.read_csv(em_path, sep='\s+', comment='#', header=None, names=['type', 'x', 'y', 'z', 'R', 'Parent'])
     fc_df = pd.read_csv(fc_path, sep='\s+', comment='#', header=None, names=['type', 'x', 'y', 'z', 'R', 'Parent'])
 
-    plot_pairs_neuron([em_df, fc_df], ['#5641D5','#E22146'], './Figure/plot_skeletons/', file_name=em_id+'_'+fc_id+'.mp4', dot_size=0.2, show_axis=True)
+    plot_pairs_neuron([fc_df, em_df], ['FC', 'EM'], ['#5641D5','#E22146'], './Figure/plot_skeletons/', file_name=fc_id+'_'+em_id+'.mp4', dot_size=0.2, show_axis=True)
 
 else:
-    print('File not exists or wrong path')
+    if not os.path.exists(em_path):
+        print('EM File not exists')
+    if not os.path.exists(fc_path):
+        print('FC File not exists')
 # %%
