@@ -64,7 +64,7 @@ em_nrn_lst = data_dict['em_nrn']
 fc_img = np.array(data_dict['fc_img'])
 em_img = np.array(data_dict['em_img'])
 
-# 開始計時
+
 st = time.time()
 predict_result = model.predict({'FC':fc_img, 'EM':em_img}, batch_size=128, verbose=0)
 time_used = time.time() - st
@@ -73,15 +73,14 @@ print('\nAverage time per pair:', time_used/len(fc_img))
 
 
 # 将文件名和计算结果添加到DataFrame
-result = predict_result.flatten()   # 一維化
-label_df = pd.DataFrame({'fc_id': fc_nrn_lst, 'em_id': em_nrn_lst, 'score': result})# online version
+label_df = pd.DataFrame({'fc_id': fc_nrn_lst, 'em_id': em_nrn_lst, 'score': predict_result.flatten()})# online version
 
 # 排序
 label_df = label_df.sort_values(by=['fc_id', 'score'], ascending=[True, False])
 
 
 # 将DataFrame存储为csv文件
-# label_df.to_csv(save_folder_path+'model_predict.csv', index=False)
-# print('\nSaved')
-# print('Program Completed.')
+label_df.to_csv(save_folder_path+'model_predict.csv', index=False)
+print('\nSaved')
+print('Program Completed.')
 # %%
