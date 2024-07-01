@@ -186,8 +186,8 @@ else:
 # %% pairs mode
 plt.style.use('default')
 
-em_id = '5813009595'
-fc_id = 'TH-F-200026'
+em_id = '859265651'
+fc_id = 'TH-F-100075'
 
 em_path = './data/selected_data/EM/'+ em_id +'.swc'
 fc_path = './data/selected_data/FC/'+ fc_id +'.swc'

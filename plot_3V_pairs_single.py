@@ -9,8 +9,8 @@ from util import load_pkl
 
 # %% 
 pic_path = './data/labeled_sn/'
-fc_id = 'TH-F-200026'
-em_id = '5813009595'
+fc_id = 'TH-F-700022'
+em_id = '981362334'
 output_path = './Figure/predict_3view/'
 map_path = pic_path + 'mapping_data_sn_' + fc_id + '.pkl'
 pair_data = load_pkl(map_path)   # list
