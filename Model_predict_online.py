@@ -20,23 +20,6 @@ if not os.path.exists(save_folder_path):
 
 
 # %% 
-
-def annotator(model,fc_img, em_img):
-    # 使用transpose()将数组形状从(3, 50, 50)更改为(50, 50, 3)
-    fc_img = np.transpose(fc_img, (1, 2, 0))
-    em_img = np.transpose(em_img, (1, 2, 0))
-
-    # 将数据维度扩展至4维 (1,50,50,3)（符合CNN输入）
-    fc_img = np.expand_dims(fc_img, axis=0)
-    em_img = np.expand_dims(em_img, axis=0)
-    label = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
-
-    label = label.flatten()[0]  #因為模型輸出是一個 numpy array
-
-    return label
-
-
-
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
 file_list_01 = [file_name for file_name in os.listdir(unlabel_path_01) if file_name.endswith('.pkl')]
 
