@@ -745,5 +745,6 @@ def find_diff_examplt(df, rank_num=50):
 
 model_fail_D2, nblast_fail_D2 = find_diff_examplt(D2_result, rank_num=350)
 model_fail_D5, nblast_fail_D5 = find_diff_examplt(D5_result, rank_num=350)
+
+
 # %%
-model
