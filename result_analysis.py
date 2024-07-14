@@ -38,7 +38,9 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
     plt.show()
 
 
+
 # %% load model
+model_name = 'Fine_Tune_Model_150Kv2_'
 
 # 设置Seaborn样式
 plt.style.use('default')
@@ -50,9 +52,9 @@ test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 
 cross_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set =  False#'./labeled_info/D5_conf.csv'
+selected_test_set = False #'./labeled_info/D2+D6_ID.csv'#'./labeled_info/D5_conf.csv' #False
 
-label_csv_name = './result/test_label_Annotator_D1-D6_'
+label_csv_name = './result/test_label_'+model_name
 
 nblast_path = './labeled_info/nblast_all_list_D2_D5_label.csv'
 
@@ -247,9 +249,9 @@ precision_sample = precision_lst[::5]
 recall_sample = recall_lst[::5]
 f1_sample = f1_lst[::5]
 
-plt.plot(threshold_sample,precision_sample,'*-',label='Precision',color='b', alpha=0.6)
-plt.plot(threshold_sample,recall_sample,'d-',label='Recall',color='y', alpha=0.6)
-plt.plot(threshold_sample,f1_sample,'o--', label='F1',color='#008367')
+plt.plot(threshold_sample,precision_sample,'*-',label='Precision',color='navy', alpha=0.6)
+plt.plot(threshold_sample,recall_sample,'d-',label='Recall',color='#008367', alpha=0.6)
+plt.plot(threshold_sample,f1_sample,'o--', label='F1',color='#A62C3A')
 
 plt.legend()
 plt.xlabel('Threshold')
@@ -261,6 +263,7 @@ plt.show()
 
 
 # --------- 绘制核函數密度曲线 ---------
+plt.figure(figsize=(5,4))
 # histogram 版本 (因為核密度曲線平滑處理，0～1範圍以外的部分)
 # 计算两组数据的最小值和最大值
 min_val = min(y_pred_label0.min(), y_pred_label1.min())
@@ -273,14 +276,14 @@ sns.histplot(y_pred_label0, label="Label 0", color="blue", lw=0.5, alpha=0.6, bi
 sns.histplot(y_pred_label1, label="Label 1", color="red", lw=0.5, alpha=0.6, bins=bins)
 
 # 標出最佳threshold
-plt.axvline(x=threshold, color='#008367', linestyle='--', label='Threshold of max F1 score')
+plt.axvline(x=threshold, color='#A62C3A', linestyle='--', label='Threshold of max F1 score')
 
 # 设置图标题和坐标轴标签
 plt.tick_params(axis='both', which='major', labelsize=12)
 
-plt.title(plot_title+' Distribution')
+# plt.title(plot_title+' Distribution')
 plt.xlabel("Score (Normalized)")
-plt.ylabel("Number")
+plt.ylabel('Count')
 plt.minorticks_on()
 # 显示图例
 plt.legend()
@@ -335,7 +338,7 @@ plt.ylim([0,1.1])
 plt.grid(axis='y', alpha=0.5)
 x_axis_name = ['Top 5', 'Top 4', 'Top 3', 'Top 2', 'Top 1']
 x_axis_name_filt = x_axis_name[-top_k:]
-plt.bar(x_axis_name_filt, top_k_accuracy, color='#2B9D9D',linewidth=0)
+plt.bar(x_axis_name_filt, top_k_accuracy, color='#BB0F1E',linewidth=0)
 
 # 加上數字標籤，以百分比形式
 for x,y in enumerate(top_k_accuracy):

@@ -6,20 +6,28 @@ from util import load_pkl
 from keras.models import *
 from tqdm import tqdm
 from collections import defaultdict
+import time
+import sys
 
 
-cross_num = 10 #int, 用了幾個模型做cross 訓練0~9
 
-# model_name  = 'Annotator_D1-D6_' +str(num_splits)
-model_file = './Annotator_Model/'   #改成計算多個模型的平均值並分析標準差
-save_folder_path = './result/unlabel_data_predict/'
+model_file = './Fine_Tune_Model/'   #改成計算多個模型的平均值並分析標準差
+save_folder_path = './result/preTrain_predict/'
 
 if not os.path.exists(save_folder_path):
     os.makedirs(save_folder_path)
 
 
-# %% 对新数据集进行标注
-unlabel_path_01 = './data/statistical_results/EMxFC_rk0-20'
+# %%
+
+#傳遞參數模式
+single_model = int(sys.argv[1])
+
+# use_model = [5, 6] # [a,b]欲使用之模型編號，從a開始用到到b
+use_model = [single_model, single_model+1]
+
+# 对新数据集进行标注
+unlabel_path_01 = './data/statistical_results/pre_train_map'
 # unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20'
 
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
@@ -34,16 +42,17 @@ file_path = file_path_01 #+ file_path_02
 # 计算label
 
 model_lst = []
-for i in range(cross_num):
-    model_name = 'Annotator_D1-D6_' +str(i)
+for i in range(use_model[0], use_model[1]):
+    model_name = 'Fine_Tune_Model_150K_' +str(i)
     model = load_model(model_file + model_name + '.h5')
     model_lst.append(model)
 
+print('Used model:', use_model)
 
 # %%
 
 # 分段完成
-sub_length = 2000
+sub_length = 2000000
 
 if len(file_path) > sub_length:
     
@@ -83,7 +92,7 @@ if len(file_path) > sub_length:
         print('Model predicting..')
         predict_lst = []
         for model in model_lst:
-            predict_result = model.predict({'FC':fc_img, 'EM':em_img}, batch_size=128, verbose=0)
+            predict_result = model.predict({'FC':fc_img, 'EM':em_img}, verbose=0)
             predict_lst.append(predict_result)
         
         predict_np = np.array(predict_lst)
@@ -94,9 +103,9 @@ if len(file_path) > sub_length:
 
         label_df = pd.DataFrame({'fc_id': fc_nrn_lst, 'em_id': em_nrn_lst, 'model_predict': result_avg.flatten(), 'binary_label': result_bin.flatten(), 'pred_std': result_std.flatten()})
 
-        label_df.to_csv(save_folder_path+'labeled_'+str(num)+'_'+model_name+'.csv', index=False)
+        label_df.to_csv(save_folder_path+'labeled_'+str(num)+'.csv', index=False)
         print('\nSave Num:', num)
-
+        del label_df, data_lst, data_dict
         num += 1
         # del label_df, data_lst, new_data_lst
     
@@ -128,11 +137,14 @@ else:
     em_img = np.array(data_dict['em_img'])
 
     print('Model predicting..')
+    st = time.time()
     predict_lst = []
     for model in model_lst:
-        predict_result = model.predict({'FC':fc_img, 'EM':em_img}, batch_size=128, verbose=0)
+        predict_result = model.predict({'FC':fc_img, 'EM':em_img}, verbose=2)
         predict_lst.append(predict_result)
     
+    print('Model predict time used:', time.time()-st, 's')
+
     predict_np = np.array(predict_lst)
     
     result_avg = np.mean(predict_np, axis=0)
@@ -145,4 +157,63 @@ else:
     label_df.to_csv(save_folder_path+model_name+'.csv', index=False)
     print('\nSaved')
     print('Program Completed.')
+# %%
+# 受限於電腦RAM不足，只能一個一個模型跑的情況下，需要額外的步驟將label.csv合併
+model_name = 'Fine_Tune_Model_150K_'
+
+file_lst = os.listdir(save_folder_path)
+file_lst = [os.path.join(save_folder_path, filename) for filename in file_lst if model_name in filename]
+print(sorted(file_lst))
+print('Len:',len(file_lst))
+
+merge_df = None
+i = 0
+for file_path in file_lst:
+    if merge_df is None:
+        merge_df = pd.read_csv(file_path)[['fc_id', 'em_id', 'model_predict']]
+        merge_df.rename(columns={'model_predict': 'model_predict_'+str(i)}, inplace=True)
+        i += 1
+    else:
+        df = pd.read_csv(file_path)[['fc_id', 'em_id', 'model_predict']]
+        df.rename(columns={'model_predict': 'model_predict_'+str(i)}, inplace=True)
+        i += 1
+
+        merge_df = pd.merge(merge_df, df, on=['fc_id', 'em_id'], how='inner')
+
+# 重新計算平均值、標準差
+predict_columns = [col for col in merge_df.columns if 'model_predict' in col]
+merge_df['model_predict_avg'] = merge_df[predict_columns].mean(axis=1)
+merge_df['model_predict_std'] = merge_df[predict_columns].std(axis=1)
+
+# 刪去已存在於human label的組合
+human_label_test = pd.read_csv('./train_test_split/test_split_0_D1-D6.csv')
+human_label_train = pd.read_csv('./train_test_split/train_split_0_D1-D6.csv')
+human_label = pd.concat([human_label_test, human_label_train])
+
+merge_df = pd.merge(merge_df, human_label, on=['fc_id', 'em_id'], how='left', indicator=True)
+merge_df = merge_df[merge_df['_merge'] == 'left_only']
+merge_df.drop(columns=['score', 'label', '_merge'], inplace=True)
+
+# 按照std排序
+merge_df_sort = merge_df.sort_values(by='model_predict_std', ascending=True)
+merge_df_sort.rename(columns={'model_predict_avg':'label'}, inplace=True)
+merge_df_sort.to_csv('preTrain_label/preTrain_label.csv', index=False)
+
+# %%
+# 複製模塊
+# import shutil
+
+# source_path = './data/mapping_data_0.7+'
+# target_path = './data/statistical_results/pre_train_map'
+
+# file_list = os.listdir(source_path)
+# file_list = [os.path.join(source_path, filename) for filename in file_list if filename.endswith('.pkl')]
+# print('Copy file:', len(file_list))
+# copy_num = 0
+# for path in tqdm(file_list):
+#     # 檢查是否已存在
+#     if not os.path.exists(os.path.join(target_path, os.path.basename(path))):
+#         shutil.copy(path, target_path) 
+#         copy_num += 1
+# print(copy_num, 'files copied.')
 # %%
