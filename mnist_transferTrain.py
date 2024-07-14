@@ -1,11 +1,3 @@
-'''
-1, Make Train/Test Set from D1~D4 or D1~D5
-2, Load Each Set and train model
-3, Transfer Big Model
-4, Result Analysis
-5, Iterative self-labeling
-6, Transfer Big Model...
-'''
 # %%
 import sys
 sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
@@ -33,20 +25,18 @@ from tqdm import tqdm
 
 
 # %%
-num_splits = 9 #0~9, or 99 for whole nBLAST testing set
+num_splits = 1 #0~9, or 99 for whole nBLAST testing set
 
-'''
-使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
-新寫法是使用和data_preprocess_annotator 相同的方法。
-'''
+pre_train_model_path = './mnist_preTrain/pre_train_0.h5'
+
+
 use_map_from = 'yf' #'kt': map_data 冠廷, 'yf': map_folder from 懿凡
 map_dict_folder = './data/labeled_sn'
 
 grid75_path = './data/D1-D5_grid75_sn'
 
 
-scheduler_exp = 0#1.5      #學習率調度器的約束力指數，越小約束越強
-initial_lr = 0.00001
+initial_lr = 0.0001
 train_epochs = 300
 
 
@@ -58,7 +48,7 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 tf.random.set_seed(seed)
 
 
-save_model_name  = 'Annotator_D1-D6_' +str(num_splits)
+save_model_name  = 'Annotator_D1-D6_' + str(num_splits) + '_tr'
 
 # load train, test
 label_table_train = pd.read_csv('./train_test_split/train_split_' + str(num_splits) +'_D1-D6.csv')
@@ -140,8 +130,8 @@ if use_map_from == 'kt':
 
         return data_np, pair_df, not_found_df
 
-    x_test, nrn_pair_test, test_not_found = data_preprocess(map_data, test_pair_nrn)
-    x_train, nrn_pair_train, train_not_found = data_preprocess(map_data, train_pair_nrn)
+    data_np_test, nrn_pair_test, test_not_found = data_preprocess(map_data, test_pair_nrn)
+    data_np_train, nrn_pair_train, train_not_found = data_preprocess(map_data, train_pair_nrn)
 
 
 elif use_map_from == 'yf':
@@ -211,17 +201,19 @@ elif use_map_from == 'yf':
         return data_np, pair_df, not_found_df
 
 
-    x_test, nrn_pair_test, test_not_found = data_preprocess(map_dict_folder, test_pair_nrn)
-    x_train, nrn_pair_train, train_not_found = data_preprocess(map_dict_folder, train_pair_nrn)
+    data_np_test, nrn_pair_test, test_not_found = data_preprocess(map_dict_folder, test_pair_nrn)
+    data_np_train, nrn_pair_train, train_not_found = data_preprocess(map_dict_folder, train_pair_nrn)
 
 
 
 # %% Train Validation Split
-x_train, x_val, nrn_pair_train, nrn_pair_valid = train_test_split(x_train, nrn_pair_train, test_size=0.15, random_state=7)
+data_np_train, data_np_valid, nrn_pair_train, nrn_pair_valid = train_test_split(data_np_train, nrn_pair_train, test_size=0.15, random_state=7)
 
-print('\nOriginal Train data:', len(x_train),'\nValid data:', len(x_val),'\nTest data:', len(x_test))
+print('\nOriginal Train data:', len(data_np_train),'\nValid data:', len(data_np_valid),'\nTest data:', len(data_np_test))
 
-y_train = np.array(nrn_pair_train['label'])
+
+x_val = data_np_valid
+X_test = data_np_test
 y_val = np.array(nrn_pair_valid['label'])
 y_test = np.array(nrn_pair_test['label'])
 
@@ -270,7 +262,11 @@ def imshow_pred_pair(predict_pair_df, pred_data_np):
 
 
 
-# %% Data Augmentation: Exchange 'fc' and 'em' data. 交換 FC/EM, enforcing symmetry in the input layer
+# %% Data Augmentation: Exchange 'fc' and 'em' data
+x_train = data_np_train.copy()
+y_train = np.array(nrn_pair_train['label'])
+
+# 交換 FC/EM, enforcing symmetry in the input layer
 x_train = np.vstack((x_train, np.flip(x_train, axis=1)))
 y_train = np.hstack((y_train, y_train))
 
@@ -434,58 +430,36 @@ del x_train
 x_val_FC = x_val[:,0,:]
 x_val_EM = x_val[:,1,:]
 
-x_test_FC = x_test[:,0,:]
-x_test_EM = x_test[:,1,:]
+x_test_FC = X_test[:,0,:]
+x_test_EM = X_test[:,1,:]
 
 print('x_train shape:', x_train_FC.shape, x_train_EM.shape)
 print('y_train shape:', len(y_train))
 print('x_val shape:', x_val_FC.shape, x_val_EM.shape)
 print('y_val shape:', len(y_val))
-print('x_test shape:', x_test_FC.shape, x_test_EM.shape)
+print('X_test shape:', x_test_FC.shape, x_test_EM.shape)
 print('y_test shape:', len(y_test))
 
 
 
 # %%
-
-from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
-# from tensorflow.keras.utils import plot_model
-
 resolutions = x_train_FC.shape[1:]
 
-cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
-# cnn = CNN_deep((resolutions[0],resolutions[1],resolutions[2]))
+cnn = tf.keras.models.load_model(pre_train_model_path)
+
+# 凍結最後全連接層參數
+for layer in cnn.layers[-4:]:
+    layer.trainable = False
+#檢查凍結情況
+# for layer in cnn.layers:
+#     print(layer.name, layer.trainable)
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
-if not scheduler_exp:
-    cnn.compile(optimizer=AdamW(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])
+cnn.compile(optimizer=AdamW(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])
 
-# Scheduler
-def scheduler(epoch, lr): 
-
-    min_lr=0.0000001
-    total_epoch = train_epochs
-    epoch_lr = lr*((1-epoch/total_epoch)**scheduler_exp)
-    if epoch_lr<min_lr:
-        epoch_lr = min_lr
-
-    return epoch_lr
-
-
-reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 
 # 設定模型儲存條件(儲存最佳模型)
 checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
-
-
-early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
-
-
-if scheduler_exp:
-    callbacks = [checkpoint, reduce_lr]
-else:
-    callbacks = [checkpoint]
-print('\nUse Callbacks:', callbacks)
 
 
 # Model.fit
@@ -496,16 +470,15 @@ Annotator_history = cnn.fit({'FC':x_train_FC, 'EM':x_train_EM},
                             validation_data=({'FC':x_val_FC, 'EM':x_val_EM}, y_val), 
                             epochs=train_epochs, 
                             shuffle=True, 
-                            callbacks = callbacks, verbose=2)
-                            # class_weight=class_weights)
+                            callbacks = [checkpoint], verbose=2)
 
 
 
 plt.plot(Annotator_history.history['loss'], label='loss')
 plt.plot(Annotator_history.history['val_loss'], label='val_loss')
 plt.legend()
-plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'.png', dpi=150, bbox_inches="tight")
-plt.show()
+plt.savefig('./Figure/Annotator_Train_Curve_'+str(num_splits)+'_tr.png', dpi=150, bbox_inches="tight")
+# plt.show()
 plt.close('all')
 
 # cnn_train_loss = history.history['loss']
@@ -589,65 +562,3 @@ pred_result_df.to_csv('./result/test_label_'+save_model_name+'.csv', index=False
 print('\nSaved')
 
 
-
-# # %% 查詢特定層輸出情況
-# fmap1_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac1').output)
-# fmap1_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac1').output)
-
-# fmap2_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac2').output)
-# fmap2_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac2').output)
-
-# fmap3_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac3').output)
-# fmap3_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac3').output)
-
-# fmap4_FC = Model(inputs=model.get_layer('FC').input, outputs=model.get_layer('fc_ac4').output)
-# fmap4_EM = Model(inputs=model.get_layer('EM').input, outputs=model.get_layer('em_ac4').output)
-
-# fmap1_test_FC = fmap1_FC.predict({'FC':x_test_FC}, verbose=2)
-# fmap1_test_EM = fmap1_EM.predict({'EM':x_test_EM}, verbose=2)
-# fmap1_val_FC = fmap1_FC.predict({'FC':x_val_FC}, verbose=2)
-# fmap1_val_EM = fmap1_EM.predict({'EM':x_val_EM}, verbose=2)
-# # fmap1_train_FC = fmap1_FC.predict({'FC':x_train_FC}, verbose=2)
-# # fmap1_train_EM = fmap1_EM.predict({'EM':x_train_EM}, verbose=2)
-
-# fmap2_test_FC = fmap2_FC.predict({'FC':x_test_FC}, verbose=2)
-# fmap2_test_EM = fmap2_EM.predict({'EM':x_test_EM}, verbose=2)
-# fmap2_val_FC = fmap2_FC.predict({'FC':x_val_FC}, verbose=2)
-# fmap2_val_EM = fmap2_EM.predict({'EM':x_val_EM}, verbose=2)
-# # fmap2_train_FC = fmap2_FC.predict({'FC':x_train_FC}, verbose=2)
-# # fmap2_train_EM = fmap2_EM.predict({'EM':x_train_EM}, verbose=2)
-
-# fmap3_test_FC = fmap3_FC.predict({'FC':x_test_FC}, verbose=2)
-# fmap3_test_EM = fmap3_EM.predict({'EM':x_test_EM}, verbose=2)
-# fmap3_val_FC = fmap3_FC.predict({'FC':x_val_FC}, verbose=2)
-# fmap3_val_EM = fmap3_EM.predict({'EM':x_val_EM}, verbose=2)
-# # fmap3_train_FC = fmap3_FC.predict({'FC':x_train_FC}, verbose=2)
-# # fmap3_train_EM = fmap3_EM.predict({'EM':x_train_EM}, verbose=2)
-
-# fmap4_test_FC = fmap4_FC.predict({'FC':x_test_FC}, verbose=2)
-# fmap4_test_EM = fmap4_EM.predict({'EM':x_test_EM}, verbose=2)
-# fmap4_val_FC = fmap4_FC.predict({'FC':x_val_FC}, verbose=2)
-# fmap4_val_EM = fmap4_EM.predict({'EM':x_val_EM}, verbose=2)
-# # fmap4_train_FC = fmap4_FC.predict({'FC':x_train_FC}, verbose=2)
-# # fmap4_train_EM = fmap4_EM.predict({'EM':x_train_EM}, verbose=2)
-
-
-
-
-# def plot_feature(fmap):
-#     f_num = fmap.shape[2]
-#     while f_num > 0:
-#         plt.figure(figsize=(20,5))
-#         for i in range(min(4, fmap.shape[2])):
-#             plt.subplot(1,4,i+1)
-#             plt.imshow(fmap[:,:,-f_num+i], cmap='magma')
-#             plt.xticks([])
-#             plt.yticks([])
-#         plt.show()
-#         f_num -= 4
-
-
-# plot_feature(fmap4_test_FC[3])
-# plot_feature(fmap4_test_EM[3])
-
-# %%
