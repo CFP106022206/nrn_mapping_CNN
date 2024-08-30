@@ -39,8 +39,8 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
 
 
 
-# %% load model
-model_name = 'Fine_Tune_Model_150Kv2_'
+# %%
+model_name = 'Fine_Tune_Model_150KnF_CoorOrient_'
 
 # 设置Seaborn样式
 plt.style.use('default')
@@ -55,6 +55,7 @@ cross_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cro
 selected_test_set = False #'./labeled_info/D2+D6_ID.csv'#'./labeled_info/D5_conf.csv' #False
 
 label_csv_name = './result/test_label_'+model_name
+# label_csv_name = './result/predict_result/model_predict_'
 
 nblast_path = './labeled_info/nblast_all_list_D2_D5_label.csv'
 

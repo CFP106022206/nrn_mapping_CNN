@@ -9,7 +9,6 @@ import random
 import shutil
 import pickle
 import numpy as np
-import neurom as nm
 import pandas as pd
 import itertools as it
 import tensorflow as tf
@@ -18,7 +17,7 @@ from tqdm import tqdm
 from numba import jit
 from itertools import chain
 from matplotlib import figure
-from matplotlib import animation
+from matplotlib.animation import FuncAnimation, FFMpegWriter
 from collections import OrderedDict
 
 
@@ -333,6 +332,9 @@ def coordinate_core(lst, norm, weight_method):
     lst[:, 1] -= cy
     lst[:, 2] -= cz
 
+    # soma vec
+    sv = lst[0, :]
+
     # Moment of Inertia
     Ixx = 0.0
     Iyy = 0.0
@@ -371,7 +373,7 @@ def coordinate_core(lst, norm, weight_method):
     if np.dot(np.cross(principal_vec[:, 0], principal_vec[:, 1]), principal_vec[:, 2]) < 0:
         principal_vec[:, 2] = -principal_vec[:, 2]
 
-    return [eigval1, eigval_ave, principal_vec, np.array([cx, cy, cz])]
+    return [eigval1, eigval_ave, principal_vec, np.array([cx, cy, cz]), sv]
 
 
 def coordinate_rule(nrn_lst, norm_v, key_lst):
@@ -753,7 +755,8 @@ def tree_builder_original(path, name, length_th,
     return nrn_list
 
 
-def tree_builder(path, name, length_th, compress_list=True):
+def tree_builder(path, name, length_th,
+                 compress_list=True):
     # load the file and convert it into useful format
     recoTxt(path+name)
 
@@ -1008,7 +1011,7 @@ def load_swc(path_dict, clear, overwrite, length_dict, plot=False):
             if len(error_nrn) != 0:
                 print("disconnected neurons: ", error_nrn[:-2])
 
-    with open(path_dict["stats"] + "group_dict.pkl", "wb") as file:
+    with open(path_dict["stats"] + "group_dict" + path_dict["name"] + ".pkl", "wb") as file:
         pickle.dump(group_dict, file)
     file_list = list(chain.from_iterable(group_dict.values()))
 
@@ -1465,134 +1468,6 @@ def partition(lst, n=None, pct=None, shuffle_list=True):
 
     return [lst[round(division * i):round(division * (i + 1))] for i in range(n)]
 
-
-def swc_vibration(swc_path,save_path,num,vibrate_amplitude=1/3):
-    filenames = os.listdir(swc_path)
-    for i in range(len(filenames)):
-        filenames[i] = os.path.splitext(filenames[i])[0]
-    print('Vibration :')
-    for swc in tqdm(filenames) :
-        time.sleep(0.5)
-        nrn = nm.io.swc.read(swc_path + swc + '.swc')
-        df = pd.DataFrame(nrn.data_block, columns=['x', 'y', 'z', 'R', 'T', 'ID', 'PARENT_ID'])
-
-        # nrn_name
-        df["nrn"] = swc
-        # Create child number col and dictionary of leaf/fork/root lists
-        df, tree_node_dict = neuron_childNumCol(df, child_col='ID', parent_col='PARENT_ID')
-        # Create ancestors and path dfs
-        df_anc, df_path = neuron_ancestors_and_path(df,child_col='ID', parent_col='PARENT_ID')
-        # Create branches (level tuple list)
-        branch_lst = neuron_level_branch(df_path, tree_node_dict)
-        # Count the level for each point
-        df, max_level, first_fork = neuron_levelCol(df, df_anc, df_path, tree_node_dict, branch_lst,child_col='ID', parent_col='PARENT_ID')
-        # Create distances of branches and create Q col
-        df, df_dis, dis_lst = neuron_branchCol_QCol_distance(df, df_path, tree_node_dict, branch_lst, first_fork,decimal=None, child_col='ID', parent_col='PARENT_ID')
-        tnd = tree_node_dict
-
-        for fk_num in range(num) :
-            df_0 = df.copy()
-            df_dis_0 = df_dis.copy()
-            df_0["nrn"] = str(swc) +'_fk'+ str(fk_num)
-            df_dis_0["direct_dis_des_anc"] = 0
-
-            nodes0 = dict_merge_value(tnd)
-            nodes = partition(nodes0, 3, shuffle_list=True)
-
-            vibrate = ["x", "y", "z"]
-
-            # r0 = min(df_dis["len"])*vibrate_amplitude
-            r0 = vibrate_amplitude
-            r = [r0, -r0]
-
-            # A.
-            # 1. Vibration
-            for i in range(3):
-                _n = nodes[i]
-                _v = random.choice(vibrate)
-                _r = random.choice(r)
-
-                df_0[_v] = np.where(df_0['ID'].isin(_n), df_0[_v]+_r, df_0[_v])
-
-            # 2. Calculate the new distance
-            for _idx in range(len(df_dis_0)):
-                # Calculate distance
-                _s = df_0.loc[df_0['ID']==tnd["root"][0], ['x', 'y', 'z']]
-                _s = [tuple(x) for x in _s.values]
-
-                _d0 = df_dis_0.loc[_idx, "descendant"]
-                _d = df_0.loc[df_0['ID']==_d0, ['x', 'y', 'z']]
-                _d = [tuple(x) for x in _d.values]
-
-                _a0 = df_dis_0.loc[_idx, "ancestor"]
-                _a = df_0.loc[df_0['ID'] == _a0, ['x', 'y', 'z']]
-                _a = [tuple(x) for x in _a.values]
-
-                tuples_ds = _s + _d
-                _ds = calculate_distance(tuples_ds)
-                df_dis_0["direct_dis_des_soma"] = np.where(df_dis_0["descendant"]==_d0, _ds, df_dis_0["direct_dis_des_soma"])
-
-                tuples_dp = _a + _d
-                _dp = calculate_distance(tuples_dp)
-                df_dis_0.loc[_idx, "direct_dis_des_anc"] = _dp
-
-            # 3. Find out nodes which violate the rule
-            _df_dis = df_dis_0.loc[df_dis_0["len"] < df_dis_0["direct_dis_des_anc"]].reset_index(drop=True)
-
-            # B.
-            # Adjust those nodes which violate the rule
-            # while len(_df_dis) > 0:
-            #
-            #     # 1. Recover x,y,z from vibration
-            #     for _idx in range(len(_df_dis)):
-            #         _d0 = _df_dis.loc[_idx, "descendant"]
-            #         _a0 = _df_dis.loc[_idx, "ancestor"]
-            #
-            #         for _n0 in [_d0, _a0]:
-            #             _n = df.loc[df['ID'] == _n0, ['x', 'y', 'z']].values
-            #             _row = df_0.index[df['ID'] == _n0].tolist()[0]
-            #             df_0.loc[_row, "x"] = _n[0, 0]
-            #             df_0.loc[_row, "y"] = _n[0, 1]
-            #             df_0.loc[_row, "z"] = _n[0, 2]
-            #
-            #     # 2. Calculate the new distance
-            #     for _idx in range(len(df_dis_0)):
-            #         # Calculate distance
-            #         _s = df_0.loc[df_0['ID'] == tnd["root"][0], ['x', 'y', 'z']]
-            #         _s = [tuple(x) for x in _s.values]
-            #
-            #         _d0 = df_dis_0.loc[_idx, "descendant"]
-            #         _d = df_0.loc[df_0['ID'] == _d0, ['x', 'y', 'z']]
-            #         _d = [tuple(x) for x in _d.values]
-            #
-            #         _a0 = df_dis_0.loc[_idx, "ancestor"]
-            #         _a = df_0.loc[df_0['ID'] == _a0, ['x', 'y', 'z']]
-            #         _a = [tuple(x) for x in _a.values]
-            #
-            #         tuples_ds = _s + _d
-            #         _ds = calculate_distance(tuples_ds)
-            #         df_dis_0["direct_dis_des_soma"] = np.where(df_dis_0["descendant"] == _d0, _ds,
-            #                                                     df_dis_0["direct_dis_des_soma"])
-            #
-            #         tuples_dp = _a + _d
-            #         _dp = calculate_distance(tuples_dp)
-            #         df_dis_0.loc[_idx, "direct_dis_des_anc"] = _dp
-            #
-            #     # 3. Find out nodes which violate the rule
-            #     _df_dis = df_dis_0.loc[df_dis_0["len"] < df_dis_0["direct_dis_des_anc"]].reset_index(drop=True)
-
-            _df_dis = _df_dis.drop(["direct_dis_des_anc"], 1)
-
-            # save data
-            df_0 = df_0.drop(columns=['nrn','NC','level','dp_level','branch','Q'])
-            df_0 = df_0.sort_index()
-            df_0[['ID','T','PARENT_ID']] = df_0[['ID','T','PARENT_ID']].astype(int)
-            df_0 = df_0[['ID','T','x','y','z','R','PARENT_ID']]
-            df_0.to_csv(str(save_path)+str(swc)+'_fk'+str(fk_num)+".swc",index=False,sep=' ')
-
-    time.sleep(0.5)
-    return
-
 def reflection_core(mapp, option):
     # generate the reflected map
     _map = copy.deepcopy(mapp)
@@ -1679,8 +1554,8 @@ def load_data_CNN(region_dict, info_dict, load_path):
         if "fc" in region1 and "em" in region2:
             # name of neurons
             nrn_list.append([nrn1, nrn2])
-  
-            # Region of neuron
+
+            # region of neurons
             region_list.append(region1 + region2)
 
             # input of neurons
@@ -1720,7 +1595,7 @@ def load_data_CNN(region_dict, info_dict, load_path):
             # name of neurons
             nrn_list.append([nrn2, nrn1])
 
-            # Region of neuron
+            # region of neurons
             region_list.append(region2 + region1)
 
             # input of neurons
@@ -2157,142 +2032,6 @@ def partition(lst, n=None, pct=None, shuffle_list=True):
 
     return [lst[round(division * i):round(division * (i + 1))] for i in range(n)]
 
-
-def swc_vibration(path_dict, num, vibrate_amplitude):
-    keys = os.listdir(path_dict["import_swc"])
-    if num == 0:
-        print('Aug_num is zero.No Augmentation.')
-    else:
-        for key_t in keys:
-            filenames = os.listdir(path_dict["import_swc"]+str(key_t))
-            for i in range(len(filenames)):
-                filenames[i] = os.path.splitext(filenames[i])[0]
-            print('Vibration for '+str(key_t)+'...')
-            time.sleep(0.5)
-            for swc in tqdm(filenames):
-                nrn = nm.io.swc.read(path_dict["import_swc"] + str(key_t) + path_dict["sep"] + swc + '.swc')
-                df = pd.DataFrame(nrn.data_block, columns=['x', 'y', 'z', 'R', 'T', 'ID', 'PARENT_ID'])
-
-                # nrn_name
-                df["nrn"] = swc
-                # Create child number col and dictionary of leaf/fork/root lists
-                df, tree_node_dict = neuron_childNumCol(df, child_col='ID', parent_col='PARENT_ID')
-                # Create ancestors and path dfs
-                df_anc, df_path = neuron_ancestors_and_path(df,child_col='ID', parent_col='PARENT_ID')
-                # Create branches (level tuple list)
-                branch_lst = neuron_level_branch(df_path, tree_node_dict)
-                # Count the level for each point
-                df, max_level, first_fork = neuron_levelCol(df, df_anc, df_path, tree_node_dict, branch_lst,child_col='ID', parent_col='PARENT_ID')
-                # Create distances of branches and create Q col
-                df, df_dis, dis_lst = neuron_branchCol_QCol_distance(df, df_path, tree_node_dict, branch_lst, first_fork,decimal=None, child_col='ID', parent_col='PARENT_ID')
-                tnd = tree_node_dict
-
-                for fk_num in range(num) :
-                    df_0 = df.copy()
-                    df_dis_0 = df_dis.copy()
-                    df_0["nrn"] = str(swc) +'_fk'+ str(fk_num)
-                    df_dis_0["direct_dis_des_anc"] = 0
-
-                    nodes0 = dict_merge_value(tnd)
-                    nodes = partition(nodes0, 3, shuffle_list=True)
-
-                    vibrate = ["x", "y", "z"]
-
-                    # vibrate : min len time amplitude
-                    # r0 = min(df_dis["len"])*vibrate_amplitude[key_t]
-                    # vibrate : amplitude --> 20 for fc ; 2000 for em
-                    r0 = vibrate_amplitude[key_t]
-                    r = [r0, -r0]
-
-                    # A.
-                    # 1. Vibration
-                    for i in range(3):
-                        _n = nodes[i]
-                        _v = random.choice(vibrate)
-                        _r = random.choice(r)
-
-                        df_0[_v] = np.where(df_0['ID'].isin(_n), df_0[_v]+_r, df_0[_v])
-
-                    # 2. Calculate the new distance
-                    for _idx in range(len(df_dis_0)):
-                        # Calculate distance
-                        _s = df_0.loc[df_0['ID']==tnd["root"][0], ['x', 'y', 'z']]
-                        _s = [tuple(x) for x in _s.values]
-
-                        _d0 = df_dis_0.loc[_idx, "descendant"]
-                        _d = df_0.loc[df_0['ID']==_d0, ['x', 'y', 'z']]
-                        _d = [tuple(x) for x in _d.values]
-
-                        _a0 = df_dis_0.loc[_idx, "ancestor"]
-                        _a = df_0.loc[df_0['ID'] == _a0, ['x', 'y', 'z']]
-                        _a = [tuple(x) for x in _a.values]
-
-                        tuples_ds = _s + _d
-                        _ds = calculate_distance(tuples_ds)
-                        df_dis_0["direct_dis_des_soma"] = np.where(df_dis_0["descendant"]==_d0, _ds, df_dis_0["direct_dis_des_soma"])
-
-                        tuples_dp = _a + _d
-                        _dp = calculate_distance(tuples_dp)
-                        df_dis_0.loc[_idx, "direct_dis_des_anc"] = _dp
-
-                    # 3. Find out nodes which violate the rule
-                    _df_dis = df_dis_0.loc[df_dis_0["len"] < df_dis_0["direct_dis_des_anc"]].reset_index(drop=True)
-
-                    # # B.
-                    # # Adjust those nodes which violate the rule
-                    # while len(_df_dis) > 0:
-                    #
-                    #     # 1. Recover x,y,z from vibration
-                    #     for _idx in range(len(_df_dis)):
-                    #         _d0 = _df_dis.loc[_idx, "descendant"]
-                    #         _a0 = _df_dis.loc[_idx, "ancestor"]
-                    #
-                    #         for _n0 in [_d0, _a0]:
-                    #             _n = df.loc[df['ID'] == _n0, ['x', 'y', 'z']].values
-                    #             _row = df_0.index[df['ID'] == _n0].tolist()[0]
-                    #             df_0.loc[_row, "x"] = _n[0, 0]
-                    #             df_0.loc[_row, "y"] = _n[0, 1]
-                    #             df_0.loc[_row, "z"] = _n[0, 2]
-                    #
-                    #     # 2. Calculate the new distance
-                    #     for _idx in range(len(df_dis_0)):
-                    #         # Calculate distance
-                    #         _s = df_0.loc[df_0['ID'] == tnd["root"][0], ['x', 'y', 'z']]
-                    #         _s = [tuple(x) for x in _s.values]
-                    #
-                    #         _d0 = df_dis_0.loc[_idx, "descendant"]
-                    #         _d = df_0.loc[df_0['ID'] == _d0, ['x', 'y', 'z']]
-                    #         _d = [tuple(x) for x in _d.values]
-                    #
-                    #         _a0 = df_dis_0.loc[_idx, "ancestor"]
-                    #         _a = df_0.loc[df_0['ID'] == _a0, ['x', 'y', 'z']]
-                    #         _a = [tuple(x) for x in _a.values]
-                    #
-                    #         tuples_ds = _s + _d
-                    #         _ds = calculate_distance(tuples_ds)
-                    #         df_dis_0["direct_dis_des_soma"] = np.where(df_dis_0["descendant"] == _d0, _ds,
-                    #                                                    df_dis_0["direct_dis_des_soma"])
-                    #
-                    #         tuples_dp = _a + _d
-                    #         _dp = calculate_distance(tuples_dp)
-                    #         df_dis_0.loc[_idx, "direct_dis_des_anc"] = _dp
-                    #
-                    #     # 3. Find out nodes which violate the rule
-                    #     _df_dis = df_dis_0.loc[df_dis_0["len"] < df_dis_0["direct_dis_des_anc"]].reset_index(drop=True)
-                    #
-                    _df_dis = _df_dis.drop(["direct_dis_des_anc"], 1)
-
-                    # save data
-                    df_0 = df_0.drop(columns=['nrn','NC','level','dp_level','branch','Q'])
-                    df_0 = df_0.sort_index()
-                    df_0[['ID','T','PARENT_ID']] = df_0[['ID','T','PARENT_ID']].astype(int)
-                    df_0 = df_0[['ID','T','x','y','z','R','PARENT_ID']]
-                    df_0.to_csv(str(path_dict["aug"])+str(key_t)+str(swc)+'_fk'+str(fk_num)+".swc",index=False,sep=' ')
-
-    time.sleep(0.5)
-    return None
-
-
 def operation_decide(key):
     if "ex" in key:
         if "R" in key:
@@ -2365,7 +2104,6 @@ def map_max_score(map1, map2, key):
                             np.sum(np.power(map2, 2))))
         return max_score
 
-
 # ----------------------------------------------------------------
 
 def plot_neuron(df_neuron, output_folder, file_name='skeleton.mp4', plot_mode='normal', dot_size=0.2, show_axis=True):
@@ -2434,8 +2172,8 @@ def plot_neuron(df_neuron, output_folder, file_name='skeleton.mp4', plot_mode='n
         ax.view_init(azim=angle)
 
     print('Saving...')
-    rot_animation = animation.FuncAnimation(fig, rotate, frames=np.arange(0,361,1),interval=100) 
-    writer = animation.FFMpegWriter(fps=24, bitrate=1536)
+    rot_animation = FuncAnimation(fig, rotate, frames=np.arange(0,361,1),interval=100) 
+    writer = FFMpegWriter(fps=24, bitrate=1536)
     rot_animation.save(output_folder+file_name, dpi=400, writer=writer)
     print('Complete.')
 

@@ -151,3 +151,131 @@ for _i, model in enumerate(best_models):
 model = load_model('Tuner_MNIST_3.h5')
 model.evaluate(x_test, y_test)
 # %%
+import pandas as pd
+import numpy as np
+import os
+import copy
+
+def recoTxt(text_name):
+    """
+    reconstruct the text to the form we'd like to use
+
+    :param text_name:
+    :return:
+    """
+    f = open(text_name + ".swc", "r")
+    lis = []
+    start = True
+    for line in f:
+        if start:
+            start = False
+            if line == '#n T x y z R P\n':
+                return None
+        if '#' in line:
+            continue
+        elif line[0] == "\n":
+            continue
+        else:
+            line = line.strip()
+            line = line.replace("\t", " ")
+            line = line.replace("   ", " ")
+            line = line.replace("  ", " ")
+            line = line + "\n"
+            lis.append(line)
+    lis.insert(0, '#n T x y z R P\n')
+    f.close()
+    f = open(text_name + ".swc", "w")
+    for i in lis:
+        f.write(i)
+    f.close()
+# %%
+path = 'data/selected_data/test/FC/'
+name = '5-HT1B-F-000000'
+length_th = 2.5
+
+def tree_builder(path, name, length_th):
+    # 假设recoTxt函数已经被定义，用于读取和预处理SWC文件
+    recoTxt(path + name)
+    
+    # 读取SWC文件到DataFrame
+    nrn_df = pd.read_csv(path + name + ".swc", sep=" ", header=0, names=["ID", "type", "x", "y", "z", "r", "parent_ID"])
+    nrn_df.sort_values(by="ID", inplace=True)
+    
+    # 检查ID连续性，如果不连续返回错误
+    if nrn_df["ID"].iloc[-1] != len(nrn_df):
+        return "error"
+    
+    # 删除不需要的列并初始化新列
+    nrn_df.drop(columns=["type", "r"], inplace=True)
+    nrn_df["CN"] = 0
+    nrn_df["distance"] = 0.0
+    nrn_df["Strahler_order"] = 0
+    
+    # 将ID列设置为索引
+    nrn_df.index = nrn_df['ID'].values
+    
+    # 创建CN列
+    for i in nrn_df.index:
+        parent_id = nrn_df.at[i, "parent_ID"]
+        if parent_id != -1:
+            nrn_df.at[parent_id, "CN"] += 1
+
+            # 创建distance列
+            nrn_df.at[i, "distance"] = np.sqrt((nrn_df.at[i, "x"] - nrn_df.at[parent_id, "x"])**2 +
+                                               (nrn_df.at[i, "y"] - nrn_df.at[parent_id, "y"])**2 +
+                                               (nrn_df.at[i, "z"] - nrn_df.at[parent_id, "z"])**2)
+    
+
+
+    # 计算Strahler order
+    leaf_nodes = nrn_df[nrn_df['CN'] == 0].index.tolist()
+    nrn_df.loc[leaf_nodes, 'Strahler_order'] = 1
+    while leaf_nodes:
+        new_leaf_nodes = []
+        for node in leaf_nodes:
+            parent = nrn_df.at[node, 'parent_ID']
+            if parent == -1:
+                continue
+            children = nrn_df[nrn_df['parent_ID'] == parent]
+            if all(children['Strahler_order'] > 0):
+                max_order = children['Strahler_order'].max()
+                if sum(children['Strahler_order'] == max_order) > 1:
+                    nrn_df.at[parent, 'Strahler_order'] = max_order + 1
+                else:
+                    nrn_df.at[parent, 'Strahler_order'] = max_order
+                new_leaf_nodes.append(parent)
+        leaf_nodes = new_leaf_nodes
+    
+    # 插值
+    interpolated_rows = []
+    for index, row in nrn_df.iterrows():
+        parent_id = row['parent_ID']
+        if parent_id != -1 and row['distance'] > length_th:
+            parent_row = nrn_df.loc[parent_id]
+            num_points = int(row['distance'] // length_th + 1)
+            delta_x = (row['x'] - parent_row['x']) / num_points
+            delta_y = (row['y'] - parent_row['y']) / num_points
+            delta_z = (row['z'] - parent_row['z']) / num_points
+            for i in range(1, num_points):
+                interpolated_row = {
+                    'ID': index,
+                    'x': parent_row['x'] + delta_x * i,
+                    'y': parent_row['y'] + delta_y * i,
+                    'z': parent_row['z'] + delta_z * i,
+                    'parent_ID': parent_id,
+                    'CN': row['CN'], 
+                    'distance': row['distance'], 
+                    'Strahler_order': row['Strahler_order']
+                }
+                interpolated_rows.append(interpolated_row)
+
+    # 将插值行添加到DataFrame中
+    if interpolated_rows:
+        interpolated_df = pd.DataFrame(interpolated_rows)
+        nrn_df = pd.concat([nrn_df, interpolated_df], ignore_index=True)
+        nrn_df.sort_values(by=['ID'], inplace=True)  # Assuming sorting by coordinates or another logic
+        nrn_df.reset_index(drop=True, inplace=True)
+    #rename column
+    nrn_df.rename(columns={'distance':'l', 'Strahler_order':'sn'}, inplace=True)
+    
+    return nrn_df
