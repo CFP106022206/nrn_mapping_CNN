@@ -26,7 +26,7 @@ from tqdm import tqdm
 
 # %%
 # self-labeling pkl path
-map_dict_folder = './data/statistical_results/pre_train_map'
+map_dict_folder = './data/statistical_results/pre_train_map'# pre-train使用的全部三视图位置
 
 initial_lr = 0.001
 train_epochs = 300
@@ -40,7 +40,7 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 tf.random.set_seed(seed)
 
 
-save_model_name  = 'pre_train_model_150Kv2'
+save_model_name  = 'pre_train_model_150K'
 
 train_scale = 150000    #儘量偶數，因為要一半pos, 一半neg
 
@@ -147,7 +147,7 @@ y_train = np.array(nrn_pair_train['label'])
 y_val = np.array(nrn_pair_valid['label'])
 
 
-# %% 画图预览 map data
+# 画图预览 map data
 def imshow_pred_pair(predict_pair_df, pred_data_np):
 
     # 检查保存路径文件夹是否存在

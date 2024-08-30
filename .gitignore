@@ -211,6 +211,8 @@ plot/*
 # sandbox
 test
 test/*
+mnist_test
+mnist_preTrain
 
 # tuner
 CNN_Tuner
@@ -218,7 +220,10 @@ CNN_Tuner/*
 mnist_kt_test
 
 # Result
+preTrain_Model/*
 Final_Model/*
+Fine_Tune_Model/*
+Fine_Tune_Model_170K/*
 Second_Stage_Model/*
 Annotator_Model/*
 DNN_Classifier/*

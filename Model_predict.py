@@ -11,7 +11,8 @@ import sys
 
 
 
-model_file = './Fine_Tune_Model/'   #改成計算多個模型的平均值並分析標準差
+model_path = './Annotator_Model/'   # 加载模型路径
+model_name = 'Annotator_D1-D6_'     # 模型名称 不包含后缀数字
 save_folder_path = './result/preTrain_predict/'
 
 if not os.path.exists(save_folder_path):
@@ -43,8 +44,8 @@ file_path = file_path_01 #+ file_path_02
 
 model_lst = []
 for i in range(use_model[0], use_model[1]):
-    model_name = 'Fine_Tune_Model_150K_' +str(i)
-    model = load_model(model_file + model_name + '.h5')
+    model_filename = model_name +str(i)
+    model = load_model(os.path.join(model_path, model_filename+'.h5'))
     model_lst.append(model)
 
 print('Used model:', use_model)
@@ -154,50 +155,50 @@ else:
     label_df = pd.DataFrame({'fc_id': fc_nrn_lst, 'em_id': em_nrn_lst, 'model_predict': result_avg.flatten(), 'binary_label': result_bin.flatten(), 'pred_std': result_std.flatten()})
 
     # 将DataFrame存储为csv文件
-    label_df.to_csv(save_folder_path+model_name+'.csv', index=False)
+    label_df.to_csv(os.path.join(save_folder_path, model_filename+'.csv'), index=False)
     print('\nSaved')
     print('Program Completed.')
 # %%
-# 受限於電腦RAM不足，只能一個一個模型跑的情況下，需要額外的步驟將label.csv合併
-model_name = 'Fine_Tune_Model_150K_'
+# # 受限於電腦RAM不足，只能一個一個模型跑的情況下，需要額外的步驟將label.csv合併
+# model_name = 'Annotator_D1-D6_'
 
-file_lst = os.listdir(save_folder_path)
-file_lst = [os.path.join(save_folder_path, filename) for filename in file_lst if model_name in filename]
-print(sorted(file_lst))
-print('Len:',len(file_lst))
+# file_lst = os.listdir(save_folder_path)
+# file_lst = [os.path.join(save_folder_path, filename) for filename in file_lst if model_name in filename]
+# print(sorted(file_lst))
+# print('Len:',len(file_lst))
 
-merge_df = None
-i = 0
-for file_path in file_lst:
-    if merge_df is None:
-        merge_df = pd.read_csv(file_path)[['fc_id', 'em_id', 'model_predict']]
-        merge_df.rename(columns={'model_predict': 'model_predict_'+str(i)}, inplace=True)
-        i += 1
-    else:
-        df = pd.read_csv(file_path)[['fc_id', 'em_id', 'model_predict']]
-        df.rename(columns={'model_predict': 'model_predict_'+str(i)}, inplace=True)
-        i += 1
+# merge_df = None
+# i = 0
+# for file_path in file_lst:
+#     if merge_df is None:
+#         merge_df = pd.read_csv(file_path)[['fc_id', 'em_id', 'model_predict']]
+#         merge_df.rename(columns={'model_predict': 'model_predict_'+str(i)}, inplace=True)
+#         i += 1
+#     else:
+#         df = pd.read_csv(file_path)[['fc_id', 'em_id', 'model_predict']]
+#         df.rename(columns={'model_predict': 'model_predict_'+str(i)}, inplace=True)
+#         i += 1
 
-        merge_df = pd.merge(merge_df, df, on=['fc_id', 'em_id'], how='inner')
+#         merge_df = pd.merge(merge_df, df, on=['fc_id', 'em_id'], how='inner')
 
-# 重新計算平均值、標準差
-predict_columns = [col for col in merge_df.columns if 'model_predict' in col]
-merge_df['model_predict_avg'] = merge_df[predict_columns].mean(axis=1)
-merge_df['model_predict_std'] = merge_df[predict_columns].std(axis=1)
+# # 重新計算平均值、標準差
+# predict_columns = [col for col in merge_df.columns if 'model_predict' in col]
+# merge_df['model_predict_avg'] = merge_df[predict_columns].mean(axis=1)
+# merge_df['model_predict_std'] = merge_df[predict_columns].std(axis=1)
 
-# 刪去已存在於human label的組合
-human_label_test = pd.read_csv('./train_test_split/test_split_0_D1-D6.csv')
-human_label_train = pd.read_csv('./train_test_split/train_split_0_D1-D6.csv')
-human_label = pd.concat([human_label_test, human_label_train])
+# # 刪去已存在於human label的組合
+# human_label_test = pd.read_csv('./train_test_split/test_split_0_D1-D6.csv')
+# human_label_train = pd.read_csv('./train_test_split/train_split_0_D1-D6.csv')
+# human_label = pd.concat([human_label_test, human_label_train])
 
-merge_df = pd.merge(merge_df, human_label, on=['fc_id', 'em_id'], how='left', indicator=True)
-merge_df = merge_df[merge_df['_merge'] == 'left_only']
-merge_df.drop(columns=['score', 'label', '_merge'], inplace=True)
+# merge_df = pd.merge(merge_df, human_label, on=['fc_id', 'em_id'], how='left', indicator=True)
+# merge_df = merge_df[merge_df['_merge'] == 'left_only']
+# merge_df.drop(columns=['score', 'label', '_merge'], inplace=True)
 
-# 按照std排序
-merge_df_sort = merge_df.sort_values(by='model_predict_std', ascending=True)
-merge_df_sort.rename(columns={'model_predict_avg':'label'}, inplace=True)
-merge_df_sort.to_csv('preTrain_label/preTrain_label.csv', index=False)
+# # 按照std排序
+# merge_df_sort = merge_df.sort_values(by='model_predict_std', ascending=True)
+# merge_df_sort.rename(columns={'model_predict_avg':'label'}, inplace=True)
+# merge_df_sort.to_csv('preTrain_label/preTrain_label_Annotator.csv', index=False)
 
 # %%
 # 複製模塊

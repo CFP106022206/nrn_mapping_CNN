@@ -1,5 +1,4 @@
 import sys
-
 from util import *
 
 
@@ -25,12 +24,14 @@ class NrnMapping:
         self.max_sn = 0
         self.num_grid = grid_num
         self.weight_keys = weighting_keys
+        self.save_name = path_dict["name"]
 
         # preprocessing-required information
         self.data = {"I_dict": {},
                      "nI_dict": {},
                      "coord_dict": {},
-                     "cm_dict": {}}
+                     "cm_dict": {},
+                     "sv_dict": {}}
         for key_g in weighting_keys:
             for key_d in self.data.keys():
                 self.data[key_d][key_g] = {}
@@ -99,8 +100,8 @@ class NrnMapping:
             # load existing data
             _lists = []
             for key_d in self.data.keys():
-                if os.path.isfile(self.path["stats"] + key_d + ".pkl"):
-                    with open(self.path["stats"] + key_d + ".pkl", "rb") as file:
+                if os.path.isfile(self.path["stats"] + key_d + self.save_name + ".pkl"):
+                    with open(self.path["stats"] + key_d + self.save_name + ".pkl", "rb") as file:
                         _data_dict = pickle.load(file)
                     for key_g in self.weight_keys:
                         if key_g in _data_dict.keys():
@@ -111,7 +112,7 @@ class NrnMapping:
                     del _data_dict
 
             # co-existing files
-            if len(_lists) == 4*len(self.weight_keys):
+            if len(_lists) == 5*len(self.weight_keys):
                 try:
                     buffer = list(set(_lists.pop()).intersection(*map(set, _lists)))
                 except IndexError:
@@ -136,10 +137,11 @@ class NrnMapping:
                 self.data["I_dict"][key_g][self.name] = _dict[key_g][1]
                 self.data["coord_dict"][key_g][self.name] = _dict[key_g][2]
                 self.data["cm_dict"][key_g][self.name] = _dict[key_g][3]
+                self.data["sv_dict"][key_g][self.name] = _dict[key_g][4]
 
         # save data
         for key_d in self.data.keys():
-            with open(self.path["stats"] + key_d + ".pkl", "wb") as file:
+            with open(self.path["stats"] + key_d + self.save_name + ".pkl", "wb") as file:
                 pickle.dump(self.data[key_d], file)
 
         return None
@@ -149,7 +151,7 @@ class NrnMapping:
         # todo: process standard coordinate
         # load data
         for key_d in self.data.keys():
-            with open(self.path["stats"] + key_d + ".pkl", "rb") as file:
+            with open(self.path["stats"] + key_d + self.save_name + ".pkl", "rb") as file:
                 self.data[key_d] = pickle.load(file)
 
         time.sleep(0.5)
@@ -158,29 +160,12 @@ class NrnMapping:
 
         if overwrite:
             buffer = []
-            _rmax_i = {i: {} for i in self.weight_keys}
             _rmax_s = {i: {} for i in self.weight_keys}
 
         else:
             _buffer = []
-            if os.path.isfile(self.path["stats"]+"rmax_individual"+".pkl"):
-                with open(self.path["stats"]+"rmax_individual"+".pkl", "rb") as file:
-                    _rmax_i = pickle.load(file)
-
-                for key_g in self.weight_keys:
-                    if key_g in _rmax_i:
-                        _buffer.append(_rmax_i[key_g].keys())
-                    else:
-                        _rmax_i[key_g] = {}
-                        _buffer.append([])
-                _buffer.append(_rmax_i[self.weight_keys[0]].keys())
-
-            else:
-                _rmax_i = {i: {} for i in self.weight_keys}
-                _buffer.append([])
-
-            if os.path.isfile(self.path["stats"]+"rmax_standard"+".pkl"):
-                with open(self.path["stats"]+"rmax_standard"+".pkl", "rb") as file:
+            if os.path.isfile(self.path["stats"]+"rmax_standard"+self.save_name+".pkl"):
+                with open(self.path["stats"]+"rmax_standard"+self.save_name+".pkl", "rb") as file:
                     _rmax_s = pickle.load(file)
 
                 for key_g in self.weight_keys:
@@ -208,14 +193,6 @@ class NrnMapping:
         for i in tqdm(_file_lst):
             self.name = i
             self.load_data(ignore_soma, reduced_sn, num_re)
-            _map = {}
-            for key_g in self.weight_keys:
-                _rmax_i[key_g][i], _map[key_g] = self.map_process(self.data["coord_dict"][key_g][i],
-                                                                  self.data["cm_dict"][key_g][i],
-                                                                  key_g)
-
-            with open(self.path["map"] + self.name + ".pkl", "wb") as file:
-                pickle.dump(_map, file)
 
             _map = {}
             for key in self.weight_keys:
@@ -224,11 +201,7 @@ class NrnMapping:
             with open(self.path["map2"] + self.name + ".pkl", "wb") as file:
                 pickle.dump(_map, file)
 
-#            if plot:
-#                self.figure_output(_map, self.path["plot_single_neuron"])
-        with open(self.path["stats"] + "rmax_individual" + ".pkl", "wb") as file:
-            pickle.dump(_rmax_i, file)
-        with open(self.path["stats"] + "rmax_standard" + ".pkl", "wb") as file:
+        with open(self.path["stats"] + "rmax_standard" + self.save_name + ".pkl", "wb") as file:
             pickle.dump(_rmax_s, file)
 
         return None

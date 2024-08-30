@@ -33,7 +33,8 @@ from tqdm import tqdm
 
 
 # %%
-num_splits = 9 #0~9, or 99 for whole nBLAST testing set
+num_splits = int(sys.argv[1])   # bash 自动运行程序传递参数
+# num_splits = 9 #0~9, or 99 for whole nBLAST testing set
 
 '''
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.

@@ -26,11 +26,11 @@ import sys
 
 # %%
 
-# num_splits = 0  #0~9, or 99 for whole nBLAST testing set
-num_splits = int(sys.argv[1])
+num_splits = 1  #0~9, or 99 for whole nBLAST testing set
+# num_splits = int(sys.argv[1])
 
-pre_train_model = './preTrain_Model/pre_train_model_150Kv2.h5'
-map_dict_folder = './data/labeled_sn'
+pre_train_model = './preTrain_Model/pre_train_model_150K.h5'
+map_dict_folder = './data/coor_orient_sn/'
 
 initial_lr = 0.00001
 train_epochs = 300
@@ -44,7 +44,7 @@ os.environ['TF_DETERMINISTIC_OPS'] = '1'
 tf.random.set_seed(seed)
 
 
-save_model_name  = f'Fine_Tune_Model_150Kv2_{num_splits}'
+save_model_name  = f'Fine_Tune_Model_150KnF_CoorOrient_{num_splits}'
 
 # load train, test
 label_table_train = pd.read_csv('./train_test_split/train_split_' + str(num_splits) +'_D1-D6.csv')
@@ -364,9 +364,9 @@ print('y_test shape:', len(y_test))
 # %% Load model
 cnn = load_model(pre_train_model)
 
-# 凍結最後全連接層參數
-for layer in cnn.layers[:-5]:
-    layer.trainable = False
+# # 凍結最後全連接層參數
+# for layer in cnn.layers[:-5]:
+#     layer.trainable = False
 # #檢查凍結情況
 # for layer in cnn.layers:
 #     print(layer.name, layer.trainable)
