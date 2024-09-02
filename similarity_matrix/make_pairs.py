@@ -21,4 +21,5 @@ pairs_df['rank'] = 0
 output_path = '/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/fc_fc_pairs.csv'
 pairs_df.to_csv(output_path, index=False)
 
+
 # %%
