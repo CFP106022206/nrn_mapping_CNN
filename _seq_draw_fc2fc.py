@@ -90,9 +90,21 @@ for p in pairs:
         continue # Without mapping EMs, directly go to next fc_id
 
     for em_id in em_ids:
-        try:
-            shutil.copy2(path + 'FC/'+ em_id + '.swc', path + 'TEMP_EM/' + em_id + '.swc')
-        except:
+        if em_id + '.swc' in fc_inlst:
+            try:
+                shutil.copy2(path + 'FC/'+ em_id + '.swc', path + 'TEMP_EM/' + em_id + '.swc')
+            except:
+                s = 'ERROR: ' + em_id
+                logging.info(s)
+                continue
+        elif em_id + '.swc' in fc_inlst_a:
+            try:
+                shutil.copy2(path + 'FC_add/'+ em_id + '.swc', path + 'TEMP_EM/' + em_id + '.swc')
+            except:
+                s = 'ERROR: ' + em_id
+                logging.info(s)
+                continue
+        else:
             s = 'NOT FOUND: ' + em_id + '.swc'
             logging.info(s)
             continue # Go to next em_id
