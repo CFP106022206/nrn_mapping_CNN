@@ -279,3 +279,4 @@ def tree_builder(path, name, length_th):
     nrn_df.rename(columns={'distance':'l', 'Strahler_order':'sn'}, inplace=True)
     
     return nrn_df
+# %%
