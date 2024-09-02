@@ -8,7 +8,7 @@ import ranking_method as rk
 from util import *
 from config import *
 from class_mapping import NrnMapping
-from class_ranking import NrnRanking
+from class_ranking_old_KTver import NrnRanking
 from class_CNN import CNN
 ########################################################################################################################
 # Parameters
@@ -53,9 +53,7 @@ ranking_method = rk.mask_test_gpu  # customized design
 # Main Code
 ########################################################################################################################
 # Additional: make vibration data
-swc_vibration(config_path,
-              num=aug_num, vibrate_amplitude=vibration_amplitude)
-
+# swc_vibs
 # STEP 1. convert the swc file into the specific data format (with linear interpolation)
 clear = False
 overwrite = False
