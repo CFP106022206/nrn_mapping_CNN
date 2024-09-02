@@ -1,3 +1,4 @@
+# %%
 import os, shutil
 import logging
 from datetime import datetime
@@ -56,9 +57,9 @@ total = len(pairs)
 count = 1
 
 # Folders for FC files
-fc_inlst = os.listdir('data/selected_data/FC')
+fc_inlst = os.listdir('data/selected_data/FC_Original')
 fc_inlst_a = os.listdir('data/selected_data/FC_add')
-
+# %%
 # Start to draw (call 'main_all.py' for each fc_id)
 for p in pairs:
 
