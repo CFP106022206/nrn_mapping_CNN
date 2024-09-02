@@ -1,5 +1,3 @@
-import time
-
 from util import *
 import ranking_method as rk
 
@@ -28,12 +26,12 @@ class NrnRanking:
         self.axis_selection = 0
         self.batch_num = 5
         self.coord_sel = coordinate_selection
-        self.save_name = path_dict["name"]
 
         # preprocessing-required information
         self.info_lst = []
         self.I_dict = {}
         self.cm_dict = {}
+        self.rmax_i = {}
         self.rmax_s = {}
         self.coord = {}
         self.total_nrnID = []
@@ -41,13 +39,15 @@ class NrnRanking:
         self.__load_para()
 
     def __load_para(self):
-        with open(self.path["stats"] + "nI_dict" + self.save_name + ".pkl", "rb") as file:
+        with open(self.path["stats"] + "nI_dict.pkl", "rb") as file:
             self.I_dict = pickle.load(file)
-        with open(self.path["stats"] + "cm_dict" + self.save_name + ".pkl", "rb") as file:
+        with open(self.path["stats"] + "cm_dict.pkl", "rb") as file:
             self.cm_dict = pickle.load(file)
-        with open(self.path["stats"] + "rmax_standard" + self.save_name + ".pkl", "rb") as file:
+        with open(self.path["stats"] + "rmax_individual.pkl", "rb") as file:
+            self.rmax_i = pickle.load(file)
+        with open(self.path["stats"] + "rmax_standard.pkl", "rb") as file:
             self.rmax_s = pickle.load(file)
-        with open(self.path["stats"] + "coord_dict" + self.save_name + ".pkl", "rb") as file:
+        with open(self.path["stats"] + "coord_dict.pkl", "rb") as file:
             self.coord = pickle.load(file)
         self.total_nrnID = list(self.I_dict[self.weight_keys[0]].keys())
 
@@ -222,6 +222,55 @@ class NrnRanking:
                     yield "L" + str(i+1) + "_ex" + str(option[1]), lambda x: reflection_core(rotation_core(x, option), indexL_lst[i])
                 i += 1
 
+    def morphological_ranking(self, key_w, threshold, save_path, plot=True):
+        # load the target map
+        with open(self.path["map"] + self.name + ".pkl", "rb") as file:
+            target_map = pickle.load(file)
+            target_map = target_map[key_w]
+
+        # search the best combination
+        info_list = []
+        time.sleep(0.5)
+        for i in range(len(self.corresponding_neuron)):
+            score_max = 0
+            right_key = ""
+            right_map = np.array([])
+            with open(self.path["map"] + self.corresponding_neuron[i] + ".pkl", "rb") as file:
+                _maps = pickle.load(file)
+                _maps = _maps[key_w]
+
+            # ranking process
+            r_max = np.max((self.rmax_i[key_w][self.corresponding_neuron[i]], self.rmax_i[key_w][self.name]))
+            _map1 = mapping_core(target_map, self.grid_num, r_max)
+            _map2 = mapping_core(_maps, self.grid_num, r_max)
+            ts = time.time()
+            for key, trans in self.orientation_generator(key_w, self.corresponding_neuron[i], threshold):
+                _map2t = trans(_map2)
+                _score, _shift = self.ranking_method(_map1, _map2t)
+                if plot == "complete":
+                    figure_output([self.name, self.corresponding_neuron[i]],
+                                  [_map1, _map2t],
+                                  [key, _score], _map1[0].shape[0], save_path, key_w,
+                                  sub_name=["X-Y", "Y-Z", "Z-X"], I_dict=self.I_dict)
+
+                if _score > score_max:
+                        right_key = key
+                        score_max = _score
+                        right_map = _map2t
+                        right_shift = _shift
+            info_list.append([self.name, self.corresponding_neuron[i], right_key, score_max, right_shift, r_max])
+            print("It costs %.2f second for comparing one pair of neurons." % (time.time()-ts))
+
+            if plot == "best":
+                self.figure_output([self.name, self.corresponding_neuron[i]],
+                                   [_map1, right_map],
+                                   [right_key, score_max, right_shift], _map1[0].shape[0], save_path, key_w)
+
+        info_list.sort(key=lambda x: (x[0], -x[3]))
+        time.sleep(0.5)
+
+        return info_list
+
     def figure_output(self, nrn_ID, maps, res, N, save_path, key_g, method="normal"):
         # order of axes
         sub_name = ["Y-Z", "Z-X", "X-Y"]
@@ -282,7 +331,7 @@ class NrnRanking:
         time.sleep(0.5)
 
         # define matching groups
-        with open(self.path["stats"] + "group_dict" + self.save_name + ".pkl", "rb") as file:
+        with open(self.path["stats"] + "group_dict.pkl", "rb") as file:
             group_dict = pickle.load(file)
         for key in target_list:
             self.file_list += group_dict[key]
@@ -293,25 +342,187 @@ class NrnRanking:
             matching_dict = {}
 
             for key in self.weight_keys:
-                time.sleep(0.5)
-                print("    " + key + " :")
-                time.sleep(0.5)
-                t_s = time.time()
-
                 matching_dict[key] = {}
                 for key_id in self.file_list:
                     matching_dict[key][key_id] = []
 
                 num_rep = 0
                 for data in self.generate_dataset(key):
-                    res = self.match(data, threshold_I, threshold_dis, threshold_in)
+                    res = self.match(data, threshold_I, threshold_dis, threshold_in, gate='or')
                     for i in range(len(res[0])):
                         matching_dict[key][self.file_list[res[0][i]+num_rep*self.batch_num]].append(self.file_list2[res[1][i]])
                     num_rep += 1
 
-                print("Time Cost: ", "%.3f" % (time.time() - t_s), " sec")
+                print("  Done!")
 
-            with open(self.path["stats"] + "match_dict" + self.save_name + ".pkl", "wb") as file:
-                    pickle.dump(matching_dict, file)
+            with open(self.path["stats"] + "match_dict.pkl", "wb") as file:
+                pickle.dump(matching_dict, file)
         else:
             print("  Done!")
+
+    def batch_matching_process_note(self, overwrite, target_list=["FC"], candidate_list=["EM"],
+                               threshold_I=0.4, threshold_dis=100.0, threshold_in=np.cos(np.pi*50/180)):
+        # 定義批量匹配過程的方法。包含一些參數，包括是否覆寫以前的匹配結果（overwrite）、目標文件列表（target_list）、
+        # 候選文件列表（candidate_list）、以及三個閾值。
+
+        # process begins
+        time.sleep(0.5)  # 等待一段時間，這可能是為了確保同步運行或為其他操作留出時間
+        print("Matching Processor : ")  # 打印提示信息
+        time.sleep(0.5)  # 再次等待一段時間
+
+        # define matching groups
+        with open(self.path["stats"] + "group_dict.pkl", "rb") as file:
+            group_dict = pickle.load(file)  # 加載group_dict文件，這是一個已經保存好的分組信息
+        for key in target_list:
+            self.file_list += group_dict[key]  # 將目標文件列表添加到現有的文件列表中
+        for key in candidate_list:
+            self.file_list2 += group_dict[key]  # 將候選文件列表添加到現有的第二文件列表中
+
+        if overwrite:  # 如果選擇覆寫現有的匹配結果
+            matching_dict = {}  # 初始化一個空字典來保存匹配結果
+
+            for key in self.weight_keys:  # 對於每一種權重鍵
+                matching_dict[key] = {}  # 在匹配字典中創建一個新的子字典
+                for key_id in self.file_list:  # 對於文件列表中的每一個文件
+                    matching_dict[key][key_id] = []  # 在子字典中創建一個新的空列表
+
+                num_rep = 0  # 初始化計數器
+                for data in self.generate_dataset(key):  # 對於生成的每一個數據集
+                    res = self.match(data, threshold_I, threshold_dis, threshold_in)  # 使用match方法對數據集進行匹配
+                    for i in range(len(res[0])):  # 對於匹配結果的每一個元素
+                        # 將匹配結果添加到相應的列表中
+                        matching_dict[key][self.file_list[res[0][i]+num_rep*self.batch_num]].append(self.file_list2[res[1][i]])
+                    num_rep += 1  # 更新計數器
+
+                print("  Done!")  # 打印完成的信息
+
+            with open(self.path["stats"] + "match_dict.pkl", "wb") as file:
+                pickle.dump(matching_dict, file)  # 保存匹配結果到檔案中
+        else:  # 如果不選擇覆寫現有的匹配結果
+            print("  Done!")  # 直接打印完成的信息
+
+    def morphological_ranking_fix(self, key_g, c_lst, saving, plot, shift_delta=30):
+        # target nrn information
+        coor_target = self.coord[key_g][self.name]
+        cm_target = self.cm_dict[key_g][self.name]
+        r_max_target = self.rmax_i[key_g][self.name]
+        with open(self.path["map"] + self.name + ".pkl", "rb") as file:
+            map_base_target = pickle.load(file)[key_g]
+
+        # candidates
+        info_list = []
+        mapping_list = []
+        candidates = c_lst
+        for name_c in candidates:
+            with open(self.path["convert"] + name_c + ".pkl", "rb") as file:
+                nrn_c = pickle.load(file).loc[:, ["x", "y", "z", "base"]].to_numpy()
+            r_max_c, map_base_c = mapping_rule(nrn_c, coor_target, cm_target, key_g)
+            r_max = max(r_max_target, r_max_c)
+
+            map_target = mapping_core(map_base_target, self.grid_num, r_max)
+            map_c = mapping_core(map_base_c, self.grid_num, r_max)
+
+            max_score = map_max_score(map_target, map_c, key_g)
+            shift_grid = np.ceil(shift_delta/(r_max/self.grid_num)).astype("int")
+            _score, _shift, _score_x, _score_y, _score_z = self.ranking_method(map_target, map_c, max_score, shift_grid)
+
+            if plot:
+                self.figure_output([self.name, name_c],
+                                   [map_target, map_c],
+                                   [key_g, _score, _shift], map_target[0].shape[0], self.path["plot_pair_neuron"], key_g)
+
+            if saving:
+                mapping_list.append([self.name, name_c, _score, map_target, map_c])
+            info_list.append([self.name, name_c, _score, _shift, _score_x, _score_y, _score_z])
+
+        if saving:
+            return info_list, mapping_list
+        else:
+            return info_list
+
+    def morphological_ranking3(self, key_w, c_lst, shift_delta=30):
+        # target nrn information
+        coor_target = self.coord[key_w][self.name]
+        cm_target = self.cm_dict[key_w][self.name]
+        r_max_target = self.rmax_s[key_w][self.name]
+        with open(self.path["map2"] + self.name + ".pkl", "rb") as file:
+            map_target = pickle.load(file)[key_w]
+
+        # candidates
+        info_list = []
+        candidates = c_lst
+        time.sleep(0.5)
+        map_candidates = []
+        for name_c in tqdm(candidates):
+            with open(self.path["map2"] + name_c + ".pkl", "rb") as file:
+                map_c = pickle.load(file)["unit"]
+            #map_candidates.append(map_c)
+
+            max_score = map_max_score(map_target, map_c, key_w)
+            shift_grid = 5
+            _score, _shift, _score_x, _score_y, _score_z = self.ranking_method(map_target, map_c, max_score, shift_grid)
+
+            info_list.append([self.name, name_c, _score, _shift, _score_x, _score_y, _score_z])
+        return info_list
+
+    def batch_ranking_process(self, overwrite, map_data_saving, plot):
+        with open(self.path["stats"] + "match_dict.pkl", "rb") as file:
+            match_dict = pickle.load(file)
+
+        keys = match_dict.keys()
+
+        if self.coord_sel == "target-orientation":
+            if overwrite:
+                for key_g in keys:
+                    information_list = []
+                    mapping_list = []
+                    print(key_g, " :")
+
+                    match_lst = list(match_dict[key_g].keys())
+                    for i in range(len(match_lst)):
+                        print("%d / %d" % (i+1,len(match_lst)))
+                        t_s = time.time()
+                        self.name = match_lst[i]
+
+                        if map_data_saving:
+                            _information_list, _mapping_data = self.morphological_ranking_fix(key_g, match_dict[key_g][self.name], map_data_saving, plot)
+                            information_list += _information_list
+                            mapping_list += _mapping_data
+                        else:
+                            information_list += self.morphological_ranking_fix(key_g, match_dict[key_g][self.name], map_data_saving, plot)
+
+                        print("Time Cost: ", "%.3f" % (time.time() - t_s), " sec")
+
+                    if map_data_saving:
+                        with open(self.path["stats"] + "mapping_data_" + key_g + ".pkl", "wb") as file:
+                            pickle.dump(mapping_list, file)
+
+                    with open(self.path["stats"] + "info_list_" + key_g + ".csv", "w", newline="") as file:
+                        writer = csv.writer(file)
+
+                        # title
+                        writer.writerow(["target_ID", "candidate_ID", "score", "shift", "score_x", "score_y", "score_z"])
+
+                        # values
+                        for row in information_list:
+                            writer.writerow(row)
+
+        if self.coord_sel == "coordinate-orientation":
+            if overwrite:
+                information_dict = {}
+
+                for key in keys:
+                    information_dict[key] = []
+                    #print(key, " :")
+
+                    match_lst = list(match_dict[key].keys())
+                    for i in range(len(match_lst)):
+                        self.name = match_lst[i]
+                        print("target: ", self.name, "  searching")
+                        information_dict[key] += self.morphological_ranking3(key, match_dict[key][self.name])
+
+                    lst = information_dict[key]
+                    lst.sort(key=lambda x: -x[2])
+                    length = min(5, len(lst))
+                    for k in range(length):
+                        print("rank ", k+1, ": ", lst[k][1], "\n score: ", lst[k][2])

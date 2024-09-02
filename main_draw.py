@@ -8,7 +8,7 @@ import ranking_method as rk
 from util import *
 from config import *
 from class_mapping import NrnMapping
-from class_ranking_old_KTver import NrnRanking
+from class_ranking import NrnRanking
 from class_CNN import CNN
 ########################################################################################################################
 # Parameters

@@ -13,7 +13,6 @@ if platform.system() == "Windows":
     config_path["plot_single_neuron"] = os.getcwd()+"\\plot\\single_neuron\\"
     config_path["plot_pair_neuron"] = os.getcwd()+"\\plot\\pair_neurons\\"
     config_path["sep"] = "\\"
-    config_path["name"] = "_"
 else:
     config_path["aug"] = os.getcwd()+"/data/fake_data/"
     config_path["import_swc"] = os.getcwd()+"/data/selected_data/"
@@ -25,4 +24,3 @@ else:
     config_path["plot_single_neuron"] = os.getcwd()+"/plot/single_neuron/"
     config_path["plot_pair_neuron"] = os.getcwd()+"/plot/pair_neurons/"
     config_path["sep"] = "/"
-    config_path["name"] = "_"
