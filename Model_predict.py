@@ -11,9 +11,9 @@ import sys
 
 
 
-model_path = './Annotator_Model/'   # 加载模型路径
-model_name = 'Annotator_D1-D6_'     # 模型名称 不包含后缀数字
-save_folder_path = './result/preTrain_predict/'
+model_path = './Fine_Tune_Model/'   # 加载模型路径
+model_name = 'Fine_Tune_Model_150K_'     # 模型名称 不包含后缀数字
+save_folder_path = './result/FC-FC_pairs/'
 
 if not os.path.exists(save_folder_path):
     os.makedirs(save_folder_path)
@@ -28,7 +28,7 @@ single_model = int(sys.argv[1])
 use_model = [single_model, single_model+1]
 
 # 对新数据集进行标注
-unlabel_path_01 = './data/statistical_results/pre_train_map'
+unlabel_path_01 = 'data/statistical_results/FC_FC_316pairs_SN'
 # unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20'
 
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
@@ -53,7 +53,7 @@ print('Used model:', use_model)
 # %%
 
 # 分段完成
-sub_length = 2000000
+sub_length = 20000000
 
 if len(file_path) > sub_length:
     
@@ -160,7 +160,7 @@ else:
     print('Program Completed.')
 # %%
 # # 受限於電腦RAM不足，只能一個一個模型跑的情況下，需要額外的步驟將label.csv合併
-# model_name = 'Annotator_D1-D6_'
+# model_name = 'Fine_Tune_Model_150K_'
 
 # file_lst = os.listdir(save_folder_path)
 # file_lst = [os.path.join(save_folder_path, filename) for filename in file_lst if model_name in filename]
@@ -201,7 +201,7 @@ else:
 # merge_df_sort.to_csv('preTrain_label/preTrain_label_Annotator.csv', index=False)
 
 # %%
-# 複製模塊
+# # 複製模塊
 # import shutil
 
 # source_path = './data/mapping_data_0.7+'
