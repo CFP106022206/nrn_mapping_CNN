@@ -73,7 +73,7 @@ for p in pairs:
 
     if fc_id + '.swc' in fc_inlst:
         try:
-            shutil.copy2(path + 'FC/'+ fc_id + '.swc', path + 'TEMP_FC/' + fc_id + '.swc')
+            shutil.copy2(path + 'FC_Original/'+ fc_id + '.swc', path + 'TEMP_FC/' + fc_id + '.swc')
         except:
             s = 'ERROR: ' + fc_id
             logging.info(s)
@@ -93,7 +93,7 @@ for p in pairs:
     for em_id in em_ids:
         if em_id + '.swc' in fc_inlst:
             try:
-                shutil.copy2(path + 'FC/'+ em_id + '.swc', path + 'TEMP_EM/' + em_id + '.swc')
+                shutil.copy2(path + 'FC_Original/'+ em_id + '.swc', path + 'TEMP_EM/' + em_id + '.swc')
             except:
                 s = 'ERROR: ' + em_id
                 logging.info(s)
