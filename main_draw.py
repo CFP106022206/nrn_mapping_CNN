@@ -40,9 +40,9 @@ coordinate_selection = "target-orientation"  # "coordinate-orientation", "MOI-or
 target_list = [tar]
 candidate_list = [can]
 threshold_of_exchange = 0.0  # threshold of considering the exchange of principal axes
-threshold_of_nI = np.inf  # threshold of choosing pairs of neurons by normalized inertia of moment
-threshold_in = np.cos(np.pi*90/180)  # threshold of inner product
-threshold_of_distance = np.inf  # threshold of distance between wrapping EM data and FC data
+threshold_of_nI = 0.4#np.inf  # threshold of choosing pairs of neurons by normalized inertia of moment
+threshold_in = np.cos(np.pi*50/180)#np.cos(np.pi*90/180)  # threshold of inner product
+threshold_of_distance = 100#np.inf  # threshold of distance between wrapping EM data and FC data
 
 # Step 4 Score and rank the selected pairs
 cluster = False  # simplify the Strahler number
