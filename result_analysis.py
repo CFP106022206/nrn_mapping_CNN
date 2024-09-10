@@ -40,19 +40,19 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
 
 
 # %%
-model_name = 'Fine_Tune_Model_150KnF_CoorOrient_'
+model_name = 'Fine_Tune_Model_150K_'#'Fine_Tune_Model_150KnF_CoorOrient_'# 網頁版本模型結果
 
 # 设置Seaborn样式
 plt.style.use('default')
 
-test_mode = 'cross'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
+test_mode = 'nblast'#'cross'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
 cross_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = False #'./labeled_info/D2+D6_ID.csv'#'./labeled_info/D5_conf.csv' #False
+selected_test_set = './labeled_info/D5_conf.csv' #'./labeled_info/D2+D6_ID.csv' #False
 
 label_csv_name = './result/test_label_'+model_name
 # label_csv_name = './result/predict_result/model_predict_'
@@ -345,7 +345,7 @@ plt.bar(x_axis_name_filt, top_k_accuracy, color='#BB0F1E',linewidth=0)
 for x,y in enumerate(top_k_accuracy):
     plt.text(x, y+0.01, '{:.1%}'.format(y), ha='center', color='black', fontsize=12)
 
-plt.ylabel('Accuracy')
+plt.ylabel('Recall at K')
 # plt.title('Top k Accuracy')
 plt.savefig('./Figure/Top_'+str(top_k)+'_Accuracy', dpi=150, bbox_inches='tight')
 plt.show()

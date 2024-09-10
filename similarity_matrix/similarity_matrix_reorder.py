@@ -74,7 +74,7 @@ for i, lpu in enumerate(lpu_lst):
 plt.figure(figsize=(10, 7))
 plt.imshow(similarity_matrix, cmap='magma')
 plt.colorbar(fraction=0.046, pad=0.04)
-plt.title(f'Similarity Matrix (MSE: {mse_model:.2f}, MAE: {mae_model:.2f}, Frobenius Norm: {frobenius_model:.2f})')
+# plt.title(f'Similarity Matrix (MSE: {mse_model:.2f}, MAE: {mae_model:.2f}, Frobenius Norm: {frobenius_model:.2f})')
 plt.xticks([45,145,216,316])
 plt.yticks([45,145,216,316])
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_single.png', dpi=300, bbox_inches='tight')
@@ -93,7 +93,7 @@ def reorder_matrix(matrix, fc_id_lst):
     reordered_fc_id2index = {fc_id_lst[i]: idx for idx, i in enumerate(order)}
 
     # 使用相同的顺序对行和列进行排序
-    reordered_matrix = similarity_matrix[order, :]
+    reordered_matrix = matrix[order, :]
     reordered_matrix = reordered_matrix[:, order]
     return reordered_matrix, reordered_fc_id2index
 
@@ -168,7 +168,7 @@ print('Frobenius Norm:', frobenius_nblast)
 plt.figure(figsize=(10, 7))
 plt.imshow(nblast_matrix, cmap='magma')
 plt.colorbar(fraction=0.046, pad=0.04)
-plt.title(f'NBLAST Matrix (MSE: {mse_nblast:.2f}, MAE: {mae_nblast:.2f}, Frobenius Norm: {frobenius_nblast:.2f})')
+# plt.title(f'NBLAST Matrix (MSE: {mse_nblast:.2f}, MAE: {mae_nblast:.2f}, Frobenius Norm: {frobenius_nblast:.2f})')
 plt.xticks([45,145,216,316])
 plt.yticks([45,145,216,316])
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_NBLAST.png', dpi=300, bbox_inches='tight')
@@ -213,41 +213,99 @@ plt.show()
 # print(f"Frobenius Norm of Model-Ideal: {frobenius_norm_model}")
 
 # %% 數值分佈圖
-def plot_distribution(matrix, title='Distribution'):
-    plt.hist(matrix.flatten(), bins=50)
+plt.style.use('default')
+def plot_distribution(matrix, title='Distribution', save=False):
+    plt.hist(matrix.flatten(), bins=50, color='teal')
     plt.title(title)
-    # plt.xlabel('Similarity Score')
-    # plt.ylabel('Frequency')
-    # plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/'+title+'.png', dpi=300, bbox_inches='tight')
+    plt.minorticks_on()
+    plt.ylabel('Count', fontsize=12)
+    plt.xlabel('Similarity Score', fontsize=12)
+    if save:
+        plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/'+title+'.png', dpi=300, bbox_inches='tight')
     plt.show()
 
-plot_distribution(nblast_matrix, 'NBLAST Distribution')
-plot_distribution(similarity_matrix, 'Model Distribution')
+
+plot_distribution(nblast_matrix, 'NBLAST Score Distribution', save=True)
+plot_distribution(similarity_matrix, 'Model Score Distribution', save=True)
 
 # %% binary化相似度矩陣
 def binarize(matrix, threshold):
     return (matrix > threshold).astype(int)
 
-nblast_binary = binarize(nblast_matrix, 0.5)
-model_binary = binarize(similarity_matrix, 0.5)
+threshold = 0.5
 
-mse_nblast_binary = np.mean((nblast_binary - ideal_matrix) ** 2)
-mse_model_binary = np.mean((model_binary - ideal_matrix)**2)
+nblast_binary = binarize(nblast_matrix, 0.65)
+model_binary = binarize(similarity_matrix, threshold)
 
-print('MSE NBLAST Binary:', mse_nblast_binary)
-print('MSE Model Binary:', mse_model_binary)
+# mse_nblast_binary = np.mean((nblast_binary - ideal_matrix) ** 2)
+# mse_model_binary = np.mean((model_binary - ideal_matrix)**2)
+mae_nblast_binary = np.mean(np.abs(nblast_binary - ideal_matrix))
+mae_model_binary = np.mean(np.abs(model_binary - ideal_matrix))
+
+
+print('MAE NBLAST Binary:', mae_nblast_binary)
+print('MAE Model Binary:', mae_model_binary)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
 cax1 = ax1.imshow(nblast_binary, cmap='magma')
-ax1.set_title('NBLAST Binary Matrix')
+ax1.set_title(f'NBLAST (Binary, thr={threshold:.2f}, MAE={mae_nblast_binary:.2f})')
 ax1.set_xticks([0,45,145,216,316])
 ax1.set_yticks([0,45,145,216,316])
 fig.colorbar(cax1, ax=ax1, fraction=0.046, pad=0.04)
 
 # 重新排序后的相似度矩阵
 cax2 = ax2.imshow(model_binary, cmap='magma')
-ax2.set_title('Model binary Matrix')
+ax2.set_title(f'Model (binary, thr={threshold:.2f}, MAE={mae_model_binary:.2f})')
 ax2.set_xticks([0,45,145,216,316])
 ax2.set_yticks([0,45,145,216,316])
 fig.colorbar(cax2, ax=ax2, fraction=0.046, pad=0.04)
+plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_binary.png', dpi=300, bbox_inches='tight')
 plt.show()
+# %% 如果只考慮ideal matrix範圍中的MSE
+def located_mse(matrix, ideal_matrix):
+    mse_matrix = (matrix - ideal_matrix) **2
+    mse_lst = mse_matrix[ideal_matrix == 1].tolist()
+    return np.mean(mse_lst)
+
+nblast_mse = located_mse(nblast_matrix, ideal_matrix)
+model_mse = located_mse(similarity_matrix, ideal_matrix)
+
+def plot_thr_mae_distribution(matrix, ideal_matrix, save=False):
+    # 計算各threshold下的MAE
+    mae_lst = []
+    for i in range(0, 105, 5):
+        threshold = i/100
+        binary_matrix = (matrix > threshold).astype(int)
+        mae = np.mean(np.abs(binary_matrix - ideal_matrix))
+        mae_lst.append(mae)
+    
+    fig, ax1 = plt.subplots()
+    # 畫分數的分佈圖
+    ax1.hist(matrix.flatten(), bins=50, color='teal', label="Prediction's Distribution")
+    ax1.set_ylabel('Count', color='teal', fontsize=12)
+    ax1.tick_params(axis='y')
+
+    # 创建第二个y轴
+    ax2 = ax1.twinx()
+
+    # 绘制MAE曲线
+    ax2.plot(np.linspace(0, 1, len(mae_lst)), mae_lst, '-d', color='#BB0F1E', label='MAE')
+    ax2.set_xlabel('Threshold')
+    ax2.set_ylabel('MAE', color='#BB0F1E', fontsize=12)
+    ax2.tick_params(axis='y')
+
+    fig.tight_layout()  # 调整布局以防止标签重叠
+
+    # 添加图例
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines + lines2, labels + labels2)
+
+
+    if save:
+        plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/threshold_vs_mae.png', dpi=150, bbox_inches='tight')
+    plt.show()
+
+plot_thr_mae_distribution(nblast_matrix, ideal_matrix, save=True)
+plot_thr_mae_distribution(similarity_matrix, ideal_matrix, save=True)
+# %%
