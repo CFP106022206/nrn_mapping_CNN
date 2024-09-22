@@ -9,18 +9,24 @@ import os
 
 folder_path = '/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/'
 
-#load csv
+# 全部資料
 similarity = pd.read_csv(os.path.join(folder_path, 'FTmodel_predict.csv'))
+
+# 建构总数据表
+df = pd.DataFrame()
 
 # 构建字典，将fc_id映射到唯一的数字
 # 讀預設順序
 lpu_lst = ['ALLN','PN','KC','FB']
 fc_id_lst, lpu_num = [], []
-for order in lpu_lst:
-    fc_id_lst.append(pd.read_csv(os.path.join(folder_path, order+'.txt'), header=None, names=['fc_id']))
+for lpu in lpu_lst:
+    fc_id_lst.append(pd.read_csv(os.path.join(folder_path, lpu+'.txt'), header=None, names=['fc_id']))
     lpu_num.append(len(fc_id_lst[-1]))
 fc_ids = pd.concat(fc_id_lst, ignore_index=True)
 fc_id2index = {fc_id: index for index, fc_id in enumerate(fc_ids['fc_id'])}
+
+df['fc_id'] = fc_ids['fc_id']
+df['index'] = df['fc_id'].map(fc_id2index)
 
 # 過濾掉不在預設順序的
 similarity = similarity[similarity['fc_id'].isin(fc_ids['fc_id'])]
@@ -75,8 +81,12 @@ plt.figure(figsize=(10, 7))
 plt.imshow(similarity_matrix, cmap='magma')
 plt.colorbar(fraction=0.046, pad=0.04)
 # plt.title(f'Similarity Matrix (MSE: {mse_model:.2f}, MAE: {mae_model:.2f}, Frobenius Norm: {frobenius_model:.2f})')
-plt.xticks([45,145,216,316])
-plt.yticks([45,145,216,316])
+axis_sep = []
+for i in lpu_num:
+    axis_sep.append(i+axis_sep[-1] if axis_sep else i)
+# axis_sep=[45,145,216,316]
+plt.xticks(axis_sep)
+plt.yticks(axis_sep)
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_single.png', dpi=300, bbox_inches='tight')
 plt.show()
 
@@ -86,18 +96,52 @@ def reorder_matrix(matrix, fc_id_lst):
 
     # 根据层次聚类的结果生成排序顺序
     dendrogram = sch.dendrogram(linkage_matrix, no_plot=True)
-    order = dendrogram['leaves']
+    lpu = dendrogram['leaves']
 
 
     # 生成新的fc_id2index字典
-    reordered_fc_id2index = {fc_id_lst[i]: idx for idx, i in enumerate(order)}
+    reordered_fc_id2index = {fc_id_lst[i]: idx for idx, i in enumerate(lpu)}
 
     # 使用相同的顺序对行和列进行排序
-    reordered_matrix = matrix[order, :]
-    reordered_matrix = reordered_matrix[:, order]
+    reordered_matrix = matrix[lpu, :]
+    reordered_matrix = reordered_matrix[:, lpu]
     return reordered_matrix, reordered_fc_id2index
 
-reordered_matrix, reordered_fc_id2index = reorder_matrix(similarity_matrix, fc_ids['fc_id'].tolist())
+# # 直接对完整的矩阵进行重排序
+# reordered_matrix, reordered_fc_id2index = reorder_matrix(similarity_matrix, fc_ids['fc_id'].tolist())
+# df['reordered_index'] = df['fc_id'].map(reordered_fc_id2index)
+
+# 分别对每个脑区进行重排序
+lpu_matrix_lst = [] # 分离每个脑区部分的矩阵
+idx=0
+for num in lpu_num:
+    lpu_matrix_lst.append(similarity_matrix[idx:idx+num, idx:idx+num])
+    idx += num
+# 排序
+reordered_matrix_lst, reordered_fc_id2index_lst = [], []
+for i, lpu_matrix in enumerate(lpu_matrix_lst):
+    reordered_matrix, reordered_fc_id2index = reorder_matrix(lpu_matrix, fc_id_lst[i]['fc_id'].tolist())
+    reordered_matrix_lst.append(reordered_matrix)
+    reordered_fc_id2index_lst.append(reordered_fc_id2index)
+
+# 合并 fc_id2index
+reordered_fc_id2index = {}
+# 合并时需要考虑reordered index 在整个矩阵中的位置需要加上脑区原本位置的偏移
+start_pos = [0]
+for num in lpu_num[:-1]:
+    start_pos.append(start_pos[-1] + num)
+for i, reordered_index in enumerate(reordered_fc_id2index_lst):
+    reordered_fc_id2index.update({fc_id: idx+start_pos[i] for fc_id, idx in reordered_index.items()})
+
+# 将 reordered_fc_id2index key换成原始矩阵位置
+reordered_idx2fc_idx = {v : fc_id2index[k] for k, v in reordered_fc_id2index.items()}
+df['reordered_index'] = df['index'].map(reordered_idx2fc_idx)
+
+# 重新排序整个矩阵
+reordered_idx = list(reordered_idx2fc_idx.values())
+reordered_matrix = similarity_matrix.copy()
+reordered_matrix = reordered_matrix[reordered_idx, :]
+reordered_matrix = reordered_matrix[:, reordered_idx]
 
 # 可视化原始相似度矩阵
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
@@ -117,8 +161,20 @@ fig.colorbar(cax2, ax=ax2, fraction=0.046, pad=0.04)
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_compare.png', dpi=300, bbox_inches='tight')
 plt.show()
 
+'''
+1、对其顺序(FB)画重排序之前之后对比的矩阵
+2、对NBLAST的矩阵也按照同样的顺序画出来
+3、在这个排列顺序上呈现原始的相似度分数
+4、同樣的順序用binary化的方式呈現
+5、畫MAE隨threshold變化的分佈圖
+假設groundtruth是四類，按照這個計算的MAE差不多，但是我們能夠分出更細的分類
+6、找ALLN和PN個一個神經，在NBLAST中分數很高，但是在我們的模型中分數很低
+7、加上FB分成不同小類的神經3D圖，找有代表性的NBLAST無法區別但是我們可以（我們這邊分數很低但是NBLAST分數很高）
+'''
+
 
 # %%    重排序之後 原本人類標註的四大類是否分散？是否有更多有意義的結構
+# 分腦區資料
 alln = pd.read_csv(os.path.join(folder_path, 'ALLN.txt'), header=None, names=['fc_id'])
 pn = pd.read_csv(os.path.join(folder_path, 'PN.txt'), header=None, names=['fc_id'])
 kc = pd.read_csv(os.path.join(folder_path, 'KC.txt'), header=None, names=['fc_id'])
@@ -135,6 +191,29 @@ alln_matrix = location_matrix(alln['fc_id'].tolist(), reordered_fc_id2index, mat
 pn_matrix = location_matrix(pn['fc_id'].tolist(), reordered_fc_id2index, matrix_size)
 kc_matrix = location_matrix(kc['fc_id'].tolist(), reordered_fc_id2index, matrix_size)
 fb_matrix = location_matrix(fb['fc_id'].tolist(), reordered_fc_id2index, matrix_size)
+
+# 找出FB matrix中1的位置
+fb_idx = np.where(fb_matrix == 1)
+fb_idx = np.unique(fb_idx[0])
+print('FB:', fb_idx)
+# 将连在一起的fb_idx对应的fc_id分类到一个list
+# 遍历fb_idx，如果fb_idx[i] - fb_idx[i-1] == 1，说明是连续的，否则添加新的一组
+fb_idx_lst = []
+new_lst = [fb_idx[0]]
+for i in range(1, len(fb_idx)):
+    if fb_idx[i] - fb_idx[i-1] == 1:
+        new_lst.append(fb_idx[i])
+    else:
+        fb_idx_lst.append(new_lst)
+        new_lst = [fb_idx[i]]
+fb_idx_lst.append(new_lst)
+
+# 找到对应的fc_id
+fb_fc_id_lst = []
+for lst in fb_idx_lst:
+    # 从reordered_fc_id2index中找到对应的fc_id
+    fc_id_sub_lst = [k for k, v in reordered_fc_id2index.items() if v in lst]
+    fb_fc_id_lst.append(fc_id_sub_lst)
 
 fig, axes = plt.subplots(2, 2, figsize=(11, 11))
 (ax1, ax2), (ax3, ax4) = axes
@@ -232,10 +311,12 @@ plot_distribution(similarity_matrix, 'Model Score Distribution', save=True)
 def binarize(matrix, threshold):
     return (matrix > threshold).astype(int)
 
-threshold = 0.5
+threshold_nblast = 0.20
+threshold_model = 0.55
 
-nblast_binary = binarize(nblast_matrix, 0.65)
-model_binary = binarize(similarity_matrix, threshold)
+nblast_binary = binarize(nblast_matrix, threshold_nblast)
+# model_binary = binarize(similarity_matrix, threshold_model)
+model_binary = binarize(reordered_matrix, threshold_model)
 
 # mse_nblast_binary = np.mean((nblast_binary - ideal_matrix) ** 2)
 # mse_model_binary = np.mean((model_binary - ideal_matrix)**2)
@@ -248,27 +329,27 @@ print('MAE Model Binary:', mae_model_binary)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
 cax1 = ax1.imshow(nblast_binary, cmap='magma')
-ax1.set_title(f'NBLAST (Binary, thr={threshold:.2f}, MAE={mae_nblast_binary:.2f})')
+ax1.set_title(f'NBLAST (Binary, thr={threshold_nblast:.2f}, MAE={mae_nblast_binary:.2f})')
 ax1.set_xticks([0,45,145,216,316])
 ax1.set_yticks([0,45,145,216,316])
 fig.colorbar(cax1, ax=ax1, fraction=0.046, pad=0.04)
 
 # 重新排序后的相似度矩阵
 cax2 = ax2.imshow(model_binary, cmap='magma')
-ax2.set_title(f'Model (binary, thr={threshold:.2f}, MAE={mae_model_binary:.2f})')
+ax2.set_title(f'Model (Binary, thr={threshold_model:.2f}, MAE={mae_model_binary:.2f})')
 ax2.set_xticks([0,45,145,216,316])
 ax2.set_yticks([0,45,145,216,316])
 fig.colorbar(cax2, ax=ax2, fraction=0.046, pad=0.04)
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_binary.png', dpi=300, bbox_inches='tight')
 plt.show()
 # %% 如果只考慮ideal matrix範圍中的MSE
-def located_mse(matrix, ideal_matrix):
-    mse_matrix = (matrix - ideal_matrix) **2
-    mse_lst = mse_matrix[ideal_matrix == 1].tolist()
-    return np.mean(mse_lst)
+# def located_mse(matrix, ideal_matrix):
+#     mse_matrix = (matrix - ideal_matrix) **2
+#     mse_lst = mse_matrix[ideal_matrix == 1].tolist()
+#     return np.mean(mse_lst)
 
-nblast_mse = located_mse(nblast_matrix, ideal_matrix)
-model_mse = located_mse(similarity_matrix, ideal_matrix)
+# nblast_mse = located_mse(nblast_matrix, ideal_matrix)
+# model_mse = located_mse(similarity_matrix, ideal_matrix)
 
 def plot_thr_mae_distribution(matrix, ideal_matrix, save=False):
     # 計算各threshold下的MAE
