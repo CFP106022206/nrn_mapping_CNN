@@ -44,6 +44,9 @@ for _, row in similarity.iterrows():
     col_index = fc_id2index[row['em_id']]
     similarity_matrix[row_index, col_index] = row['score']
 
+# 因為模型交換輸入的結果會有細微差異，也可以使用平均讓矩陣對稱
+similarity_matrix = (similarity_matrix + similarity_matrix.T) / 2
+
 # 歸一化
 matrix_min = np.min(similarity_matrix)
 matrix_max = np.max(similarity_matrix)
@@ -81,10 +84,10 @@ plt.figure(figsize=(10, 7))
 plt.imshow(similarity_matrix, cmap='magma')
 plt.colorbar(fraction=0.046, pad=0.04)
 # plt.title(f'Similarity Matrix (MSE: {mse_model:.2f}, MAE: {mae_model:.2f}, Frobenius Norm: {frobenius_model:.2f})')
-axis_sep = []
+axis_sep = [0]
 for i in lpu_num:
-    axis_sep.append(i+axis_sep[-1] if axis_sep else i)
-# axis_sep=[45,145,216,316]
+    axis_sep.append(i+axis_sep[-1])
+# axis_sep=[0,45,145,216,316]
 plt.xticks(axis_sep)
 plt.yticks(axis_sep)
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_single.png', dpi=300, bbox_inches='tight')
@@ -148,15 +151,15 @@ fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
 
 cax1 = ax1.imshow(similarity_matrix, cmap='magma')
 ax1.set_title('Original Similarity Matrix')
-ax1.set_xticks([0,45,145,216,316])
-ax1.set_yticks([0,45,145,216,316])
+ax1.set_xticks(axis_sep)
+ax1.set_yticks(axis_sep)
 fig.colorbar(cax1, ax=ax1, fraction=0.046, pad=0.04)
 
 # 重新排序后的相似度矩阵
 cax2 = ax2.imshow(reordered_matrix, cmap='magma')
 ax2.set_title('Reordered Similarity Matrix')
-ax2.set_xticks(np.arange(0, matrix_size, 50))
-ax2.set_yticks(np.arange(0, matrix_size, 50))
+ax2.set_xticks(axis_sep)
+ax2.set_yticks(axis_sep)
 fig.colorbar(cax2, ax=ax2, fraction=0.046, pad=0.04)
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_compare.png', dpi=300, bbox_inches='tight')
 plt.show()
@@ -172,6 +175,26 @@ plt.show()
 7、加上FB分成不同小類的神經3D圖，找有代表性的NBLAST無法區別但是我們可以（我們這邊分數很低但是NBLAST分數很高）
 '''
 
+# 以下為使用自動找出色塊邊界的嘗試
+# # 找出分裂出三小塊的ID
+# # 挖出感興趣的部分
+# fb_matrix = reordered_matrix[axis_sep[-2]:, axis_sep[-2]:]
+# # 找到邊界位置
+# from scipy import ndimage
+# # 使用 Sobel 算子进行边缘检测
+# sobel_x = ndimage.sobel(fb_matrix, axis=0)
+# sobel_y = ndimage.sobel(fb_matrix, axis=1)
+# edges = np.hypot(sobel_x, sobel_y)
+# # 找到边界位置
+# threshold = 0.5 * np.max(edges)  # 例如，设置为边缘强度最大值的一半
+# boundary_positions = np.where(edges > threshold)
+
+# # 可视化边缘检测结果
+# plt.figure(figsize=(8, 8))
+# plt.imshow(fb_matrix, cmap='gray')
+# plt.scatter(boundary_positions[1], boundary_positions[0], color='red', s=1)
+# plt.title('Detected Boundaries in fb_matrix')
+# plt.show()
 
 # %%    重排序之後 原本人類標註的四大類是否分散？是否有更多有意義的結構
 # 分腦區資料
@@ -229,7 +252,7 @@ ax4.set_title('FB')
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/location_matrix.png', dpi=300, bbox_inches='tight')
 plt.show()
 
-# %% 讀取NBLAST那邊的計算分數
+ # %% 讀取NBLAST那邊的計算分數
 nblast_matrix = np.load(os.path.join(folder_path, 'NBLAST_316.npy'))
 
 # 歸一化
