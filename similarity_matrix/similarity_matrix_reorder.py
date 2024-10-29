@@ -149,21 +149,44 @@ reordered_matrix = reordered_matrix[:, reordered_idx]
 # 可视化原始相似度矩阵
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
 
+# 使用虛線分隔開各個種類
+lines_positions = axis_sep[1:-1]
+lines_width = 0.75   # 設定線寬
+
 cax1 = ax1.imshow(similarity_matrix, cmap='magma')
-ax1.set_title('Original Similarity Matrix')
+# ax1.set_title('Original Similarity Matrix')
 ax1.set_xticks(axis_sep)
 ax1.set_yticks(axis_sep)
 fig.colorbar(cax1, ax=ax1, fraction=0.046, pad=0.04)
 
+# 在原始相似度矩阵中添加白色虚线
+for pos in lines_positions:
+    ax1.axvline(x=pos, color='white', linestyle='--', linewidth=lines_width)
+    ax1.axhline(y=pos, color='white', linestyle='--', linewidth=lines_width)
+
 # 重新排序后的相似度矩阵
 cax2 = ax2.imshow(reordered_matrix, cmap='magma')
-ax2.set_title('Reordered Similarity Matrix')
+# ax2.set_title('Reordered Similarity Matrix')
 ax2.set_xticks(axis_sep)
 ax2.set_yticks(axis_sep)
 fig.colorbar(cax2, ax=ax2, fraction=0.046, pad=0.04)
+
+# 在原始相似度矩阵中添加白色虚线
+for pos in lines_positions:
+    ax2.axvline(x=pos, color='white', linestyle='--', linewidth=lines_width)
+    ax2.axhline(y=pos, color='white', linestyle='--', linewidth=lines_width)
+
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_compare.png', dpi=300, bbox_inches='tight')
 plt.show()
 
+# # 高清排序後的相似度矩陣(找新分區位置用)
+# plt.figure(figsize=(30, 28))
+# plt.imshow(reordered_matrix, cmap='magma')
+# plt.colorbar(fraction=0.046, pad=0.04)
+# plt.xticks(np.arange(0, 317, 2), rotation=90)
+# plt.yticks(np.arange(0, 317, 2))
+# plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_reorder_MEGA.png', dpi=400, bbox_inches='tight')
+# plt.show()
 '''
 1、对其顺序(FB)画重排序之前之后对比的矩阵
 2、对NBLAST的矩阵也按照同样的顺序画出来
@@ -215,29 +238,6 @@ pn_matrix = location_matrix(pn['fc_id'].tolist(), reordered_fc_id2index, matrix_
 kc_matrix = location_matrix(kc['fc_id'].tolist(), reordered_fc_id2index, matrix_size)
 fb_matrix = location_matrix(fb['fc_id'].tolist(), reordered_fc_id2index, matrix_size)
 
-# 找出FB matrix中1的位置
-fb_idx = np.where(fb_matrix == 1)
-fb_idx = np.unique(fb_idx[0])
-print('FB:', fb_idx)
-# 将连在一起的fb_idx对应的fc_id分类到一个list
-# 遍历fb_idx，如果fb_idx[i] - fb_idx[i-1] == 1，说明是连续的，否则添加新的一组
-fb_idx_lst = []
-new_lst = [fb_idx[0]]
-for i in range(1, len(fb_idx)):
-    if fb_idx[i] - fb_idx[i-1] == 1:
-        new_lst.append(fb_idx[i])
-    else:
-        fb_idx_lst.append(new_lst)
-        new_lst = [fb_idx[i]]
-fb_idx_lst.append(new_lst)
-
-# 找到对应的fc_id
-fb_fc_id_lst = []
-for lst in fb_idx_lst:
-    # 从reordered_fc_id2index中找到对应的fc_id
-    fc_id_sub_lst = [k for k, v in reordered_fc_id2index.items() if v in lst]
-    fb_fc_id_lst.append(fc_id_sub_lst)
-
 fig, axes = plt.subplots(2, 2, figsize=(11, 11))
 (ax1, ax2), (ax3, ax4) = axes
 
@@ -252,6 +252,27 @@ ax4.set_title('FB')
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/location_matrix.png', dpi=300, bbox_inches='tight')
 plt.show()
 
+# 找出特定位置的fc_id
+# idx start from 0
+# FB part1 idx: 215-255
+# FB part2 idx: 256-298
+# FB part3 idx: 299-315
+def find_fc_id(idx_lst, reordered_fc_id2index):
+    fc_id_lst = []
+    for idx in idx_lst:
+        fc_id = [k for k, v in reordered_fc_id2index.items() if v == idx]   # 反向查找fc_id(key)
+        fc_id_lst.append(fc_id[0])
+    return fc_id_lst
+
+fb_part1 = find_fc_id(np.arange(215,256), reordered_fc_id2index)
+fb_part2 = find_fc_id(np.arange(256,299), reordered_fc_id2index)
+fb_part3 = find_fc_id(np.arange(299,316), reordered_fc_id2index)
+fb_id = fb_part1 + fb_part2 + fb_part3
+
+part_num = [1]*len(fb_part1) + [2]*len(fb_part2) + [3]*len(fb_part3)
+
+fb_df = pd.DataFrame({'fc_id': fb_id, 'part': part_num})
+fb_df.to_csv(os.path.join(folder_path, 'FB_part.csv'), index=False)
  # %% 讀取NBLAST那邊的計算分數
 nblast_matrix = np.load(os.path.join(folder_path, 'NBLAST_316.npy'))
 
@@ -335,7 +356,7 @@ def binarize(matrix, threshold):
     return (matrix > threshold).astype(int)
 
 threshold_nblast = 0.20
-threshold_model = 0.55
+threshold_model = 0.50
 
 nblast_binary = binarize(nblast_matrix, threshold_nblast)
 # model_binary = binarize(similarity_matrix, threshold_model)
@@ -383,6 +404,9 @@ def plot_thr_mae_distribution(matrix, ideal_matrix, save=False):
         mae = np.mean(np.abs(binary_matrix - ideal_matrix))
         mae_lst.append(mae)
     
+    print('Lowest MAE:', min(mae_lst))
+    print('Threshold:', mae_lst.index(min(mae_lst))/20)
+
     fig, ax1 = plt.subplots()
     # 畫分數的分佈圖
     ax1.hist(matrix.flatten(), bins=50, color='teal', label="Prediction's Distribution")
