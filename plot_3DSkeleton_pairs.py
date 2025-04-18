@@ -68,8 +68,8 @@ def plot_pairs_neuron(df_neuron_lst, color_map, output_folder, file_name='skelet
 
 plt.style.use('default')
 
-em_id = '331662710'
-fc_id = 'TH-F-100099'
+em_id = 'G0239-F-000012'
+fc_id = 'G0239-F-000001'
 
 em_path = './data/selected_data/EM/'+ em_id +'.swc'
 fc_path = './data/selected_data/FC/'+ fc_id +'.swc'

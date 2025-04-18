@@ -1,3 +1,7 @@
+'''
+画指定ID的三视图
+'''
+
 # %%
 import numpy as np
 import os
@@ -9,14 +13,57 @@ from util import load_pkl
 
 # %% 
 pic_path = './data/labeled_sn/'
-fc_id = 'TH-F-700022'
-em_id = '981362334'
+fc_id = 'Cha-F-000009'
+em_id = '1078693835'
 output_path = './Figure/predict_3view/'
 map_path = pic_path + 'mapping_data_sn_' + fc_id + '.pkl'
 pair_data = load_pkl(map_path)   # list
 
 if not os.path.exists(output_path):
     os.makedirs(output_path)
+
+def plot_single(pair_data, em_id):
+    for pairs in pair_data:
+        fc = pairs[0]
+        em = pairs[1]
+        if em == em_id: # 找到指定的em_id
+            fc_img = pairs[3]   # shape=(3, 50, 50)
+            em_img = pairs[4]   # shape=(3, 50, 50)
+
+            plt.figure(figsize=(10,6))
+            for i in range(3):
+                plt.subplot(1,4,i+1)
+                plt.imshow(fc_img[i], cmap='magma')
+                plt.xticks([])
+                plt.yticks([])
+                plt.gca().invert_yaxis()  # 反转y轴
+                # plt.colorbar()
+            plt.subplot(1,4,4)# 画三色图
+            plt.imshow(np.stack([fc_img[0], fc_img[1], fc_img[2]], axis=-1))
+            plt.xticks([])
+            plt.yticks([])
+            plt.savefig(output_path+f'{fc}.png', dpi=150, bbox_inches='tight')
+            plt.show()
+
+            # 画EM
+            plt.figure(figsize=(10,6))
+            for i in range(3):
+                plt.subplot(1,4,i+1)
+                plt.imshow(em_img[i], cmap='magma')
+                plt.xticks([])
+                plt.yticks([])
+                plt.gca().invert_yaxis()  # 反转y轴
+                # plt.colorbar()
+            plt.subplot(1,4,4)# 画三色图
+            plt.imshow(np.stack([em_img[0], em_img[1], em_img[2]], axis=-1))
+            plt.xticks([])
+            plt.yticks([])
+            plt.savefig(output_path+f'{em}.png', dpi=150, bbox_inches='tight')
+            plt.show()
+
+plot_single(pair_data, em_id)
+
+# %%
 
 def plot_pair(pair_data, em_id):
     for pairs in pair_data:
