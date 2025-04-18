@@ -1,7 +1,7 @@
 # %%
 import sys
 sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
-
+ 
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -45,14 +45,14 @@ model_name = 'Fine_Tune_Model_150K_'#'Fine_Tune_Model_150KnF_CoorOrient_'# 網�
 # 设置Seaborn样式
 plt.style.use('default')
 
-test_mode = 'nblast'#'cross'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
+test_mode = 'cross'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
 cross_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = './labeled_info/D5_conf.csv' #'./labeled_info/D2+D6_ID.csv' #False
+selected_test_set = False #'./labeled_info/D5_conf.csv' #'./labeled_info/D2+D6_ID.csv' #False
 
 label_csv_name = './result/test_label_'+model_name
 # label_csv_name = './result/predict_result/model_predict_'
@@ -340,6 +340,8 @@ plt.grid(axis='y', alpha=0.5)
 x_axis_name = ['Top 5', 'Top 4', 'Top 3', 'Top 2', 'Top 1']
 x_axis_name_filt = x_axis_name[-top_k:]
 plt.bar(x_axis_name_filt, top_k_accuracy, color='#BB0F1E',linewidth=0)
+# 設置y軸刻度線為虛線
+plt.grid(axis='y', linestyle='--')
 
 # 加上數字標籤，以百分比形式
 for x,y in enumerate(top_k_accuracy):
@@ -698,6 +700,32 @@ D5_nblast = D2_D5_nblast.merge(D5, on=['fc_id', 'em_id'], how='inner')
 D2_result = D2_nblast.merge(D2_model, on=['fc_id', 'em_id'], how='outer')
 D5_result = D5_nblast.merge(D5_model, on=['fc_id', 'em_id'], how='outer')
 
+# 這裡嘗試將NBLAST分數和模型分數畫在同一scatter plot 中比較，可以看出靠近座標軸的數據是兩種方法差異較大的
+D2_pos = D2_result[D2_result['label'] >= 0.5]
+D2_neg = D2_result[D2_result['label'] < 0.5]
+D5_pos = D5_result[D5_result['label'] >= 0.5]
+D5_neg = D5_result[D5_result['label'] < 0.5]
+
+def plot_score_compare(pos_result, neg_result, title):
+    plt.figure(figsize=(6,6))
+    plt.plot(pos_result['Norm score'], pos_result['model_pred'], '.', c='r', label=title+'_True')
+    plt.plot(neg_result['Norm score'], neg_result['model_pred'], '.', c='b', label=title+'_False')
+    plt.plot([0, 1], [0, 1], color='lightseagreen', linestyle='--', label='y=x')
+    plt.xlabel('NBLAST Score')
+    plt.ylabel('Model Score')
+    plt.legend()
+    plt.savefig('./Figure/score_compare_'+title+'.png', dpi=150, bbox_inches='tight')
+    plt.show()
+
+plot_score_compare(D2_pos, D2_neg, 'D2')
+plot_score_compare(D5_pos, D5_neg, 'D5')
+
+# 排序後更容易找代表性案例
+D2_pos = D2_pos.sort_values(by=['Norm score', 'model_pred'], ascending=[True, False])
+D5_pos = D5_pos.sort_values(by=['Norm score', 'model_pred'], ascending=[True, False])
+D2_neg = D2_neg.sort_values(by=['Norm score', 'model_pred'], ascending=[False, True])
+D5_neg = D5_neg.sort_values(by=['Norm score', 'model_pred'], ascending=[False, True])
+
 # 計算score和label的差異
 D2_result['nblast diff'] = D2_result['Norm score'] - D2_result['label']
 D2_result['model diff'] = D2_result['model_pred'] - D2_result['label']
@@ -736,7 +764,7 @@ plt.legend()
 plt.savefig('./Figure/Diff_Scatter.png', dpi=150, bbox_inches='tight')
 plt.show()
 # %% 找出模型、NBLAST表現差異大的
-def find_diff_examplt(df, rank_num=50):
+def find_diff_examplt(df, rank_num=10):
     # 找出差異最大的
     df['diff'] = np.abs(df['model diff']) - np.abs(df['nblast diff'])
     df = df.sort_values(by='diff', ascending=False)
@@ -747,8 +775,8 @@ def find_diff_examplt(df, rank_num=50):
 
     return model_fail, nblast_fail
 
-model_fail_D2, nblast_fail_D2 = find_diff_examplt(D2_result, rank_num=350)
-model_fail_D5, nblast_fail_D5 = find_diff_examplt(D5_result, rank_num=350)
+model_fail_D2, nblast_fail_D2 = find_diff_examplt(D2_result, rank_num=20)
+model_fail_D5, nblast_fail_D5 = find_diff_examplt(D5_result, rank_num=20)
 
 
-# %%
+# %% 
