@@ -449,12 +449,12 @@ print('y_test shape:', len(y_test))
 
 # %%
 
-from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
+from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared, CNN_multi_viewpool
 # from tensorflow.keras.utils import plot_model
 
 resolutions = x_train_FC.shape[1:]
 
-cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
+cnn = CNN_multi_viewpool(input_size=(resolutions[0],resolutions[1],resolutions[2]))
 # cnn = CNN_deep((resolutions[0],resolutions[1],resolutions[2]))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)

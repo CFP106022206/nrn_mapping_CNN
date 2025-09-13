@@ -8,9 +8,9 @@ from util import load_pkl
 
 
 # %% 
-pic_path = './data/labeled_sn/'
-fc_id = 'TH-F-700022'
-em_id = '981362334'
+pic_path = './data/statistical_results/Test/'
+fc_id = '720575940614026193'
+em_id = '5813068729'
 output_path = './Figure/predict_3view/'
 map_path = pic_path + 'mapping_data_sn_' + fc_id + '.pkl'
 pair_data = load_pkl(map_path)   # list
@@ -48,7 +48,7 @@ def plot_pair(pair_data, em_id):
             plt.savefig(output_path+f'{fc}_{em}.png', dpi=150, bbox_inches='tight')
             plt.show()
 
-plot_pair(pair_data, em_id)
+# plot_pair(pair_data, em_id)
 
 # %% 生成論文使用之三種權重九宮格圖
 pic_path_lst = ['data/statistical_results/three_view_pic_paper_UNIT/',
@@ -146,6 +146,81 @@ def plot_single3(pair_data_lst):
     plt.show()
 
 
+# %%
+def plot_single3_individual_flexible(pair_data_lst, output_path="./Figure", 
+                                   show_labels_on_all=False, show_plots=True):
+    """
+    更靈活的版本，可以控制標籤顯示方式
+    
+    Args:
+        pair_data_lst: 包含配對資料的列表
+        output_path: 輸出路徑
+        show_labels_on_all: 是否在所有圖片上都顯示標籤（而非只在第一列）
+        show_plots: 是否顯示圖片（False 時只儲存不顯示）
+    """
+    fc_id_lst, em_id_lst = [], []
+    fc_img_lst, em_img_lst = [], []
+    
+    # 收集資料
+    for pair_data in pair_data_lst:
+        for pairs in pair_data:
+            fc_id_lst.append(pairs[0])
+            em_id_lst.append(pairs[1])
+            fc_img_lst.append(pairs[3])
+            em_img_lst.append(pairs[4])
+    
+    def save_individual_image(img, img_id, img_type, row, col, 
+                            output_path, show_labels_on_all, show_plots):
+        """儲存單張圖片的輔助函數"""
+        fig, ax = plt.subplots(1, 1, figsize=(2.33, 2.33))
+        
+        # 繪製圖像
+        im = ax.imshow(img, cmap='magma')
+        ax.set_xticks([])
+        ax.set_yticks([])
+        
+        # 添加 colorbar
+        cbar = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.03, aspect=20)
+        cbar.set_ticks([0, 1])
+        
+        # 添加標籤
+        if show_labels_on_all or col == 0:
+            ax.set_ylabel(img_id, rotation=90, size='large')
+        
+        # 儲存檔案
+        filename = f'{output_path}{img_type}_{img_id}_pos_{row}_{col}.png'
+        plt.savefig(filename, dpi=300, bbox_inches='tight')
+        
+        if show_plots:
+            plt.show()
+        plt.close()
+        
+        return filename
+    
+    # 儲存所有 FC 圖像
+    fc_filenames = []
+    for i in range(3):
+        for j in range(3):
+            filename = save_individual_image(
+                fc_img_lst[i][j], fc_id_lst[i], 'fc', i, j,
+                output_path, show_labels_on_all, show_plots
+            )
+            fc_filenames.append(filename)
+    
+    # 儲存所有 EM 圖像
+    em_filenames = []
+    for i in range(3):
+        for j in range(3):
+            filename = save_individual_image(
+                em_img_lst[i][j], em_id_lst[i], 'em', i, j,
+                output_path, show_labels_on_all, show_plots
+            )
+            em_filenames.append(filename)
+    
+    print(f"已儲存 {len(fc_filenames)} 張 FC 圖片和 {len(em_filenames)} 張 EM 圖片")
+    return fc_filenames, em_filenames
+
+
 fc_id_lst = ['TH-F-100083', 'Cha-F-000009', 'G0239-F-000001']
 
 pair_data_lst = []
@@ -153,5 +228,8 @@ for fc_id in fc_id_lst:
     fc_path = pic_path + 'mapping_data_sn_' + fc_id + '.pkl'
     pair_data_lst.append(load_pkl(fc_path))
 
-plot_single3(pair_data_lst)
+plt.style.use('default')
+# plot_single3(pair_data_lst)
+plot_single3_individual_flexible(pair_data_lst, output_path="./Figure/Paper/")
+
 # %%

@@ -116,7 +116,7 @@ def plot_neuron(df_neuron, output_folder, file_name='skeleton.mp4', plot_mode='n
     print('Complete.')
 
 
-def plot_pairs_neuron(df_neuron_lst, label_lst, color_map, output_folder, file_name='skeleton.mp4', dot_size=0.2, interpolate=[0], show_axis=True):
+def plot_pairs_neuron(df_neuron_lst, label_lst, color_map, output_folder, file_name='skeleton.mp4', dot_size=0.2, interpolate=[0], show_axis=True, hide_tick_labels=True):
     if type(file_name) != str:
         file_name = str(file_name)
     if file_name[-4:] != '.mp4':
@@ -149,8 +149,13 @@ def plot_pairs_neuron(df_neuron_lst, label_lst, color_map, output_folder, file_n
     ax.set_zlim([ax.get_zlim()[0], ax.get_zlim()[0]+max_length])
 
     if show_axis == False:
-        ax.axis('off')
-
+        ax.axis('off')  # 完全隱藏座標軸
+    elif hide_tick_labels:
+        # 只隱藏數字標籤，保留座標軸線
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        ax.set_zticklabels([])
+        
     ax.set_title(file_name[:-4])
 
     def rotate(angle): 
@@ -159,13 +164,14 @@ def plot_pairs_neuron(df_neuron_lst, label_lst, color_map, output_folder, file_n
     print('Drawing 3D Plot...')
     rot_animation = animation.FuncAnimation(fig, rotate, frames=np.arange(0,361,1),interval=100) 
     writer = animation.FFMpegWriter(fps=24, bitrate=1536)
-    rot_animation.save(output_folder+file_name, dpi=400, writer=writer)
+    rot_animation.save(output_folder+file_name, dpi=300, writer=writer)
     print('Complete.')
 
 
 
 
 # %%
+'''
 plt.style.use('default')
 plot_id = 'TH-F-200026'
 plot_path = './data/selected_data/FC/'+ plot_id +'.swc'
@@ -182,13 +188,12 @@ if os.path.exists(plot_path):
 
 else:
     print('File not exists or wrong path')
-
+'''
 # %% pairs mode
 plt.style.use('default')
 
-em_id = '859265651'
-fc_id = 'TH-F-100075'
-
+em_id = '1078693835'
+fc_id = 'Cha-F-000009'
 em_path = './data/selected_data/EM/'+ em_id +'.swc'
 fc_path = './data/selected_data/FC/'+ fc_id +'.swc'
 
@@ -197,7 +202,7 @@ if os.path.exists(em_path) and os.path.exists(fc_path):
     em_df = pd.read_csv(em_path, sep='\s+', comment='#', header=None, names=['type', 'x', 'y', 'z', 'R', 'Parent'])
     fc_df = pd.read_csv(fc_path, sep='\s+', comment='#', header=None, names=['type', 'x', 'y', 'z', 'R', 'Parent'])
 
-    plot_pairs_neuron([fc_df, em_df], ['FC', 'EM'], ['#5641D5','#E22146'], './Figure/plot_skeletons/', file_name=fc_id+'_'+em_id+'.mp4', dot_size=0.2, show_axis=True)
+    plot_pairs_neuron([fc_df, em_df], [fc_id, em_id], ['#5641D5','#E22146'], './Figure/plot_skeletons/', file_name=fc_id+'_'+em_id+'.mp4', dot_size=0.2, show_axis=True)
 
 else:
     if not os.path.exists(em_path):

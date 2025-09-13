@@ -1,3 +1,4 @@
+# %%
 import os, shutil
 import logging
 from datetime import datetime
@@ -5,8 +6,8 @@ import pytz
 import pandas as pd
 
 # Primary params
-FILE_PATH = "data/selected_data/fc_fc_pairs.csv" # CSV to read and run, with full path from the root folder
-NEW_DIR = 'FC_FC_316pairs_SN/' # !!! Save pkls in 'statistical_results/' + NEW_DIR. Need to add '/' at the end
+FILE_PATH = "data/selected_data/paper_draw_0528.csv" # CSV to read and run, with full path from the root folder
+NEW_DIR = 'Test/' # !!! Save pkls in 'statistical_results/' + NEW_DIR. Need to add '/' at the end
 W_KEY = 'sn' # Weighting keys: unit, sn, rsn. Choose ONE for per run
 
 # Not necessary to change
@@ -60,10 +61,10 @@ fc_inlst = os.listdir('data/selected_data/FC')
 fc_inlst_a = os.listdir('data/selected_data/FC_add')
 
 # Start to draw (call 'main_all.py' for each fc_id)
-
+# %%
 for p in pairs:
     ts = get_time()
-    fc_id = p[0]
+    fc_id = str(p[0])
     em_ids = p[1:]
 
     logging.info(str(count) + ' / ' + str(total))
@@ -91,7 +92,7 @@ for p in pairs:
 
     for em_id in em_ids:
         try:
-            shutil.copy2(path + 'FC/'+ em_id + '.swc', path + 'TEMP_EM/' + em_id + '.swc')
+            shutil.copy2(path + 'EM_Original/'+ em_id + '.swc', path + 'TEMP_EM/' + em_id + '.swc')
         except:
             s = 'NOT FOUND: ' + em_id + '.swc'
             logging.info(s)
@@ -118,7 +119,7 @@ for p in pairs:
     d = str(tf - ts)[:-7]
     d_log = '   Duration: ' + d
     logging.info(d_log)
-    print()
+
 
     # Clear files in TEMP_FC and TEMP_EM for next fc_id
     try:
@@ -135,3 +136,4 @@ for p in pairs:
 logging.info('Finished!')
 d = '   Total Duration: ' + str(tf-T)
 logging.info(d)
+# %%

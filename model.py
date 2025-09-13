@@ -459,3 +459,71 @@ def CNN_big(input_size=(256,256,3)):
     model.compile(optimizer='Adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
     model.summary()
     return model
+
+
+
+
+
+
+
+
+
+# %% 2025/09/13 尝试使用MVCNN观察结果是否会更好
+def CNN_multi_viewpool(input_size=(50, 50, 3), num_views=3, pool_type="max"):
+    """
+    num_views: 视角数量
+    pool_type: "max" 或 "avg"
+    """
+    inputs = [Input(shape=input_size, name=f"view{i+1}") for i in range(num_views)]
+
+    def build_single_branch(x):
+        x = Conv2D(32, (3, 3), padding='same')(x)
+        x = BatchNormalization()(x)
+        x = Activation("gelu")(x)
+
+        x = Conv2D(32, (3, 3), padding='same')(x)
+        x = BatchNormalization()(x)
+        x = Activation("gelu")(x)
+        x = MaxPool2D(pool_size=(2, 2))(x)
+
+        x = Conv2D(64, (3, 3), padding='same')(x)
+        x = BatchNormalization()(x)
+        x = Activation("gelu")(x)
+
+        x = Conv2D(64, (3, 3), padding='same')(x)
+        x = BatchNormalization()(x)
+        x = Activation("gelu")(x)
+        x = MaxPool2D(pool_size=(2, 2))(x)
+
+        x = Dropout(0.5)(x)
+        return Flatten()(x)
+
+    # 每个视角 embedding
+    features = [build_single_branch(inp) for inp in inputs]
+
+    # 堆叠成 (batch, num_views, feature_dim)
+    stacked = tf.stack(features, axis=1)
+
+    # view pooling
+    if pool_type == "max":
+        pooled = tf.reduce_max(stacked, axis=1)   # (batch, feature_dim)
+    elif pool_type == "avg":
+        pooled = tf.reduce_mean(stacked, axis=1)  # (batch, feature_dim)
+    else:
+        raise ValueError("pool_type 必须是 'max' 或 'avg'")
+
+    # 分类器
+    x = Dropout(0.5)(pooled)
+    x = Dense(256)(x)
+    x = BatchNormalization()(x)
+    x = Activation("gelu")(x)
+    output = Dense(1, activation="sigmoid")(x)
+
+    model = Model(inputs=inputs, outputs=output)
+    model.compile(
+        optimizer=RMSprop(learning_rate=0.001),
+        loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False),
+        metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")]
+    )
+    model.summary()
+    return model

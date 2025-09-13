@@ -10,7 +10,8 @@ from collections import defaultdict
 
 model_path = './Annotator_Model/Annotator_D1-D6_0.h5'   # 模型存放路徑
 save_folder_path = './result/'                       # 模型預測結果存放路徑
-unlabel_path_01 = './data/statistical_results/three_view_pic_rk10' # 使用者上傳的神經做圖資料夾
+# unlabel_path_01 = './data/statistical_results/three_view_pic_rk10' # 使用者上傳的神經做圖資料夾
+unlabel_path_01 = './data/statistical_results/Test' # 使用者上傳的神經做圖資料夾
 
 if not os.path.exists(save_folder_path):
     os.makedirs(save_folder_path)
