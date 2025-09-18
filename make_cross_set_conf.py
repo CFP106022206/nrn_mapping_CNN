@@ -27,10 +27,10 @@ from sklearn.model_selection import KFold
 # Mode 1: 用所有標注data做cross validation
 # Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
 
-mode = 2
+mode = 1
 mode2_file_path = './data/nblast_D2+D5+D6_60as1.csv'
 
-cross_validation_num = 5
+cross_validation_num = 10
 
 
 seed = 10                       # Random Seed
