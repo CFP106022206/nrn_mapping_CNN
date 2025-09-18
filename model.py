@@ -459,3 +459,242 @@ def CNN_big(input_size=(256,256,3)):
     model.compile(optimizer='Adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
     model.summary()
     return model
+
+
+
+
+# %% 2025/09/13 嘗試 MVCNN
+
+def MVCNN_Siamese(input_size=(50, 50, 3), pool_type="max"):
+    """
+    MVCNN + Siamese Network
+    输入: 两组图片 (FC, EM)，每组是50x50x3的图像（三个视角叠在RGB通道）
+    输出: 二分类结果（是否同类）
+    """
+    
+    # 定义两个输入
+    inputs = [Input(shape=input_size, name="FC"), 
+              Input(shape=input_size, name="EM")]
+    
+    # 定义共享的卷积层（用于处理每个视角）
+    shared_conv1 = Conv2D(32, (3, 3), padding='same', name="conv1")
+    shared_bn1 = BatchNormalization(name="bn1")
+    shared_act1 = Activation("gelu", name="ac1")
+    shared_conv2 = Conv2D(32, (3, 3), padding='same', name="conv2")
+    shared_bn2 = BatchNormalization(name='bn2')
+    shared_act2 = Activation("gelu", name='ac2')
+    shared_pool1 = MaxPool2D(pool_size=(2, 2), name='pool1')
+    shared_conv3 = Conv2D(64, (3, 3), padding='same', name='conv3')
+    shared_bn3 = BatchNormalization(name='bn3')
+    shared_act3 = Activation("gelu", name='ac3')
+    shared_conv4 = Conv2D(64, (3, 3), padding='same', name='conv4')
+    shared_bn4 = BatchNormalization(name='bn4')
+    shared_act4 = Activation("gelu", name='ac4')
+    shared_pool2 = MaxPool2D(pool_size=(2, 2), name='pool2')
+    
+    def process_single_view(view_input):
+        """处理单个视角的函数"""
+        x = shared_conv1(view_input)
+        # x = shared_bn1(x)
+        x = shared_act1(x)
+        x = shared_conv2(x)
+        # x = shared_bn2(x)
+        x = shared_act2(x)
+        x = shared_pool1(x)
+        x = shared_conv3(x)
+        # x = shared_bn3(x)
+        x = shared_act3(x)
+        x = shared_conv4(x)
+        # x = shared_bn4(x)
+        x = BatchNormalization()(x) # 针对每一个视角独立一个batch normalization层，而不使用共享参数
+        x = shared_act4(x)
+        x = shared_pool2(x)
+        x = Dropout(0.1)(x)
+        return Flatten()(x)
+    
+    def extract_multiview_features(input_image):
+        """
+        从输入图像中提取多视角特征
+        输入: (50, 50, 3) - 三个视角叠在RGB通道
+        输出: 融合后的特征向量
+        """
+        # 分离三个视角 (每个channel代表一个视角)
+        views = [Lambda(lambda x: tf.expand_dims(x[..., i], axis=-1))(input_image) 
+                 for i in range(3)]
+        
+        # 每个视角通过共享的CNN处理
+        view_features = [process_single_view(v) for v in views]
+        
+        # 堆叠视角特征: (batch, num_views, feature_dim)
+        stacked_features = Lambda(lambda x: tf.stack(x, axis=1))(view_features)
+        
+        # View Pooling: 融合多视角信息
+        if pool_type == "max":
+            pooled_features = Lambda(lambda x: tf.reduce_max(x, axis=1))(stacked_features)
+        elif pool_type == "mean":
+            pooled_features = Lambda(lambda x: tf.reduce_mean(x, axis=1))(stacked_features)
+        else:  # concatenate
+            pooled_features = Lambda(lambda x: tf.reshape(x, (tf.shape(x)[0], -1)))(stacked_features)
+        
+        return pooled_features
+    
+    # 处理两组输入
+    features_FC = extract_multiview_features(inputs[0])
+    features_EM = extract_multiview_features(inputs[1])
+    
+    # Siamese结构：合并两个特征
+    # 方法1: 使用绝对差值（对称性好）
+    # merged = Lambda(lambda x: tf.abs(x[0] - x[1]))([features_FC, features_EM])
+    
+    # 方法2: 拼接特征（保留更多信息）
+    merged = concatenate([features_FC, features_EM], axis=1)
+    
+    # 分类头
+    output = Dropout(0.3)(merged)
+    output = Dense(256)(output)
+    output = BatchNormalization()(output)
+    output = Activation("gelu")(output)
+    output = Dense(1, activation="sigmoid")(output)
+    
+    # 构建模型
+    model = Model(inputs=inputs, outputs=output)
+    
+    # # 编译模型
+    # try:
+    #     # 如果有focal loss库
+    #     model.compile(
+    #         optimizer=RMSprop(learning_rate=0.001),
+    #         loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False),
+    #         metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")]
+    #     )
+    # except:
+    #     # 使用标准的二元交叉熵
+    #     model.compile(
+    #         optimizer=RMSprop(learning_rate=0.001),
+    #         loss='binary_crossentropy',
+    #         metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")]
+    #     )
+    
+    # model.summary()
+    return model
+
+def MVCNN_Siamese_Advanced(input_size=(50, 50, 3), pool_type="max"):
+    """
+    增强版的MVCNN + Siamese Network
+    包含更多的特征融合选项和注意力机制
+    """
+    
+    # 定义两个输入
+    inputs = [Input(shape=input_size, name="FC"), 
+              Input(shape=input_size, name="EM")]
+    
+    # 定义共享的卷积层
+    def create_view_encoder():
+        """创建处理单个视角的编码器"""
+        view_input = Input(shape=(50, 50, 1))
+        
+        x = Conv2D(32, (3, 3), padding='same')(view_input)
+        x = BatchNormalization()(x)
+        x = Activation("gelu")(x)
+        x = Conv2D(32, (3, 3), padding='same')(x)
+        x = BatchNormalization()(x)
+        x = Activation("gelu")(x)
+        x = MaxPool2D(pool_size=(2, 2))(x)
+        
+        x = Conv2D(64, (3, 3), padding='same')(x)
+        x = BatchNormalization()(x)
+        x = Activation("gelu")(x)
+        x = Conv2D(64, (3, 3), padding='same')(x)
+        x = BatchNormalization()(x)
+        x = Activation("gelu")(x)
+        x = MaxPool2D(pool_size=(2, 2))(x)
+        
+        x = Conv2D(128, (3, 3), padding='same')(x)
+        x = BatchNormalization()(x)
+        x = Activation("gelu")(x)
+        x = Dropout(0.5)(x)
+        
+        x = Flatten()(x)
+        
+        return Model(view_input, x)
+    
+    # 创建共享的视角编码器
+    view_encoder = create_view_encoder()
+    
+    def extract_multiview_features_with_attention(input_image):
+        """
+        带注意力机制的多视角特征提取
+        """
+        # 分离三个视角
+        views = [Lambda(lambda x: tf.expand_dims(x[..., i], axis=-1))(input_image) 
+                 for i in range(3)]
+        
+        # 每个视角通过共享的编码器
+        view_features = [view_encoder(v) for v in views]
+        
+        # 学习视角权重（简单的注意力机制）
+        stacked_features = Lambda(lambda x: tf.stack(x, axis=1))(view_features)
+        
+        # 计算注意力权重
+        attention_scores = Dense(3, activation='softmax')(
+            Lambda(lambda x: tf.reduce_mean(x, axis=-1))(stacked_features)
+        )
+        attention_scores = Lambda(lambda x: tf.expand_dims(x, axis=-1))(attention_scores)
+        
+        # 应用注意力权重
+        weighted_features = Lambda(lambda x: x[0] * x[1])([stacked_features, attention_scores])
+        
+        # 融合
+        if pool_type == "max":
+            pooled = Lambda(lambda x: tf.reduce_max(x, axis=1))(weighted_features)
+        elif pool_type == "mean":
+            pooled = Lambda(lambda x: tf.reduce_mean(x, axis=1))(weighted_features)
+        else:  # weighted sum
+            pooled = Lambda(lambda x: tf.reduce_sum(x, axis=1))(weighted_features)
+        
+        return pooled
+    
+    # 处理两组输入
+    features_FC = extract_multiview_features_with_attention(inputs[0])
+    features_EM = extract_multiview_features_with_attention(inputs[1])
+    
+    # Siamese融合：组合多种相似度度量
+    # 绝对差值
+    diff_features = Lambda(lambda x: tf.abs(x[0] - x[1]))([features_FC, features_EM])
+    # 哈达玛积（元素积）
+    hadamard_features = Lambda(lambda x: x[0] * x[1])([features_FC, features_EM])
+    # 拼接所有特征
+    merged = concatenate([features_FC, features_EM, diff_features, hadamard_features], axis=1)
+    
+    # 更深的分类头
+    output = Dense(512)(merged)
+    output = BatchNormalization()(output)
+    output = Activation("gelu")(output)
+    output = Dropout(0.5)(output)
+    
+    output = Dense(256)(output)
+    output = BatchNormalization()(output)
+    output = Activation("gelu")(output)
+    output = Dropout(0.3)(output)
+    
+    output = Dense(1, activation="sigmoid")(output)
+    
+    # 构建模型
+    model = Model(inputs=inputs, outputs=output)
+    
+    # 编译模型
+    try:
+        model.compile(
+            optimizer=RMSprop(learning_rate=0.001),
+            loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False),
+            metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")]
+        )
+    except:
+        model.compile(
+            optimizer=RMSprop(learning_rate=0.001),
+            loss='binary_crossentropy',
+            metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")]
+        )
+    
+    model.summary()
+    return model

@@ -11,9 +11,9 @@ import sys
 
 
 
-model_path = './Fine_Tune_Model/'   # 加载模型路径
-model_name = 'Fine_Tune_Model_150K_'     # 模型名称 不包含后缀数字
-save_folder_path = './result/FC-FC_pairs/'
+model_path = './Annotator_Model/'   # 加载模型路径
+model_name = 'Annotator_D1-D6_'     # 模型名称 不包含后缀数字
+save_folder_path = './preTrain_label/'
 
 if not os.path.exists(save_folder_path):
     os.makedirs(save_folder_path)
@@ -23,12 +23,13 @@ if not os.path.exists(save_folder_path):
 
 #傳遞參數模式
 single_model = int(sys.argv[1])
+# single_model = 9
 
 # use_model = [5, 6] # [a,b]欲使用之模型編號，從a開始用到到b
 use_model = [single_model, single_model+1]
 
 # 对新数据集进行标注
-unlabel_path_01 = 'data/statistical_results/FC_FC_316pairs_SN'
+unlabel_path_01 = './data/statistical_results/pre_train_map/'
 # unlabel_path_02 = './data/statistical_results/three_view_pic_rk10to20'
 
 # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
@@ -53,10 +54,11 @@ print('Used model:', use_model)
 # %%
 
 # 分段完成
-sub_length = 20000000
+need_merge = False
+sub_length = 5500
 
 if len(file_path) > sub_length:
-    
+    need_merge = True
     num = 0
     while num * sub_length < len(file_path):
         start_idx = int(num * sub_length)
@@ -104,7 +106,7 @@ if len(file_path) > sub_length:
 
         label_df = pd.DataFrame({'fc_id': fc_nrn_lst, 'em_id': em_nrn_lst, 'model_predict': result_avg.flatten(), 'binary_label': result_bin.flatten(), 'pred_std': result_std.flatten()})
 
-        label_df.to_csv(save_folder_path+'labeled_'+str(num)+'.csv', index=False)
+        label_df.to_csv(save_folder_path+model_filename+'_'+str(num)+'.csv', index=False)
         print('\nSave Num:', num)
         del label_df, data_lst, data_dict
         num += 1
@@ -147,7 +149,7 @@ else:
     print('Model predict time used:', time.time()-st, 's')
 
     predict_np = np.array(predict_lst)
-    
+
     result_avg = np.mean(predict_np, axis=0)
     result_std = np.std(predict_np, axis=0)
     result_bin = np.where(result_avg > 0.5, 1, 0)
@@ -160,7 +162,30 @@ else:
     print('Program Completed.')
 # %%
 # # 受限於電腦RAM不足，只能一個一個模型跑的情況下，需要額外的步驟將label.csv合併
-# model_name = 'Fine_Tune_Model_150K_'
+# # 分段完成的部分需要先合併
+# def simple_merge(subfile_name, folder_path):
+#     file_lst = os.listdir(folder_path)  #先列出文件夾下所有檔案
+#     file_lst = [filename for filename in file_lst if subfile_name in filename] #篩選出需要合併的檔案
+#     file_lst = sorted(file_lst)
+
+#     merge_df = None
+#     for filename in file_lst:
+#         df = pd.read_csv(os.path.join(folder_path, filename))
+#         if merge_df is None:
+#             merge_df = df
+#         else:
+#             merge_df = pd.concat([merge_df, df], ignore_index=True)
+    
+#     merge_df.to_csv(os.path.join(folder_path, subfile_name +'.csv'), index=False)
+
+
+# if need_merge:
+#     model_name = 'Annotator_D1-D6_'
+
+#     # 先將各個模型結果合併
+#     for i in range(10):
+#         simple_merge(model_name + str(i), save_folder_path)
+# model_name = 'Annotator_D1-D6_'
 
 # file_lst = os.listdir(save_folder_path)
 # file_lst = [os.path.join(save_folder_path, filename) for filename in file_lst if model_name in filename]

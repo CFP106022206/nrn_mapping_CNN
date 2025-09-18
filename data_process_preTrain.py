@@ -26,7 +26,7 @@ from tqdm import tqdm
 
 # %%
 # self-labeling pkl path
-map_dict_folder = './data/statistical_results/pre_train_map'# pre-train使用的全部三视图位置
+map_dict_folder = './data/statistical_results/pre_train_map/'# pre-train使用的全部三视图位置
 
 initial_lr = 0.001
 train_epochs = 300
@@ -42,10 +42,10 @@ tf.random.set_seed(seed)
 
 save_model_name  = 'pre_train_model_150K'
 
-train_scale = 150000    #儘量偶數，因為要一半pos, 一半neg
+train_scale = 150000    #儘量偶數，因為要一半pos, 一半neg 目前大約有21000+數據
 
 # load train, test
-label_table_train = pd.read_csv('./preTrain_label/preTrain_label.csv')
+label_table_train = pd.read_csv('./preTrain_label/preTrain_label_Annotator.csv')
 # 平衡 neg 和 pos 並優先選擇std小的
 neg_idx = label_table_train[label_table_train['label']<0.5].index
 pos_idx = label_table_train[label_table_train['label']>=0.5].index
@@ -324,12 +324,12 @@ print('y_val shape:', len(y_val))
 
 # %%
 
-from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
+from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared, MVCNN_Siamese
 # from tensorflow.keras.utils import plot_model
 
 resolutions = x_train_FC.shape[1:]
 
-cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
+cnn = MVCNN_Siamese(input_size=(resolutions[0],resolutions[1],resolutions[2]))
 # cnn = CNN_deep((resolutions[0],resolutions[1],resolutions[2]))
 
 cnn.compile(optimizer=AdamW(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])

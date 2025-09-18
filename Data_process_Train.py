@@ -34,7 +34,7 @@ from tqdm import tqdm
 
 # %%
 num_splits = int(sys.argv[1])   # bash 自动运行程序传递参数
-# num_splits = 9 #0~9, or 99 for whole nBLAST testing set
+# num_splits = 0 #0~9, or 99 for whole nBLAST testing set
 
 '''
 使用冠廷的檔案寫法，因冠廷的檔案全部混在同一個黃瓜中.
@@ -48,7 +48,7 @@ grid75_path = './data/D1-D5_grid75_sn'
 
 scheduler_exp = 0#1.5      #學習率調度器的約束力指數，越小約束越強
 initial_lr = 0.00001
-train_epochs = 300
+train_epochs = 100
 
 
 seed = 3407
@@ -449,13 +449,13 @@ print('y_test shape:', len(y_test))
 
 # %%
 
-from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared
+from model import CNN_best, CNN_deep, CNN_shared, CNN_focal, CNN_L2shared, MVCNN_Siamese
 # from tensorflow.keras.utils import plot_model
 
 resolutions = x_train_FC.shape[1:]
 
-cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
-# cnn = CNN_deep((resolutions[0],resolutions[1],resolutions[2]))
+cnn = MVCNN_Siamese((resolutions[0],resolutions[1],resolutions[2]))
+# cnn = CNN_shared((resolutions[0],resolutions[1],resolutions[2]))
 
 # plot_model(cnn, './Figure/Model_Structure.png', show_shapes=True)
 if not scheduler_exp:
@@ -479,7 +479,7 @@ reduce_lr = tf.keras.callbacks.LearningRateScheduler(scheduler,verbose=1)
 checkpoint = ModelCheckpoint('./Annotator_Model/' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
 
 
-early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=1, mode="auto")
+# early_stopping = EarlyStopping(monitor='val_loss', patience=50, verbose=1, mode="auto")
 
 
 if scheduler_exp:
@@ -488,6 +488,7 @@ else:
     callbacks = [checkpoint]
 print('\nUse Callbacks:', callbacks)
 
+cnn.summary()
 
 # Model.fit
 
