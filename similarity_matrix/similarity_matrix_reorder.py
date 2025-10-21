@@ -16,7 +16,7 @@ similarity = pd.read_csv(os.path.join(folder_path, 'FTmodel_predict.csv'))
 df = pd.DataFrame()
 
 # 构建字典，将fc_id映射到唯一的数字
-# 讀預設順序
+# 讀取預設順序
 lpu_lst = ['ALLN','PN','KC','FB']
 fc_id_lst, lpu_num = [], []
 for lpu in lpu_lst:
@@ -27,7 +27,7 @@ fc_id2index = {fc_id: index for index, fc_id in enumerate(fc_ids['fc_id'])}
 
 df['fc_id'] = fc_ids['fc_id']
 df['index'] = df['fc_id'].map(fc_id2index)
-
+# %%
 # 過濾掉不在預設順序的
 similarity = similarity[similarity['fc_id'].isin(fc_ids['fc_id'])]
 similarity = similarity[similarity['em_id'].isin(fc_ids['fc_id'])]
