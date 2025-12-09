@@ -10,7 +10,7 @@ import os
 folder_path = '/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/'
 
 # 全部資料
-similarity = pd.read_csv(os.path.join(folder_path, 'FTmodel_predict.csv'))
+similarity = pd.read_csv(os.path.join(folder_path, 'FT150K_predict.csv'))
 
 # 建构总数据表
 df = pd.DataFrame()
@@ -30,7 +30,7 @@ df['index'] = df['fc_id'].map(fc_id2index)
 # %%
 # 過濾掉不在預設順序的
 similarity = similarity[similarity['fc_id'].isin(fc_ids['fc_id'])]
-similarity = similarity[similarity['em_id'].isin(fc_ids['fc_id'])]
+similarity = similarity[similarity['em_id'].isin(fc_ids['fc_id'])]  #方便起見，此處的em_id實際上是fc_id
 
 # 获取矩阵的大小
 matrix_size = len(fc_ids)
@@ -42,7 +42,7 @@ similarity_matrix = np.zeros((matrix_size, matrix_size))
 for _, row in similarity.iterrows():
     row_index = fc_id2index[row['fc_id']]
     col_index = fc_id2index[row['em_id']]
-    similarity_matrix[row_index, col_index] = row['score']
+    similarity_matrix[row_index, col_index] = row['model_predict_avg']
 
 # 因為模型交換輸入的結果會有細微差異，也可以使用平均讓矩陣對稱
 similarity_matrix = (similarity_matrix + similarity_matrix.T) / 2
@@ -110,10 +110,6 @@ def reorder_matrix(matrix, fc_id_lst):
     reordered_matrix = reordered_matrix[:, lpu]
     return reordered_matrix, reordered_fc_id2index
 
-# # 直接对完整的矩阵进行重排序
-# reordered_matrix, reordered_fc_id2index = reorder_matrix(similarity_matrix, fc_ids['fc_id'].tolist())
-# df['reordered_index'] = df['fc_id'].map(reordered_fc_id2index)
-
 # 分别对每个脑区进行重排序
 lpu_matrix_lst = [] # 分离每个脑区部分的矩阵
 idx=0
@@ -137,11 +133,11 @@ for i, reordered_index in enumerate(reordered_fc_id2index_lst):
     reordered_fc_id2index.update({fc_id: idx+start_pos[i] for fc_id, idx in reordered_index.items()})
 
 # 将 reordered_fc_id2index key换成原始矩阵位置
-reordered_idx2fc_idx = {v : fc_id2index[k] for k, v in reordered_fc_id2index.items()}
-df['reordered_index'] = df['index'].map(reordered_idx2fc_idx)
+fc_idx2reordered_idx = {fc_id2index[k] : v for k, v in reordered_fc_id2index.items()}   # original_id : reordered_id
+df['reordered_index'] = df['index'].map(fc_idx2reordered_idx)
 
 # 重新排序整个矩阵
-reordered_idx = list(reordered_idx2fc_idx.values())
+reordered_idx = list(fc_idx2reordered_idx.keys())
 reordered_matrix = similarity_matrix.copy()
 reordered_matrix = reordered_matrix[reordered_idx, :]
 reordered_matrix = reordered_matrix[:, reordered_idx]
@@ -187,6 +183,9 @@ plt.show()
 # plt.yticks(np.arange(0, 317, 2))
 # plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_reorder_MEGA.png', dpi=400, bbox_inches='tight')
 # plt.show()
+
+# %%
+
 '''
 1、对其顺序(FB)画重排序之前之后对比的矩阵
 2、对NBLAST的矩阵也按照同样的顺序画出来
@@ -279,6 +278,38 @@ nblast_matrix = np.load(os.path.join(folder_path, 'NBLAST_316.npy'))
 # 歸一化
 nblast_matrix = (nblast_matrix - np.min(nblast_matrix)) / (np.max(nblast_matrix) - np.min(nblast_matrix))
 
+# 对NBLAST结果做重排序
+lpu_matrix_lst = [] # 分离每个脑区部分的矩阵
+idx=0
+for num in lpu_num:
+    lpu_matrix_lst.append(nblast_matrix[idx:idx+num, idx:idx+num])
+    idx += num
+# 排序
+reordered_matrix_lst, reordered_fc_id2index_lst = [], []
+for i, lpu_matrix in enumerate(lpu_matrix_lst):
+    reordered_matrix, reordered_fc_id2index = reorder_matrix(lpu_matrix, fc_id_lst[i]['fc_id'].tolist())
+    reordered_matrix_lst.append(reordered_matrix)
+    reordered_fc_id2index_lst.append(reordered_fc_id2index)
+
+# 合并 fc_id2index
+reordered_fc_id2index = {}
+# 合并时需要考虑reordered index 在整个矩阵中的位置需要加上脑区原本位置的偏移
+start_pos = [0]
+for num in lpu_num[:-1]:
+    start_pos.append(start_pos[-1] + num)
+for i, reordered_index in enumerate(reordered_fc_id2index_lst):
+    reordered_fc_id2index.update({fc_id: idx+start_pos[i] for fc_id, idx in reordered_index.items()})
+
+# 将 reordered_fc_id2index key换成原始矩阵位置
+fc_idx2reordered_idx = {fc_id2index[k] : v for k, v in reordered_fc_id2index.items()}   # original_id : reordered_id
+
+# 重新排序整个矩阵
+reordered_idx = list(fc_idx2reordered_idx.keys())
+reordered_matrix = nblast_matrix.copy()
+reordered_matrix = reordered_matrix[reordered_idx, :]
+reordered_matrix = reordered_matrix[:, reordered_idx]
+
+
 # 计算均方误差（MSE）
 mse_nblast = np.mean((nblast_matrix - ideal_matrix) ** 2)
 mae_nblast = np.mean(np.abs(nblast_matrix - ideal_matrix))
@@ -297,6 +328,14 @@ plt.yticks([45,145,216,316])
 plt.savefig('/cluster/home/ming/Project_N/nrn_mapping_CNN/similarity_matrix/similarity_matrix_NBLAST.png', dpi=300, bbox_inches='tight')
 plt.show()
 
+
+# 重排序的结果
+plt.figure(figsize=(10, 7))
+plt.imshow(reordered_matrix, cmap='magma')
+plt.colorbar(fraction=0.046, pad=0.04)
+plt.xticks([45,145,216,316])
+plt.yticks([45,145,216,316])
+plt.show()
 
 # 畫NBLAST和模型的結果對比
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
@@ -350,6 +389,72 @@ def plot_distribution(matrix, title='Distribution', save=False):
 
 plot_distribution(nblast_matrix, 'NBLAST Score Distribution', save=True)
 plot_distribution(similarity_matrix, 'Model Score Distribution', save=True)
+
+# %%
+from collections import Counter
+# 針對特別腦區例如FB畫圖並自動找出新聚類的位置
+fb_start = axis_sep[3]
+fb_end = axis_sep[4]
+# 畫出FB部分
+plt.style.use('dark_background')
+plt.figure(figsize=(8, 8))
+plt.imshow(reordered_matrix, cmap='magma')
+plt.xlim([fb_start, fb_end])
+plt.ylim([fb_end, fb_start])
+plt.xticks(np.arange(fb_start, fb_end+1, 5))
+plt.yticks(np.arange(fb_start, fb_end+1, 5))
+plt.colorbar(fraction=0.046, pad=0.04)
+plt.title('FB Similarity Matrix')
+plt.show()
+
+#找出明顯分界位置並畫線
+fb_matrix = reordered_matrix[fb_start:fb_end, fb_start:fb_end]
+# 二值化
+reordered_matrix_bi = (reordered_matrix > 0.6).astype(int)
+plt.imshow(reordered_matrix_bi, cmap='gray')
+# 在範圍內掃描從1-0的變化邊界
+#檢測寬度
+detect_range = 3
+edge_positions = []
+for i in range(fb_start, fb_end):
+    column = reordered_matrix_bi[fb_start:fb_end, i]
+    for j in range(1, len(column)-detect_range):
+        if column[j-1] == 1 and np.all(column[j:j+detect_range] == 0):
+            edge_positions.append(j)
+            break
+# 邊界是連續的，找到裡面前三個數量最多的index
+edge_positions = np.sort(edge_positions)
+edge_count = Counter(edge_positions)
+most_common_edges = edge_count.most_common(3)
+
+# FB初始端點
+edge_position_idx = [fb_start]
+for edge in most_common_edges[:2]:
+    edge_position_idx.append(edge[0] + fb_start)
+#加上末端點
+edge_position_idx.append(fb_end)
+edge_position_idx = sorted(edge_position_idx)
+print('FB cluster edge positions:', edge_position_idx)
+
+# 返回範圍內的fc_id
+fb_clustered_idx = []
+reordered_fc_id_lst = list(reordered_fc_id2index.keys())
+for i in range(len(edge_position_idx)-1):
+    start_idx = edge_position_idx[i]
+    end_idx = edge_position_idx[i+1]
+    fb_clustered_idx.append(reordered_fc_id_lst[start_idx:end_idx])
+print('FB cluster indices:', fb_clustered_idx)
+
+
+# 補齊長度
+max_len = max(len(part) for part in fb_clustered_idx)
+for i in range(len(fb_clustered_idx)):
+    while len(fb_clustered_idx[i]) < max_len:
+        fb_clustered_idx[i].append(None)
+# save to csv
+result_df = pd.DataFrame({'part1': fb_clustered_idx[0], 'part2': fb_clustered_idx[1], 'part3': fb_clustered_idx[2]})
+result_df.to_csv(os.path.join(folder_path, 'FB_clustered_parts.csv'), index=False)
+
 
 # %% binary化相似度矩陣
 def binarize(matrix, threshold):
