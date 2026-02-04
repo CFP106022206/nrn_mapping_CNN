@@ -10,225 +10,232 @@
 '''
 這個檔案使用10-fold validation規則
 '''
-# %%
-import sys
-sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
+from __future__ import annotations
+
+import os
+import random
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
-import os
-import random
 from sklearn.model_selection import KFold
 
-# %% 此档案目的为 load 最佳参数模型, 然后对yifan那边画出的未标注三视图进行标注
-# Mode 0: 不做cross validation
-# Mode 1: 用所有標注data做cross validation
-# Mode 2: 指定test data csv(用於nBLAST)做cross validation, 剩下所有不重複資料做train data
-# Mode 3: 选同一条fc有对应到比较多em的pair作为testing data, 这样做的目的是为了评估时在评估几率从高到低排序时前n名中是否有正确答案
 
-mode = 1
-mode2_file_path = './labeled_info/nblast_D2+D5+D6_50as1.csv'
-cross_validation_num = 10
-
-
-used_label = 'soft_label'   # thres0.5(confidence>0.5 label as 1), thres0.6(confidence>0.6 label as 1), soft_label(keep confidence)
-
-
-seed = 7                        # Random Seed
-
-os.environ['PYTHONHASHSEED'] = str(seed)
-random.seed(seed)
-np.random.seed(seed)
-os.environ['TF_DITERMINISTIC_OPS'] = '1'
+# -----------------------------
+# Config
+# -----------------------------
+@dataclass(frozen=True)
+class Config:
+    mode: int = 1
+    cross_validation_num: int = 10
+    used_label: str = "soft_label"  # "thres0.5" | "thres0.6" | "soft_label"
+    seed: int = 7
+    mode2_file_path: str = "./labeled_info/nblast_D2+D5+D6_50as1.csv"
+    out_dir: str = "./train_test_split"
 
 
-# Load labeled csv
-if used_label == 'thres0.5':
-    label_csv_D1 = './labeled_info/D1_20221230.csv'
-    label_csv_D2 = './labeled_info/D2_20230710.csv'
-    label_csv_D3 = './labeled_info/D3_20221230.csv'
-    label_csv_D4 = './labeled_info/D4_20230710.csv'
-    label_csv_D5 = './labeled_info/D5_20221230.csv'
-    label_csv_D6 = './labeled_info/D6_20230523.csv'
-
-elif used_label == 'thres0.6':
-    label_csv_D1 = './labeled_info/D1_20230113.csv'
-    label_csv_D2 = './labeled_info/D2_60as1.csv'
-    label_csv_D3 = './labeled_info/D3_20230113.csv'
-    label_csv_D4 = './labeled_info/D4_60as1.csv'
-    label_csv_D5 = './labeled_info/D5_60as1.csv'
-    label_csv_D6 = './labeled_info/D6_60as1.csv'
-
-elif used_label == 'soft_label':
-    label_csv_D1 = './labeled_info/D1_conf.csv'
-    label_csv_D2 = './labeled_info/D2_conf.csv'
-    label_csv_D3 = './labeled_info/D3_conf.csv'
-    label_csv_D4 = './labeled_info/D4_conf.csv'
-    label_csv_D5 = './labeled_info/D5_conf.csv'
-    label_csv_D6 = './labeled_info/D6_conf.csv'
-
-
-D1 = pd.read_csv(label_csv_D1)     # FC, EM, label
-D1.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-D2 = pd.read_csv(label_csv_D2)     # FC, EM, label
-D2.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-D3 = pd.read_csv(label_csv_D3)     # FC, EM, label
-D3.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-D4 = pd.read_csv(label_csv_D4)     # FC, EM, label
-D4.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-D5 = pd.read_csv(label_csv_D5)     # FC, EM, label
-D5.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
-
-D6 = pd.read_csv(label_csv_D6)     # FC, EM, label
-D6.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+LABEL_CSVS: Dict[str, Dict[str, str]] = {
+    "thres0.5": {
+        "D1": "./labeled_info/D1_20221230.csv",
+        "D2": "./labeled_info/D2_20230710.csv",
+        "D3": "./labeled_info/D3_20221230.csv",
+        "D4": "./labeled_info/D4_20230710.csv",
+        "D5": "./labeled_info/D5_20221230.csv",
+        "D6": "./labeled_info/D6_20230523.csv",
+    },
+    "thres0.6": {
+        "D1": "./labeled_info/D1_20230113.csv",
+        "D2": "./labeled_info/D2_60as1.csv",
+        "D3": "./labeled_info/D3_20230113.csv",
+        "D4": "./labeled_info/D4_60as1.csv",
+        "D5": "./labeled_info/D5_60as1.csv",
+        "D6": "./labeled_info/D6_60as1.csv",
+    },
+    "soft_label": {
+        "D1": "./labeled_info/D1_conf.csv",
+        "D2": "./labeled_info/D2_conf.csv",
+        "D3": "./labeled_info/D3_conf.csv",
+        "D4": "./labeled_info/D4_conf.csv",
+        "D5": "./labeled_info/D5_conf.csv",
+        "D6": "./labeled_info/D6_conf.csv",
+    },
+}
 
 
-label_table_all = pd.concat([D1, D2, D3, D4, D5, D6])   # fc_id, em_id, score, rank, label
-label_table_all.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+# -----------------------------
+# Utilities
+# -----------------------------
+def set_seed(seed: int) -> None:
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    os.environ["TF_DETERMINISTIC_OPS"] = "1"
 
 
-# 设置 KFold 参数
-kf = KFold(n_splits=cross_validation_num, shuffle=True, random_state=seed)
+def read_label_tables(used_label: str) -> Dict[str, pd.DataFrame]:
+    if used_label not in LABEL_CSVS:
+        raise ValueError(f"Unknown used_label={used_label}. Options={list(LABEL_CSVS)}")
 
-# %% 分割数据集并执行交叉验证
-if mode == 0:
-
-    # shuffle label_table_all 
-    label_table_all = label_table_all.sample(frac=1, random_state=seed).reset_index(drop=True)
-
-    # 将 label_table_all 分成两份: train and test
-    test_ratio = 0.1
-    test_size = int(label_table_all.shape[0]*test_ratio)
-
-    label_table_test = label_table_all.iloc[:test_size]
-    label_table_train = label_table_all.iloc[test_size:]
-
-    # save as csv
-    label_table_test.to_csv('./train_test_split/test_split_0_D1-D6.csv', index=False)
-    label_table_train.to_csv('./train_test_split/train_split_0_D1-D6.csv', index=False)
+    tables: Dict[str, pd.DataFrame] = {}
+    for name, path in LABEL_CSVS[used_label].items():
+        df = pd.read_csv(path)
+        df = df.drop_duplicates(subset=["fc_id", "em_id"])
+        tables[name] = df
+    return tables
 
 
-elif mode == 1:
-    i = 0
+def concat_all_tables(tables: Dict[str, pd.DataFrame]) -> pd.DataFrame:
+    df = pd.concat(list(tables.values()), ignore_index=True)
+    df = df.drop_duplicates(subset=["fc_id", "em_id"])
+    return df
 
-    for train_index, test_index in kf.split(label_table_all):
-        label_table_train = label_table_all.iloc[train_index]
-        label_table_test = label_table_all.iloc[test_index]
 
-        # save as csv
-        label_table_test.to_csv('./train_test_split/test_split_' + str(i) +'_D1-D6.csv', index=False)
-        label_table_train.to_csv('./train_test_split/train_split_' + str(i) +'_D1-D6.csv', index=False)
-        i += 1
+def ensure_out_dir(out_dir: Path) -> None:
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-elif mode == 2:
+
+def save_split(out_dir: Path, i: int, train_df: pd.DataFrame, test_df: pd.DataFrame, suffix: str = "D1-D6") -> None:
+    test_df.to_csv(out_dir / f"test_split_{i}_{suffix}.csv", index=False)
+    train_df.to_csv(out_dir / f"train_split_{i}_{suffix}.csv", index=False)
+
+
+def kfold_indices(df: pd.DataFrame, n_splits: int, seed: int):
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=seed)
+    return kf.split(df)
+
+
+def drop_by_pairs(full_df: pd.DataFrame, drop_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Remove rows in full_df whose (fc_id, em_id) appear in drop_df.
+    Avoids merge(score_x/score_y) mess.
+    """
+    key_cols = ["fc_id", "em_id"]
+    drop_keys = set(map(tuple, drop_df[key_cols].to_numpy()))
+    mask = ~full_df[key_cols].apply(tuple, axis=1).isin(drop_keys)
+    return full_df.loc[mask].reset_index(drop=True)
+
+
+def align_columns_like(df: pd.DataFrame, ref: pd.DataFrame) -> pd.DataFrame:
+    cols = [c for c in df.columns if c in ref.columns]
+    return df[cols]
+
+
+# -----------------------------
+# Modes
+# -----------------------------
+def mode0_holdout(label_all: pd.DataFrame, out_dir: Path, seed: int, test_ratio: float = 0.1) -> None:
+    label_all = label_all.sample(frac=1, random_state=seed).reset_index(drop=True)
+
+    test_size = int(len(label_all) * test_ratio)
+    test_df = label_all.iloc[:test_size].reset_index(drop=True)
+    train_df = label_all.iloc[test_size:].reset_index(drop=True)
+
+    save_split(out_dir, 0, train_df, test_df)
+
+
+def mode1_kfold(label_all: pd.DataFrame, out_dir: Path, n_splits: int, seed: int) -> None:
+    for i, (train_idx, test_idx) in enumerate(kfold_indices(label_all, n_splits, seed)):
+        train_df = label_all.iloc[train_idx].reset_index(drop=True)
+        test_df = label_all.iloc[test_idx].reset_index(drop=True)
+        save_split(out_dir, i, train_df, test_df)
+
+
+def mode2_custom_test_kfold(
+    label_all: pd.DataFrame,
+    tables: Dict[str, pd.DataFrame],
+    out_dir: Path,
+    n_splits: int,
+    seed: int,
+    mode2_file_path: str,
+) -> None:
     test_table = pd.read_csv(mode2_file_path)
+    test_table = align_columns_like(test_table, label_all)
 
-    # 使用label_table_all的列名来筛选label_table中的列, 保留和label_table_all 一樣的列
-    selected_columns = [col for col in test_table.columns if col in label_table_all.columns]
-    test_table = test_table[selected_columns]
-    
-    # test_table label有誤,用 lebal_table_all 修正
-    test_table = test_table.merge(label_table_all, on=['fc_id', 'em_id'], how='inner')
-    test_table = test_table.rename(columns={'score_y':'score', 'label_y':'label'}).drop(columns=['score_x','label_x'])
+    # 用 label_all 校正 label/score：只保留在 label_all 裡存在的 pairs
+    test_table = test_table.merge(label_all, on=["fc_id", "em_id"], how="inner", suffixes=("_in", ""))
+    # 最終只保留 label_all 的 score/label 欄位
+    keep_cols = list(label_all.columns)
+    test_table = test_table[keep_cols].drop_duplicates(subset=["fc_id", "em_id"]).reset_index(drop=True)
 
-    test_table.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+    # 分離 D2+D6 與 D5，讓 KFold 更均勻
+    d2d6 = pd.concat([tables["D2"], tables["D6"]], ignore_index=True)
+    test_table_d2 = test_table.merge(d2d6[["fc_id", "em_id"]], on=["fc_id", "em_id"], how="inner")
+    test_table_d5 = test_table.merge(tables["D5"][["fc_id", "em_id"]], on=["fc_id", "em_id"], how="inner")
 
-    #2023/8/12 添加, 分離出D2和D5的test data, 保證在做KFold時均勻
-    test_table_D2 = test_table.merge(pd.concat([D2,D6], ignore_index=True), on=['fc_id', 'em_id'], how='inner')
-    test_table_D2 = test_table_D2.rename(columns={'score_x':'score', 'label_x':'label'}).drop(columns=['score_y','label_y'])
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
-    test_table_D5 = test_table.merge(D5, on=['fc_id', 'em_id'], how='inner')
-    test_table_D5 = test_table_D5.rename(columns={'score_x':'score', 'label_x':'label'}).drop(columns=['score_y','label_y'])
+    d2_splits = [test_table_d2.iloc[idx].reset_index(drop=True) for _, idx in kf.split(test_table_d2)]
+    d5_splits = [test_table_d5.iloc[idx].reset_index(drop=True) for _, idx in kf.split(test_table_d5)]
 
+    for i in range(n_splits):
+        test_df = pd.concat([d2_splits[i], d5_splits[i]], ignore_index=True).drop_duplicates(subset=["fc_id", "em_id"])
+        train_df = drop_by_pairs(label_all, test_df)
 
-    def kfold_split(test_table):
-
-        test_table_lst = []
-
-        # 使用 KFold 分出test data, train data會是label_table_all 剔除 test data
-        for train_index, test_index in kf.split(test_table):
-            test_table_lst.append(test_table.iloc[test_index])
-
-        return test_table_lst
-
-    # 分開處理D2和D5 將他們分別分成三份
-    D2_test_lst = kfold_split(test_table_D2)
-    D5_test_lst = kfold_split(test_table_D5)
-
-    # 將分別分好三份的D2和D5的test data合併
-    for i in range(len(D2_test_lst)):
-        label_table_test = pd.concat([D2_test_lst[i], D5_test_lst[i]], ignore_index=True)
-
-        # 創建一個輔助列'Merge', 表示是僅 label_table_all 原有的還是同時在test_tabl中也出現
-        label_table_merged = label_table_all.merge(label_table_test, on=['fc_id', 'em_id'], how='left', indicator=True)
-        # 从csv2中删除交集'Both'的行, 刪除新增的輔助列label
-        label_table_cleaned = label_table_merged[label_table_merged['_merge'] == 'left_only'].drop(columns='_merge')
-
-        # 重命名列
-        label_table_cleaned = label_table_cleaned.rename(columns={'score_x': 'score', 'label_x': 'label'})
-
-        # 刪除不需要的列
-        label_table_cleaned = label_table_cleaned.drop(columns=['score_y', 'label_y'])
-
-        # save as csv
-        label_table_test.to_csv('./train_test_split/test_split_' + str(i) +'_D1-D6.csv', index=False)
-        label_table_cleaned.to_csv('./train_test_split/train_split_' + str(i) +'_D1-D6.csv', index=False)
+        save_split(out_dir, i, train_df, test_df)
 
 
-elif mode == 3:
-    # 针对label_table_all中的pair，統計相同的fc_id有多少個pair
-    fc_id_dict = {}
+def mode3_fc_heavy_test(label_all: pd.DataFrame, out_dir: Path, seed: int, approx_total_test_pairs: int = 100) -> None:
 
-    for index, row in label_table_all.iterrows():
-        if row['fc_id'] in fc_id_dict:
-            fc_id_dict[row['fc_id']] += 1   # 如果fc_id已经在字典中，就在对应的value(pair數量)上加1
-        else:
-            fc_id_dict[row['fc_id']] = 1
+    fc_counts = label_all.groupby("fc_id").size().sort_values(ascending=False)
 
+    test_tables: List[pd.DataFrame] = []
+    total = 0
 
-    # 依value 大小排序
-    # fc_id_dict = dict(sorted(fc_id_dict.items(), key=lambda item: item[1], reverse=True))
-
-    # 篩選出約 100 條 test data
     print("\nTest set's fc_id / Number of pairs")
-    num = 0
-    test_table_lst= []
-    for key in fc_id_dict:
-        print(key, fc_id_dict[key])   # 将fc_id_dict中每个key对应的value长度print出
-        test_table = label_table_all[label_table_all['fc_id'] == key]
-        # 檢查test_tabel中是否有label=1
-        if 1 in test_table['label'].tolist():
-            # 找到 有1 所在的那一行，這一步是為了保證test_tabel中至少有一個positive
-            test_table_pos = test_table[test_table['label'] == 1]
-            # 保留第一個
-            test_table_pos = test_table_pos.iloc[0:1]
-            #shuffle test_table
-            test_table_shuffle = test_table.sample(frac=1, random_state=seed)
-            # 將一半隨機放進test_tabel
-            test_table = test_table_shuffle[:len(test_table)//1]
-            # 加回test_tabel_pos，保證至少有一個positive在test中
-            test_table = pd.concat([test_table, test_table_pos], ignore_index=True)
+    for fc_id, cnt in fc_counts.items():
+        print(fc_id, int(cnt))
+        fc_df = label_all[label_all["fc_id"] == fc_id].copy()
 
-            test_table.drop_duplicates(subset=['fc_id','em_id'], inplace=True)
+        # 至少要有一個 positive 才納入
+        if (fc_df["label"] == 1).any():
+            pos_one = fc_df[fc_df["label"] == 1].iloc[:1]
 
-            test_table_lst.append(test_table)
-            num += len(test_table)
-        
-        if num > 100:
+            # shuffle
+            fc_df = fc_df.sample(frac=1, random_state=seed).reset_index(drop=True)
+
+            half = max(1, len(fc_df) // 2)
+            fc_df = pd.concat([fc_df.iloc[:half], pos_one], ignore_index=True)
+            fc_df = fc_df.drop_duplicates(subset=["fc_id", "em_id"]).reset_index(drop=True)
+
+            test_tables.append(fc_df)
+            total += len(fc_df)
+
+        if total >= approx_total_test_pairs:
             break
-    
-    # 將test_table_lst合併
-    label_table_test = pd.concat(test_table_lst, ignore_index=True)
-    # 分离出 train data
-    label_table_train = label_table_all.merge(label_table_test, on=['fc_id', 'em_id'], how='left', indicator=True)
-    label_table_train = label_table_train[label_table_train['_merge'] == 'left_only'].drop(columns=['score_y', 'label_y', '_merge'])
-    label_table_train = label_table_train.rename(columns={'score_x': 'score', 'label_x': 'label'})
 
-    # save as csv
-    label_table_test.to_csv('./train_test_split/test_split_0_D1-D6.csv', index=False)
-    label_table_train.to_csv('./train_test_split/train_split_0_D1-D6.csv', index=False)
-# %%
+    test_df = pd.concat(test_tables, ignore_index=True).drop_duplicates(subset=["fc_id", "em_id"]).reset_index(drop=True)
+    train_df = drop_by_pairs(label_all, test_df)
+
+    save_split(out_dir, 0, train_df, test_df)
+
+
+# -----------------------------
+# Main
+# -----------------------------
+def main() -> None:
+    cfg = Config()
+    set_seed(cfg.seed)
+
+    out_dir = Path(cfg.out_dir)
+    ensure_out_dir(out_dir)
+
+    tables = read_label_tables(cfg.used_label)
+    label_all = concat_all_tables(tables)
+
+    if cfg.mode == 0:
+        mode0_holdout(label_all, out_dir, cfg.seed)
+    elif cfg.mode == 1:
+        mode1_kfold(label_all, out_dir, cfg.cross_validation_num, cfg.seed)
+    elif cfg.mode == 2:
+        mode2_custom_test_kfold(label_all, tables, out_dir, cfg.cross_validation_num, cfg.seed, cfg.mode2_file_path)
+    elif cfg.mode == 3:
+        mode3_fc_heavy_test(label_all, out_dir, cfg.seed)
+    else:
+        raise ValueError(f"Unknown mode={cfg.mode}")
+
+
+if __name__ == "__main__":
+    main()
+
