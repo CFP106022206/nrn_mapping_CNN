@@ -70,12 +70,11 @@ def load_swc(path: str | Path) -> Swc:
         raise ValueError(f"{path.name}: xyz shape invalid: {xyz.shape}")
 
     return Swc(nid=nid, ntype=ntype, xyz=xyz, radius=radius, parent=parent)
+
 def load_swc_fast(path: str | Path) -> Swc:
-    '''
-    quick loader
-    '''
     path = Path(path)
-    lines = []
+    buf = []
+
     with path.open("r", encoding="utf-8", errors="ignore") as f:
         for raw in f:
             line = raw.strip()
@@ -86,24 +85,24 @@ def load_swc_fast(path: str | Path) -> Swc:
             # skip header lines containing letters
             if any(("A" <= ch <= "Z") or ("a" <= ch <= "z") for ch in line):
                 continue
-            lines.append(line.replace(",", " "))
+            buf.append(line.replace(",", " "))
 
-    if not lines:
+    if not buf:
         raise ValueError(f"{path.name}: no numeric SWC rows found")
 
-    arr = np.loadtxt(StringIO("\n".join(lines)), dtype=np.float64)
-    if arr.ndim == 1:
-        arr = arr[None, :]
-    if arr.shape[1] < 7:
-        raise ValueError(f"{path.name}: expected >=7 cols, got {arr.shape[1]}")
+    # fromstring 比 loadtxt 更快
+    data = np.fromstring(" ".join(buf), sep=" ", dtype=np.float64)
+    if data.size % 7 != 0:
+        # 有些 swc 行可能有额外列
+        raise ValueError(f"{path.name}: parsed values not divisible by 7 (got {data.size})")
 
-    arr = arr[:, :7]
+    arr = data.reshape(-1, 7)
+
     nid = arr[:, 0].astype(np.int32, copy=False)
     ntype = arr[:, 1].astype(np.int16, copy=False)
     xyz = arr[:, 2:5].astype(np.float32, copy=False)
     radius = arr[:, 5].astype(np.float32, copy=False)
     parent = arr[:, 6].astype(np.int32, copy=False)
-
     return Swc(nid=nid, ntype=ntype, xyz=xyz, radius=radius, parent=parent)
 
 def _build_parent_index(nid: np.ndarray) -> dict[int, int]:

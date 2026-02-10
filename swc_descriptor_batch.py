@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import argparse
 from pathlib import Path
 import numpy as np
 import pandas as pd # need pyarrow for parquet support in pandas
@@ -32,6 +33,8 @@ def batch_run(input_dir: str | Path, out_dir: str | Path, source: str='FC', recu
     eigvecs_list = []
 
     files = list(iter_swc_files(input_dir, recursive=recursive))
+    files = sorted(files, key=lambda p: p.as_posix())
+
     if not files:
         raise FileNotFoundError(f"No .swc found under {input_dir}")
 
@@ -72,6 +75,7 @@ def batch_run(input_dir: str | Path, out_dir: str | Path, source: str='FC', recu
 
     np.save(out_dir / f"centroids_{source}.npy", df[["cx", "cy", "cz"]].to_numpy(np.float32))
     np.save(out_dir / f"eigvals_ratio_{source}.npy", df[["r11", "r21", "r31"]].to_numpy(np.float32))
+    np.save(out_dir / f"neuron_ids_{source}.npy", df["neuron_id"].to_numpy())
 
     if errors:
         err_df = pd.DataFrame(errors)
@@ -82,14 +86,14 @@ def batch_run(input_dir: str | Path, out_dir: str | Path, source: str='FC', recu
     print(f" Saved: {parquet_path}")
     return parquet_path
 
-
+# %%
 if __name__ == "__main__":
-    import argparse
 
     # 默認運行參數
-    input_path = "./data/SWC/EM"
-    output_path = "./data/descriptors_EM"
     source = "EM"
+    input_path = "./data/SWC/"+source
+    output_path = "./data/descriptors_"+source
+
 
 
     ap = argparse.ArgumentParser()
@@ -107,3 +111,5 @@ if __name__ == "__main__":
         recursive=not args.no_recursive,
         fail_fast=args.fail_fast,
     )
+
+# %%

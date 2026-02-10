@@ -15,27 +15,34 @@ class SourceDesc:
     source: str
     centroids: np.ndarray  # (N,3) float32
     ratios2d: np.ndarray   # (N,2) float32 -> [r21, r31]
-
+    eigvecs: np.ndarray    # (N,3,3) float32
 
 def load_source(out_dir: str | Path, source: str) -> SourceDesc:
     out_dir = Path(out_dir)
 
     cent_path = out_dir / f"centroids_{source}.npy"
     ratio_path = out_dir / f"eigvals_ratio_{source}.npy"
+    eigvecs_path = out_dir / f"eigvecs_{source}.npy"
 
     if not cent_path.exists():
         raise FileNotFoundError(f"Missing {cent_path}")
     if not ratio_path.exists():
         raise FileNotFoundError(f"Missing {ratio_path}")
+    if not eigvecs_path.exists():
+        raise FileNotFoundError(f"Missing {eigvecs_path}")
 
     centroids = np.load(cent_path).astype(np.float32)
     ratios = np.load(ratio_path).astype(np.float32)
+    eigvecs = np.load(eigvecs_path).astype(np.float32)
 
     if centroids.ndim != 2 or centroids.shape[1] != 3:
         raise ValueError(f"{cent_path} invalid shape: {centroids.shape}")
 
     if ratios.ndim != 2:
         raise ValueError(f"{ratio_path} invalid shape: {ratios.shape}")
+
+    if eigvecs.ndim != 3 or eigvecs.shape[1:] != (3, 3):
+        raise ValueError(f"{eigvecs_path} invalid shape: {eigvecs.shape}")
 
     # Accept (N,3)=[r11,r21,r31] OR (N,2)=[r21,r31]
     if ratios.shape[1] == 3:
@@ -45,14 +52,14 @@ def load_source(out_dir: str | Path, source: str) -> SourceDesc:
     else:
         raise ValueError(f"{ratio_path} expected (N,3) or (N,2), got {ratios.shape}")
 
-    return SourceDesc(source=source, centroids=centroids, ratios2d=ratios2d)
+    return SourceDesc(source=source, centroids=centroids, ratios2d=ratios2d, eigvecs=eigvecs)
 
-
-def candidate_pairs_by_centroid_distance( cent_a: np.ndarray, cent_b: np.ndarray,
+# 利用質心距離進行第一步過濾
+def candidate_pairs_by_centroid_distance(cent_a: np.ndarray, cent_b: np.ndarray,
     threshold: float,) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Return (ia, ib, dist_centroid) for pairs with centroid distance <= threshold.
-    Uses cKDTree if scipy available; otherwise raises with hint.
+    Uses cKDTree for fast spatial search.
     """
 
     tree = cKDTree(cent_b.astype(np.float64, copy=False))
@@ -84,7 +91,7 @@ def candidate_pairs_by_centroid_distance( cent_a: np.ndarray, cent_b: np.ndarray
     m = dist <= float(threshold)
     return ia[m], ib[m], dist[m]
 
-
+# 第二步過濾：歸一化轉動慣量ratio2d相似性
 def filter_pairs_by_ratio2d_distance(
     ia: np.ndarray,
     ib: np.ndarray,
@@ -130,15 +137,144 @@ def filter_pairs_by_ratio2d_distance(
 
     return np.concatenate(keep_ia), np.concatenate(keep_ib), np.concatenate(keep_dr)
 
+# 第三步過濾：判斷方向性是否明顯(r21-r31)，符合條件者計算cosine similarity
+def filter_pairs_by_orientation_rod_disk(
+    ia: np.ndarray,
+    ib: np.ndarray,
+    ratios2d_a: np.ndarray,   # (NA,2) [r21,r31]
+    ratios2d_b: np.ndarray,   # (NB,2) [r21,r31]
+    eigvecs_a: np.ndarray,    # (NA,3,3) columns v1,v2,v3 (λ1>=λ2>=λ3)
+    eigvecs_b: np.ndarray,    # (NB,3,3)
+    *,
+    # rod thresholds
+    rod_r31_max: float = 0.35,  # 判斷是否是rod-like，需要r21接近1且r31接近0
+    rod_gap_min: float = 0.4,       # r21 - r31
+    rod_angle_th_deg: float = 40.0,
+    # disk thresholds
+    disk_r21_max: float = 0.45,
+    disk_r31_max: float = 0.45,
+    disk_gap_max: float = 0.1,      # |r21 - r31|
+    disk_angle_th_deg: float = 40.0,
+    chunk: int = 2_000_000,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Conditional orientation gating with two regimes:
+    - rod-like pairs: compare v3 (λ3 axis)
+    - disk-like pairs: compare v1 (λ1 axis)
+    Only enabled when BOTH sides are in the same regime.
+    Others pass through without orientation filtering.
 
+    Returns:
+        ia3, ib3,
+        angle_deg (NaN if not enabled),
+        enabled_type (uint8): 0=not enabled, 1=rod, 2=disk
+    """
+    n = ia.shape[0]
+    if n == 0:
+        return ia, ib, np.empty((0,), np.float32), np.empty((0,), np.uint8)
+
+    thr_cos_rod = float(np.cos(np.deg2rad(rod_angle_th_deg)))
+    thr_cos_disk = float(np.cos(np.deg2rad(disk_angle_th_deg)))
+
+    keep_ia, keep_ib, keep_ang, keep_type = [], [], [], []
+
+    for s in range(0, n, chunk):
+        e = min(s + chunk, n)
+        ia_s = ia[s:e]
+        ib_s = ib[s:e]
+
+        ra = ratios2d_a[ia_s]
+        rb = ratios2d_b[ib_s]
+
+        r21_a, r31_a = ra[:, 0], ra[:, 1]
+        r21_b, r31_b = rb[:, 0], rb[:, 1]
+
+        gap_a = r21_a - r31_a
+        gap_b = r21_b - r31_b
+
+        # per-item regime
+        rod_a = (r31_a <= rod_r31_max) & (gap_a >= rod_gap_min)
+        rod_b = (r31_b <= rod_r31_max) & (gap_b >= rod_gap_min)
+
+        disk_a = (r21_a <= disk_r21_max) & (r31_a <= disk_r31_max) & (np.abs(gap_a) <= disk_gap_max)
+        disk_b = (r21_b <= disk_r21_max) & (r31_b <= disk_r31_max) & (np.abs(gap_b) <= disk_gap_max)
+
+        enable_rod = rod_a & rod_b
+        enable_disk = disk_a & disk_b
+
+        enabled = enable_rod | enable_disk
+        keep = ~enabled  # default: keep non-enabled
+        ang = np.full((e - s,), np.nan, dtype=np.float32)
+        typ = np.zeros((e - s,), dtype=np.uint8)
+
+        # --- rod: compare vector3 ---
+        if np.any(enable_rod):
+            va = eigvecs_a[ia_s[enable_rod], :, 2].astype(np.float32, copy=False)
+            vb = eigvecs_b[ib_s[enable_rod], :, 2].astype(np.float32, copy=False)
+            dot = np.abs(np.einsum("ij,ij->i", va, vb)).astype(np.float32)  # 取絕對值，避免eigen vector方向相反
+            na = np.sqrt(np.einsum("ij,ij->i", va, va)).astype(np.float32)
+            nb = np.sqrt(np.einsum("ij,ij->i", vb, vb)).astype(np.float32)
+            cos = dot / (na * nb + 1e-12)
+            k = cos >= thr_cos_rod
+
+            cos_clip = np.clip(cos, -1.0, 1.0)
+            ang_enable = np.rad2deg(np.arccos(cos_clip)).astype(np.float32)
+
+            idx = np.flatnonzero(enable_rod)
+            ang[idx] = ang_enable
+            typ[idx] = 1
+            keep[idx] = k
+
+        # --- disk: compare vector1 ---
+        if np.any(enable_disk):
+            va = eigvecs_a[ia_s[enable_disk], :, 0].astype(np.float32, copy=False)
+            vb = eigvecs_b[ib_s[enable_disk], :, 0].astype(np.float32, copy=False)
+            dot = np.abs(np.einsum("ij,ij->i", va, vb)).astype(np.float32)
+            na = np.sqrt(np.einsum("ij,ij->i", va, va)).astype(np.float32)
+            nb = np.sqrt(np.einsum("ij,ij->i", vb, vb)).astype(np.float32)
+            cos = dot / (na * nb + 1e-12)
+            k = cos >= thr_cos_disk
+
+            cos_clip = np.clip(cos, -1.0, 1.0)
+            ang_enable = np.rad2deg(np.arccos(cos_clip)).astype(np.float32)
+
+            idx = np.flatnonzero(enable_disk)
+            ang[idx] = ang_enable
+            typ[idx] = 2
+            keep[idx] = k
+
+        if np.any(keep):
+            keep_ia.append(ia_s[keep])
+            keep_ib.append(ib_s[keep])
+            keep_ang.append(ang[keep])
+            keep_type.append(typ[keep])
+
+    if not keep_ia:
+        return (
+            np.empty((0,), dtype=np.int32),
+            np.empty((0,), dtype=np.int32),
+            np.empty((0,), dtype=np.float32),
+            np.empty((0,), dtype=np.uint8),
+        )
+
+    return (
+        np.concatenate(keep_ia).astype(np.int32, copy=False),
+        np.concatenate(keep_ib).astype(np.int32, copy=False),
+        np.concatenate(keep_ang).astype(np.float32, copy=False),
+        np.concatenate(keep_type).astype(np.uint8, copy=False),
+    )
+
+
+
+
+# %%
 def main():
     ap = argparse.ArgumentParser(description="Stage1: Candidate matching by centroid + (r21,r31) distance")
-    ap.add_argument("--fc_dir", required=True, help="Folder containing centroids_FC.npy and eigvals_ratio_FC.npy")
-    ap.add_argument("--em_dir", required=True, help="Folder containing centroids_EM.npy and eigvals_ratio_EM.npy")
+    ap.add_argument("--fc_dir", default='data/descriptors_FC/', help="Folder containing centroids_FC.npy and eigvals_ratio_FC.npy")
+    ap.add_argument("--em_dir", default='data/descriptors_EM/', help="Folder containing centroids_EM.npy and eigvals_ratio_EM.npy")
     ap.add_argument("--centroid_th", type=float, default=100.0, help="Centroid distance threshold")
-    ap.add_argument("--ratio_th", type=float, default=0.2, help="(r21,r31) 2D distance threshold")
+    ap.add_argument("--ratio_th", type=float, default=0.4, help="(r21,r31) 2D distance threshold")
     ap.add_argument("--out_dir", required=True, help="Folder to write candidate pairs")
-    ap.add_argument("--no_kdtree", action="store_true", help="Disable KDTree (not supported currently)")
     args = ap.parse_args()
 
     fc = load_source(args.fc_dir, "FC")
@@ -147,10 +283,9 @@ def main():
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1) centroid candidate generation
+    # 1) centroid candidate generation (using KDTree)
     ia, ib, d_cent = candidate_pairs_by_centroid_distance(
-        fc.centroids, em.centroids, threshold=args.centroid_th, use_kdtree=not args.no_kdtree
-    )
+        fc.centroids, em.centroids, threshold=args.centroid_th)
 
     # 2) ratio2d filter
     ia2, ib2, d_ratio = filter_pairs_by_ratio2d_distance(
@@ -164,18 +299,25 @@ def main():
     else:
         d_cent2 = np.empty((0,), dtype=np.float32)
 
-    # Save arrays (compact + easy downstream)
-    np.save(out_dir / "pairs_FC_EM_ia.npy", ia2)
-    np.save(out_dir / "pairs_FC_EM_ib.npy", ib2)
-    np.save(out_dir / "pairs_FC_EM_centroid_dist.npy", d_cent2)
-    np.save(out_dir / "pairs_FC_EM_ratio2d_dist.npy", d_ratio)
+    ia3, ib3, ang_deg, en_type = filter_pairs_by_orientation_rod_disk(
+    ia2, ib2, fc.ratios2d, em.ratios2d, fc.eigvecs, em.eigvecs,
+    rod_angle_th_deg=30.0, disk_angle_th_deg=30.0)
 
-    # Save combined table-like array: [ia, ib, centroid_dist, ratio2d_dist]
-    combined = np.empty((ia2.shape[0], 4), dtype=np.float32)
-    combined[:, 0] = ia2.astype(np.float32)
-    combined[:, 1] = ib2.astype(np.float32)
-    combined[:, 2] = d_cent2
-    combined[:, 3] = d_ratio
+
+    # Save arrays (compact + easy downstream)
+    # np.save(out_dir / "pairs_FC_EM_ia.npy", ia3)
+    # np.save(out_dir / "pairs_FC_EM_ib.npy", ib3)
+    # np.save(out_dir / "pairs_FC_EM_centroid_dist.npy", d_cent2)
+    # np.save(out_dir / "pairs_FC_EM_ratio2d_dist.npy", d_ratio)
+    # np.save(out_dir / "pairs_FC_EM_angle_deg.npy", ang_deg)      # NaN if not enabled
+    # np.save(out_dir / "pairs_FC_EM_orient_type.npy", en_type)    # 0 none, 1 rod, 2 disk
+
+    # Save combined table-like array: [ia, ib, angle_deg, orient_type]
+    combined = np.empty((ia3.shape[0], 4), dtype=np.float32)
+    combined[:, 0] = ia3.astype(np.int32)
+    combined[:, 1] = ib3.astype(np.int32)
+    combined[:, 2] = ang_deg
+    combined[:, 3] = en_type.astype(np.float32)
     np.save(out_dir / "pairs_FC_EM.npy", combined)
 
     print(f"FC: {fc.centroids.shape[0]}  EM: {em.centroids.shape[0]}")
