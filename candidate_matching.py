@@ -16,6 +16,7 @@ class SourceDesc:
     centroids: np.ndarray  # (N,3) float32
     ratios2d: np.ndarray   # (N,2) float32 -> [r21, r31]
     eigvecs: np.ndarray    # (N,3,3) float32
+    neuron_ids: np.ndarray    # (N,) str
 
 def load_source(out_dir: str | Path, source: str) -> SourceDesc:
     out_dir = Path(out_dir)
@@ -23,17 +24,20 @@ def load_source(out_dir: str | Path, source: str) -> SourceDesc:
     cent_path = out_dir / f"centroids_{source}.npy"
     ratio_path = out_dir / f"eigvals_ratio_{source}.npy"
     eigvecs_path = out_dir / f"eigvecs_{source}.npy"
-
+    neuron_ids_path = out_dir / f"neuron_ids_{source}.npy"
     if not cent_path.exists():
         raise FileNotFoundError(f"Missing {cent_path}")
     if not ratio_path.exists():
         raise FileNotFoundError(f"Missing {ratio_path}")
     if not eigvecs_path.exists():
         raise FileNotFoundError(f"Missing {eigvecs_path}")
+    if not neuron_ids_path.exists():
+        raise FileNotFoundError(f"Missing {neuron_ids_path}")
 
     centroids = np.load(cent_path).astype(np.float32)
     ratios = np.load(ratio_path).astype(np.float32)
     eigvecs = np.load(eigvecs_path).astype(np.float32)
+    neuron_ids = np.load(neuron_ids_path, allow_pickle=True)
 
     if centroids.ndim != 2 or centroids.shape[1] != 3:
         raise ValueError(f"{cent_path} invalid shape: {centroids.shape}")
@@ -52,7 +56,7 @@ def load_source(out_dir: str | Path, source: str) -> SourceDesc:
     else:
         raise ValueError(f"{ratio_path} expected (N,3) or (N,2), got {ratios.shape}")
 
-    return SourceDesc(source=source, centroids=centroids, ratios2d=ratios2d, eigvecs=eigvecs)
+    return SourceDesc(source=source, centroids=centroids, ratios2d=ratios2d, eigvecs=eigvecs, neuron_ids=neuron_ids)
 
 # 利用質心距離進行第一步過濾
 def candidate_pairs_by_centroid_distance(cent_a: np.ndarray, cent_b: np.ndarray,
@@ -265,8 +269,6 @@ def filter_pairs_by_orientation_rod_disk(
     )
 
 
-
-
 # %%
 def main():
     ap = argparse.ArgumentParser(description="Stage1: Candidate matching by centroid + (r21,r31) distance")
@@ -302,7 +304,6 @@ def main():
     ia3, ib3, ang_deg, en_type = filter_pairs_by_orientation_rod_disk(
     ia2, ib2, fc.ratios2d, em.ratios2d, fc.eigvecs, em.eigvecs,
     rod_angle_th_deg=30.0, disk_angle_th_deg=30.0)
-
 
     # Save arrays (compact + easy downstream)
     # np.save(out_dir / "pairs_FC_EM_ia.npy", ia3)
