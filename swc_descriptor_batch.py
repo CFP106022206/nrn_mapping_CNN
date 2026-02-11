@@ -75,7 +75,7 @@ def batch_run(input_dir: str | Path, out_dir: str | Path, source: str='FC', recu
 
     np.save(out_dir / f"centroids_{source}.npy", df[["cx", "cy", "cz"]].to_numpy(np.float32))
     np.save(out_dir / f"eigvals_ratio_{source}.npy", df[["r11", "r21", "r31"]].to_numpy(np.float32))
-    np.save(out_dir / f"neuron_ids_{source}.npy", df["neuron_id"].to_numpy())
+    np.save(out_dir / f"neuron_ids_{source}.npy", df["neuron_id"].to_numpy(dtype='U64'))
 
     if errors:
         err_df = pd.DataFrame(errors)

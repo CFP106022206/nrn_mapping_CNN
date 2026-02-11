@@ -121,17 +121,31 @@ def rotate_to_ia_axes(xyz: np.ndarray, centroid: np.ndarray, eigvecs_ia: np.ndar
     x = (xyz - centroid[None, :]).astype(np.float32, copy=False)
     return (x @ eigvecs_ia).astype(np.float32, copy=False)
 
+def pair_cube_bbox_3d(a_xyz, b_xyz, margin: float = 0.08):
+    # 決定三視圖正方體位置。 margin 防止貼邊
+    xyz = np.concatenate([a_xyz, b_xyz], axis=0)
 
-def pair_view_bbox_2d(a_uv: np.ndarray, b_uv: np.ndarray, pad: float = 1e-6) -> Tuple[float, float, float, float]:
-    uv = np.concatenate([a_uv, b_uv], axis=0)
-    umin = float(np.min(uv[:, 0])); umax = float(np.max(uv[:, 0]))
-    vmin = float(np.min(uv[:, 1])); vmax = float(np.max(uv[:, 1]))
+    xmin, ymin, zmin = xyz.min(axis=0)
+    xmax, ymax, zmax = xyz.max(axis=0)
 
-    if umax - umin < pad:
-        mid = 0.5 * (umin + umax); umin, umax = mid - 0.5, mid + 0.5
-    if vmax - vmin < pad:
-        mid = 0.5 * (vmin + vmax); vmin, vmax = mid - 0.5, mid + 0.5
-    return umin, umax, vmin, vmax
+    cx = 0.5 * (xmin + xmax)
+    cy = 0.5 * (ymin + ymax)
+    cz = 0.5 * (zmin + zmax)
+
+    dx = xmax - xmin
+    dy = ymax - ymin
+    dz = zmax - zmin
+
+    side = max(dx, dy, dz, 1e-3)
+    side *= (1.0 + margin)
+
+    half = 0.5 * side
+
+    return (
+        (cx - half, cx + half),
+        (cy - half, cy + half),
+        (cz - half, cz + half),
+    )
 
 
 # -----------------------------
@@ -286,15 +300,18 @@ def render_pair(
     va = np.zeros((3, grid, grid), np.float32)
     vb = np.zeros((3, grid, grid), np.float32)
 
-    for view in range(3):
-        if view == 0:
-            a_uv = a_rot[:, [1, 2]]; b_uv = b_rot[:, [1, 2]]
-        elif view == 1:
-            a_uv = a_rot[:, [0, 2]]; b_uv = b_rot[:, [0, 2]]
-        else:
-            a_uv = a_rot[:, [0, 1]]; b_uv = b_rot[:, [0, 1]]
+    # 在 for view 之前先算一次 cube bbox
+    (xb, yb, zb) = pair_cube_bbox_3d(a_rot, b_rot, margin=0.08)
 
-        bbox = pair_view_bbox_2d(a_uv, b_uv)
+
+    for view in range(3):
+        if view == 0:      # YZ
+            bbox = (yb[0], yb[1], zb[0], zb[1])
+        elif view == 1:    # XZ
+            bbox = (xb[0], xb[1], zb[0], zb[1])
+        else:              # XY
+            bbox = (xb[0], xb[1], yb[0], yb[1])
+
         if edges_a.size:
             va[view] = project_and_rasterize(a_rot, edges_a, w_a, grid, view, bbox)
         if edges_b.size:
@@ -310,8 +327,8 @@ def flush_shard(out_dir: Path, shard_id: int, ids_a: List[str], ids_b: List[str]
     out_path = out_dir / f"pairs_views_{shard_id:05d}.npz"
     np.savez_compressed(
         out_path,
-        id_a=np.asarray(ids_a, dtype=object),
-        id_b=np.asarray(ids_b, dtype=object),
+        id_a=np.asarray(ids_a, dtype='U64'),
+        id_b=np.asarray(ids_b, dtype='U64'),
         views_a=np.stack(va, axis=0).astype(np.uint8),
         views_b=np.stack(vb, axis=0).astype(np.uint8),
     )
@@ -331,7 +348,7 @@ def main():
     ap.add_argument("--source_b", default="EM")
     ap.add_argument("--grid", type=int, default=50)
     ap.add_argument("--normalize", choices=["max", "p99"], default="p99")
-    ap.add_argument("--out_dir", required=True)
+    ap.add_argument("--out_dir", default='./data/mapping_data/')
     ap.add_argument("--shard_size", type=int, default=5000)
     ap.add_argument("--max_pairs", type=int, default=0, help="debug limit")
     args = ap.parse_args()
@@ -342,7 +359,7 @@ def main():
     if args.max_pairs and args.max_pairs > 0:
         ia = ia[: args.max_pairs]
         ib = ib[: args.max_pairs]
-
+    # idx -> neuron id mapping
     ids_a = np.load(args.ids_a, allow_pickle=True)
     ids_b = np.load(args.ids_b, allow_pickle=True)
 
@@ -405,6 +422,148 @@ def main():
 
     print(f"All done. Shards saved under: {out_dir}")
 
-
+# %%
 if __name__ == "__main__":
     main()
+# %% Testing
+import pandas as pd
+import time
+st = time.time()
+def load_and_merge_conf_csvs(
+    label_dir: str | Path = "./labeled_info",
+    datasets: list[str] = ["D1", "D2", "D3", "D4", "D5", "D6"],
+) -> pd.DataFrame:
+    """
+    合并所有 D1-D6 的 conf.csv 文件
+
+    预期每个 csv 至少包含：fc_id, em_id, label
+    """
+    dfs = []
+    for dataset in datasets:
+        csv_path = Path(label_dir) / f"{dataset}_conf.csv"
+        if csv_path.exists():
+            df = pd.read_csv(csv_path)
+            df["dataset"] = dataset
+            dfs.append(df)
+            print(f"Loaded {dataset}: {len(df)} rows")
+        else:
+            print(f"{csv_path} not found, skipping")
+
+    if not dfs:
+        raise FileNotFoundError(f"No conf.csv found under: {label_dir}")
+
+    merged_df = pd.concat(dfs, ignore_index=True)
+    merged_df = merged_df.drop_duplicates(subset=["fc_id", "em_id"])
+    merged_df["fc_id"] = merged_df["fc_id"].astype(str)
+    merged_df["em_id"] = merged_df["em_id"].astype(str)
+
+    print(f"\nTotal pairs after merge: {len(merged_df)}")
+    return merged_df
+
+test_df = load_and_merge_conf_csvs(label_dir="./labeled_info", datasets=["D1", "D2", "D3", "D4", "D5", "D6"])
+# save to npy
+ids_a = test_df["fc_id"].to_numpy()
+ids_b = test_df["em_id"].to_numpy()
+# turn to idx
+neurons_ids_fc = np.load("./data/descriptors_FC/neuron_ids_FC.npy", allow_pickle=True)
+neurons_ids_em = np.load("./data/descriptors_EM/neuron_ids_EM.npy", allow_pickle=True)
+id2idx_fc = {nid: idx for idx, nid in enumerate(neurons_ids_fc.tolist())}
+id2idx_em = {nid: idx for idx, nid in enumerate(neurons_ids_em.tolist())}
+idx_a = np.array([id2idx_fc.get(nid, -1) for nid in ids_a], dtype=np.int32)
+idx_b = np.array([id2idx_em.get(nid, -1) for nid in ids_b], dtype=np.int32)
+pairs = np.stack([idx_a, idx_b], axis=1)
+
+ia = pairs[:, 0].astype(np.int32)
+ib = pairs[:, 1].astype(np.int32)
+
+# idx -> neuron id mapping
+ids_a = np.load("./data/descriptors_FC/neuron_ids_FC.npy", allow_pickle=True)
+ids_b = np.load("./data/descriptors_EM/neuron_ids_EM.npy", allow_pickle=True)
+
+desc_a = Path('data/descriptors_FC')
+desc_b = Path('data/descriptors_EM')
+cent_a = np.load(desc_a / f"centroids_FC.npy").astype(np.float32, copy=False)
+eig_a = np.load(desc_a / f"eigvecs_FC.npy").astype(np.float32, copy=False)
+
+# 檢查eigvec是否為正交矩陣，否則後續旋轉會有問題
+G = eig_a[0].T @ eig_a[0]
+if not np.allclose(G, np.eye(3), atol=1e-3):
+    raise ValueError("Eigvecs not orthonormal; check eigvecs convention / ordering.")
+
+cent_b = np.load(desc_b / f"centroids_EM.npy").astype(np.float32, copy=False)
+
+cache: Dict[str, NeuronCacheItem] = {}
+out_dir = Path('data/mapping_data')
+
+buf_ida: List[str] = []
+buf_idb: List[str] = []
+buf_va: List[np.ndarray] = []
+buf_vb: List[np.ndarray] = []
+
+shard_id = 0
+total = len(ia)
+
+for k, (i, j) in enumerate(zip(ia.tolist(), ib.tolist()), start=1):
+    try:
+        ida, idb, va, vb = render_pair(
+            i, j,
+            ids_a=ids_a,
+            ids_b=ids_b,
+            swc_a=Path('data/SWC/FC'),
+            swc_b=Path('data/SWC/EM'),
+            cent_a=cent_a,
+            cent_b=cent_b,
+            eigvecs_a=eig_a,
+            cache=cache,
+            grid=50,
+            norm="p99",
+        )
+        buf_ida.append(ida)
+        buf_idb.append(idb)
+        buf_va.append(va)
+        buf_vb.append(vb)
+
+    except Exception as e:
+        print(f"[warn] pair {k}/{total} (ia={i}, ib={j}) failed: {repr(e)}")
+
+    if len(buf_ida) >= 1000:
+        flush_shard(out_dir, shard_id, buf_ida, buf_idb, buf_va, buf_vb)
+        shard_id += 1
+        buf_ida, buf_idb, buf_va, buf_vb = [], [], [], []
+
+    if k % 200 == 0:
+        print(f"[{k}/{total}] done, cache={len(cache)} neurons")
+
+if buf_ida:
+    flush_shard(out_dir, shard_id, buf_ida, buf_idb, buf_va, buf_vb)
+
+print(f"All done. Shards saved under: {out_dir}")
+print(time.time() - st, "seconds")
+# 檢查npz
+data = np.load(out_dir / "pairs_views_00000.npz")
+print(data.files)
+
+fc_ids = data["id_a"]
+em_ids = data["id_b"]
+views_a = data["views_a"]
+views_b = data["views_b"]
+
+
+
+# 畫出三視圖
+import matplotlib.pyplot as plt
+def show_views(views_a: np.ndarray, views_b: np.ndarray, idx: int):
+    fig, axes = plt.subplots(2, 3, figsize=(12, 8))
+    for i in range(3):
+        axes[0, i].imshow(views_a[idx, i], cmap='magma')
+        axes[0, i].set_title(f"FC view {i}")
+
+
+        axes[1, i].imshow(views_b[idx, i], cmap='magma')
+        axes[1, i].set_title(f"EM view {i}")
+
+    plt.suptitle(f"Pair idx={idx}  FC ID={fc_ids[idx]}  EM ID={em_ids[idx]}")
+    plt.tight_layout()
+    plt.show()
+show_views(views_a, views_b, idx=0)
+# %%
