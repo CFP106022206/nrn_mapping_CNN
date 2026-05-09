@@ -1,4 +1,4 @@
-# %% stage2_pair_views.py (sharded npz, store only neuron IDs + uint8 views)
+# %% stage2_pair_draw.py (sharded npz, store only neuron IDs + uint8 views)
 
 from __future__ import annotations
 
@@ -272,8 +272,8 @@ def render_pair(
     ia: int,
     ib: int,
     *,
-    ids_a: np.ndarray,
-    ids_b: np.ndarray,
+    ids_a: np.ndarray,  # (NA,) array of all neuron IDs for source A (FC)
+    ids_b: np.ndarray,  # (NB,) array of all neuron IDs for source B (EM)
     swc_a: Path,
     swc_b: Path,
     cent_a: np.ndarray,
@@ -365,14 +365,14 @@ def main():
 
     desc_a = Path(args.desc_a)
     desc_b = Path(args.desc_b)
-    cent_a = np.load(desc_a / f"centroids_{args.source_a}.npy").astype(np.float32, copy=False)
     eig_a = np.load(desc_a / f"eigvecs_{args.source_a}.npy").astype(np.float32, copy=False)
 
     # 檢查eigvec是否為正交矩陣，否則後續旋轉會有問題
     G = eig_a[0].T @ eig_a[0]
     if not np.allclose(G, np.eye(3), atol=1e-3):
         raise ValueError("Eigvecs not orthonormal; check eigvecs convention / ordering.")
-
+    
+    cent_a = np.load(desc_a / f"centroids_{args.source_a}.npy").astype(np.float32, copy=False)
     cent_b = np.load(desc_b / f"centroids_{args.source_b}.npy").astype(np.float32, copy=False)
 
     cache: Dict[str, NeuronCacheItem] = {}
@@ -422,9 +422,17 @@ def main():
 
     print(f"All done. Shards saved under: {out_dir}")
 
+
+
 # %%
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
 # %% Testing
 import pandas as pd
 import time
@@ -457,11 +465,12 @@ def load_and_merge_conf_csvs(
     merged_df["fc_id"] = merged_df["fc_id"].astype(str)
     merged_df["em_id"] = merged_df["em_id"].astype(str)
 
-    print(f"\nTotal pairs after merge: {len(merged_df)}")
+    print(f"\nTotal pairs in label_df after merge: {len(merged_df)}")
     return merged_df
 
 test_df = load_and_merge_conf_csvs(label_dir="./labeled_info", datasets=["D1", "D2", "D3", "D4", "D5", "D6"])
-# save to npy
+# 這一步在實際運行時應該是由上一步篩選程序生成的table_df
+
 ids_a = test_df["fc_id"].to_numpy()
 ids_b = test_df["em_id"].to_numpy()
 # turn to idx
@@ -473,16 +482,15 @@ idx_a = np.array([id2idx_fc.get(nid, -1) for nid in ids_a], dtype=np.int32)
 idx_b = np.array([id2idx_em.get(nid, -1) for nid in ids_b], dtype=np.int32)
 pairs = np.stack([idx_a, idx_b], axis=1)
 
-ia = pairs[:, 0].astype(np.int32)
-ib = pairs[:, 1].astype(np.int32)
+ia = pairs[:, 0].astype(np.int32)   # FC neuron id in total dataset
+ib = pairs[:, 1].astype(np.int32)   # EM neuron id in total dataset
 
-# idx -> neuron id mapping
-ids_a = np.load("./data/descriptors_FC/neuron_ids_FC.npy", allow_pickle=True)
-ids_b = np.load("./data/descriptors_EM/neuron_ids_EM.npy", allow_pickle=True)
+# # idx -> neuron id mapping
+# ids_a = np.load("./data/descriptors_FC/neuron_ids_FC.npy", allow_pickle=True)
+# ids_b = np.load("./data/descriptors_EM/neuron_ids_EM.npy", allow_pickle=True)
 
 desc_a = Path('data/descriptors_FC')
 desc_b = Path('data/descriptors_EM')
-cent_a = np.load(desc_a / f"centroids_FC.npy").astype(np.float32, copy=False)
 eig_a = np.load(desc_a / f"eigvecs_FC.npy").astype(np.float32, copy=False)
 
 # 檢查eigvec是否為正交矩陣，否則後續旋轉會有問題
@@ -490,6 +498,7 @@ G = eig_a[0].T @ eig_a[0]
 if not np.allclose(G, np.eye(3), atol=1e-3):
     raise ValueError("Eigvecs not orthonormal; check eigvecs convention / ordering.")
 
+cent_a = np.load(desc_a / f"centroids_FC.npy").astype(np.float32, copy=False)
 cent_b = np.load(desc_b / f"centroids_EM.npy").astype(np.float32, copy=False)
 
 cache: Dict[str, NeuronCacheItem] = {}
@@ -507,8 +516,8 @@ for k, (i, j) in enumerate(zip(ia.tolist(), ib.tolist()), start=1):
     try:
         ida, idb, va, vb = render_pair(
             i, j,
-            ids_a=ids_a,
-            ids_b=ids_b,
+            ids_a=neurons_ids_fc,
+            ids_b=neurons_ids_em,
             swc_a=Path('data/SWC/FC'),
             swc_b=Path('data/SWC/EM'),
             cent_a=cent_a,
@@ -539,18 +548,72 @@ if buf_ida:
 
 print(f"All done. Shards saved under: {out_dir}")
 print(time.time() - st, "seconds")
-# 檢查npz
-data = np.load(out_dir / "pairs_views_00000.npz")
-print(data.files)
 
-fc_ids = data["id_a"]
-em_ids = data["id_b"]
-views_a = data["views_a"]
-views_b = data["views_b"]
+# %% 檢查npz
+# %% Load and merge sharded npz files
+def load_and_merge_pairs_views(out_dir: Path | str = "./data/mapping_data/") -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """
+    合并读取所有分片的 pairs_views_*.npz 文件
+    
+    Returns:
+        id_a: (N,) uint64 array of FC neuron IDs
+        id_b: (N,) uint64 array of EM neuron IDs  
+        views_a: (N, 3, grid, grid) uint8 array of FC views
+        views_b: (N, 3, grid, grid) uint8 array of EM views
+    """
+    out_dir = Path(out_dir)
+    
+    # 找出所有分片文件
+    shard_files = sorted(out_dir.glob("pairs_views_*.npz"))
+    if not shard_files:
+        raise FileNotFoundError(f"No pairs_views_*.npz found under: {out_dir}")
+    
+    print(f"Found {len(shard_files)} shard(s)")
+    
+    all_id_a = []
+    all_id_b = []
+    all_views_a = []
+    all_views_b = []
+    
+    for shard_path in shard_files:
+        print(f"Loading {shard_path.name}...")
+        data = np.load(shard_path)
+        all_id_a.append(data["id_a"])
+        all_id_b.append(data["id_b"])
+        all_views_a.append(data["views_a"])
+        all_views_b.append(data["views_b"])
+        print(f"  -> {len(data['id_a'])} pairs")
+    
+    # 合并所有分片
+    id_a = np.concatenate(all_id_a, axis=0)
+    id_b = np.concatenate(all_id_b, axis=0)
+    views_a = np.concatenate(all_views_a, axis=0)
+    views_b = np.concatenate(all_views_b, axis=0)
+    
+    print(f"\nTotal merged: {len(id_a)} pairs")
+    print(f"  id_a shape: {id_a.shape}, dtype: {id_a.dtype}")
+    print(f"  id_b shape: {id_b.shape}, dtype: {id_b.dtype}")
+    print(f"  views_a shape: {views_a.shape}, dtype: {views_a.dtype}")
+    print(f"  views_b shape: {views_b.shape}, dtype: {views_b.dtype}")
+    
+    return id_a, id_b, views_a, views_b
+
+# 测试合并读取函数
+id_a, id_b, views_a, views_b = load_and_merge_pairs_views(out_dir="./data/mapping_data/")
+
+# 或直接加载单个分片
+# data = np.load(out_dir / "pairs_views_00000.npz")
+
+# print(data.files)
+
+# fc_ids = data["id_a"]
+# em_ids = data["id_b"]
+# views_a = data["views_a"]
+# views_b = data["views_b"]
 
 
 
-# 畫出三視圖
+# %%畫出三視圖
 import matplotlib.pyplot as plt
 def show_views(views_a: np.ndarray, views_b: np.ndarray, idx: int):
     fig, axes = plt.subplots(2, 3, figsize=(12, 8))

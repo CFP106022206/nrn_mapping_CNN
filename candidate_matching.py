@@ -1,5 +1,15 @@
 # %%
 # stage1_candidate_matching.py
+'''
+python candidate_matching.py
+    --fc_dir data/descriptors_FC
+    --em_dir data/descriptors_EM
+    --out_dir data/pairs_label
+    --centroid_th 100
+    --ratio_th 0.4
+'''
+
+
 from __future__ import annotations
 
 import argparse
@@ -8,6 +18,7 @@ from pathlib import Path
 from scipy.spatial import cKDTree  # type: ignore
 
 import numpy as np
+import pandas as pd
 
 
 @dataclass(frozen=True)
@@ -95,7 +106,7 @@ def candidate_pairs_by_centroid_distance(cent_a: np.ndarray, cent_b: np.ndarray,
     m = dist <= float(threshold)
     return ia[m], ib[m], dist[m]
 
-# 第二步過濾：歸一化轉動慣量ratio2d相似性
+# 第二步過濾：歸一化轉動慣量, 利用ratio2d坐标之间的距离判断相似性
 def filter_pairs_by_ratio2d_distance(
     ia: np.ndarray,
     ib: np.ndarray,
@@ -276,7 +287,7 @@ def main():
     ap.add_argument("--em_dir", default='data/descriptors_EM/', help="Folder containing centroids_EM.npy and eigvals_ratio_EM.npy")
     ap.add_argument("--centroid_th", type=float, default=100.0, help="Centroid distance threshold")
     ap.add_argument("--ratio_th", type=float, default=0.4, help="(r21,r31) 2D distance threshold")
-    ap.add_argument("--out_dir", required=True, help="Folder to write candidate pairs")
+    ap.add_argument("--out_dir", default='data/pairs_label/', help="Folder to write candidate pairs")
     args = ap.parse_args()
 
     fc = load_source(args.fc_dir, "FC")
@@ -305,27 +316,24 @@ def main():
     ia2, ib2, fc.ratios2d, em.ratios2d, fc.eigvecs, em.eigvecs,
     rod_angle_th_deg=30.0, disk_angle_th_deg=30.0)
 
-    # Save arrays (compact + easy downstream)
-    # np.save(out_dir / "pairs_FC_EM_ia.npy", ia3)
-    # np.save(out_dir / "pairs_FC_EM_ib.npy", ib3)
-    # np.save(out_dir / "pairs_FC_EM_centroid_dist.npy", d_cent2)
-    # np.save(out_dir / "pairs_FC_EM_ratio2d_dist.npy", d_ratio)
-    # np.save(out_dir / "pairs_FC_EM_angle_deg.npy", ang_deg)      # NaN if not enabled
-    # np.save(out_dir / "pairs_FC_EM_orient_type.npy", en_type)    # 0 none, 1 rod, 2 disk
+    # Output CSV with only neuron IDs
+    fc_ids = fc.neuron_ids[ia3]
+    em_ids = em.neuron_ids[ib3]
+    # ensure plain string columns
+    fc_ids = np.asarray(fc_ids).astype(str)
+    em_ids = np.asarray(em_ids).astype(str)
+    out_df = pd.DataFrame({"fc_id": fc_ids, "em_id": em_ids})
+    out_df = out_df.drop_duplicates(["fc_id", "em_id"], keep="first")
 
-    # Save combined table-like array: [ia, ib, angle_deg, orient_type]
-    combined = np.empty((ia3.shape[0], 4), dtype=np.float32)
-    combined[:, 0] = ia3.astype(np.int32)
-    combined[:, 1] = ib3.astype(np.int32)
-    combined[:, 2] = ang_deg
-    combined[:, 3] = en_type.astype(np.float32)
-    np.save(out_dir / "pairs_FC_EM.npy", combined)
+    out_csv = out_dir / "pairs_FC_EM.csv"
+    out_df.to_csv(out_csv, index=False)
 
     print(f"FC: {fc.centroids.shape[0]}  EM: {em.centroids.shape[0]}")
     print(f"centroid_th={args.centroid_th}  ratio_th={args.ratio_th}")
     print(f"after centroid filter: {ia.shape[0]}")
     print(f"after ratio2d filter:  {ia2.shape[0]}")
-    print(f"saved to: {out_dir}")
+    print(f"after orientation filter: {ia3.shape[0]}")
+    print(f"saved: {out_csv}")
 
 
 if __name__ == "__main__":

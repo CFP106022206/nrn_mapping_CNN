@@ -1,7 +1,7 @@
 # %%
 # import sys
 # sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
- 
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -40,7 +40,7 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
 
 
 # %%
-model_name = 'Fine_Tune_Model_150K_'#'Fine_Tune_Model_150KnF_CoorOrient_'# 網頁版本模型結果
+model_name = 'FineTune_miniLR' #'Annotator' #'Fine_Tune_Model_150KnF_CoorOrient_'# 網頁版本模型結果
 
 # 设置Seaborn样式
 plt.style.use('default')
@@ -52,9 +52,9 @@ test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 
 cross_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = './labeled_info/D5_conf.csv' # './labeled_info/D2+D6_ID.csv' #False
+selected_test_set = False#'./labeled_info/D5_conf.csv' # './labeled_info/D2+D6_ID.csv' #False
 
-label_csv_name = './result/test_label_'+model_name
+label_csv_name = f'./result/test_label_{model_name}_D1-D6_'
 # label_csv_name = './result/predict_result/model_predict_'
 
 nblast_path = './labeled_info/nblast_all_list_D2_D5_label.csv'
@@ -77,7 +77,7 @@ elif test_mode == 'cross':
         predict_result_lst.append(predict_result)
 
         # 加载训练和验证历史记录
-        history = load_pkl('./result/Train_History_Annotator_D1-D6_'+str(i)+'.pkl')
+        history = load_pkl(f'./result/Train_History_{model_name}_D1-D6_{i}.pkl')
         train_losses.append(history['loss'])
         val_losses.append(history['val_loss'])
 

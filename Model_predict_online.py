@@ -52,7 +52,8 @@ unlabel_pairs_df = pd.read_csv(unlabel_pairs_path)
 
 
 # %%
-model = load_model(model_path)   # 模型存放資料夾
+# Inference only: avoid restoring optimizer state (and related warnings)
+model = load_model(model_path, compile=False)   # 模型存放資料夾
 
 # Initialize dictionaries with default types to store file names and results
 source_img_lst, target_img_lst = [], []
