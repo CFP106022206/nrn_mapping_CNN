@@ -1,477 +1,408 @@
+"""
+Fine-tune training pipeline.
+"""
+
 # %%
-import sys
-sys.path.insert(0, '/opt/tensorflow/2.9.0/local/lib/python3.10/dist-packages')
+from __future__ import annotations
+
+import os
+import random
+import pickle
+from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import os
-import random
 import tensorflow as tf
-import pickle
-import cv2
-import matplotlib.pyplot as plt
-from keras.utils import plot_model
-from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
-from keras.models import *
-from keras.layers import *
-from keras.losses import BinaryFocalCrossentropy
-from keras.metrics import BinaryAccuracy
-from keras.optimizers import *
 from sklearn.model_selection import train_test_split
-from sklearn.utils.class_weight import compute_class_weight
-from sklearn.metrics import confusion_matrix, f1_score, recall_score, precision_score
-from util import load_pkl
-from tqdm import tqdm
-import sys
+from sklearn.metrics import confusion_matrix, f1_score
 
-# %%
+import keras
 
-num_splits = 8  #0~9, or 99 for whole nBLAST testing set
-# num_splits = int(sys.argv[1])
+keras.config.enable_unsafe_deserialization()  # 关闭 keras safe mode
 
-pre_train_model = './preTrain_Model/pre_train_model_150K.h5'
-map_dict_folder = './data/labeled_sn'
+from model import MVCNN_Siamese
 
-initial_lr = 0.00001
-train_epochs = 100
+@dataclass(frozen=True)
+class Config:
+    fold: int
+    seed: int = 3407
 
+    used_split_suffix: str = "D1-D6"
+    split_dir: str = "./train_test_split"
 
-seed = 3407
-os.environ['PYTHONHASHSEED'] = str(seed)
-random.seed(seed)
-np.random.seed(seed)
-os.environ['TF_DETERMINISTIC_OPS'] = '1'
-tf.random.set_seed(seed)
+    fc_views_dir: str = "./data/standard_views/FC"
+    em_views_dir: str = "./data/standard_views/EM"
 
+    # keep legacy fine-tune model load/save locations
+    pre_train_model: str = "PreTrain_Model/pre_train_model_by_EMxFC_120K.weights.h5"
+    save_model_dir: str = "./FineTune_Model"
+    save_result_dir: str = "./result"
+    fig_dir: str = "./Figure"
 
-save_model_name  = f'Fine_Tune_Model_150K_{num_splits}'
+    initial_lr: float = 1e-5
+    train_epochs: int = 100
+    batch_size: int = 16
+    val_ratio: float = 0.15
 
-# load train, test
-label_table_train = pd.read_csv('./train_test_split/train_split_' + str(num_splits) +'_D1-D6.csv')
-label_table_test = pd.read_csv('./train_test_split/test_split_' + str(num_splits) +'_D1-D6.csv')
-
-
-# turn to numpy array
-test_pair_nrn = label_table_test[['fc_id','em_id','label']].to_numpy()
-train_pair_nrn = label_table_train[['fc_id','em_id','label']].to_numpy()
+    out_hw: tuple[int, int] = (50, 50)
 
 
+def _to_uint8_views(v: np.ndarray) -> np.ndarray:
+    v = np.asarray(v)
+    if v.dtype == np.uint8:
+        return v
+    vf = v.astype(np.float32, copy=False)
+    vmax = float(np.nanmax(vf)) if vf.size else 0.0
+    if vmax <= 1.0:
+        vf = np.round(vf * 255.0)
+    vf = np.clip(vf, 0.0, 255.0)
+    return vf.astype(np.uint8)
 
 
-# %% data prerpare
-
-def data_preprocess(file_path, pair_nrn):
-
-    print('\nCollecting 3-View Data Numpy Array..')
-    # 筛选出指定文件夹下以 .pkl 结尾的文件並存入列表
-    file_list = [file_name for file_name in os.listdir(file_path) if file_name.endswith('.pkl')]
-
-    #使用字典存储有三視圖数据, 以 FC_EM 作为键, 使用字典来查找相应的数据, 减少查找时间
-    data_dict = {}
-    for file_name in file_list:
-        pkl_path = os.path.join(file_path, file_name)
-        data_lst = load_pkl(pkl_path)
-        for data in data_lst:
-            key = f"{data[0]}_{data[1]}"
-            data_dict[key] = data
-
-    resolutions = data[3].shape
-    print('\n Resolutions:', resolutions)
-
-    data_np = np.zeros((len(pair_nrn), 2, resolutions[1], resolutions[2], resolutions[0]))  #pair, FC/EM, 图(三维)
-    fc_nrn_lst, em_nrn_lst, score_lst, label_lst = [], [], [], []
-
-    # 依訓練名單從已有三視圖名單中查找是否存在
-    for i, row in enumerate(pair_nrn):
-        
-        key = f"{row[0]}_{row[1]}"
-
-        if key in data_dict:
-            data = data_dict[key]   # 找出data的所有信息
-            # 三視圖填入 data_np
-            for k in range(3):
-                data_np[i, 0, :, :, k] = data[3][k] # FC Image
-                data_np[i, 1, :, :, k] = data[4][k] # EM Image
-            # 其餘信息填入list
-            fc_nrn_lst.append(data[0])
-            em_nrn_lst.append(data[1])
-            score_lst.append(data[2])
-            label_lst.append(row[2])
-    
+def _ensure_3hw_views(v: np.ndarray) -> np.ndarray:
+    v = np.asarray(v)
+    if v.ndim != 3:
+        raise ValueError(f"Expect 3D views, got shape={v.shape}")
+    if v.shape[0] == 3:
+        return v
+    if v.shape[-1] == 3:
+        return np.transpose(v, (2, 0, 1))
+    raise ValueError(f"Cannot interpret views shape as (3,H,W): {v.shape}")
 
 
-    # map data 中有可能找不到pair_nrn裡面的組合, 刪除那些找不到的0矩陣
-    not_found_data = []
-    for i, data in enumerate(data_np):
-        if not(np.any(data)):
-            not_found_data.append(i)
-    data_np = np.delete(data_np, not_found_data, axis=0)
+def _pad_to_same_size(fc_views: np.ndarray, em_views: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    fc = _ensure_3hw_views(_to_uint8_views(fc_views))
+    em = _ensure_3hw_views(_to_uint8_views(em_views))
+    target = max(int(fc.shape[1]), int(em.shape[1]))
 
-    not_found_df = []
-    if not_found_data:
-        print('How many pairs Not Found in map_data: ')
-        for i in not_found_data:
-            not_found_df.append(pair_nrn[i])
-        print(len(not_found_df))
-        not_found_df = pd.DataFrame(not_found_df, columns=['fc_id', 'em_id', 'label'])
+    def _pad(v: np.ndarray) -> np.ndarray:
+        _, h, w = v.shape
+        if h != w:
+            raise ValueError(f"Expect square views (H==W). got {(h, w)}")
+        pad = target - h
+        if pad < 0:
+            raise ValueError(f"target smaller than current: current=({h},{w}) target=({target},{target})")
+        top = pad // 2
+        bottom = pad - top
+        left = pad // 2
+        right = pad - left
+        return np.pad(v, ((0, 0), (top, bottom), (left, right)), mode="constant", constant_values=0)
 
-
-
-    # Normalization : x' = x - min(x) / max(x) - min(x)
-    data_np = (data_np - np.min(data_np))/(np.max(data_np) - np.min(data_np))
-
-    pair_df = pd.DataFrame({'fc_id':fc_nrn_lst, 'em_id':em_nrn_lst, 'label':label_lst, 'score':score_lst})    # list of pairs
-
-    return data_np, pair_df, not_found_df
+    return _pad(fc), _pad(em)
 
 
-x_test, nrn_pair_test, test_not_found = data_preprocess(map_dict_folder, test_pair_nrn)
-x_train, nrn_pair_train, train_not_found = data_preprocess(map_dict_folder, train_pair_nrn)
+def _resize_to_50(views: np.ndarray, out_hw: tuple[int, int] = (50, 50)) -> np.ndarray:
+    v = _ensure_3hw_views(_to_uint8_views(views))
+    out_h, out_w = int(out_hw[0]), int(out_hw[1])
+    h, w = int(v.shape[1]), int(v.shape[2])
+
+    if h == out_h and w == out_w:
+        return v
+
+    if h < out_h or w < out_w:
+        pad_h = max(out_h - h, 0)
+        pad_w = max(out_w - w, 0)
+        top = pad_h // 2
+        bottom = pad_h - top
+        left = pad_w // 2
+        right = pad_w - left
+        vv = np.pad(v, ((0, 0), (top, bottom), (left, right)), mode="constant", constant_values=0)
+        return vv[:, :out_h, :out_w].astype(np.uint8, copy=False)
+
+    y_starts = (np.arange(out_h, dtype=np.int64) * h) // out_h
+    x_starts = (np.arange(out_w, dtype=np.int64) * w) // out_w
+
+    tmp = np.maximum.reduceat(v, y_starts, axis=1)
+    out = np.maximum.reduceat(tmp, x_starts, axis=2)
+    return out.astype(np.uint8, copy=False)
 
 
-# %% Train Validation Split
-x_train, x_val, nrn_pair_train, nrn_pair_valid = train_test_split(x_train, nrn_pair_train, test_size=0.15, random_state=7)
-
-print('\nOriginal Train data:', len(x_train),'\nValid data:', len(x_val),'\nTest data:', len(x_test))
-
-y_train = np.array(nrn_pair_train['label'])
-y_val = np.array(nrn_pair_valid['label'])
-y_test = np.array(nrn_pair_test['label'])
+def _load_views_from_npz(npz_path: Path) -> np.ndarray:
+    with np.load(npz_path, allow_pickle=False) as z:
+        if "views" not in z.files:
+            raise KeyError(f"Missing key 'views' in {npz_path}. keys={list(z.files)}")
+        return z["views"]
 
 
-# %% 画图预览 map data
-def imshow_pred_pair(predict_pair_df, pred_data_np):
+def make_numpy_from_standard_views(
+    pair_df: pd.DataFrame,
+    fc_dir: Path | str = "./data/standard_views/FC",
+    em_dir: Path | str = "./data/standard_views/EM",
+    out_hw: tuple[int, int] = (50, 50),
+) -> tuple[np.ndarray, pd.DataFrame, pd.DataFrame, tuple[int, int, int]]:
+    fc_dir = Path(fc_dir)
+    em_dir = Path(em_dir)
 
-    # 检查保存路径文件夹是否存在
-    if not os.path.exists('./Figure/predict_3view/label_1'):
-        os.makedirs('./Figure/predict_3view/label_1')
-    
-    if not os.path.exists('./Figure/predict_3view/label_0'):
-        os.makedirs('./Figure/predict_3view/label_0')
+    out_h, out_w = int(out_hw[0]), int(out_hw[1])
+    if out_h <= 0 or out_w <= 0:
+        raise ValueError(f"Invalid out_hw={out_hw}")
 
-    for p in range(len(predict_pair_df)):
-        fc_img = pred_data_np[p,0,:]
-        em_img = pred_data_np[p,1,:]
+    if not fc_dir.exists():
+        raise FileNotFoundError(f"FC standard views dir not found: {fc_dir}")
+    if not em_dir.exists():
+        raise FileNotFoundError(f"EM standard views dir not found: {em_dir}")
 
-        fc_id = predict_pair_df.iloc[p]['fc_id']
-        em_id = predict_pair_df.iloc[p]['em_id']
-        label = predict_pair_df.iloc[p]['label']
+    fc_cache: dict[str, np.ndarray] = {}
+    em_cache: dict[str, np.ndarray] = {}
 
-        plt.figure(figsize=(9,6))
-        for i in range(3):
-            plt.subplot(2,3,i+1)
-            plt.imshow(fc_img[:,:,i], cmap='magma')
-            plt.xticks([])
-            plt.yticks([])      # 隱藏刻度線
-            plt.subplot(2,3,i+4)
-            plt.imshow(em_img[:,:,i], cmap='magma')
-            plt.xticks([])
-            plt.yticks([])      # 隱藏刻度線
+    x_list: list[np.ndarray] = []
+    found_rows: list[tuple[str, str, float]] = []
+    not_found_rows: list[tuple[str, str, float, str]] = []
 
-        plt.suptitle(f'{fc_id}_{em_id}     Label={label}')
+    required_cols = {"fc_id", "em_id", "label"}
+    if not required_cols.issubset(set(pair_df.columns)):
+        raise KeyError(f"pair_df must contain columns {sorted(required_cols)}. got={list(pair_df.columns)}")
 
-        if label == 1:
-            plt.savefig(f'./Figure/predict_3view/label_1/{fc_id}_{em_id}.png', dpi=150, bbox_inches='tight')
-        elif label == 0:
-            plt.savefig(f'./Figure/predict_3view/label_0/{fc_id}_{em_id}.png', dpi=150, bbox_inches='tight')
-        plt.close('all')
+    for row in pair_df.itertuples(index=False):
+        fc_id = str(getattr(row, "fc_id")).strip()
+        em_id = str(getattr(row, "em_id")).strip()
+        label = float(getattr(row, "label"))
 
-# imshow_pred_pair(nrn_pair_train, data_np_train)
-# imshow_pred_pair(nrn_pair_test, data_np_test)
+        fc_npz = fc_dir / f"{fc_id}_views.npz"
+        em_npz = em_dir / f"{em_id}_views.npz"
+
+        if not fc_npz.exists() and not em_npz.exists():
+            not_found_rows.append((fc_id, em_id, label, "missing_fc_and_em_npz"))
+            continue
+        if not fc_npz.exists():
+            not_found_rows.append((fc_id, em_id, label, "missing_fc_npz"))
+            continue
+        if not em_npz.exists():
+            not_found_rows.append((fc_id, em_id, label, "missing_em_npz"))
+            continue
+
+        try:
+            if fc_id in fc_cache:
+                fc_v = fc_cache[fc_id]
+            else:
+                fc_v = _load_views_from_npz(fc_npz)
+                fc_cache[fc_id] = fc_v
+
+            if em_id in em_cache:
+                em_v = em_cache[em_id]
+            else:
+                em_v = _load_views_from_npz(em_npz)
+                em_cache[em_id] = em_v
+        except Exception as e:
+            not_found_rows.append((fc_id, em_id, label, f"load_error:{type(e).__name__}:{e}"))
+            continue
+
+        try:
+            fc_pad, em_pad = _pad_to_same_size(fc_v, em_v)
+            fc_50 = _resize_to_50(fc_pad, (out_h, out_w))
+            em_50 = _resize_to_50(em_pad, (out_h, out_w))
+        except Exception as e:
+            not_found_rows.append((fc_id, em_id, label, f"preprocess_error:{type(e).__name__}:{e}"))
+            continue
+
+        x_pair = np.empty((2, out_h, out_w, 3), dtype=np.float32)
+        x_pair[0] = np.transpose(fc_50, (1, 2, 0))
+        x_pair[1] = np.transpose(em_50, (1, 2, 0))
+        x_pair /= 255.0
+
+        x_list.append(x_pair)
+        found_rows.append((fc_id, em_id, label))
+
+    if not x_list:
+        raise RuntimeError("No valid pairs loaded from standard_views.")
+
+    x = np.stack(x_list, axis=0)
+    found_df = pd.DataFrame(found_rows, columns=["fc_id", "em_id", "label"])
+    not_found_df = pd.DataFrame(not_found_rows, columns=["fc_id", "em_id", "label", "reason"])
+    return x, found_df, not_found_df, (3, out_h, out_w)
+
+def set_seed(seed: int) -> None:
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    os.environ["TF_DETERMINISTIC_OPS"] = "1"
+    random.seed(seed)
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
 
 
-
-# %% Data Augmentation: Exchange 'fc' and 'em' data
-# 交換 FC/EM, enforcing symmetry in the input layer
-x_train = np.vstack((x_train, np.flip(x_train, axis=1)))
-y_train = np.hstack((y_train, y_train))
-
-y_train_bin = np.array([1 if y > 0.5 else 0 for y in y_train])
+def load_splits(cfg: Config) -> tuple[pd.DataFrame, pd.DataFrame]:
+    train_csv = Path(cfg.split_dir) / f"train_split_{cfg.fold}_{cfg.used_split_suffix}.csv"
+    test_csv = Path(cfg.split_dir) / f"test_split_{cfg.fold}_{cfg.used_split_suffix}.csv"
+    return pd.read_csv(train_csv), pd.read_csv(test_csv)
 
 
+def make_tf_dataset(x, y, batch_size, training, seed):
+    """Same dataset/augmentation behavior as Data_process_Train.py."""
 
+    ds = tf.data.Dataset.from_tensor_slices((x, y))
 
+    if training:
+        ds = ds.shuffle(buffer_size=min(len(x), 4096), seed=seed, reshuffle_each_iteration=True)
 
-# %% Balanced Weight
-neg, pos = np.bincount(y_train_bin)     #label為0, label為1
-print('\nTotal(After exchange): {}\nPositive: {} ({:.2f}% of total)\n'.format(neg + pos, pos, 100 * pos / (neg + pos)))
-weight = compute_class_weight('balanced', classes=np.unique(y_train_bin), y=y_train_bin)
-class_weights = {0:weight[0]*100, 1:weight[1]}
-print('Balanced Weight in:\n', weight)
+    def augment(pair, label):
+        fc = pair[0]
+        em = pair[1]
 
+        fc_list = []
+        em_list = []
+        label_list = []
 
-# UpSampling
-X_train_add = np.zeros((abs(neg-pos), x_train.shape[1], x_train.shape[2], x_train.shape[3], x_train.shape[4]))   # 製作需要增加的x_train 量
-y_train_add = np.zeros(abs(neg-pos))
+        for swap in [False, True]:
+            if swap:
+                fc0, em0 = em, fc
+            else:
+                fc0, em0 = fc, em
 
-if neg > pos:
-    add_idx = np.where(y_train_bin == 1)[0] #數據擴增在 label為1的 x_train
+            for rot in range(4):
+                fc_r = tf.image.rot90(fc0, rot)
+                em_r = tf.image.rot90(em0, rot)
+                fc_list.append(fc_r)
+                em_list.append(em_r)
+                label_list.append(label)
 
-else:
-    add_idx = np.where(y_train_bin == 0)[0]#數據擴增在 label為0的 x_train
+            fc_f = tf.image.flip_left_right(fc0)
+            em_f = tf.image.flip_left_right(em0)
+            fc_list.append(fc_f)
+            em_list.append(em_f)
+            label_list.append(label)
 
+        fc_stack = tf.stack(fc_list)
+        em_stack = tf.stack(em_list)
+        label_stack = tf.stack(label_list)
 
-k=0
-for i in range(X_train_add.shape[0]):
-    rotation_angle = 1  # 1*90 度旋轉
-    X_train_add[i,0,:] = np.rot90(x_train[add_idx[k],0,:],rotation_angle) # FC img
-    X_train_add[i,1,:] = np.rot90(x_train[add_idx[k],1,:],rotation_angle) # EM img
+        return tf.data.Dataset.from_tensor_slices(({"FC": fc_stack, "EM": em_stack}, label_stack))
 
-    y_train_add[i] = y_train[add_idx[k]]
-
-    if k >= len(add_idx):
-        k=0
-        rotation_angle += 1
+    if training:
+        ds = ds.flat_map(augment)
     else:
-        k+=1
+        ds = ds.map(
+            lambda pair, label: ({"FC": pair[0], "EM": pair[1]}, label),
+            num_parallel_calls=tf.data.AUTOTUNE,
+        )
+
+    return ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
+
+
+def metrics_report(y_true, y_prob, threshold=0.5):
+    y_true_bin = (np.array(y_true) > threshold).astype(int)
+    y_pred_bin = (np.array(y_prob).reshape(-1) > threshold).astype(int)
+
+    cm = confusion_matrix(y_true_bin, y_pred_bin, labels=[0, 1])
+    tn, fp, fn, tp = cm.ravel()
+
+    precision = tp / (tp + fp) if (tp + fp) else 0.0
+    recall = tp / (tp + fn) if (tp + fn) else 0.0
+    f1_pos = f1_score(y_true_bin, y_pred_bin, pos_label=1)
+
+    return {
+        "cm": cm,
+        "tp": int(tp),
+        "fp": int(fp),
+        "fn": int(fn),
+        "tn": int(tn),
+        "precision": float(precision),
+        "recall": float(recall),
+        "f1_pos": float(f1_pos),
+    }, y_pred_bin
+
+
+def main(cfg: Config) -> None:
+    set_seed(cfg.seed)
+
+    Path(cfg.save_model_dir).mkdir(parents=True, exist_ok=True)
+    Path(cfg.save_result_dir).mkdir(parents=True, exist_ok=True)
+    Path(cfg.fig_dir).mkdir(parents=True, exist_ok=True)
+
+    save_model_name = f"FineTune_D1-D6_{cfg.fold}"  # legacy naming
+
+    train_df, test_df = load_splits(cfg)
+
+    x_train_all, pair_train, not_found_train, resolutions = make_numpy_from_standard_views(
+        train_df[["fc_id", "em_id", "label"]],
+        fc_dir=cfg.fc_views_dir,
+        em_dir=cfg.em_views_dir,
+        out_hw=cfg.out_hw,
+    )
+    x_test, pair_test, not_found_test, _ = make_numpy_from_standard_views(
+        test_df[["fc_id", "em_id", "label"]],
+        fc_dir=cfg.fc_views_dir,
+        em_dir=cfg.em_views_dir,
+        out_hw=cfg.out_hw,
+    )
+
+    print("Not found train:", len(not_found_train), "Not found test:", len(not_found_test))
+
+    x_train, x_val, pair_train, pair_val = train_test_split(
+        x_train_all, pair_train, test_size=cfg.val_ratio, random_state=cfg.seed
+    )
+    y_train = pair_train["label"].to_numpy(dtype=np.float32)
+    y_val = pair_val["label"].to_numpy(dtype=np.float32)
+    y_test = pair_test["label"].to_numpy(dtype=np.float32)
+    print(f"Train {len(x_train)} | Val {len(x_val)} | Test {len(x_test)}")
+
+    ds_train = make_tf_dataset(x_train, y_train, cfg.batch_size, training=True, seed=cfg.seed)
+    ds_val = make_tf_dataset(x_val, y_val, cfg.batch_size, training=False, seed=cfg.seed)
+    ds_test = make_tf_dataset(x_test, y_test, cfg.batch_size, training=False, seed=cfg.seed)
+
+    # build model and load pre-train weights (location kept)
+    _, H, W = resolutions
+    model = MVCNN_Siamese((H, W, resolutions[0]))
+
+    pretrain_path = Path(cfg.pre_train_model)
+    if not pretrain_path.exists():
+        raise FileNotFoundError(f"Pre-train checkpoint not found: {pretrain_path}")
+    model.load_weights(pretrain_path)
+
+    model.compile(
+        optimizer=tf.keras.optimizers.AdamW(learning_rate=cfg.initial_lr),
+        loss=tf.keras.losses.BinaryFocalCrossentropy(gamma=2.0, from_logits=False),
+        metrics=[tf.keras.metrics.BinaryAccuracy(name="Bi-Acc")],
+    )
+
+    # keep legacy fine-tune saving format/location: full .h5 model
+    ckpt_path = Path(cfg.save_model_dir) / f"{save_model_name}.weights.h5"
+    callbacks = [
+        tf.keras.callbacks.ModelCheckpoint(
+            filepath=str(ckpt_path),
+            monitor="val_loss",
+            save_best_only=True,
+            save_weights_only=True,
+            mode="min",
+            verbose=1,
+        )
+    ]
+
+    history = model.fit(
+        ds_train,
+        validation_data=ds_val,
+        epochs=cfg.train_epochs,
+        callbacks=callbacks,
+        verbose=2,
+    )
 
+    with open(Path(cfg.save_result_dir) / f"Train_History_{save_model_name}.pkl", "wb") as f:
+        pickle.dump(history.history, f)
 
-x_train = np.vstack((x_train, X_train_add))
-y_train = np.hstack((y_train, y_train_add))
+    # reload best full model and evaluate
+    best = MVCNN_Siamese((H, W, resolutions[0]))
+    best.load_weights(ckpt_path)
 
-print('UpSampling: After label balancing:\nTrue Label/Total in x_train:\n',np.sum(y_train_bin),'/', len(x_train))
+    y_val_pred = best.predict(ds_val, verbose=0)
+    val_report, _ = metrics_report(y_val, y_val_pred)
+    print("Validation:", val_report)
 
-# 圖片旋轉任一角度
-def rotate_and_pad(image, angle, border_value=(0, 0, 0)):
-    # 获取图像尺寸
-    h, w = image.shape[:2]
-    center = (w / 2, h / 2)
+    y_test_pred = best.predict(ds_test, verbose=0)
+    test_report, test_pred_bin = metrics_report(y_test, y_test_pred)
+    print("Test:", test_report)
 
-    # 计算旋转矩阵
-    rot_mat = cv2.getRotationMatrix2D(center, angle, 1.0)
+    with open(Path(cfg.save_result_dir) / f"Test_Result_{save_model_name}.pkl", "wb") as f:
+        pickle.dump(test_report, f)
 
-    # 计算新图像的尺寸
-    new_w = int(h * abs(np.sin(np.radians(angle))) + w * abs(np.cos(np.radians(angle))))
-    new_h = int(h * abs(np.cos(np.radians(angle))) + w * abs(np.sin(np.radians(angle))))
+    pred_df = pair_test.copy()
+    pred_df["model_pred"] = y_test_pred.reshape(-1)
+    pred_df["model_pred_binary"] = test_pred_bin
+    pred_df.to_csv(Path(cfg.save_result_dir) / f"test_label_{save_model_name}.csv", index=False)
+    print("Saved")
 
-    # 更新旋转矩阵
-    rot_mat[0, 2] += (new_w / 2) - center[0]
-    rot_mat[1, 2] += (new_h / 2) - center[1]
 
-    # 应用旋转和填充
-    rotated_image = cv2.warpAffine(image, rot_mat, (new_w, new_h), borderValue=border_value)
+if __name__ == "__main__":
+    import sys
+    fold = int(sys.argv[1])
+    main(Config(fold=fold))
 
-    # 裁剪或填充旋转后的图像以保持原始尺寸
-    if new_h > h and new_w > w:
-        y_offset = (new_h - h) // 2
-        x_offset = (new_w - w) // 2
-        rotated_image = rotated_image[y_offset:y_offset + h, x_offset:x_offset + w]
-    else:
-        y_padding_top = (h - new_h) // 2
-        y_padding_bottom = h - new_h - y_padding_top
-        x_padding_left = (w - new_w) // 2
-        x_padding_right = w - new_w - x_padding_left
-        rotated_image = cv2.copyMakeBorder(rotated_image, y_padding_top, y_padding_bottom, x_padding_left, x_padding_right, cv2.BORDER_CONSTANT, value=border_value)
-
-    return rotated_image
-
-
-def augment_data(x_train, y_train, angle_range, resize_range, aug_seed):
-    X_augmented, y_augmented = [], []
-
-    for i in range(x_train.shape[0]):
-        current_seed = aug_seed + i         #為每個循環定義一個種子。每張圖片旋轉角度因此不同
-        rng = np.random.default_rng(current_seed)
-        angle = rng.uniform(angle_range[0], angle_range[1])
-        # scale = rng.random.uniform(resize_range[0], resize_range[1])
-
-        rotate_pair = np.zeros(x_train.shape[1:])   # shape=(2,50,50,3)
-        resize_pair = np.zeros(x_train.shape[1:])
-        for j in range(x_train.shape[1]):
-            rotate_pair[j] = rotate_and_pad(x_train[i, j], angle)
-
-        X_augmented.append(rotate_pair)
-        y_augmented.append(y_train[i])
-
-    return np.array(X_augmented), np.array(y_augmented)
-
-
-
-# 示例用法
-angle_range = [-45, 45]  # 旋转角度范围（在 -10 到 10 之间）
-resize_range = [0.8, 1.2]   # 縮放範圍（在 0.8 到 1.2 之間）
-X_train_augmented, y_train_augmented = augment_data(x_train, y_train, angle_range, resize_range, seed)
-
-x_train = np.vstack((x_train, X_train_augmented))
-y_train = np.hstack((y_train, y_train_augmented))
-
-# 再做一次
-X_train_augmented, y_train_augmented = augment_data(x_train, y_train, angle_range, resize_range, seed+10000)
-
-x_train = np.vstack((x_train, X_train_augmented))
-y_train = np.hstack((y_train, y_train_augmented))
-
-
-# 翻倍  All train data augmentation
-
-X_train_aug1 = np.zeros_like(x_train)
-for i in range(X_train_aug1.shape[0]):
-    X_train_aug1[i,0,:] = np.fliplr(x_train[i,0,:])
-    X_train_aug1[i,1,:] = np.fliplr(x_train[i,1,:])
-
-x_train = np.vstack((x_train, X_train_aug1))
-y_train = np.hstack((y_train, y_train))
-
-del X_train_aug1
-
-# 翻倍
-X_train_aug2 = np.zeros_like(x_train)
-
-for i in range(X_train_aug2.shape[0]):
-    X_train_aug2[i,0,:] = np.flipud(x_train[i,0,:])
-    X_train_aug2[i,1,:] = np.flipud(x_train[i,1,:])
-
-x_train = np.vstack((x_train, X_train_aug2))
-y_train = np.hstack((y_train, y_train))
-
-del X_train_aug2
-
-# 翻倍
-X_train_aug3 = np.zeros_like(x_train)
-
-for i in range(X_train_aug3.shape[0]):
-    X_train_aug3[i,0,:] = np.flipud(np.rot90(x_train[i,0,:],1))
-    X_train_aug3[i,1,:] = np.flipud(np.rot90(x_train[i,1,:],1))
-
-x_train = np.vstack((x_train, X_train_aug3))
-y_train = np.hstack((y_train, y_train))
-
-del X_train_aug3
-
-
-# FC/EM Split
-x_train_FC = x_train[:,0,:]
-x_train_EM = x_train[:,1,:]
-
-del x_train
-
-x_val_FC = x_val[:,0,:]
-x_val_EM = x_val[:,1,:]
-
-x_test_FC = x_test[:,0,:]
-x_test_EM = x_test[:,1,:]
-
-print('x_train shape:', x_train_FC.shape, x_train_EM.shape)
-print('y_train shape:', len(y_train))
-print('x_val shape:', x_val_FC.shape, x_val_EM.shape)
-print('y_val shape:', len(y_val))
-print('x_test shape:', x_test_FC.shape, x_test_EM.shape)
-print('y_test shape:', len(y_test))
-
-
-
-
-# %% Load model
-cnn = load_model(pre_train_model)
-
-# # 凍結最後全連接層參數
-# for layer in cnn.layers[:-5]:
-#     layer.trainable = False
-# #檢查凍結情況
-# for layer in cnn.layers:
-#     print(layer.name, layer.trainable)
-
-
-cnn.compile(optimizer=AdamW(learning_rate=initial_lr), loss=BinaryFocalCrossentropy(gamma=2.0, from_logits=False), metrics=[BinaryAccuracy(name='Bi-Acc')])
-
-
-# 設定模型儲存條件(儲存最佳模型)
-checkpoint = ModelCheckpoint('./Fine_Tune_Model/' + save_model_name + '.h5', verbose=1, monitor='val_loss', save_best_only=True, mode='min')
-
-
-
-# Model.fit
-history = cnn.fit({'FC':x_train_FC, 'EM':x_train_EM}, 
-                            y_train, 
-                            validation_data=({'FC':x_val_FC, 'EM':x_val_EM}, y_val), 
-                            epochs=train_epochs, 
-                            shuffle=True, 
-                            callbacks = [checkpoint], verbose=2)
-
-
-
-plt.plot(history.history['loss'], label='loss')
-plt.plot(history.history['val_loss'], label='val_loss')
-plt.legend()
-plt.savefig('./Figure/'+save_model_name+'_train_curve.png', dpi=150, bbox_inches="tight")
-# plt.show()
-plt.close('all')
-
-
-# Save history to file
-with open('./result/'+save_model_name+'_train_history.pkl', 'wb') as f:
-    pickle.dump(history.history, f)
-
-
-# %%
-model = load_model('./Fine_Tune_Model/' + save_model_name + '.h5')
-
-def binary(y_lst):
-    y_binary = []
-    for y in y_lst:
-        if y > 0.5:
-            y_binary.append(1)
-        else:
-            y_binary.append(0)
-    return y_binary
-
-def print_conf_martix(conf_matrix, name='0'):
-
-    print('\nConfusion Matrix for ' + name)
-    print('True Pos','False Neg')
-    print(conf_matrix[0])
-    print('False Pos','True Neg')
-    print(conf_matrix[1])
-
-def result_analysis(y_pred, y_test):
-    y_pred_binary = binary(y_pred)
-    y_test = binary(y_test) # for 软标签，统一格式
-
-    conf_matrix = confusion_matrix(y_test, y_pred_binary, labels=[1,0])# 統一標籤格式
-
-    print_conf_martix(conf_matrix)
-
-    # Precision and recall
-    precision = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0])
-    recall = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[0,1])
-    print("Precision:", precision)
-    print("Recall:", recall)
-
-    # F1 Score
-    result_f1_score = f1_score(y_test, y_pred_binary, average=None)
-    print('F1 Score for Neg:', result_f1_score[0])
-    print('F1 Score for Pos:', result_f1_score[1])
-
-    # save results
-    result = {'conf_matrix': conf_matrix, 'Precision': precision, 'Recall': recall, 'F1_pos':result_f1_score[1]}
-    return result, y_pred_binary
-
-
-# predict validation dataset result
-y_pred_val = model.predict({'FC':x_val_FC, 'EM':x_val_EM}, verbose=2)
-
-print('Validation:')
-val_result, val_pred_bin = result_analysis(y_pred_val, y_val)
-
-
-# predict test dataset result
-y_pred_test = model.predict({'FC':x_test_FC, 'EM':x_test_EM}, verbose=2)
-
-print('Test:')
-test_result, test_pred_binary = result_analysis(y_pred_test, y_test)
-
-with open('./result/Test_Result_'+save_model_name+'.pkl', 'wb') as f:
-    pickle.dump(test_result, f)
-
-
-# 保存對Testing data的label情況
-
-# Save model prediction csv
-pred_result_df = nrn_pair_test.copy()
-pred_result_df['model_pred'] = y_pred_test
-pred_result_df['model_pred_binary'] = test_pred_binary
-
-# 将DataFrame存储为csv文件
-pred_result_df.to_csv('./result/test_label_'+save_model_name+'.csv', index=False)
-print('\nSaved')
 

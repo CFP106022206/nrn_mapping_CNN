@@ -26,7 +26,7 @@ file_list_01 = [file_name for file_name in os.listdir(unlabel_path_01) if file_n
 file_path = [os.path.join(unlabel_path_01, file_name) for file_name in file_list_01]
 
 # 載入模型
-model = load_model(model_path)   # 模型存放資料夾
+model = load_model(model_path, compile=False)   # 模型存放資料夾
 
 
 

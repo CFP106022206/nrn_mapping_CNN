@@ -12,9 +12,9 @@ from util import load_pkl
 
 
 # %% 
-pic_path = './data/labeled_sn/'
-fc_id = 'Cha-F-000009'
-em_id = '1078693835'
+pic_path = './data/standard_views/'
+fc_id = 'VGlut-F-000111'
+em_id = '5812987694'
 output_path = './Figure/predict_3view/'
 map_path = pic_path + 'mapping_data_sn_' + fc_id + '.pkl'
 pair_data = load_pkl(map_path)   # list

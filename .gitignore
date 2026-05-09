@@ -248,3 +248,10 @@ yichen/*
 Drosophila_all_Brain_imaging
 Drosophila_all_Brain_imaging/*
 
+BrainVisualizer/*
+
+#Model Weight
+Annotator_Model/*
+FineTune_Model/*
+PreTrain_Model/*
+

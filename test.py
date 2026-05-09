@@ -153,6 +153,7 @@ model.evaluate(x_test, y_test)
 # %%
 import pandas as pd
 import numpy as np
+from pathlib import Path
 import os
 import copy
 
@@ -280,5 +281,288 @@ def tree_builder(path, name, length_th):
     
     return nrn_df
 # %%
+import pandas as pd
+import numpy as np
+
+# 读取全部名单
+label_path = './labeled_info/'
+df_filename_lst = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6']
+
+df_lst = []
+for f in df_filename_lst:
+    df_lst.append(pd.read_csv(label_path + f + '_conf.csv').drop_duplicates(subset=['fc_id','em_id'])) # 删除重复
+df_total = pd.concat(df_lst, ignore_index=True)
+df_total.drop_duplicates(subset=['fc_id','em_id'], inplace=True) # 删除重复
+df_total.to_csv(label_path + 'D1-D6_total_conf.csv', index=False)
+
+# %%
+
+# === 找出 (fc_id, em_id) 重複但 label 不一致的行 ===
+# 注意：上面的 merge 沒有指定 on=...，會用“共同欄位的交集”當 join key，
+# 因此 diff 不等同於「(fc_id, em_id) 重複被刪掉的行」。下面用 duplicated/groupby 做精確檢查。
+
+key_cols = ['fc_id', 'em_id']
+if not all(c in df_total.columns for c in key_cols):
+    raise KeyError(f"Missing key columns: {key_cols}")
+if 'label' not in df_total.columns:
+    raise KeyError("Missing column: label")
+
+df_check = df_total.copy()
+
+# 如果上面做過 merge，可能會帶入 '_merge' 欄；不影響 key/label 檢查，但輸出 CSV 時先去掉會更乾淨
+if '_merge' in df_check.columns:
+    df_check = df_check.drop(columns=['_merge'])
+
+# 先把 key 欄位與 label 統一成乾淨的字串，避免 '123' vs 123、尾空白等造成“看起來重複但判定不重複”
+df_check['fc_id'] = df_check['fc_id'].astype(str).str.strip()
+df_check['em_id'] = df_check['em_id'].astype(str).str.strip()
+df_check['label'] = df_check['label'].astype(str).str.strip()
+
+mask_key_dup_any = df_check.duplicated(subset=key_cols, keep=False)
+
+# 每一組 (fc_id, em_id) 的 label 種類數 > 1 代表 label 有衝突
+label_nunique = df_check.groupby(key_cols)['label'].transform(lambda s: s.nunique(dropna=False))
+mask_label_conflict = label_nunique > 1
+
+conflict_rows = (
+    df_check.loc[mask_key_dup_any & mask_label_conflict]
+    .sort_values(key_cols)
+    .reset_index(drop=True)
+)
+
+conflict_keys = (
+    conflict_rows[key_cols]
+    .drop_duplicates()
+    .reset_index(drop=True)
+)
+
+print("\n[check] key-duplicate rows:", int(mask_key_dup_any.sum()))
+print("[check] conflict rows:", len(conflict_rows))
+print("[check] conflict key groups:", len(conflict_keys))
+
+out_conflict = Path(label_path) / 'conflict_fc_em_label.csv'
+conflict_rows.to_csv(out_conflict, index=False)
+print(f"[save] {out_conflict}")
+
+# 進一步：列出“被 drop_duplicates(subset=key) 會丟掉的那些行”，並比對它們與保留行的 label
+kept = df_check.drop_duplicates(subset=key_cols, keep='first')[key_cols + ['label']].rename(columns={'label': 'label_keep'})
+dropped = df_check[df_check.duplicated(subset=key_cols, keep='first')].copy()
+dropped = dropped.merge(kept, on=key_cols, how='left')
+
+dropped_label_diff = dropped[dropped['label'] != dropped['label_keep']].sort_values(key_cols).reset_index(drop=True)
+out_dropped = Path(label_path) / 'dropped_pairs_label_diff.csv'
+dropped_label_diff.to_csv(out_dropped, index=False)
+print(f"[save] {out_dropped}  rows={len(dropped_label_diff)}")
+
+print("\nExample conflict rows (top 10):")
+print(conflict_rows.head(10)[key_cols + ['label']])
+
+# %%
+from pathlib import Path
+import sys
+
+p = Path("data/standard_views/FC/5HT1A-F-200016_views.npz")
+# p = Path("data/standard_views/EM/203253253_views.npz")
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 
+with np.load(p, allow_pickle=False) as z:
+    print("keys:", list(z.files))
+    for k in z.files:
+        a = z[k]
+        print(f"- {k}: shape={a.shape}, dtype={a.dtype}")
+
+    if "views" in z.files:
+        v = z["views"]
+        print("views stats: min=", int(v.min()), "max=", int(v.max()))
+        if v.ndim == 3 and v.shape[0] == 3:
+            for i in range(3):
+                vi = v[i]
+                print(f"  view[{i}]: shape={vi.shape}, min={int(vi.min())}, max={int(vi.max())}, nonzero={(vi>0).sum()}")
+plt.imshow(v[0], cmap='magma')
+plt.show()
+# %%
+from pathlib import Path
+import csv
+import numpy as np
+import pandas as pd
+PAIRS_CSV = Path("data/pairs_label/D1-D6_total_conf.csv")
+FC_DIR    = Path("data/standard_views/FC")
+EM_DIR    = Path("data/standard_views/EM")
+
+OUT_CSV   = Path("data/pairs_label/pairs_views_size_report.csv")
+MAX_PAIRS = 0   # 0=全跑；比如先测 200 对就写 200
+
+def read_npz_size(npz_path: Path):
+    """
+    返回 (exists, grid_size, h, w, err)
+    - 优先读 grid_size（不会把 views 整个数组读进内存）
+    - 若没有 grid_size 才读 views.shape
+    """
+    if not npz_path.exists():
+        return (False, None, None, None, "missing_file")
+
+    try:
+        with np.load(npz_path, allow_pickle=False) as z:
+            if "grid_size" in z.files:
+                gs = z["grid_size"]
+                try:
+                    gs = int(gs)
+                except Exception:
+                    gs = int(np.asarray(gs).reshape(-1)[0])
+                return (True, gs, gs, gs, "")
+            elif "views" in z.files:
+                v = z["views"]
+                if v.ndim >= 2:
+                    h, w = int(v.shape[-2]), int(v.shape[-1])
+                    gs = h if h == w else None
+                    return (True, gs, h, w, "")
+                else:
+                    return (True, None, None, None, "views_ndim_too_small")
+            else:
+                return (True, None, None, None, f"no_expected_keys:{z.files}")
+    except Exception as e:
+        return (True, None, None, None, f"load_error:{repr(e)}")
+
+# 读 pairs
+with PAIRS_CSV.open("r", encoding="utf-8", errors="ignore", newline="") as f:
+    reader = csv.DictReader(f)
+    if reader.fieldnames is None:
+        raise ValueError(f"CSV has no header: {PAIRS_CSV}")
+
+    header = [h.strip() for h in reader.fieldnames]
+    if "fc_id" not in header or "em_id" not in header:
+        raise KeyError(f"CSV must contain fc_id/em_id. header={header}")
+
+    rows = list(reader)
+
+if MAX_PAIRS and MAX_PAIRS > 0:
+    rows = rows[:MAX_PAIRS]
+
+OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
+
+abs_diffs = []
+pair_max_sizes = []
+missing_fc = 0
+missing_em = 0
+ok_pairs = 0
+
+with OUT_CSV.open("w", encoding="utf-8", newline="") as fo:
+    w = csv.writer(fo)
+    w.writerow([
+        "fc_id",
+        "em_id",
+        "fc_grid_size",
+        "em_grid_size",
+        "abs_diff_grid",
+        "label",
+    ])
+
+    for i, r in enumerate(rows, start=1):
+        fc_id = str(r.get("fc_id", "")).strip()
+        em_id = str(r.get("em_id", "")).strip()
+        label = str(r.get("label", "")).strip()
+
+        fc_npz = FC_DIR / f"{fc_id}_views.npz"
+        em_npz = EM_DIR / f"{em_id}_views.npz"
+
+        fc_exists, fc_gs, fc_h, fc_w, fc_err = read_npz_size(fc_npz)
+        em_exists, em_gs, em_h, em_w, em_err = read_npz_size(em_npz)
+
+        if not fc_exists:
+            missing_fc += 1
+        if not em_exists:
+            missing_em += 1
+
+        abs_diff = ""
+        if fc_gs is not None and em_gs is not None:
+            d = abs(int(fc_gs) - int(em_gs))
+            abs_diff = d
+            abs_diffs.append(d)
+            pair_max_sizes.append(max(int(fc_gs), int(em_gs)))
+            if fc_exists and em_exists:
+                ok_pairs += 1
+
+        w.writerow([
+            fc_id,
+            em_id,
+            fc_gs,
+            em_gs,
+            abs_diff,
+            label,
+        ])
+
+print("saved:", OUT_CSV, "rows:", len(rows))
+print("missing fc views:", missing_fc)
+print("missing em views:", missing_em)
+print("ok pairs (both exist & grid_size present):", ok_pairs)
+
+if abs_diffs:
+    a = np.asarray(abs_diffs, dtype=np.int32)
+    m = np.asarray(pair_max_sizes, dtype=np.int32)
+    print("abs_diff_grid: min/median/p90/p99/max =",
+          int(a.min()), float(np.median(a)), float(np.percentile(a, 90)),
+          float(np.percentile(a, 99)), int(a.max()))
+    print("pair_max_grid: min/median/p90/p99/max =",
+          int(m.min()), float(np.median(m)), float(np.percentile(m, 90)),
+          float(np.percentile(m, 99)), int(m.max()))
+else:
+    print("No valid grid_size pairs to summarize.")
+# %% pseudo labeling前將所有人類標註資料剔除
+import pandas as pd
+import numpy as np
+from pathlib import Path
+# %%
+label_path = Path("data/pairs_label/D1-D6_total_conf.csv")
+predict_label_path = Path("data/pairs_label/EMxFC_all.csv")
+
+predict_df = pd.read_csv(predict_label_path)
+label_df = pd.read_csv(label_path)
+# 以 fc_id 和 em_id 為鍵，從 predict_df 中剔除 label_df 中存在的行
+merged_df = predict_df.merge(label_df[['fc_id', 'em_id']], on=['fc_id', 'em_id'], how='left', indicator=True)
+filtered_predict_df = merged_df[merged_df['_merge'] == 'left_only'].drop(columns=['_merge'])
+# 进一步：剔除 em_swc 缺失名单中的 neuron
+missing_em_txt = Path("data/pairs_label/missing_em_swc_ids.txt")
+if missing_em_txt.exists():
+    missing_em_ids: set[str] = set()
+    with missing_em_txt.open("r", encoding="utf-8", errors="ignore") as f:
+        for line in f:
+            s = line.strip()
+            if not s:
+                continue
+            # allow comma/space separated tokens
+            for tok in s.replace(",", " ").split():
+                t = tok.strip()
+                if not t:
+                    continue
+                if t.endswith(".swc"):
+                    t = t[:-4]
+                missing_em_ids.add(t)
+
+    if missing_em_ids:
+        before_n = len(filtered_predict_df)
+        filtered_predict_df = filtered_predict_df[
+            ~filtered_predict_df["em_id"].astype(str).str.strip().isin(missing_em_ids)
+        ]
+        after_n = len(filtered_predict_df)
+        print(f"Removed {before_n - after_n} rows by missing EM SWC list: {missing_em_txt}")
+else:
+    print(f"[warn] missing list not found, skip: {missing_em_txt}")
+
+# 保存剔除後的 DataFrame 到新的 CSV 文件
+filtered_predict_df.to_csv("data/pairs_label/EMxFC_all_0_rk20_filtered.csv", index=False)
+
+# %%
+# 批量修改文件名
+import os
+folder_path = './result/unlabel_data_predict/'
+for filename in os.listdir(folder_path):
+    if filename.endswith('.csv'):
+        # 末尾添加001
+        new_filename = filename[:-4] + '02.csv'
+        os.rename(os.path.join(folder_path, filename), os.path.join(folder_path, new_filename))
+        print(f'Renamed: {filename} -> {new_filename}')
+
+# %%
