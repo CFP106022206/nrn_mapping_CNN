@@ -40,7 +40,7 @@ def generate_cross_loss_curve(losses_df, curve_color, name):
 
 
 # %%
-model_name = 'FineTune_miniLR' #'Annotator' #'Fine_Tune_Model_150KnF_CoorOrient_'# 網頁版本模型結果
+model_name = 'FineTune_miniLR'#'FineTune_miniLR_e7' #'Annotator' #'Fine_Tune_Model_150KnF_CoorOrient_'# 網頁版本模型結果
 
 # 设置Seaborn样式
 plt.style.use('default')
@@ -52,7 +52,7 @@ test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 
 cross_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = False#'./labeled_info/D5_conf.csv' # './labeled_info/D2+D6_ID.csv' #False
+selected_test_set = './labeled_info/D2+D6_ID.csv'#'./labeled_info/D5_conf.csv'  #False
 
 label_csv_name = f'./result/test_label_{model_name}_D1-D6_'
 # label_csv_name = './result/predict_result/model_predict_'
@@ -184,9 +184,24 @@ plt.show()
 fpr, tpr, thresholds = roc_curve(y_true, y_pred)
 roc_auc = auc(fpr, tpr)
 
+# Find the ROC point closest to the top-left corner (0, 1)
+# (Common heuristic: minimum Euclidean distance to (0,1))
+finite_mask = np.isfinite(thresholds)
+fpr_f = fpr[finite_mask]
+tpr_f = tpr[finite_mask]
+thr_f = thresholds[finite_mask]
+dist_to_topleft = np.sqrt((fpr_f - 0.0) ** 2 + (tpr_f - 1.0) ** 2)
+best_roc_idx = int(np.argmin(dist_to_topleft))
+roc_best_threshold = float(thr_f[best_roc_idx])
+roc_best_fpr = float(fpr_f[best_roc_idx])
+roc_best_tpr = float(tpr_f[best_roc_idx])
+print(f'ROC closest-top-left threshold = {roc_best_threshold:.4f} (FPR={roc_best_fpr:.4f}, TPR={roc_best_tpr:.4f})')
+
 plt.figure(figsize=(6,5))
 plt.plot(fpr, tpr, color=roc_color, label='ROC curve (area = %0.2f)' % roc_auc, linewidth=4)
 plt.plot([0, 1], [0, 1], color='navy', linestyle='--')
+plt.scatter([roc_best_fpr], [roc_best_tpr], s=90, c='#A62C3A', edgecolors='white', linewidths=1.2,
+            zorder=5, label=f'Closest to (0,1) thr={roc_best_threshold:.2f}')
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.0])
 plt.xlabel('False Positive Rate')
@@ -232,14 +247,16 @@ for threshold in threshold_lst:
 
 
 # Find Best F1 score
-best_result_idx = f1_lst.index(max(f1_lst))
-threshold = threshold_lst[best_result_idx]
-print('Best F1 at threshold = ', threshold)
 
-print('Precision: ', precision_lst[best_result_idx])
-print('Recall: ', recall_lst[best_result_idx])
-print('F1: ', f1_lst[best_result_idx])
-print(gen_conf_matrix(y_true, y_pred, threshold=threshold)[1])
+print('Use ROC Best F1 at threshold = ', roc_best_threshold)
+y_pred_binary, conf_matrix = gen_conf_matrix(y_true, y_pred, threshold=roc_best_threshold)
+precision = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0])
+recall = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[0,1])
+pos_f1_score = f1_score(y_true, y_pred_binary, average=None)[1]
+print('Precision: ', precision)
+print('Recall: ', recall)
+print('F1: ', pos_f1_score)
+print('Confusion Matrix:\n', conf_matrix)
 
 
 # sns.set_theme(style="whitegrid")    # 背景灰色格線
@@ -277,7 +294,7 @@ sns.histplot(y_pred_label0, label="Label 0", color="blue", lw=0.5, alpha=0.6, bi
 sns.histplot(y_pred_label1, label="Label 1", color="red", lw=0.5, alpha=0.6, bins=bins)
 
 # 標出最佳threshold
-plt.axvline(x=threshold, color='#A62C3A', linestyle='--', label='Threshold of max F1 score')
+plt.axvline(x=roc_best_threshold, color='#A62C3A', linestyle='--', label='Threshold of max F1 score')
 
 # 设置图标题和坐标轴标签
 plt.tick_params(axis='both', which='major', labelsize=12)
@@ -294,10 +311,15 @@ plt.savefig('./Figure/predict_distribution.png', dpi=150, bbox_inches="tight")
 # 显示图
 plt.show()
 
-
-
-
-
+# %%   -------- 和NBLAST比較找出NBLAST表現不佳的案例(該區域不能在mode==nblast下運行) --------
+nblast_label = pd.read_csv(nblast_path)
+# normalize nblast similarity score
+nblast_label['Norm NBLAST score'] = (nblast_label['similarity score'] - np.min(nblast_label['similarity score']))/(np.max(nblast_label['similarity score']) - np.min(nblast_label['similarity score']))
+# 計算predict_df 中每一個pair和nblast的分數差距
+predict_df = predict_df.merge(nblast_label[['fc_id', 'em_id', 'Norm NBLAST score']], on=['fc_id', 'em_id'], how='left')
+predict_df['NBLAST_diff'] = np.abs(predict_df['model_pred'] - predict_df['Norm NBLAST score'])
+# 按照NBLAST_diff排序，找出差距最大的前30個案例
+worst_nblast = predict_df.sort_values(by='NBLAST_diff', ascending=False).head(30)
 # %% Ranking analysis
 plt.style.use('default')
 

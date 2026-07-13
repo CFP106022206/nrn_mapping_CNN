@@ -45,16 +45,16 @@ class Config:
 
     # Finetune model
     use_pretrain_model = True
-    pretrain_model: str = "./PreTrain_Model/pre_train_model_by_EMxFC_120K.weights.h5"
+    pretrain_model: str = "./PreTrain_Model/pre_train_model_by_EMxFC_high_confidence.weights.h5"
     save_model_dir: str = "./FineTune_Model"
-    model_name = "FineTune_miniLR"
+    model_name = "FineTune_miniLR_e7"
     # ------------------------------------------------------------
 
     save_result_dir: str = "./result"
     fig_dir: str = "./Figure"
 
-    initial_lr: float = 1e-8    #Annotator use 1e-5, finetune use 1e-6
-    train_epochs: int = 100     #Annotator use 300, finetune use 100
+    initial_lr: float = 1e-7    #Annotator use 1e-5, finetune use 1e-6
+    train_epochs: int = 600     #Annotator use 300, finetune use 100
     batch_size: int = 16
 
     val_ratio: float = 0.15

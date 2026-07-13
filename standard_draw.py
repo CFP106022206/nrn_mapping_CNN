@@ -58,6 +58,8 @@ from typing import Dict, Tuple, List, Optional, Iterable
 import numpy as np
 from PIL import Image
 
+from swc_util import Swc, load_swc_fast
+
 
 def _stable_unique(items: Iterable[str]) -> List[str]:
     seen = set()
@@ -148,51 +150,6 @@ def load_neuron_ids(
     if suf == '.csv':
         return _read_ids_from_pairs_csv(neuron_list_path, swc_dir=swc_dir, id_col=csv_id_col)
     return _read_ids_from_txt(neuron_list_path)
-
-
-# -----------------------------
-# SWC IO
-# -----------------------------
-@dataclass(frozen=True)
-class Swc:
-    nid: np.ndarray
-    ntype: np.ndarray
-    xyz: np.ndarray
-    radius: np.ndarray
-    parent: np.ndarray
-
-
-def load_swc_fast(path: str | Path) -> Swc:
-    path = Path(path)
-    buf = []
-
-    with path.open("r", encoding="utf-8", errors="ignore") as f:
-        for raw in f:
-            line = raw.strip()
-            if not line:
-                continue
-            if line.startswith(("#", "//", ";")):
-                continue
-            if any(("A" <= ch <= "Z") or ("a" <= ch <= "z") for ch in line):
-                continue
-            buf.append(line.replace(",", " "))
-
-    if not buf:
-        raise ValueError(f"{path.name}: no numeric SWC rows found")
-
-    data = np.fromstring(" ".join(buf), sep=" ", dtype=np.float64)
-    if data.size % 7 != 0:
-        raise ValueError(f"{path.name}: parsed values not divisible by 7 (got {data.size})")
-
-    arr = data.reshape(-1, 7)
-
-    return Swc(
-        nid=arr[:, 0].astype(np.int32, copy=False),
-        ntype=arr[:, 1].astype(np.int16, copy=False),
-        xyz=arr[:, 2:5].astype(np.float32, copy=False),
-        radius=arr[:, 5].astype(np.float32, copy=False),
-        parent=arr[:, 6].astype(np.int32, copy=False),
-    )
 
 
 # -----------------------------
@@ -600,6 +557,94 @@ def outputs_exist(out_dir: Path, nid: str, format: str, file_tag: str = "") -> b
     raise ValueError(f"Unknown format: {format}")
 
 
+def run_standard_draw(
+    swc_dir: str | Path,
+    neuron_list: str | Path,
+    output_dir: str | Path = './standard_views/',
+    *,
+    csv_id_col: str | None = None,
+    export_unique_list: str | Path | None = None,
+    scale_um_per_px: float = 1.0,
+    normalize: str = "p99",
+    format: str = "npz",
+    skip_existing: bool = False,
+    export_missing_list: str | Path | None = None,
+    max_neurons: int = 0,
+) -> None:
+    swc_dir = Path(swc_dir)
+
+    neuron_list_path = Path(neuron_list)
+    csv_col = csv_id_col.strip() if csv_id_col else None
+    neuron_ids = load_neuron_ids(neuron_list_path, swc_dir=swc_dir, csv_id_col=csv_col)
+
+    if export_unique_list:
+        out_list = Path(export_unique_list)
+        out_list.parent.mkdir(parents=True, exist_ok=True)
+        out_list.write_text("\n".join(neuron_ids) + "\n", encoding='utf-8')
+        print(f"[save] unique neuron list -> {out_list}  (n={len(neuron_ids)})")
+
+    if max_neurons > 0:
+        neuron_ids = neuron_ids[:max_neurons]
+
+    cache: Dict[str, NeuronCacheItem] = {}
+    out_dir = Path(output_dir)
+
+    total = len(neuron_ids)
+    success_count = 0
+    skip_count = 0
+    missing_count = 0
+    fail_count = 0
+    missing_ids: List[str] = []
+
+    for k, nid in enumerate(neuron_ids, start=1):
+        try:
+            nid_str_pre = str(nid).strip()
+
+            swc_file = swc_dir / f"{nid_str_pre}.swc"
+            if not swc_file.exists():
+                missing_count += 1
+                missing_ids.append(nid_str_pre)
+                continue
+
+            if skip_existing and outputs_exist(out_dir, nid_str_pre, format, file_tag=""):
+                skip_count += 1
+                continue
+
+            nid_str, views, grid_size = render_single(
+                nid,
+                swc_path=swc_dir,
+                cache=cache,
+                scale_um_per_px=scale_um_per_px,
+                norm=normalize,
+            )
+            save_views(out_dir, nid_str, views, grid_size, format=format, file_tag="")
+            success_count += 1
+
+        except Exception as e:
+            print(f"[warn] neuron {k}/{total} (id={nid}) failed: {repr(e)}")
+            fail_count += 1
+
+        if k % 50 == 0:
+            print(
+                f"[{k}/{total}] processed, success={success_count}, skipped={skip_count}, missing={missing_count}, "
+                f"fail={fail_count}, cache_size={len(cache)}"
+            )
+
+    print(f"\nAll done. Output: {out_dir}")
+    print(f"Success: {success_count}, Skipped: {skip_count}, Missing SWC: {missing_count}, Failed: {fail_count}")
+
+    if missing_ids:
+        missing_unique = _stable_unique(missing_ids)
+        print(f"Missing unique neuron ids: {len(missing_unique)}")
+        print("Example missing ids (top 20):", missing_unique[:20])
+
+        if export_missing_list:
+            out_missing = Path(export_missing_list)
+            out_missing.parent.mkdir(parents=True, exist_ok=True)
+            out_missing.write_text("\n".join(missing_unique) + "\n", encoding='utf-8')
+            print(f"[save] missing swc list -> {out_missing}")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Render single neuron 3-view projections using standard brain coordinates (XYZ).")
     ap.add_argument("--swc_dir", required=True, help="SWC file directory")
@@ -635,82 +680,19 @@ def main():
     ap.add_argument("--max_neurons", type=int, default=0, help="Debug limit (0=all)")
     args = ap.parse_args()
 
-    swc_dir = Path(args.swc_dir)
-
-    # 读取神经元 ID 列表（并 stable unique）
-    neuron_list_path = Path(args.neuron_list)
-    csv_id_col = args.csv_id_col.strip() or None
-    neuron_ids = load_neuron_ids(neuron_list_path, swc_dir=swc_dir, csv_id_col=csv_id_col)
-
-    if args.export_unique_list:
-        out_list = Path(args.export_unique_list)
-        out_list.parent.mkdir(parents=True, exist_ok=True)
-        out_list.write_text("\n".join(neuron_ids) + "\n", encoding='utf-8')
-        print(f"[save] unique neuron list -> {out_list}  (n={len(neuron_ids)})")
-    
-    if args.max_neurons > 0:
-        neuron_ids = neuron_ids[:args.max_neurons]
-
-    cache: Dict[str, NeuronCacheItem] = {}
-    out_dir = Path(args.output_dir)
-
-    total = len(neuron_ids)
-    success_count = 0
-    skip_count = 0
-    missing_count = 0
-    fail_count = 0
-    missing_ids: List[str] = []
-
-    for k, nid in enumerate(neuron_ids, start=1):
-        try:
-            nid_str_pre = str(nid).strip()
-
-            # 先檢查 SWC 是否存在，缺失就記錄並跳過（避免每次都丟 FileNotFoundError）
-            swc_file = swc_dir / f"{nid_str_pre}.swc"
-            if not swc_file.exists():
-                missing_count += 1
-                missing_ids.append(nid_str_pre)
-                continue
-
-            if args.skip_existing:
-                if outputs_exist(out_dir, nid_str_pre, args.format, file_tag=""):
-                    skip_count += 1
-                    continue
-
-            nid_str, views, grid_size = render_single(
-                nid,
-                swc_path=swc_dir,
-                cache=cache,
-                scale_um_per_px=args.scale_um_per_px,
-                norm=args.normalize,
-            )
-            save_views(out_dir, nid_str, views, grid_size, format=args.format, file_tag="")
-            success_count += 1
-
-        except Exception as e:
-            print(f"[warn] neuron {k}/{total} (id={nid}) failed: {repr(e)}")
-            fail_count += 1
-
-        if k % 50 == 0:
-            print(
-                f"[{k}/{total}] processed, success={success_count}, skipped={skip_count}, missing={missing_count}, "
-                f"fail={fail_count}, cache_size={len(cache)}"
-            )
-
-    print(f"\nAll done. Output: {out_dir}")
-    print(f"Success: {success_count}, Skipped: {skip_count}, Missing SWC: {missing_count}, Failed: {fail_count}")
-
-    if missing_ids:
-        # stable unique（保持第一次出现顺序）
-        missing_unique = _stable_unique(missing_ids)
-        print(f"Missing unique neuron ids: {len(missing_unique)}")
-        print("Example missing ids (top 20):", missing_unique[:20])
-
-        if args.export_missing_list:
-            out_missing = Path(args.export_missing_list)
-            out_missing.parent.mkdir(parents=True, exist_ok=True)
-            out_missing.write_text("\n".join(missing_unique) + "\n", encoding='utf-8')
-            print(f"[save] missing swc list -> {out_missing}")
+    run_standard_draw(
+        swc_dir=args.swc_dir,
+        neuron_list=args.neuron_list,
+        output_dir=args.output_dir,
+        csv_id_col=args.csv_id_col or None,
+        export_unique_list=args.export_unique_list or None,
+        scale_um_per_px=args.scale_um_per_px,
+        normalize=args.normalize,
+        format=args.format,
+        skip_existing=args.skip_existing,
+        export_missing_list=args.export_missing_list or None,
+        max_neurons=args.max_neurons,
+    )
 
 
 # %%
