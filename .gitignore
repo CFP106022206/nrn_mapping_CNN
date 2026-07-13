@@ -32,8 +32,6 @@ __pycache__/
 .idea/*
 
 # Environments
-venv/*
-*.pyc
 .env
 .venv
 env/
@@ -166,7 +164,6 @@ fabric.properties
 
 # Editor-based Rest Client
 .idea/httpRequests
-__pycache__/
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
@@ -198,40 +195,26 @@ cython_debug/
 
 # data format
 data/*
-plot/*
+!data/**/
+!data/**/.gitkeep
+!data/**/.gitignore
+data/**/*.csv
+data/SWC/**/*.swc
+data/standard_views/**
+!data/standard_views/**/
+!data/standard_views/**/.gitkeep
+data/pairs_label/**
+!data/pairs_label/**/
+!data/pairs_label/**/.gitkeep
 
-# plot result
-3D_Plot
-3D_Plot/*
-.history/*
-.history
 
 .vscode
 
-# sandbox
-test
-test/*
-mnist_test
-mnist_preTrain
 
-# tuner
-CNN_Tuner
-CNN_Tuner/*
-mnist_kt_test
 
 # Result
-preTrain_Model/*
-Final_Model/*
-Fine_Tune_Model/*
-Fine_Tune_Model_170K/*
-Second_Stage_Model/*
 Annotator_Model/*
-DNN_Classifier/*
-CAE_FC/*
-CAE_EM/*
-CAE_mix/*
 result/*
-Figure
 Figure/*
 
 Iterative_Figure/*
