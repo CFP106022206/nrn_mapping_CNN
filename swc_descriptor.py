@@ -2,108 +2,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from io import StringIO
 from pathlib import Path
 import numpy as np
 import time
 
-@dataclass(frozen=True)
-class Swc:
-    nid: np.ndarray      # (N,) int32
-    ntype: np.ndarray    # (N,) int16
-    xyz: np.ndarray      # (N,3) float32
-    radius: np.ndarray   # (N,) float32
-    parent: np.ndarray   # (N,) int32
+from swc_util import Swc, load_swc_fast
 
-
-def load_swc(path: str | Path) -> Swc:
-    """Robust SWC loader: skips comment/header lines, accepts float-like ints, ignores extra cols."""
-    path = Path(path)
-    nid = []
-    ntype = []
-    xyz = []
-    radius = []
-    parent = []
-
-    with path.open("r", encoding="utf-8", errors="ignore") as f:
-        for lineno, raw in enumerate(f, start=1):
-            line = raw.strip()
-            if not line:
-                continue
-            if line.startswith("#") or line.startswith("//") or line.startswith(";"):
-                continue
-            # skip non-comment header lines containing letters
-            if any(("A" <= ch <= "Z") or ("a" <= ch <= "z") for ch in line):
-                continue
-
-            parts = line.replace(",", " ").split()
-            if len(parts) < 7:
-                raise ValueError(
-                    f"{path.name}:{lineno} malformed SWC row: expected >=7 cols, got {len(parts)} -> {line!r}"
-                )
-            parts = parts[:7]
-
-            try:
-                i = int(float(parts[0]))
-                t = int(float(parts[1]))
-                x = float(parts[2])
-                y = float(parts[3])
-                z = float(parts[4])
-                r = float(parts[5])
-                p = int(float(parts[6]))
-            except Exception as e:
-                raise ValueError(f"{path.name}:{lineno} parse error -> {line!r}") from e
-
-            nid.append(i)
-            ntype.append(t)
-            xyz.append((x, y, z))
-            radius.append(r)
-            parent.append(p)
-
-    nid = np.asarray(nid, dtype=np.int32)
-    ntype = np.asarray(ntype, dtype=np.int16)
-    xyz = np.asarray(xyz, dtype=np.float32)
-    radius = np.asarray(radius, dtype=np.float32)
-    parent = np.asarray(parent, dtype=np.int32)
-
-    if xyz.ndim != 2 or xyz.shape[1] != 3:
-        raise ValueError(f"{path.name}: xyz shape invalid: {xyz.shape}")
-
-    return Swc(nid=nid, ntype=ntype, xyz=xyz, radius=radius, parent=parent)
-
-def load_swc_fast(path: str | Path) -> Swc:
-    path = Path(path)
-    buf = []
-
-    with path.open("r", encoding="utf-8", errors="ignore") as f:
-        for raw in f:
-            line = raw.strip()
-            if not line:
-                continue
-            if line.startswith(("#", "//", ";")):
-                continue
-            # skip header lines containing letters
-            if any(("A" <= ch <= "Z") or ("a" <= ch <= "z") for ch in line):
-                continue
-            buf.append(line.replace(",", " "))
-
-    if not buf:
-        raise ValueError(f"{path.name}: no numeric SWC rows found")
-
-    # fromstring 比 loadtxt 更快
-    data = np.fromstring(" ".join(buf), sep=" ", dtype=np.float64)
-    if data.size % 7 != 0:
-        # 有些 swc 行可能有额外列
-        raise ValueError(f"{path.name}: parsed values not divisible by 7 (got {data.size})")
-
-    arr = data.reshape(-1, 7)
-
-    nid = arr[:, 0].astype(np.int32, copy=False)
-    ntype = arr[:, 1].astype(np.int16, copy=False)
-    xyz = arr[:, 2:5].astype(np.float32, copy=False)
-    radius = arr[:, 5].astype(np.float32, copy=False)
-    parent = arr[:, 6].astype(np.int32, copy=False)
-    return Swc(nid=nid, ntype=ntype, xyz=xyz, radius=radius, parent=parent)
+load_swc = load_swc_fast
 
 def _build_parent_index(nid: np.ndarray) -> dict[int, int]:
     """Map SWC node id -> row index."""

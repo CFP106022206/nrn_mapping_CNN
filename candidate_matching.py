@@ -280,6 +280,58 @@ def filter_pairs_by_orientation_rod_disk(
     )
 
 
+def run_matching(
+    fc_dir: str | Path = "data/descriptors_FC/",
+    em_dir: str | Path = "data/descriptors_EM/",
+    out_dir: str | Path = "data/pairs_label/",
+    centroid_th: float = 100.0,
+    ratio_th: float = 0.4,
+) -> Path:
+    fc = load_source(fc_dir, "FC")
+    em = load_source(em_dir, "EM")
+
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1) centroid candidate generation (using KDTree)
+    ia, ib, _ = candidate_pairs_by_centroid_distance(
+        fc.centroids, em.centroids, threshold=centroid_th
+    )
+
+    # 2) ratio2d filter
+    ia2, ib2, _ = filter_pairs_by_ratio2d_distance(
+        ia, ib, fc.ratios2d, em.ratios2d, threshold=ratio_th
+    )
+
+    ia3, ib3, _, _ = filter_pairs_by_orientation_rod_disk(
+        ia2,
+        ib2,
+        fc.ratios2d,
+        em.ratios2d,
+        fc.eigvecs,
+        em.eigvecs,
+        rod_angle_th_deg=30.0,
+        disk_angle_th_deg=30.0,
+    )
+
+    # Output CSV with only neuron IDs
+    fc_ids = np.asarray(fc.neuron_ids[ia3]).astype(str)
+    em_ids = np.asarray(em.neuron_ids[ib3]).astype(str)
+    out_df = pd.DataFrame({"fc_id": fc_ids, "em_id": em_ids})
+    out_df = out_df.drop_duplicates(["fc_id", "em_id"], keep="first")
+
+    out_csv = out_dir / "pairs_FC_EM.csv"
+    out_df.to_csv(out_csv, index=False)
+
+    print(f"FC: {fc.centroids.shape[0]}  EM: {em.centroids.shape[0]}")
+    print(f"centroid_th={centroid_th}  ratio_th={ratio_th}")
+    print(f"after centroid filter: {ia.shape[0]}")
+    print(f"after ratio2d filter:  {ia2.shape[0]}")
+    print(f"after orientation filter: {ia3.shape[0]}")
+    print(f"saved: {out_csv}")
+    return out_csv
+
+
 # %%
 def main():
     ap = argparse.ArgumentParser(description="Stage1: Candidate matching by centroid + (r21,r31) distance")
@@ -290,50 +342,13 @@ def main():
     ap.add_argument("--out_dir", default='data/pairs_label/', help="Folder to write candidate pairs")
     args = ap.parse_args()
 
-    fc = load_source(args.fc_dir, "FC")
-    em = load_source(args.em_dir, "EM")
-
-    out_dir = Path(args.out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    # 1) centroid candidate generation (using KDTree)
-    ia, ib, d_cent = candidate_pairs_by_centroid_distance(
-        fc.centroids, em.centroids, threshold=args.centroid_th)
-
-    # 2) ratio2d filter
-    ia2, ib2, d_ratio = filter_pairs_by_ratio2d_distance(
-        ia, ib, fc.ratios2d, em.ratios2d, threshold=args.ratio_th
+    run_matching(
+        fc_dir=args.fc_dir,
+        em_dir=args.em_dir,
+        out_dir=args.out_dir,
+        centroid_th=args.centroid_th,
+        ratio_th=args.ratio_th,
     )
-
-    # Keep centroid distance aligned to ia2/ib2 (recompute quickly; avoids carrying masks around)
-    if ia2.size:
-        diff = fc.centroids[ia2] - em.centroids[ib2]
-        d_cent2 = np.sqrt(np.einsum("ij,ij->i", diff, diff)).astype(np.float32)
-    else:
-        d_cent2 = np.empty((0,), dtype=np.float32)
-
-    ia3, ib3, ang_deg, en_type = filter_pairs_by_orientation_rod_disk(
-    ia2, ib2, fc.ratios2d, em.ratios2d, fc.eigvecs, em.eigvecs,
-    rod_angle_th_deg=30.0, disk_angle_th_deg=30.0)
-
-    # Output CSV with only neuron IDs
-    fc_ids = fc.neuron_ids[ia3]
-    em_ids = em.neuron_ids[ib3]
-    # ensure plain string columns
-    fc_ids = np.asarray(fc_ids).astype(str)
-    em_ids = np.asarray(em_ids).astype(str)
-    out_df = pd.DataFrame({"fc_id": fc_ids, "em_id": em_ids})
-    out_df = out_df.drop_duplicates(["fc_id", "em_id"], keep="first")
-
-    out_csv = out_dir / "pairs_FC_EM.csv"
-    out_df.to_csv(out_csv, index=False)
-
-    print(f"FC: {fc.centroids.shape[0]}  EM: {em.centroids.shape[0]}")
-    print(f"centroid_th={args.centroid_th}  ratio_th={args.ratio_th}")
-    print(f"after centroid filter: {ia.shape[0]}")
-    print(f"after ratio2d filter:  {ia2.shape[0]}")
-    print(f"after orientation filter: {ia3.shape[0]}")
-    print(f"saved: {out_csv}")
 
 
 if __name__ == "__main__":

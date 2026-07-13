@@ -85,44 +85,6 @@ for k in range(11): # 遍歷所有信心度等級
 print('all confidence levels number:')
 print(confidence_lvl_lst)
 
-# ============================================================
-# [DISABLED] 合併信心等級（先停用，保留原始 label 信心度）
-# 你之後要測試再打開即可
-# ============================================================
-# # 合併信心等級以減小等級之間的數據量差異
-# # [0%, [10% ~ 40%], [50% ~ 70%], [80% ~ 100%]]
-# integration_method = [[0], [1,2,3,4], [5,6,7], [8,9,10]]
-#
-# # 計算合併後的信心度（加權平均）
-# conf_lvl_merge, class_num_merge = [], []
-# for i_lst in integration_method:
-#     conf_lvl = 0    # 合併後該類別加權計算的信心度
-#     class_num = 0   # 統計合併後該類別的數量
-#     for i in i_lst:
-#         class_num += confidence_lvl_lst[i]
-#         conf_lvl += confidence_lvl_lst[i] * (i/10)    #加權
-#     class_num_merge.append(class_num)
-#     conf_lvl_merge.append(np.round(conf_lvl/class_num, 1))
-#
-# print('Confidence Level after merge:')
-# print(conf_lvl_merge)
-#
-# print('Number of each class')
-# print(class_num_merge)
-#
-# # 將label_table_all 的 confidence用合併後的信心度替代
-# conf_new = []
-# for conf in label_table_all['label']:
-#     # 找到對應信心度在融合規則中在哪個位置
-#     for i, sublist in enumerate(integration_method):
-#         if int(conf*10) in sublist: # i索引對應的位置為新信心度位置
-#             conf_new.append(conf_lvl_merge[i])
-#
-# label_table_all['label'] = conf_new
-# ============================================================
-# [DISABLED END]
-# ============================================================
-
 # 设置 KFold 参数
 kf = KFold(n_splits=cross_validation_num, shuffle=True, random_state=seed)
 

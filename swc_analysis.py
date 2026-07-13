@@ -5,14 +5,15 @@ import matplotlib.pyplot as plt
 import os
 import seaborn as sns
 
+from swc_util import load_swc_fast
+
+
 def load_swc(swc_path):
     if swc_path[-4:] != '.swc':
         swc_path = swc_path + '.swc'
 
-    # load swc file
-    swc = pd.read_csv(swc_path, sep='\s+', comment='#', header=None, names=['type', 'x', 'y', 'z', 'R', 'Parent'])
-    swc_np = swc[['x', 'y', 'z']].values
-    return swc_np
+    swc = load_swc_fast(swc_path)
+    return swc.xyz
 
 
 def find_CM(swc_np):
