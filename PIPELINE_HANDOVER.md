@@ -1,6 +1,8 @@
 # 全流程使用說明
+整個流程分成兩個部分：1、將swc 數據做初步篩選配對以及畫出三視圖。2、用模型預測每一對三視圖相似度。
+這份使用說明為第一部分
 
-這份文檔說明 `nrn_mapping_CNN` 里從 `SWC` 原始數據到 `descriptor`、`pair matching`、`standard view` 的完整流水線，目標是讓第一次接手的人可以直接按步驟運行，而不是先讀完全部代碼。
+這份文檔說明從 `SWC` 原始數據到 `descriptor`、`pair matching`、`standard view` 的完整流程。
 
 ## 1. 流水線總覽
 
@@ -47,7 +49,6 @@
 
 - `pairs_FC_EM.csv`
 
-注意：這份 pair CSV 是這個 pipeline 的標準中間產物，不是 `EMxFC_all.csv` 那一類下遊 pseudo-label 文件。
 
 ### 3.3 Standard View 渲染
 
@@ -60,9 +61,9 @@
 
 每個 `npz` 里通常包含：
 
-- `nid`
-- `views`
-- `grid_size`
+- `nid` 神經ID
+- `views` 三視圖
+
 
 ## 4. 一鍵運行全流程
 
@@ -77,28 +78,8 @@ python swc_pair_and_draw.py \
 ```
 
 建議在倉庫根目錄下執行，因為默認的輸入和輸出路徑都是按當前目錄解析的。
-
-從倉庫根目錄運行：
-
-```bash
-cd /cluster/home/ming/Project/nrn_mapping_CNN
-conda run -n ming python swc_pair_and_draw.py \
-    --fc_swc_dir ./data/SWC/FC \
-    --em_swc_dir ./data/SWC/EM
-```
-
 這條命令會使用默認輸出目錄，依次生成 descriptor、pair、standard view。
 
-如果你的數據目錄不在默認位置，可以顯式指定：
-
-```bash
-conda run -n ming python swc_pair_and_draw.py \
-    --fc_swc_dir /path/to/FC \
-    --em_swc_dir /path/to/EM \
-    --descriptor_root /path/to/output_root \
-    --pairs_out_dir /path/to/output_root/pairs_label \
-    --views_root /path/to/output_root/standard_views
-```
 
 ## 5. 常用參數
 
@@ -136,23 +117,7 @@ ls data/pairs_label
 ls data/standard_views/FC | head
 ls data/standard_views/EM | head
 ```
-
-## 7. 哪些文件不屬於這個 pipeline
-
-下面這些 `EMxFC_*` 文件屬於別的後處理或 pseudo-label 流程，不是這條主 pipeline 的標準輸出：
-
-- `EMxFC_all.csv`
-- `EMxFC_all_filtered.csv`
-- `EMxFC_all_high_confidence.csv`
-- `EMxFC_1000K.csv`
-- `EMxFC_5000K.csv`
-- `EMxFC_10KK.csv`
-- `EMxFC_1000-5000K.csv`
-- `EMxFC_6KK_last.csv`
-- `EMxFC_all_0_rk20.csv`
-- `EMxFC_shuffle.csv`
-
-如果你在這條 pipeline 里看到這些名字，通常是接錯了文件來源。
+## 7. （已刪除）
 
 ## 8. 只跑某一段時怎麼做
 
@@ -161,7 +126,7 @@ ls data/standard_views/EM | head
 前提是 descriptor 已經存在：
 
 ```bash
-conda run -n ming python candidate_matching.py \
+python candidate_matching.py \
     --fc_dir ./data/descriptors_FC \
     --em_dir ./data/descriptors_EM \
     --out_dir ./data/pairs_label
@@ -172,7 +137,7 @@ conda run -n ming python candidate_matching.py \
 前提是 pair CSV 已經存在：
 
 ```bash
-conda run -n ming python standard_draw.py \
+python standard_draw.py \
     --swc_dir ./data/SWC/FC \
     --neuron_list ./data/pairs_label/pairs_FC_EM.csv \
     --csv_id_col fc_id \
@@ -189,7 +154,7 @@ EM 側同理，把 `--swc_dir` 和 `--csv_id_col` 改成 `./data/SWC/EM` 和 `em
 如果你想確認這條 pipeline 有沒有被改壞，可以用：
 
 ```bash
-conda run -n ming python swc_pair_and_draw_test.py \
+python swc_pair_and_draw_test.py \
     --fc_swc_dir ./data/SWC/FC \
     --em_swc_dir ./data/SWC/EM
 ```
