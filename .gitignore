@@ -255,3 +255,11 @@ Annotator_Model/*
 FineTune_Model/*
 PreTrain_Model/*
 
+
+# Large generated artifacts kept out of feature branches
+Annotator_Model_Uninverse/*
+preTrain_label/*
+similarity_matrix/*
+模型暫存/*
+predict_mapping_data/*
+DB_Rank5.db
