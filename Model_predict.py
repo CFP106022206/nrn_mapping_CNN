@@ -13,6 +13,7 @@ import keras
 import tensorflow as tf
 
 from model import MVCNN_Siamese
+from swc_util import _load_views_from_npz, _pad_to_same_size, _resize_to_50
 
 
 @dataclass(frozen=True)
@@ -75,105 +76,6 @@ class _LRUCache:
         self._d[key] = value
         if len(self._d) > self.max_items:
             self._d.popitem(last=False)
-
-
-def _to_uint8_views(v: np.ndarray) -> np.ndarray:
-    v = np.asarray(v)
-    if v.dtype == np.uint8:
-        return v
-    vf = v.astype(np.float32, copy=False)
-    vmax = float(np.nanmax(vf)) if vf.size else 0.0
-    # 常见：如果是 0~1 浮点，就转 0~255
-    if vmax <= 1.0:
-        vf = np.round(vf * 255.0)
-    vf = np.clip(vf, 0.0, 255.0)
-    return vf.astype(np.uint8)
-
-
-def _ensure_3hw_views(v: np.ndarray) -> np.ndarray:
-    """Normalize view array to shape (3,H,W)."""
-    v = np.asarray(v)
-    if v.ndim != 3:
-        raise ValueError(f"Expect 3D views, got shape={v.shape}")
-
-    # standard_draw: (3,H,W)
-    if v.shape[0] == 3:
-        return v
-
-    # sometimes: (H,W,3)
-    if v.shape[-1] == 3:
-        return np.transpose(v, (2, 0, 1))
-
-    raise ValueError(f"Cannot interpret views shape as (3,H,W): {v.shape}")
-
-
-def _pad_to_same_size(fc_views: np.ndarray, em_views: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """把较小的一侧用黑边补齐到较大的一侧尺寸（居中）。输入/输出都是 (3,H,W)。"""
-    fc = _ensure_3hw_views(_to_uint8_views(fc_views))
-    em = _ensure_3hw_views(_to_uint8_views(em_views))
-
-    target = max(int(fc.shape[1]), int(em.shape[1]))
-
-    def _pad(v: np.ndarray) -> np.ndarray:
-        _, h, w = v.shape
-        if h != w:
-            raise ValueError(f"Expect square views (H==W). got {(h, w)}")
-        pad = target - h
-        if pad < 0:
-            raise ValueError(f"target smaller than current: current=({h},{w}) target=({target},{target})")
-        top = pad // 2
-        bottom = pad - top
-        left = pad // 2
-        right = pad - left
-        return np.pad(v, ((0, 0), (top, bottom), (left, right)), mode='constant', constant_values=0)
-
-    return _pad(fc), _pad(em)
-
-
-def _resize_to_50(views: np.ndarray, out_hw: tuple[int, int] = (50, 50)) -> np.ndarray:
-    """把 (3,H,W) 下采样到 (3,out_h,out_w)。
-
-    使用“自适应 max pooling”（每个输出像素取对应输入块的最大值），
-    对稀疏线条/骨架图更不容易产生断裂。
-    """
-
-    v = _ensure_3hw_views(_to_uint8_views(views))
-
-    out_h, out_w = int(out_hw[0]), int(out_hw[1])
-    h, w = int(v.shape[1]), int(v.shape[2])
-
-    if h == out_h and w == out_w:
-        return v
-
-    # 如果出现比目标还小的情况：直接 padding 到目标尺寸（居中补黑边），不做上采样，避免结构被复制/变粗。
-    if h < out_h or w < out_w:
-        pad_h = max(out_h - h, 0)
-        pad_w = max(out_w - w, 0)
-        top = pad_h // 2
-        bottom = pad_h - top
-        left = pad_w // 2
-        right = pad_w - left
-        vv = np.pad(v, ((0, 0), (top, bottom), (left, right)), mode='constant', constant_values=0)
-        # 安全裁切：避免 padding 后仍超出目标
-        return vv[:, :out_h, :out_w].astype(np.uint8, copy=False)
-
-    # 自适应 max pooling（向量化）：
-    # 仍然是用 y0=(oy*h)//out_h, y1=((oy+1)*h)//out_h 的分箱方式，
-    y_starts = (np.arange(out_h, dtype=np.int64) * h) // out_h  # (out_h,)
-    x_starts = (np.arange(out_w, dtype=np.int64) * w) // out_w  # (out_w,)
-
-    # 先沿 y 方向做分段 maxpool： (3,H,W) -> (3,out_h,W)
-    tmp = np.maximum.reduceat(v, y_starts, axis=1)
-    # 再沿 x 方向做分段 maxpool： (3,out_h,W) -> (3,out_h,out_w)
-    out = np.maximum.reduceat(tmp, x_starts, axis=2)
-    return out.astype(np.uint8, copy=False)
-
-
-def _load_views_from_npz(npz_path: Path) -> np.ndarray:
-    with np.load(npz_path, allow_pickle=False) as z:
-        if "views" not in z.files:
-            raise KeyError(f"Missing key 'views' in {npz_path}. keys={list(z.files)}")
-        return z["views"]
 
 
 def maybe_minmax_norm(x: np.ndarray) -> np.ndarray:

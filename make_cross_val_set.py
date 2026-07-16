@@ -30,7 +30,7 @@ from sklearn.model_selection import KFold
 class Config:
     mode: int = 1
     cross_validation_num: int = 10
-    used_label: str = "soft_label"  # "thres0.5" | "thres0.6" | "soft_label"
+    used_label: str = "soft_label"  # 保留人類信心度評分
     seed: int = 7
     mode2_file_path: str = "./labeled_info/nblast_D2+D5+D6_50as1.csv"
     out_dir: str = "./train_test_split"
