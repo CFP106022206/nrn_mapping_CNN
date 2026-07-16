@@ -1,0 +1,3282 @@
+2026-05-05 16:18:02.333685: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 16:18:02.341229: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777969082.355211  642984 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777969082.358007  642984 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777969082.365574  642984 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777969082.365616  642984 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777969082.365620  642984 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777969082.365622  642984 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 16:18:02.367931: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777969086.505416  642984 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777969090.549587  642984 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777969090.909379  643212 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 16:18:18.887147: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 16:18:18.887314: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 16:18:26.894465: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:18:41.690485: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:19:10.475822: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:20:08.922418: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:22:03.057580: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:25:46.455735: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:30:01.204587: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 16:30:01.212103: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777969801.221110  664147 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777969801.223906  664147 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777969801.231128  664147 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777969801.231167  664147 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777969801.231171  664147 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777969801.231173  664147 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 16:30:01.233712: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777969805.344061  664147 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777969809.434655  664147 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777969809.811436  664359 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 16:30:17.565413: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 16:30:17.565586: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 16:30:25.623663: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:30:40.175890: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:31:08.460258: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:32:03.923037: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:33:54.505449: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:37:35.229836: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:41:44.177825: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 16:41:44.185402: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777970504.194393  684847 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777970504.197226  684847 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777970504.216608  684847 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777970504.216650  684847 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777970504.216654  684847 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777970504.216655  684847 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 16:41:44.218930: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777970508.267736  684847 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777970512.361370  684847 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777970512.724375  685048 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 16:42:00.687067: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 16:42:00.687150: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 16:42:08.555626: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:42:23.894752: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:42:52.274481: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:43:48.734483: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:44:51.568395: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 5454114872236426700
+2026-05-05 16:45:41.013788: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:49:23.948170: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:53:38.246208: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 16:53:38.253332: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777971218.265828  705328 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777971218.269081  705328 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777971218.276369  705328 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777971218.276414  705328 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777971218.276419  705328 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777971218.276421  705328 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 16:53:38.278737: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777971222.158941  705328 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777971226.267174  705328 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777971226.630373  705527 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 16:53:54.842182: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 16:53:54.842249: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 16:54:02.959076: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:54:17.601105: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:54:46.937282: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:55:44.673021: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 16:55:51.677853: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 15723806856682477949
+2026-05-05 16:55:51.677930: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 12461784875662500737
+2026-05-05 16:55:51.677950: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 17252360471138635097
+2026-05-05 16:55:51.677956: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 7573817569250197421
+2026-05-05 16:56:26.187970: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 15723806856682477949
+2026-05-05 16:56:26.188054: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 12461784875662500737
+2026-05-05 16:56:26.188064: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 17252360471138635097
+2026-05-05 16:56:26.188071: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 7573817569250197421
+2026-05-05 16:56:33.110642: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 15723806856682477949
+2026-05-05 16:57:34.485267: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:00:22.052602: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 15723806856682477949
+2026-05-05 17:00:22.052669: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 17252360471138635097
+2026-05-05 17:00:22.052679: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 7573817569250197421
+2026-05-05 17:01:17.804609: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:02:20.839547: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 15723806856682477949
+2026-05-05 17:02:41.678044: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 15723806856682477949
+2026-05-05 17:02:41.678154: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 12461784875662500737
+2026-05-05 17:02:41.678170: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 17252360471138635097
+2026-05-05 17:02:41.678182: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 7573817569250197421
+2026-05-05 17:05:27.651508: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 15723806856682477949
+2026-05-05 17:05:27.651576: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 17252360471138635097
+2026-05-05 17:05:27.651584: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 7573817569250197421
+2026-05-05 17:05:30.560745: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 17:05:30.567831: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777971930.576253  725780 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777971930.579506  725780 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777971930.586311  725780 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777971930.586349  725780 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777971930.586352  725780 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777971930.586354  725780 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 17:05:30.589121: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777971934.932054  725780 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777971939.078903  725780 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777971939.448216  725979 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 17:05:47.245749: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 17:05:47.245837: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 17:05:54.934715: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:06:02.540931: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 8314149551320830218
+2026-05-05 17:06:09.298232: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:06:16.913599: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 326696793389863757
+2026-05-05 17:06:16.913665: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 7072080211534511445
+2026-05-05 17:06:16.913677: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 8314149551320830218
+2026-05-05 17:06:16.913682: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 9918604259703681762
+2026-05-05 17:06:16.913685: I tensorflow/core/framework/local_rendezvous.cc:430] Local rendezvous send item cancelled. Key hash: 14540167795579314710
+2026-05-05 17:06:38.192865: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:07:12.513672: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 8314149551320830218
+2026-05-05 17:07:33.529870: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:07:33.529962: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 8314149551320830218
+2026-05-05 17:09:25.267680: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:10:55.700500: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 8314149551320830218
+2026-05-05 17:13:08.196361: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:13:15.094260: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 8314149551320830218
+2026-05-05 17:14:03.747075: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 8314149551320830218
+2026-05-05 17:17:20.315081: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 17:17:20.322823: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777972640.331220  746238 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777972640.333990  746238 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777972640.341241  746238 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777972640.341276  746238 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777972640.341280  746238 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777972640.341282  746238 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 17:17:20.343586: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777972644.287547  746238 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777972648.381023  746238 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777972648.748388  746439 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 17:17:36.916851: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 17:17:36.916925: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 17:17:44.842976: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:17:59.999090: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:18:29.090845: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:19:25.418466: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:21:17.613234: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:25:05.004366: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:29:10.990421: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 15649497720745609430
+2026-05-05 17:29:20.929915: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 17:29:20.937358: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777973360.945659  766702 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777973360.948451  766702 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777973360.955619  766702 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777973360.955652  766702 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777973360.955657  766702 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777973360.955658  766702 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 17:29:20.958403: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777973365.169686  766702 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777973369.430358  766702 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777973369.826320  766902 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 17:29:37.748929: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 17:29:37.749026: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 17:29:45.662971: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 17:30:00.984615: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 17:30:29.358962: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 17:31:26.949146: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 17:33:17.788703: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 17:37:00.003816: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 17:37:00.003900: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 9924273524833680733
+2026-05-05 17:39:31.209951: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 9924273524833680733
+2026-05-05 17:40:19.253860: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 9924273524833680733
+2026-05-05 17:40:19.253960: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 15611545894322894302
+2026-05-05 17:41:10.026215: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 17:41:10.033926: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777974070.043064  787148 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777974070.045946  787148 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777974070.053253  787148 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777974070.053290  787148 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777974070.053294  787148 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777974070.053296  787148 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 17:41:10.055628: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777974073.729136  787148 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777974077.706745  787148 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777974078.071638  787348 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 17:41:25.895461: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 17:41:25.895532: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 17:41:33.494889: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:41:48.519556: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:42:17.417310: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:43:13.007367: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:45:03.388296: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:45:37.491467: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 16809060965659341639
+2026-05-05 17:45:37.491549: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 14749507811774725950
+2026-05-05 17:46:39.350783: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 16809060965659341639
+2026-05-05 17:46:39.350872: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 14749507811774725950
+2026-05-05 17:48:43.887789: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:51:30.918590: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 16809060965659341639
+2026-05-05 17:51:30.918657: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 13746227311107591603
+2026-05-05 17:51:30.918667: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 1537577242052509996
+2026-05-05 17:51:30.918672: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 14749507811774725950
+2026-05-05 17:52:40.361233: I tensorflow/core/framework/local_rendezvous.cc:430] Local rendezvous send item cancelled. Key hash: 14060247188914666237
+2026-05-05 17:52:40.361297: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 16809060965659341639
+2026-05-05 17:52:40.361305: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 13746227311107591603
+2026-05-05 17:52:40.361311: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 1537577242052509996
+2026-05-05 17:52:40.361313: I tensorflow/core/framework/local_rendezvous.cc:430] Local rendezvous send item cancelled. Key hash: 1505986111406554480
+2026-05-05 17:52:40.361315: I tensorflow/core/framework/local_rendezvous.cc:430] Local rendezvous send item cancelled. Key hash: 15176354277012586040
+2026-05-05 17:52:40.361320: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 14749507811774725950
+2026-05-05 17:52:57.003294: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 17:52:57.010855: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777974777.019344  807640 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777974777.022155  807640 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777974777.036948  807640 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777974777.036988  807640 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777974777.036992  807640 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777974777.036994  807640 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 17:52:57.039771: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777974781.090294  807640 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777974785.185321  807640 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777974785.551522  807840 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 17:53:13.461400: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 17:53:13.461487: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 17:53:21.468522: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:53:36.884439: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:54:06.124592: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:55:02.801981: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 17:56:53.869442: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 18:00:35.759261: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+2026-05-05 18:04:47.754289: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-05 18:04:47.761780: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1777975487.775260  828105 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1777975487.778246  828105 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1777975487.785951  828105 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777975487.785990  828105 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777975487.785995  828105 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1777975487.785997  828105 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-05 18:04:47.788292: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1777975491.933879  828105 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+E0000 00:00:1777975495.916306  828105 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1777975496.273933  828306 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-05 18:05:04.277799: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-05 18:05:04.277911: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+2026-05-05 18:05:12.036135: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 18:05:26.578201: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 18:05:54.512346: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 18:06:49.782506: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 18:08:40.500502: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-05 18:12:22.399233: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+ - loss: 0.1196 - val_Bi-Acc: 0.4121 - val_loss: 0.0909
+Epoch 3/100
+
+Epoch 3: val_loss did not improve from 0.09091
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3604 - loss: 0.1079 - val_Bi-Acc: 0.4000 - val_loss: 0.0945
+Epoch 4/100
+
+Epoch 4: val_loss improved from 0.09091 to 0.08829, saving model to FineTune_Model/FineTune_D1-D6_3.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3651 - loss: 0.1029 - val_Bi-Acc: 0.4242 - val_loss: 0.0883
+Epoch 5/100
+
+Epoch 5: val_loss did not improve from 0.08829
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3717 - loss: 0.0976 - val_Bi-Acc: 0.3576 - val_loss: 0.1487
+Epoch 6/100
+
+Epoch 6: val_loss improved from 0.08829 to 0.08718, saving model to FineTune_Model/FineTune_D1-D6_3.weights.h5
+583/583 - 8s - 14ms/step - Bi-Acc: 0.3776 - loss: 0.0917 - val_Bi-Acc: 0.4121 - val_loss: 0.0872
+Epoch 7/100
+
+Epoch 7: val_loss did not improve from 0.08718
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3792 - loss: 0.0890 - val_Bi-Acc: 0.3939 - val_loss: 0.0966
+Epoch 8/100
+
+Epoch 8: val_loss did not improve from 0.08718
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3848 - loss: 0.0851 - val_Bi-Acc: 0.4121 - val_loss: 0.0909
+Epoch 9/100
+
+Epoch 9: val_loss did not improve from 0.08718
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3857 - loss: 0.0829 - val_Bi-Acc: 0.3818 - val_loss: 0.1558
+Epoch 10/100
+
+Epoch 10: val_loss improved from 0.08718 to 0.08597, saving model to FineTune_Model/FineTune_D1-D6_3.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3880 - loss: 0.0817 - val_Bi-Acc: 0.4303 - val_loss: 0.0860
+Epoch 11/100
+
+Epoch 11: val_loss did not improve from 0.08597
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3892 - loss: 0.0795 - val_Bi-Acc: 0.4121 - val_loss: 0.1053
+Epoch 12/100
+
+Epoch 12: val_loss did not improve from 0.08597
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3909 - loss: 0.0779 - val_Bi-Acc: 0.3939 - val_loss: 0.1209
+Epoch 13/100
+
+Epoch 13: val_loss did not improve from 0.08597
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3950 - loss: 0.0752 - val_Bi-Acc: 0.4182 - val_loss: 0.0949
+Epoch 14/100
+
+Epoch 14: val_loss improved from 0.08597 to 0.08551, saving model to FineTune_Model/FineTune_D1-D6_3.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3956 - loss: 0.0736 - val_Bi-Acc: 0.4242 - val_loss: 0.0855
+Epoch 15/100
+
+Epoch 15: val_loss improved from 0.08551 to 0.08428, saving model to FineTune_Model/FineTune_D1-D6_3.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3942 - loss: 0.0721 - val_Bi-Acc: 0.4242 - val_loss: 0.0843
+Epoch 16/100
+
+Epoch 16: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3960 - loss: 0.0708 - val_Bi-Acc: 0.4000 - val_loss: 0.1044
+Epoch 17/100
+
+Epoch 17: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3983 - loss: 0.0703 - val_Bi-Acc: 0.4242 - val_loss: 0.0956
+Epoch 18/100
+
+Epoch 18: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3988 - loss: 0.0687 - val_Bi-Acc: 0.4182 - val_loss: 0.1076
+Epoch 19/100
+
+Epoch 19: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4004 - loss: 0.0669 - val_Bi-Acc: 0.4182 - val_loss: 0.0890
+Epoch 20/100
+
+Epoch 20: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3987 - loss: 0.0668 - val_Bi-Acc: 0.4182 - val_loss: 0.0890
+Epoch 21/100
+
+Epoch 21: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4010 - loss: 0.0655 - val_Bi-Acc: 0.4182 - val_loss: 0.1035
+Epoch 22/100
+
+Epoch 22: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3995 - loss: 0.0653 - val_Bi-Acc: 0.4182 - val_loss: 0.1186
+Epoch 23/100
+
+Epoch 23: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4013 - loss: 0.0642 - val_Bi-Acc: 0.4182 - val_loss: 0.0858
+Epoch 24/100
+
+Epoch 24: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4015 - loss: 0.0633 - val_Bi-Acc: 0.4242 - val_loss: 0.0970
+Epoch 25/100
+
+Epoch 25: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4008 - loss: 0.0634 - val_Bi-Acc: 0.3515 - val_loss: 0.2339
+Epoch 26/100
+
+Epoch 26: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4004 - loss: 0.0634 - val_Bi-Acc: 0.4242 - val_loss: 0.1004
+Epoch 27/100
+
+Epoch 27: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4025 - loss: 0.0621 - val_Bi-Acc: 0.4182 - val_loss: 0.0918
+Epoch 28/100
+
+Epoch 28: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4017 - loss: 0.0610 - val_Bi-Acc: 0.3939 - val_loss: 0.1145
+Epoch 29/100
+
+Epoch 29: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4017 - loss: 0.0612 - val_Bi-Acc: 0.4121 - val_loss: 0.0988
+Epoch 30/100
+
+Epoch 30: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4021 - loss: 0.0609 - val_Bi-Acc: 0.4121 - val_loss: 0.0934
+Epoch 31/100
+
+Epoch 31: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4024 - loss: 0.0600 - val_Bi-Acc: 0.3879 - val_loss: 0.1345
+Epoch 32/100
+
+Epoch 32: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4030 - loss: 0.0591 - val_Bi-Acc: 0.4242 - val_loss: 0.0935
+Epoch 33/100
+
+Epoch 33: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4023 - loss: 0.0591 - val_Bi-Acc: 0.4182 - val_loss: 0.1037
+Epoch 34/100
+
+Epoch 34: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4021 - loss: 0.0583 - val_Bi-Acc: 0.3697 - val_loss: 0.1467
+Epoch 35/100
+
+Epoch 35: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4028 - loss: 0.0582 - val_Bi-Acc: 0.4242 - val_loss: 0.1017
+Epoch 36/100
+
+Epoch 36: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4028 - loss: 0.0580 - val_Bi-Acc: 0.4242 - val_loss: 0.0913
+Epoch 37/100
+
+Epoch 37: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4028 - loss: 0.0576 - val_Bi-Acc: 0.4242 - val_loss: 0.0903
+Epoch 38/100
+
+Epoch 38: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4026 - loss: 0.0578 - val_Bi-Acc: 0.3939 - val_loss: 0.1037
+Epoch 39/100
+
+Epoch 39: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4028 - loss: 0.0568 - val_Bi-Acc: 0.3818 - val_loss: 0.1213
+Epoch 40/100
+
+Epoch 40: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4031 - loss: 0.0570 - val_Bi-Acc: 0.4182 - val_loss: 0.0873
+Epoch 41/100
+
+Epoch 41: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4030 - loss: 0.0573 - val_Bi-Acc: 0.4121 - val_loss: 0.0861
+Epoch 42/100
+
+Epoch 42: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0569 - val_Bi-Acc: 0.4242 - val_loss: 0.1082
+Epoch 43/100
+
+Epoch 43: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4029 - loss: 0.0563 - val_Bi-Acc: 0.4242 - val_loss: 0.1109
+Epoch 44/100
+
+Epoch 44: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4030 - loss: 0.0566 - val_Bi-Acc: 0.4182 - val_loss: 0.0855
+Epoch 45/100
+
+Epoch 45: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4028 - loss: 0.0562 - val_Bi-Acc: 0.4121 - val_loss: 0.0951
+Epoch 46/100
+
+Epoch 46: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4029 - loss: 0.0557 - val_Bi-Acc: 0.4182 - val_loss: 0.0985
+Epoch 47/100
+
+Epoch 47: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0557 - val_Bi-Acc: 0.4242 - val_loss: 0.0882
+Epoch 48/100
+
+Epoch 48: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4031 - loss: 0.0555 - val_Bi-Acc: 0.4121 - val_loss: 0.0926
+Epoch 49/100
+
+Epoch 49: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4029 - loss: 0.0555 - val_Bi-Acc: 0.4182 - val_loss: 0.0893
+Epoch 50/100
+
+Epoch 50: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0551 - val_Bi-Acc: 0.4182 - val_loss: 0.0951
+Epoch 51/100
+
+Epoch 51: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4032 - loss: 0.0551 - val_Bi-Acc: 0.4242 - val_loss: 0.0950
+Epoch 52/100
+
+Epoch 52: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4031 - loss: 0.0549 - val_Bi-Acc: 0.4121 - val_loss: 0.0915
+Epoch 53/100
+
+Epoch 53: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0546 - val_Bi-Acc: 0.4000 - val_loss: 0.1062
+Epoch 54/100
+
+Epoch 54: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4031 - loss: 0.0549 - val_Bi-Acc: 0.4182 - val_loss: 0.0867
+Epoch 55/100
+
+Epoch 55: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4032 - loss: 0.0545 - val_Bi-Acc: 0.4182 - val_loss: 0.0887
+Epoch 56/100
+
+Epoch 56: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4029 - loss: 0.0547 - val_Bi-Acc: 0.4182 - val_loss: 0.0923
+Epoch 57/100
+
+Epoch 57: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0542 - val_Bi-Acc: 0.4182 - val_loss: 0.0939
+Epoch 58/100
+
+Epoch 58: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0541 - val_Bi-Acc: 0.4182 - val_loss: 0.0867
+Epoch 59/100
+
+Epoch 59: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0542 - val_Bi-Acc: 0.4061 - val_loss: 0.0996
+Epoch 60/100
+
+Epoch 60: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0543 - val_Bi-Acc: 0.4182 - val_loss: 0.0879
+Epoch 61/100
+
+Epoch 61: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0539 - val_Bi-Acc: 0.4182 - val_loss: 0.0905
+Epoch 62/100
+
+Epoch 62: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0535 - val_Bi-Acc: 0.4182 - val_loss: 0.0864
+Epoch 63/100
+
+Epoch 63: val_loss did not improve from 0.08428
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0538 - val_Bi-Acc: 0.4242 - val_loss: 0.0942
+Epoch 64/100
+
+Epoch 64: val_loss improved from 0.08428 to 0.08345, saving model to FineTune_Model/FineTune_D1-D6_3.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4034 - loss: 0.0537 - val_Bi-Acc: 0.4182 - val_loss: 0.0834
+Epoch 65/100
+
+Epoch 65: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4030 - loss: 0.0539 - val_Bi-Acc: 0.4182 - val_loss: 0.0840
+Epoch 66/100
+
+Epoch 66: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0536 - val_Bi-Acc: 0.3758 - val_loss: 0.1275
+Epoch 67/100
+
+Epoch 67: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0536 - val_Bi-Acc: 0.4182 - val_loss: 0.0851
+Epoch 68/100
+
+Epoch 68: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0535 - val_Bi-Acc: 0.4242 - val_loss: 0.0951
+Epoch 69/100
+
+Epoch 69: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0534 - val_Bi-Acc: 0.4182 - val_loss: 0.0899
+Epoch 70/100
+
+Epoch 70: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0534 - val_Bi-Acc: 0.3818 - val_loss: 0.1079
+Epoch 71/100
+
+Epoch 71: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0531 - val_Bi-Acc: 0.4182 - val_loss: 0.0879
+Epoch 72/100
+
+Epoch 72: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0533 - val_Bi-Acc: 0.4182 - val_loss: 0.0860
+Epoch 73/100
+
+Epoch 73: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0530 - val_Bi-Acc: 0.4182 - val_loss: 0.0865
+Epoch 74/100
+
+Epoch 74: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0531 - val_Bi-Acc: 0.4182 - val_loss: 0.0864
+Epoch 75/100
+
+Epoch 75: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0530 - val_Bi-Acc: 0.4182 - val_loss: 0.0867
+Epoch 76/100
+
+Epoch 76: val_loss did not improve from 0.08345
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0528 - val_Bi-Acc: 0.4182 - val_loss: 0.0879
+Epoch 77/100
+
+Epoch 77: val_loss improved from 0.08345 to 0.08255, saving model to FineTune_Model/FineTune_D1-D6_3.weights.h5
+583/583 - 7s - 13ms/step - Bi-Acc: 0.4034 - loss: 0.0530 - val_Bi-Acc: 0.4182 - val_loss: 0.0826
+Epoch 78/100
+
+Epoch 78: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0527 - val_Bi-Acc: 0.4242 - val_loss: 0.0907
+Epoch 79/100
+
+Epoch 79: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0528 - val_Bi-Acc: 0.4000 - val_loss: 0.1002
+Epoch 80/100
+
+Epoch 80: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0527 - val_Bi-Acc: 0.4182 - val_loss: 0.0891
+Epoch 81/100
+
+Epoch 81: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0527 - val_Bi-Acc: 0.4182 - val_loss: 0.0848
+Epoch 82/100
+
+Epoch 82: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0527 - val_Bi-Acc: 0.4182 - val_loss: 0.0867
+Epoch 83/100
+
+Epoch 83: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0525 - val_Bi-Acc: 0.4121 - val_loss: 0.0874
+Epoch 84/100
+
+Epoch 84: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0526 - val_Bi-Acc: 0.3879 - val_loss: 0.1055
+Epoch 85/100
+
+Epoch 85: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0527 - val_Bi-Acc: 0.4242 - val_loss: 0.1006
+Epoch 86/100
+
+Epoch 86: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0524 - val_Bi-Acc: 0.4182 - val_loss: 0.0896
+Epoch 87/100
+
+Epoch 87: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0524 - val_Bi-Acc: 0.4121 - val_loss: 0.0994
+Epoch 88/100
+
+Epoch 88: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0525 - val_Bi-Acc: 0.4182 - val_loss: 0.0888
+Epoch 89/100
+
+Epoch 89: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0525 - val_Bi-Acc: 0.4182 - val_loss: 0.0861
+Epoch 90/100
+
+Epoch 90: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0524 - val_Bi-Acc: 0.3758 - val_loss: 0.1241
+Epoch 91/100
+
+Epoch 91: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0524 - val_Bi-Acc: 0.4182 - val_loss: 0.0844
+Epoch 92/100
+
+Epoch 92: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0523 - val_Bi-Acc: 0.4182 - val_loss: 0.0919
+Epoch 93/100
+
+Epoch 93: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0524 - val_Bi-Acc: 0.4242 - val_loss: 0.0869
+Epoch 94/100
+
+Epoch 94: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4033 - loss: 0.0522 - val_Bi-Acc: 0.4121 - val_loss: 0.0901
+Epoch 95/100
+
+Epoch 95: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0522 - val_Bi-Acc: 0.4182 - val_loss: 0.0893
+Epoch 96/100
+
+Epoch 96: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0521 - val_Bi-Acc: 0.4182 - val_loss: 0.0867
+Epoch 97/100
+
+Epoch 97: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0522 - val_Bi-Acc: 0.4121 - val_loss: 0.0835
+Epoch 98/100
+
+Epoch 98: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0520 - val_Bi-Acc: 0.4182 - val_loss: 0.0855
+Epoch 99/100
+
+Epoch 99: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0521 - val_Bi-Acc: 0.4182 - val_loss: 0.0832
+Epoch 100/100
+
+Epoch 100: val_loss did not improve from 0.08255
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0522 - val_Bi-Acc: 0.4182 - val_loss: 0.0836
+Validation: {'cm': array([[74, 12],
+       [11, 68]]), 'tp': 68, 'fp': 12, 'fn': 11, 'tn': 74, 'precision': 0.85, 'recall': 0.8607594936708861, 'f1_pos': 0.8553459119496856}
+Test: {'cm': array([[58, 14],
+       [ 8, 42]]), 'tp': 42, 'fp': 14, 'fn': 8, 'tn': 58, 'precision': 0.75, 'recall': 0.84, 'f1_pos': 0.7924528301886793}
+Saved
+Not found train: 0 Not found test: 0
+Train 932 | Val 165 | Test 122
+Epoch 1/100
+
+Epoch 1: val_loss improved from None to 0.16664, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 11s - 19ms/step - Bi-Acc: 0.3518 - loss: 0.1251 - val_Bi-Acc: 0.3333 - val_loss: 0.1666
+Epoch 2/100
+
+Epoch 2: val_loss improved from 0.16664 to 0.09918, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3616 - loss: 0.1137 - val_Bi-Acc: 0.3818 - val_loss: 0.0992
+Epoch 3/100
+
+Epoch 3: val_loss did not improve from 0.09918
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3682 - loss: 0.1069 - val_Bi-Acc: 0.3818 - val_loss: 0.1139
+Epoch 4/100
+
+Epoch 4: val_loss improved from 0.09918 to 0.09593, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3811 - loss: 0.0981 - val_Bi-Acc: 0.3879 - val_loss: 0.0959
+Epoch 5/100
+
+Epoch 5: val_loss did not improve from 0.09593
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3830 - loss: 0.0945 - val_Bi-Acc: 0.4061 - val_loss: 0.1052
+Epoch 6/100
+
+Epoch 6: val_loss improved from 0.09593 to 0.09061, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3830 - loss: 0.0918 - val_Bi-Acc: 0.3818 - val_loss: 0.0906
+Epoch 7/100
+
+Epoch 7: val_loss did not improve from 0.09061
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3894 - loss: 0.0887 - val_Bi-Acc: 0.4000 - val_loss: 0.0941
+Epoch 8/100
+
+Epoch 8: val_loss did not improve from 0.09061
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3924 - loss: 0.0850 - val_Bi-Acc: 0.3879 - val_loss: 0.1052
+Epoch 9/100
+
+Epoch 9: val_loss did not improve from 0.09061
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3907 - loss: 0.0842 - val_Bi-Acc: 0.3818 - val_loss: 0.0990
+Epoch 10/100
+
+Epoch 10: val_loss did not improve from 0.09061
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3973 - loss: 0.0799 - val_Bi-Acc: 0.3636 - val_loss: 0.1233
+Epoch 11/100
+
+Epoch 11: val_loss did not improve from 0.09061
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3991 - loss: 0.0789 - val_Bi-Acc: 0.3515 - val_loss: 0.1155
+Epoch 12/100
+
+Epoch 12: val_loss did not improve from 0.09061
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3991 - loss: 0.0776 - val_Bi-Acc: 0.4000 - val_loss: 0.0981
+Epoch 13/100
+
+Epoch 13: val_loss improved from 0.09061 to 0.08686, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 7s - 13ms/step - Bi-Acc: 0.4015 - loss: 0.0760 - val_Bi-Acc: 0.4182 - val_loss: 0.0869
+Epoch 14/100
+
+Epoch 14: val_loss did not improve from 0.08686
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4011 - loss: 0.0751 - val_Bi-Acc: 0.4121 - val_loss: 0.1050
+Epoch 15/100
+
+Epoch 15: val_loss did not improve from 0.08686
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4026 - loss: 0.0724 - val_Bi-Acc: 0.4000 - val_loss: 0.1304
+Epoch 16/100
+
+Epoch 16: val_loss did not improve from 0.08686
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4027 - loss: 0.0724 - val_Bi-Acc: 0.4000 - val_loss: 0.0946
+Epoch 17/100
+
+Epoch 17: val_loss did not improve from 0.08686
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4047 - loss: 0.0705 - val_Bi-Acc: 0.4061 - val_loss: 0.1135
+Epoch 18/100
+
+Epoch 18: val_loss did not improve from 0.08686
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4062 - loss: 0.0683 - val_Bi-Acc: 0.3758 - val_loss: 0.0938
+Epoch 19/100
+
+Epoch 19: val_loss improved from 0.08686 to 0.07990, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 7s - 13ms/step - Bi-Acc: 0.4060 - loss: 0.0679 - val_Bi-Acc: 0.4000 - val_loss: 0.0799
+Epoch 20/100
+
+Epoch 20: val_loss did not improve from 0.07990
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4057 - loss: 0.0677 - val_Bi-Acc: 0.4121 - val_loss: 0.0852
+Epoch 21/100
+
+Epoch 21: val_loss did not improve from 0.07990
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4064 - loss: 0.0662 - val_Bi-Acc: 0.4121 - val_loss: 0.0801
+Epoch 22/100
+
+Epoch 22: val_loss did not improve from 0.07990
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4059 - loss: 0.0663 - val_Bi-Acc: 0.2909 - val_loss: 0.2203
+Epoch 23/100
+
+Epoch 23: val_loss did not improve from 0.07990
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4080 - loss: 0.0643 - val_Bi-Acc: 0.4061 - val_loss: 0.1233
+Epoch 24/100
+
+Epoch 24: val_loss did not improve from 0.07990
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4068 - loss: 0.0643 - val_Bi-Acc: 0.4242 - val_loss: 0.0826
+Epoch 25/100
+
+Epoch 25: val_loss did not improve from 0.07990
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4062 - loss: 0.0637 - val_Bi-Acc: 0.4242 - val_loss: 0.0979
+Epoch 26/100
+
+Epoch 26: val_loss did not improve from 0.07990
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4084 - loss: 0.0627 - val_Bi-Acc: 0.3576 - val_loss: 0.1239
+Epoch 27/100
+
+Epoch 27: val_loss did not improve from 0.07990
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4077 - loss: 0.0619 - val_Bi-Acc: 0.4061 - val_loss: 0.1213
+Epoch 28/100
+
+Epoch 28: val_loss improved from 0.07990 to 0.07873, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4080 - loss: 0.0617 - val_Bi-Acc: 0.4121 - val_loss: 0.0787
+Epoch 29/100
+
+Epoch 29: val_loss did not improve from 0.07873
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4084 - loss: 0.0612 - val_Bi-Acc: 0.3758 - val_loss: 0.1720
+Epoch 30/100
+
+Epoch 30: val_loss improved from 0.07873 to 0.07768, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4088 - loss: 0.0605 - val_Bi-Acc: 0.4182 - val_loss: 0.0777
+Epoch 31/100
+
+Epoch 31: val_loss did not improve from 0.07768
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4078 - loss: 0.0605 - val_Bi-Acc: 0.4182 - val_loss: 0.0790
+Epoch 32/100
+
+Epoch 32: val_loss did not improve from 0.07768
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4088 - loss: 0.0599 - val_Bi-Acc: 0.4121 - val_loss: 0.0777
+Epoch 33/100
+
+Epoch 33: val_loss improved from 0.07768 to 0.07617, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4087 - loss: 0.0597 - val_Bi-Acc: 0.4121 - val_loss: 0.0762
+Epoch 34/100
+
+Epoch 34: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4086 - loss: 0.0595 - val_Bi-Acc: 0.4061 - val_loss: 0.0808
+Epoch 35/100
+
+Epoch 35: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4089 - loss: 0.0590 - val_Bi-Acc: 0.4061 - val_loss: 0.1113
+Epoch 36/100
+
+Epoch 36: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4080 - loss: 0.0589 - val_Bi-Acc: 0.3697 - val_loss: 0.1264
+Epoch 37/100
+
+Epoch 37: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4093 - loss: 0.0585 - val_Bi-Acc: 0.4061 - val_loss: 0.0796
+Epoch 38/100
+
+Epoch 38: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0581 - val_Bi-Acc: 0.4121 - val_loss: 0.0800
+Epoch 39/100
+
+Epoch 39: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4092 - loss: 0.0581 - val_Bi-Acc: 0.4182 - val_loss: 0.0864
+Epoch 40/100
+
+Epoch 40: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0573 - val_Bi-Acc: 0.4182 - val_loss: 0.0775
+Epoch 41/100
+
+Epoch 41: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0576 - val_Bi-Acc: 0.4000 - val_loss: 0.0821
+Epoch 42/100
+
+Epoch 42: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0571 - val_Bi-Acc: 0.4121 - val_loss: 0.0804
+Epoch 43/100
+
+Epoch 43: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4091 - loss: 0.0572 - val_Bi-Acc: 0.4242 - val_loss: 0.0835
+Epoch 44/100
+
+Epoch 44: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4093 - loss: 0.0563 - val_Bi-Acc: 0.4182 - val_loss: 0.0778
+Epoch 45/100
+
+Epoch 45: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0566 - val_Bi-Acc: 0.4182 - val_loss: 0.0816
+Epoch 46/100
+
+Epoch 46: val_loss did not improve from 0.07617
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0566 - val_Bi-Acc: 0.4121 - val_loss: 0.0786
+Epoch 47/100
+
+Epoch 47: val_loss improved from 0.07617 to 0.07528, saving model to FineTune_Model/FineTune_D1-D6_4.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4097 - loss: 0.0565 - val_Bi-Acc: 0.4242 - val_loss: 0.0753
+Epoch 48/100
+
+Epoch 48: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0558 - val_Bi-Acc: 0.4061 - val_loss: 0.0814
+Epoch 49/100
+
+Epoch 49: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0559 - val_Bi-Acc: 0.3697 - val_loss: 0.1200
+Epoch 50/100
+
+Epoch 50: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4093 - loss: 0.0556 - val_Bi-Acc: 0.3818 - val_loss: 0.1101
+Epoch 51/100
+
+Epoch 51: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0559 - val_Bi-Acc: 0.4000 - val_loss: 0.0895
+Epoch 52/100
+
+Epoch 52: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0555 - val_Bi-Acc: 0.4000 - val_loss: 0.0878
+Epoch 53/100
+
+Epoch 53: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0552 - val_Bi-Acc: 0.4121 - val_loss: 0.0824
+Epoch 54/100
+
+Epoch 54: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0552 - val_Bi-Acc: 0.4121 - val_loss: 0.0812
+Epoch 55/100
+
+Epoch 55: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0549 - val_Bi-Acc: 0.4121 - val_loss: 0.0829
+Epoch 56/100
+
+Epoch 56: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0550 - val_Bi-Acc: 0.4121 - val_loss: 0.0812
+Epoch 57/100
+
+Epoch 57: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0547 - val_Bi-Acc: 0.4182 - val_loss: 0.0859
+Epoch 58/100
+
+Epoch 58: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0549 - val_Bi-Acc: 0.4242 - val_loss: 0.0846
+Epoch 59/100
+
+Epoch 59: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0547 - val_Bi-Acc: 0.4182 - val_loss: 0.0803
+Epoch 60/100
+
+Epoch 60: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0546 - val_Bi-Acc: 0.3939 - val_loss: 0.0872
+Epoch 61/100
+
+Epoch 61: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0544 - val_Bi-Acc: 0.3939 - val_loss: 0.0902
+Epoch 62/100
+
+Epoch 62: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0544 - val_Bi-Acc: 0.4182 - val_loss: 0.0817
+Epoch 63/100
+
+Epoch 63: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0542 - val_Bi-Acc: 0.4061 - val_loss: 0.0857
+Epoch 64/100
+
+Epoch 64: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0542 - val_Bi-Acc: 0.4182 - val_loss: 0.0808
+Epoch 65/100
+
+Epoch 65: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0543 - val_Bi-Acc: 0.4242 - val_loss: 0.0863
+Epoch 66/100
+
+Epoch 66: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0539 - val_Bi-Acc: 0.4000 - val_loss: 0.0840
+Epoch 67/100
+
+Epoch 67: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0539 - val_Bi-Acc: 0.4061 - val_loss: 0.0878
+Epoch 68/100
+
+Epoch 68: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0540 - val_Bi-Acc: 0.4182 - val_loss: 0.0788
+Epoch 69/100
+
+Epoch 69: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0540 - val_Bi-Acc: 0.3939 - val_loss: 0.0880
+Epoch 70/100
+
+Epoch 70: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0539 - val_Bi-Acc: 0.4000 - val_loss: 0.0840
+Epoch 71/100
+
+Epoch 71: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0536 - val_Bi-Acc: 0.3879 - val_loss: 0.1019
+Epoch 72/100
+
+Epoch 72: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0537 - val_Bi-Acc: 0.4000 - val_loss: 0.0855
+Epoch 73/100
+
+Epoch 73: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0537 - val_Bi-Acc: 0.3939 - val_loss: 0.0878
+Epoch 74/100
+
+Epoch 74: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0537 - val_Bi-Acc: 0.4000 - val_loss: 0.0834
+Epoch 75/100
+
+Epoch 75: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0534 - val_Bi-Acc: 0.3758 - val_loss: 0.1096
+Epoch 76/100
+
+Epoch 76: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0535 - val_Bi-Acc: 0.4121 - val_loss: 0.0854
+Epoch 77/100
+
+Epoch 77: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0534 - val_Bi-Acc: 0.4061 - val_loss: 0.0851
+Epoch 78/100
+
+Epoch 78: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0533 - val_Bi-Acc: 0.4242 - val_loss: 0.0890
+Epoch 79/100
+
+Epoch 79: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0533 - val_Bi-Acc: 0.3939 - val_loss: 0.0928
+Epoch 80/100
+
+Epoch 80: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0532 - val_Bi-Acc: 0.4061 - val_loss: 0.0842
+Epoch 81/100
+
+Epoch 81: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0532 - val_Bi-Acc: 0.4061 - val_loss: 0.0846
+Epoch 82/100
+
+Epoch 82: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0532 - val_Bi-Acc: 0.3455 - val_loss: 0.1178
+Epoch 83/100
+
+Epoch 83: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0531 - val_Bi-Acc: 0.4242 - val_loss: 0.0836
+Epoch 84/100
+
+Epoch 84: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0531 - val_Bi-Acc: 0.4061 - val_loss: 0.0846
+Epoch 85/100
+
+Epoch 85: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0529 - val_Bi-Acc: 0.4182 - val_loss: 0.1067
+Epoch 86/100
+
+Epoch 86: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0529 - val_Bi-Acc: 0.3939 - val_loss: 0.0906
+Epoch 87/100
+
+Epoch 87: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0529 - val_Bi-Acc: 0.4000 - val_loss: 0.0887
+Epoch 88/100
+
+Epoch 88: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0529 - val_Bi-Acc: 0.4121 - val_loss: 0.0885
+Epoch 89/100
+
+Epoch 89: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0529 - val_Bi-Acc: 0.4242 - val_loss: 0.0813
+Epoch 90/100
+
+Epoch 90: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0527 - val_Bi-Acc: 0.4000 - val_loss: 0.0906
+Epoch 91/100
+
+Epoch 91: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0527 - val_Bi-Acc: 0.4182 - val_loss: 0.0858
+Epoch 92/100
+
+Epoch 92: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0527 - val_Bi-Acc: 0.4000 - val_loss: 0.0887
+Epoch 93/100
+
+Epoch 93: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0527 - val_Bi-Acc: 0.4242 - val_loss: 0.0891
+Epoch 94/100
+
+Epoch 94: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0527 - val_Bi-Acc: 0.4061 - val_loss: 0.0848
+Epoch 95/100
+
+Epoch 95: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0527 - val_Bi-Acc: 0.4061 - val_loss: 0.0862
+Epoch 96/100
+
+Epoch 96: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0527 - val_Bi-Acc: 0.4000 - val_loss: 0.0857
+Epoch 97/100
+
+Epoch 97: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0528 - val_Bi-Acc: 0.4242 - val_loss: 0.0859
+Epoch 98/100
+
+Epoch 98: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0525 - val_Bi-Acc: 0.4061 - val_loss: 0.0853
+Epoch 99/100
+
+Epoch 99: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0525 - val_Bi-Acc: 0.3939 - val_loss: 0.0904
+Epoch 100/100
+
+Epoch 100: val_loss did not improve from 0.07528
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0525 - val_Bi-Acc: 0.4000 - val_loss: 0.0867
+Validation: {'cm': array([[78,  6],
+       [10, 71]]), 'tp': 71, 'fp': 6, 'fn': 10, 'tn': 78, 'precision': 0.922077922077922, 'recall': 0.8765432098765432, 'f1_pos': 0.8987341772151899}
+Test: {'cm': array([[63,  6],
+       [ 7, 46]]), 'tp': 46, 'fp': 6, 'fn': 7, 'tn': 63, 'precision': 0.8846153846153846, 'recall': 0.8679245283018868, 'f1_pos': 0.8761904761904762}
+Saved
+Not found train: 0 Not found test: 0
+Train 932 | Val 165 | Test 122
+Epoch 1/100
+
+Epoch 1: val_loss improved from None to 0.10235, saving model to FineTune_Model/FineTune_D1-D6_5.weights.h5
+583/583 - 12s - 20ms/step - Bi-Acc: 0.3568 - loss: 0.1280 - val_Bi-Acc: 0.3758 - val_loss: 0.1024
+Epoch 2/100
+
+Epoch 2: val_loss improved from 0.10235 to 0.09538, saving model to FineTune_Model/FineTune_D1-D6_5.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3674 - loss: 0.1129 - val_Bi-Acc: 0.3879 - val_loss: 0.0954
+Epoch 3/100
+
+Epoch 3: val_loss did not improve from 0.09538
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3710 - loss: 0.1051 - val_Bi-Acc: 0.3818 - val_loss: 0.0954
+Epoch 4/100
+
+Epoch 4: val_loss did not improve from 0.09538
+583/583 - 7s - 13ms/step - Bi-Acc: 0.3776 - loss: 0.0988 - val_Bi-Acc: 0.3758 - val_loss: 0.1142
+Epoch 5/100
+
+Epoch 5: val_loss did not improve from 0.09538
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3832 - loss: 0.0944 - val_Bi-Acc: 0.3939 - val_loss: 0.1120
+Epoch 6/100
+
+Epoch 6: val_loss improved from 0.09538 to 0.09094, saving model to FineTune_Model/FineTune_D1-D6_5.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3889 - loss: 0.0898 - val_Bi-Acc: 0.4121 - val_loss: 0.0909
+Epoch 7/100
+
+Epoch 7: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3926 - loss: 0.0863 - val_Bi-Acc: 0.3939 - val_loss: 0.1284
+Epoch 8/100
+
+Epoch 8: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3938 - loss: 0.0848 - val_Bi-Acc: 0.4182 - val_loss: 0.0957
+Epoch 9/100
+
+Epoch 9: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3940 - loss: 0.0816 - val_Bi-Acc: 0.4121 - val_loss: 0.0913
+Epoch 10/100
+
+Epoch 10: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3989 - loss: 0.0795 - val_Bi-Acc: 0.3697 - val_loss: 0.0959
+Epoch 11/100
+
+Epoch 11: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4001 - loss: 0.0782 - val_Bi-Acc: 0.3818 - val_loss: 0.1003
+Epoch 12/100
+
+Epoch 12: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4024 - loss: 0.0747 - val_Bi-Acc: 0.4182 - val_loss: 0.0925
+Epoch 13/100
+
+Epoch 13: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4009 - loss: 0.0745 - val_Bi-Acc: 0.3455 - val_loss: 0.1229
+Epoch 14/100
+
+Epoch 14: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4054 - loss: 0.0733 - val_Bi-Acc: 0.3818 - val_loss: 0.1639
+Epoch 15/100
+
+Epoch 15: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4028 - loss: 0.0718 - val_Bi-Acc: 0.3697 - val_loss: 0.1016
+Epoch 16/100
+
+Epoch 16: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4064 - loss: 0.0691 - val_Bi-Acc: 0.4121 - val_loss: 0.0910
+Epoch 17/100
+
+Epoch 17: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4056 - loss: 0.0693 - val_Bi-Acc: 0.4061 - val_loss: 0.0927
+Epoch 18/100
+
+Epoch 18: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4060 - loss: 0.0680 - val_Bi-Acc: 0.4000 - val_loss: 0.1006
+Epoch 19/100
+
+Epoch 19: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4062 - loss: 0.0678 - val_Bi-Acc: 0.4061 - val_loss: 0.0955
+Epoch 20/100
+
+Epoch 20: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4077 - loss: 0.0657 - val_Bi-Acc: 0.4061 - val_loss: 0.1088
+Epoch 21/100
+
+Epoch 21: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4084 - loss: 0.0648 - val_Bi-Acc: 0.4061 - val_loss: 0.0960
+Epoch 22/100
+
+Epoch 22: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4078 - loss: 0.0643 - val_Bi-Acc: 0.4061 - val_loss: 0.0944
+Epoch 23/100
+
+Epoch 23: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4088 - loss: 0.0636 - val_Bi-Acc: 0.4182 - val_loss: 0.1096
+Epoch 24/100
+
+Epoch 24: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0622 - val_Bi-Acc: 0.4182 - val_loss: 0.0937
+Epoch 25/100
+
+Epoch 25: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0621 - val_Bi-Acc: 0.3818 - val_loss: 0.1074
+Epoch 26/100
+
+Epoch 26: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4089 - loss: 0.0615 - val_Bi-Acc: 0.3455 - val_loss: 0.1176
+Epoch 27/100
+
+Epoch 27: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4102 - loss: 0.0607 - val_Bi-Acc: 0.4121 - val_loss: 0.0973
+Epoch 28/100
+
+Epoch 28: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4093 - loss: 0.0609 - val_Bi-Acc: 0.3273 - val_loss: 0.1764
+Epoch 29/100
+
+Epoch 29: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0606 - val_Bi-Acc: 0.4061 - val_loss: 0.0941
+Epoch 30/100
+
+Epoch 30: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0601 - val_Bi-Acc: 0.4121 - val_loss: 0.0973
+Epoch 31/100
+
+Epoch 31: val_loss did not improve from 0.09094
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0594 - val_Bi-Acc: 0.3939 - val_loss: 0.1002
+Epoch 32/100
+
+Epoch 32: val_loss improved from 0.09094 to 0.09079, saving model to FineTune_Model/FineTune_D1-D6_5.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4100 - loss: 0.0590 - val_Bi-Acc: 0.4061 - val_loss: 0.0908
+Epoch 33/100
+
+Epoch 33: val_loss did not improve from 0.09079
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4101 - loss: 0.0585 - val_Bi-Acc: 0.3394 - val_loss: 0.1301
+Epoch 34/100
+
+Epoch 34: val_loss improved from 0.09079 to 0.08999, saving model to FineTune_Model/FineTune_D1-D6_5.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4103 - loss: 0.0584 - val_Bi-Acc: 0.4121 - val_loss: 0.0900
+Epoch 35/100
+
+Epoch 35: val_loss improved from 0.08999 to 0.08693, saving model to FineTune_Model/FineTune_D1-D6_5.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4105 - loss: 0.0578 - val_Bi-Acc: 0.4121 - val_loss: 0.0869
+Epoch 36/100
+
+Epoch 36: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4102 - loss: 0.0577 - val_Bi-Acc: 0.3939 - val_loss: 0.1041
+Epoch 37/100
+
+Epoch 37: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4102 - loss: 0.0576 - val_Bi-Acc: 0.4000 - val_loss: 0.0933
+Epoch 38/100
+
+Epoch 38: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4106 - loss: 0.0570 - val_Bi-Acc: 0.4061 - val_loss: 0.0951
+Epoch 39/100
+
+Epoch 39: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4106 - loss: 0.0568 - val_Bi-Acc: 0.4000 - val_loss: 0.0997
+Epoch 40/100
+
+Epoch 40: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4105 - loss: 0.0569 - val_Bi-Acc: 0.3879 - val_loss: 0.1063
+Epoch 41/100
+
+Epoch 41: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4105 - loss: 0.0565 - val_Bi-Acc: 0.4121 - val_loss: 0.0906
+Epoch 42/100
+
+Epoch 42: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4107 - loss: 0.0563 - val_Bi-Acc: 0.4000 - val_loss: 0.0944
+Epoch 43/100
+
+Epoch 43: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4103 - loss: 0.0562 - val_Bi-Acc: 0.4242 - val_loss: 0.1025
+Epoch 44/100
+
+Epoch 44: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4107 - loss: 0.0559 - val_Bi-Acc: 0.3939 - val_loss: 0.0965
+Epoch 45/100
+
+Epoch 45: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4106 - loss: 0.0555 - val_Bi-Acc: 0.4000 - val_loss: 0.0973
+Epoch 46/100
+
+Epoch 46: val_loss did not improve from 0.08693
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4106 - loss: 0.0554 - val_Bi-Acc: 0.3939 - val_loss: 0.1009
+Epoch 47/100
+
+Epoch 47: val_loss improved from 0.08693 to 0.08465, saving model to FineTune_Model/FineTune_D1-D6_5.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4101 - loss: 0.0556 - val_Bi-Acc: 0.4121 - val_loss: 0.0846
+Epoch 48/100
+
+Epoch 48: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0550 - val_Bi-Acc: 0.3879 - val_loss: 0.1000
+Epoch 49/100
+
+Epoch 49: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0548 - val_Bi-Acc: 0.4182 - val_loss: 0.0904
+Epoch 50/100
+
+Epoch 50: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4106 - loss: 0.0546 - val_Bi-Acc: 0.3394 - val_loss: 0.1257
+Epoch 51/100
+
+Epoch 51: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4105 - loss: 0.0549 - val_Bi-Acc: 0.3939 - val_loss: 0.0940
+Epoch 52/100
+
+Epoch 52: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0544 - val_Bi-Acc: 0.4182 - val_loss: 0.0897
+Epoch 53/100
+
+Epoch 53: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0546 - val_Bi-Acc: 0.3697 - val_loss: 0.1106
+Epoch 54/100
+
+Epoch 54: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4107 - loss: 0.0544 - val_Bi-Acc: 0.3697 - val_loss: 0.1156
+Epoch 55/100
+
+Epoch 55: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0541 - val_Bi-Acc: 0.4061 - val_loss: 0.0915
+Epoch 56/100
+
+Epoch 56: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4105 - loss: 0.0544 - val_Bi-Acc: 0.3939 - val_loss: 0.1021
+Epoch 57/100
+
+Epoch 57: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0541 - val_Bi-Acc: 0.3939 - val_loss: 0.0883
+Epoch 58/100
+
+Epoch 58: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0540 - val_Bi-Acc: 0.4121 - val_loss: 0.0920
+Epoch 59/100
+
+Epoch 59: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0538 - val_Bi-Acc: 0.3939 - val_loss: 0.1007
+Epoch 60/100
+
+Epoch 60: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4106 - loss: 0.0540 - val_Bi-Acc: 0.3939 - val_loss: 0.0958
+Epoch 61/100
+
+Epoch 61: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4107 - loss: 0.0539 - val_Bi-Acc: 0.3758 - val_loss: 0.1050
+Epoch 62/100
+
+Epoch 62: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0537 - val_Bi-Acc: 0.4061 - val_loss: 0.0912
+Epoch 63/100
+
+Epoch 63: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0533 - val_Bi-Acc: 0.3697 - val_loss: 0.1202
+Epoch 64/100
+
+Epoch 64: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0537 - val_Bi-Acc: 0.4061 - val_loss: 0.0890
+Epoch 65/100
+
+Epoch 65: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0535 - val_Bi-Acc: 0.4061 - val_loss: 0.0954
+Epoch 66/100
+
+Epoch 66: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0534 - val_Bi-Acc: 0.4121 - val_loss: 0.0948
+Epoch 67/100
+
+Epoch 67: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0534 - val_Bi-Acc: 0.4121 - val_loss: 0.0930
+Epoch 68/100
+
+Epoch 68: val_loss did not improve from 0.08465
+583/583 - 7s - 13ms/step - Bi-Acc: 0.4108 - loss: 0.0532 - val_Bi-Acc: 0.4000 - val_loss: 0.0913
+Epoch 69/100
+
+Epoch 69: val_loss did not improve from 0.08465
+583/583 - 7s - 13ms/step - Bi-Acc: 0.4108 - loss: 0.0531 - val_Bi-Acc: 0.4061 - val_loss: 0.0885
+Epoch 70/100
+
+Epoch 70: val_loss did not improve from 0.08465
+583/583 - 7s - 13ms/step - Bi-Acc: 0.4109 - loss: 0.0532 - val_Bi-Acc: 0.4000 - val_loss: 0.0976
+Epoch 71/100
+
+Epoch 71: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0531 - val_Bi-Acc: 0.3818 - val_loss: 0.1022
+Epoch 72/100
+
+Epoch 72: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0528 - val_Bi-Acc: 0.4121 - val_loss: 0.0912
+Epoch 73/100
+
+Epoch 73: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0529 - val_Bi-Acc: 0.3636 - val_loss: 0.1074
+Epoch 74/100
+
+Epoch 74: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0529 - val_Bi-Acc: 0.4061 - val_loss: 0.0884
+Epoch 75/100
+
+Epoch 75: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0530 - val_Bi-Acc: 0.3576 - val_loss: 0.1007
+Epoch 76/100
+
+Epoch 76: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0528 - val_Bi-Acc: 0.4121 - val_loss: 0.0923
+Epoch 77/100
+
+Epoch 77: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0529 - val_Bi-Acc: 0.3455 - val_loss: 0.1340
+Epoch 78/100
+
+Epoch 78: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0527 - val_Bi-Acc: 0.4061 - val_loss: 0.0951
+Epoch 79/100
+
+Epoch 79: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0525 - val_Bi-Acc: 0.4061 - val_loss: 0.0925
+Epoch 80/100
+
+Epoch 80: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0527 - val_Bi-Acc: 0.3576 - val_loss: 0.1009
+Epoch 81/100
+
+Epoch 81: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0526 - val_Bi-Acc: 0.4000 - val_loss: 0.0960
+Epoch 82/100
+
+Epoch 82: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0525 - val_Bi-Acc: 0.3879 - val_loss: 0.1026
+Epoch 83/100
+
+Epoch 83: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0525 - val_Bi-Acc: 0.3697 - val_loss: 0.0969
+Epoch 84/100
+
+Epoch 84: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0525 - val_Bi-Acc: 0.4061 - val_loss: 0.0954
+Epoch 85/100
+
+Epoch 85: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0523 - val_Bi-Acc: 0.3879 - val_loss: 0.0912
+Epoch 86/100
+
+Epoch 86: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0525 - val_Bi-Acc: 0.3636 - val_loss: 0.1186
+Epoch 87/100
+
+Epoch 87: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0524 - val_Bi-Acc: 0.4182 - val_loss: 0.0901
+Epoch 88/100
+
+Epoch 88: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0522 - val_Bi-Acc: 0.4182 - val_loss: 0.0936
+Epoch 89/100
+
+Epoch 89: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0524 - val_Bi-Acc: 0.3879 - val_loss: 0.1074
+Epoch 90/100
+
+Epoch 90: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0522 - val_Bi-Acc: 0.3697 - val_loss: 0.0966
+Epoch 91/100
+
+Epoch 91: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0521 - val_Bi-Acc: 0.3818 - val_loss: 0.1103
+Epoch 92/100
+
+Epoch 92: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0523 - val_Bi-Acc: 0.4000 - val_loss: 0.0931
+Epoch 93/100
+
+Epoch 93: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0521 - val_Bi-Acc: 0.3939 - val_loss: 0.0923
+Epoch 94/100
+
+Epoch 94: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0522 - val_Bi-Acc: 0.3818 - val_loss: 0.0948
+Epoch 95/100
+
+Epoch 95: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0520 - val_Bi-Acc: 0.3939 - val_loss: 0.0968
+Epoch 96/100
+
+Epoch 96: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0520 - val_Bi-Acc: 0.3818 - val_loss: 0.0949
+Epoch 97/100
+
+Epoch 97: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0522 - val_Bi-Acc: 0.3818 - val_loss: 0.0977
+Epoch 98/100
+
+Epoch 98: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0522 - val_Bi-Acc: 0.3939 - val_loss: 0.1203
+Epoch 99/100
+
+Epoch 99: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0521 - val_Bi-Acc: 0.3939 - val_loss: 0.0977
+Epoch 100/100
+
+Epoch 100: val_loss did not improve from 0.08465
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0520 - val_Bi-Acc: 0.4061 - val_loss: 0.0921
+Validation: {'cm': array([[71,  9],
+       [11, 74]]), 'tp': 74, 'fp': 9, 'fn': 11, 'tn': 71, 'precision': 0.891566265060241, 'recall': 0.8705882352941177, 'f1_pos': 0.8809523809523809}
+Test: {'cm': array([[64,  8],
+       [ 5, 45]]), 'tp': 45, 'fp': 8, 'fn': 5, 'tn': 64, 'precision': 0.8490566037735849, 'recall': 0.9, 'f1_pos': 0.8737864077669902}
+Saved
+Not found train: 0 Not found test: 0
+Train 932 | Val 165 | Test 122
+Epoch 1/100
+
+Epoch 1: val_loss improved from None to 0.10907, saving model to FineTune_Model/FineTune_D1-D6_6.weights.h5
+583/583 - 12s - 20ms/step - Bi-Acc: 0.3559 - loss: 0.1287 - val_Bi-Acc: 0.3879 - val_loss: 0.1091
+Epoch 2/100
+
+Epoch 2: val_loss improved from 0.10907 to 0.10852, saving model to FineTune_Model/FineTune_D1-D6_6.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3700 - loss: 0.1146 - val_Bi-Acc: 0.3697 - val_loss: 0.1085
+Epoch 3/100
+
+Epoch 3: val_loss improved from 0.10852 to 0.10156, saving model to FineTune_Model/FineTune_D1-D6_6.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3727 - loss: 0.1076 - val_Bi-Acc: 0.4061 - val_loss: 0.1016
+Epoch 4/100
+
+Epoch 4: val_loss did not improve from 0.10156
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3793 - loss: 0.1012 - val_Bi-Acc: 0.3879 - val_loss: 0.1076
+Epoch 5/100
+
+Epoch 5: val_loss improved from 0.10156 to 0.09796, saving model to FineTune_Model/FineTune_D1-D6_6.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3842 - loss: 0.0975 - val_Bi-Acc: 0.4061 - val_loss: 0.0980
+Epoch 6/100
+
+Epoch 6: val_loss did not improve from 0.09796
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3888 - loss: 0.0931 - val_Bi-Acc: 0.3879 - val_loss: 0.1051
+Epoch 7/100
+
+Epoch 7: val_loss did not improve from 0.09796
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3891 - loss: 0.0907 - val_Bi-Acc: 0.4061 - val_loss: 0.1000
+Epoch 8/100
+
+Epoch 8: val_loss did not improve from 0.09796
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3943 - loss: 0.0871 - val_Bi-Acc: 0.3818 - val_loss: 0.1084
+Epoch 9/100
+
+Epoch 9: val_loss did not improve from 0.09796
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3948 - loss: 0.0855 - val_Bi-Acc: 0.3515 - val_loss: 0.1301
+Epoch 10/100
+
+Epoch 10: val_loss improved from 0.09796 to 0.09787, saving model to FineTune_Model/FineTune_D1-D6_6.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3960 - loss: 0.0817 - val_Bi-Acc: 0.3818 - val_loss: 0.0979
+Epoch 11/100
+
+Epoch 11: val_loss improved from 0.09787 to 0.09178, saving model to FineTune_Model/FineTune_D1-D6_6.weights.h5
+583/583 - 7s - 13ms/step - Bi-Acc: 0.3990 - loss: 0.0803 - val_Bi-Acc: 0.4000 - val_loss: 0.0918
+Epoch 12/100
+
+Epoch 12: val_loss did not improve from 0.09178
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4002 - loss: 0.0793 - val_Bi-Acc: 0.4242 - val_loss: 0.1010
+Epoch 13/100
+
+Epoch 13: val_loss did not improve from 0.09178
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4005 - loss: 0.0772 - val_Bi-Acc: 0.4121 - val_loss: 0.1271
+Epoch 14/100
+
+Epoch 14: val_loss did not improve from 0.09178
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4025 - loss: 0.0755 - val_Bi-Acc: 0.4242 - val_loss: 0.0936
+Epoch 15/100
+
+Epoch 15: val_loss improved from 0.09178 to 0.08876, saving model to FineTune_Model/FineTune_D1-D6_6.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4049 - loss: 0.0739 - val_Bi-Acc: 0.4000 - val_loss: 0.0888
+Epoch 16/100
+
+Epoch 16: val_loss did not improve from 0.08876
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4038 - loss: 0.0717 - val_Bi-Acc: 0.3758 - val_loss: 0.1232
+Epoch 17/100
+
+Epoch 17: val_loss did not improve from 0.08876
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4059 - loss: 0.0712 - val_Bi-Acc: 0.4000 - val_loss: 0.0907
+Epoch 18/100
+
+Epoch 18: val_loss improved from 0.08876 to 0.08824, saving model to FineTune_Model/FineTune_D1-D6_6.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.4068 - loss: 0.0702 - val_Bi-Acc: 0.4121 - val_loss: 0.0882
+Epoch 19/100
+
+Epoch 19: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4074 - loss: 0.0689 - val_Bi-Acc: 0.4000 - val_loss: 0.0899
+Epoch 20/100
+
+Epoch 20: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4077 - loss: 0.0682 - val_Bi-Acc: 0.4000 - val_loss: 0.0918
+Epoch 21/100
+
+Epoch 21: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4087 - loss: 0.0675 - val_Bi-Acc: 0.4121 - val_loss: 0.1126
+Epoch 22/100
+
+Epoch 22: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0660 - val_Bi-Acc: 0.3273 - val_loss: 0.1965
+Epoch 23/100
+
+Epoch 23: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0657 - val_Bi-Acc: 0.4182 - val_loss: 0.1237
+Epoch 24/100
+
+Epoch 24: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4092 - loss: 0.0650 - val_Bi-Acc: 0.4121 - val_loss: 0.0990
+Epoch 25/100
+
+Epoch 25: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4093 - loss: 0.0647 - val_Bi-Acc: 0.3879 - val_loss: 0.1076
+Epoch 26/100
+
+Epoch 26: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4093 - loss: 0.0644 - val_Bi-Acc: 0.3879 - val_loss: 0.0941
+Epoch 27/100
+
+Epoch 27: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4105 - loss: 0.0634 - val_Bi-Acc: 0.4061 - val_loss: 0.1045
+Epoch 28/100
+
+Epoch 28: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4102 - loss: 0.0622 - val_Bi-Acc: 0.4182 - val_loss: 0.1128
+Epoch 29/100
+
+Epoch 29: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4106 - loss: 0.0622 - val_Bi-Acc: 0.4121 - val_loss: 0.0926
+Epoch 30/100
+
+Epoch 30: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4104 - loss: 0.0617 - val_Bi-Acc: 0.3939 - val_loss: 0.1020
+Epoch 31/100
+
+Epoch 31: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0618 - val_Bi-Acc: 0.3818 - val_loss: 0.1150
+Epoch 32/100
+
+Epoch 32: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4104 - loss: 0.0610 - val_Bi-Acc: 0.4242 - val_loss: 0.0973
+Epoch 33/100
+
+Epoch 33: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0601 - val_Bi-Acc: 0.4000 - val_loss: 0.2236
+Epoch 34/100
+
+Epoch 34: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4104 - loss: 0.0609 - val_Bi-Acc: 0.4061 - val_loss: 0.1022
+Epoch 35/100
+
+Epoch 35: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4112 - loss: 0.0598 - val_Bi-Acc: 0.3879 - val_loss: 0.1046
+Epoch 36/100
+
+Epoch 36: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4109 - loss: 0.0595 - val_Bi-Acc: 0.4061 - val_loss: 0.0946
+Epoch 37/100
+
+Epoch 37: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4116 - loss: 0.0592 - val_Bi-Acc: 0.4182 - val_loss: 0.1024
+Epoch 38/100
+
+Epoch 38: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4115 - loss: 0.0584 - val_Bi-Acc: 0.4121 - val_loss: 0.0935
+Epoch 39/100
+
+Epoch 39: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4116 - loss: 0.0583 - val_Bi-Acc: 0.3939 - val_loss: 0.0953
+Epoch 40/100
+
+Epoch 40: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4116 - loss: 0.0581 - val_Bi-Acc: 0.4000 - val_loss: 0.0951
+Epoch 41/100
+
+Epoch 41: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4108 - loss: 0.0583 - val_Bi-Acc: 0.4121 - val_loss: 0.0988
+Epoch 42/100
+
+Epoch 42: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4113 - loss: 0.0579 - val_Bi-Acc: 0.4121 - val_loss: 0.1026
+Epoch 43/100
+
+Epoch 43: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4115 - loss: 0.0577 - val_Bi-Acc: 0.3879 - val_loss: 0.1001
+Epoch 44/100
+
+Epoch 44: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0574 - val_Bi-Acc: 0.3818 - val_loss: 0.1089
+Epoch 45/100
+
+Epoch 45: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4117 - loss: 0.0574 - val_Bi-Acc: 0.4121 - val_loss: 0.0944
+Epoch 46/100
+
+Epoch 46: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4115 - loss: 0.0572 - val_Bi-Acc: 0.4061 - val_loss: 0.0991
+Epoch 47/100
+
+Epoch 47: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0565 - val_Bi-Acc: 0.4121 - val_loss: 0.1030
+Epoch 48/100
+
+Epoch 48: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4113 - loss: 0.0569 - val_Bi-Acc: 0.3939 - val_loss: 0.0990
+Epoch 49/100
+
+Epoch 49: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4117 - loss: 0.0565 - val_Bi-Acc: 0.4182 - val_loss: 0.1021
+Epoch 50/100
+
+Epoch 50: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4117 - loss: 0.0564 - val_Bi-Acc: 0.4000 - val_loss: 0.1092
+Epoch 51/100
+
+Epoch 51: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0561 - val_Bi-Acc: 0.3939 - val_loss: 0.1086
+Epoch 52/100
+
+Epoch 52: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0561 - val_Bi-Acc: 0.4000 - val_loss: 0.1047
+Epoch 53/100
+
+Epoch 53: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4116 - loss: 0.0561 - val_Bi-Acc: 0.4061 - val_loss: 0.1007
+Epoch 54/100
+
+Epoch 54: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4117 - loss: 0.0561 - val_Bi-Acc: 0.3879 - val_loss: 0.1078
+Epoch 55/100
+
+Epoch 55: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0555 - val_Bi-Acc: 0.4000 - val_loss: 0.0929
+Epoch 56/100
+
+Epoch 56: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0556 - val_Bi-Acc: 0.3939 - val_loss: 0.1003
+Epoch 57/100
+
+Epoch 57: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4117 - loss: 0.0555 - val_Bi-Acc: 0.4000 - val_loss: 0.1016
+Epoch 58/100
+
+Epoch 58: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4117 - loss: 0.0553 - val_Bi-Acc: 0.3879 - val_loss: 0.1042
+Epoch 59/100
+
+Epoch 59: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4116 - loss: 0.0555 - val_Bi-Acc: 0.4061 - val_loss: 0.0987
+Epoch 60/100
+
+Epoch 60: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4117 - loss: 0.0555 - val_Bi-Acc: 0.3879 - val_loss: 0.1022
+Epoch 61/100
+
+Epoch 61: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0551 - val_Bi-Acc: 0.4182 - val_loss: 0.1014
+Epoch 62/100
+
+Epoch 62: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4118 - loss: 0.0550 - val_Bi-Acc: 0.4121 - val_loss: 0.0987
+Epoch 63/100
+
+Epoch 63: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0550 - val_Bi-Acc: 0.3939 - val_loss: 0.1030
+Epoch 64/100
+
+Epoch 64: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4117 - loss: 0.0550 - val_Bi-Acc: 0.4121 - val_loss: 0.1121
+Epoch 65/100
+
+Epoch 65: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4116 - loss: 0.0549 - val_Bi-Acc: 0.4061 - val_loss: 0.0998
+Epoch 66/100
+
+Epoch 66: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0548 - val_Bi-Acc: 0.3879 - val_loss: 0.1004
+Epoch 67/100
+
+Epoch 67: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0547 - val_Bi-Acc: 0.3939 - val_loss: 0.0951
+Epoch 68/100
+
+Epoch 68: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0545 - val_Bi-Acc: 0.4000 - val_loss: 0.1023
+Epoch 69/100
+
+Epoch 69: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0545 - val_Bi-Acc: 0.4061 - val_loss: 0.0966
+Epoch 70/100
+
+Epoch 70: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4118 - loss: 0.0546 - val_Bi-Acc: 0.3939 - val_loss: 0.1081
+Epoch 71/100
+
+Epoch 71: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0544 - val_Bi-Acc: 0.3939 - val_loss: 0.0993
+Epoch 72/100
+
+Epoch 72: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0543 - val_Bi-Acc: 0.4000 - val_loss: 0.1001
+Epoch 73/100
+
+Epoch 73: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0543 - val_Bi-Acc: 0.4000 - val_loss: 0.0983
+Epoch 74/100
+
+Epoch 74: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0544 - val_Bi-Acc: 0.4061 - val_loss: 0.1011
+Epoch 75/100
+
+Epoch 75: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0543 - val_Bi-Acc: 0.4000 - val_loss: 0.0997
+Epoch 76/100
+
+Epoch 76: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0540 - val_Bi-Acc: 0.3939 - val_loss: 0.1119
+Epoch 77/100
+
+Epoch 77: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0542 - val_Bi-Acc: 0.3879 - val_loss: 0.1113
+Epoch 78/100
+
+Epoch 78: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4118 - loss: 0.0541 - val_Bi-Acc: 0.3939 - val_loss: 0.0974
+Epoch 79/100
+
+Epoch 79: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0539 - val_Bi-Acc: 0.4000 - val_loss: 0.0990
+Epoch 80/100
+
+Epoch 80: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0537 - val_Bi-Acc: 0.4121 - val_loss: 0.1035
+Epoch 81/100
+
+Epoch 81: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0539 - val_Bi-Acc: 0.4121 - val_loss: 0.0996
+Epoch 82/100
+
+Epoch 82: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0539 - val_Bi-Acc: 0.4121 - val_loss: 0.1046
+Epoch 83/100
+
+Epoch 83: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0537 - val_Bi-Acc: 0.3939 - val_loss: 0.1022
+Epoch 84/100
+
+Epoch 84: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0538 - val_Bi-Acc: 0.4121 - val_loss: 0.0980
+Epoch 85/100
+
+Epoch 85: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0537 - val_Bi-Acc: 0.4121 - val_loss: 0.0976
+Epoch 86/100
+
+Epoch 86: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0537 - val_Bi-Acc: 0.4000 - val_loss: 0.0933
+Epoch 87/100
+
+Epoch 87: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0537 - val_Bi-Acc: 0.4000 - val_loss: 0.1005
+Epoch 88/100
+
+Epoch 88: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0536 - val_Bi-Acc: 0.4000 - val_loss: 0.1014
+Epoch 89/100
+
+Epoch 89: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0535 - val_Bi-Acc: 0.4000 - val_loss: 0.0974
+Epoch 90/100
+
+Epoch 90: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0535 - val_Bi-Acc: 0.4000 - val_loss: 0.0946
+Epoch 91/100
+
+Epoch 91: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0534 - val_Bi-Acc: 0.3939 - val_loss: 0.0942
+Epoch 92/100
+
+Epoch 92: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0534 - val_Bi-Acc: 0.4061 - val_loss: 0.1020
+Epoch 93/100
+
+Epoch 93: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0534 - val_Bi-Acc: 0.4000 - val_loss: 0.1018
+Epoch 94/100
+
+Epoch 94: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0536 - val_Bi-Acc: 0.4000 - val_loss: 0.0951
+Epoch 95/100
+
+Epoch 95: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0533 - val_Bi-Acc: 0.4000 - val_loss: 0.0985
+Epoch 96/100
+
+Epoch 96: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4119 - loss: 0.0534 - val_Bi-Acc: 0.3879 - val_loss: 0.1087
+Epoch 97/100
+
+Epoch 97: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0534 - val_Bi-Acc: 0.4061 - val_loss: 0.0938
+Epoch 98/100
+
+Epoch 98: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0533 - val_Bi-Acc: 0.4000 - val_loss: 0.1025
+Epoch 99/100
+
+Epoch 99: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0532 - val_Bi-Acc: 0.3879 - val_loss: 0.1067
+Epoch 100/100
+
+Epoch 100: val_loss did not improve from 0.08824
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4120 - loss: 0.0532 - val_Bi-Acc: 0.4061 - val_loss: 0.0982
+Validation: {'cm': array([[80,  7],
+       [ 8, 70]]), 'tp': 70, 'fp': 7, 'fn': 8, 'tn': 80, 'precision': 0.9090909090909091, 'recall': 0.8974358974358975, 'f1_pos': 0.9032258064516129}
+Test: {'cm': array([[59,  4],
+       [ 4, 55]]), 'tp': 55, 'fp': 4, 'fn': 4, 'tn': 59, 'precision': 0.9322033898305084, 'recall': 0.9322033898305084, 'f1_pos': 0.9322033898305084}
+Saved
+Not found train: 0 Not found test: 0
+Train 932 | Val 165 | Test 122
+Epoch 1/100
+
+Epoch 1: val_loss improved from None to 0.10286, saving model to FineTune_Model/FineTune_D1-D6_7.weights.h5
+583/583 - 11s - 19ms/step - Bi-Acc: 0.3631 - loss: 0.1242 - val_Bi-Acc: 0.4364 - val_loss: 0.1029
+Epoch 2/100
+
+Epoch 2: val_loss improved from 0.10286 to 0.09697, saving model to FineTune_Model/FineTune_D1-D6_7.weights.h5
+583/583 - 7s - 13ms/step - Bi-Acc: 0.3712 - loss: 0.1141 - val_Bi-Acc: 0.4061 - val_loss: 0.0970
+Epoch 3/100
+
+Epoch 3: val_loss improved from 0.09697 to 0.09678, saving model to FineTune_Model/FineTune_D1-D6_7.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3744 - loss: 0.1096 - val_Bi-Acc: 0.4000 - val_loss: 0.0968
+Epoch 4/100
+
+Epoch 4: val_loss improved from 0.09678 to 0.09264, saving model to FineTune_Model/FineTune_D1-D6_7.weights.h5
+583/583 - 7s - 13ms/step - Bi-Acc: 0.3828 - loss: 0.0998 - val_Bi-Acc: 0.3939 - val_loss: 0.0926
+Epoch 5/100
+
+Epoch 5: val_loss did not improve from 0.09264
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3866 - loss: 0.0950 - val_Bi-Acc: 0.4000 - val_loss: 0.0928
+Epoch 6/100
+
+Epoch 6: val_loss did not improve from 0.09264
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3912 - loss: 0.0911 - val_Bi-Acc: 0.4061 - val_loss: 0.0957
+Epoch 7/100
+
+Epoch 7: val_loss improved from 0.09264 to 0.08675, saving model to FineTune_Model/FineTune_D1-D6_7.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3977 - loss: 0.0856 - val_Bi-Acc: 0.4121 - val_loss: 0.0868
+Epoch 8/100
+
+Epoch 8: val_loss did not improve from 0.08675
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3997 - loss: 0.0844 - val_Bi-Acc: 0.4000 - val_loss: 0.1082
+Epoch 9/100
+
+Epoch 9: val_loss did not improve from 0.08675
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3991 - loss: 0.0831 - val_Bi-Acc: 0.3939 - val_loss: 0.0916
+Epoch 10/100
+
+Epoch 10: val_loss improved from 0.08675 to 0.08344, saving model to FineTune_Model/FineTune_D1-D6_7.weights.h5
+583/583 - 7s - 13ms/step - Bi-Acc: 0.4005 - loss: 0.0812 - val_Bi-Acc: 0.4121 - val_loss: 0.0834
+Epoch 11/100
+
+Epoch 11: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4036 - loss: 0.0783 - val_Bi-Acc: 0.4121 - val_loss: 0.0901
+Epoch 12/100
+
+Epoch 12: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4061 - loss: 0.0763 - val_Bi-Acc: 0.4000 - val_loss: 0.1011
+Epoch 13/100
+
+Epoch 13: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4071 - loss: 0.0745 - val_Bi-Acc: 0.4364 - val_loss: 0.0880
+Epoch 14/100
+
+Epoch 14: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4083 - loss: 0.0728 - val_Bi-Acc: 0.3879 - val_loss: 0.1004
+Epoch 15/100
+
+Epoch 15: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4102 - loss: 0.0719 - val_Bi-Acc: 0.4061 - val_loss: 0.0862
+Epoch 16/100
+
+Epoch 16: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4083 - loss: 0.0708 - val_Bi-Acc: 0.3758 - val_loss: 0.1143
+Epoch 17/100
+
+Epoch 17: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4115 - loss: 0.0697 - val_Bi-Acc: 0.4424 - val_loss: 0.1007
+Epoch 18/100
+
+Epoch 18: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4104 - loss: 0.0683 - val_Bi-Acc: 0.4303 - val_loss: 0.1094
+Epoch 19/100
+
+Epoch 19: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4118 - loss: 0.0675 - val_Bi-Acc: 0.4303 - val_loss: 0.0954
+Epoch 20/100
+
+Epoch 20: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4146 - loss: 0.0661 - val_Bi-Acc: 0.4242 - val_loss: 0.0910
+Epoch 21/100
+
+Epoch 21: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4143 - loss: 0.0652 - val_Bi-Acc: 0.4364 - val_loss: 0.0946
+Epoch 22/100
+
+Epoch 22: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4145 - loss: 0.0644 - val_Bi-Acc: 0.4303 - val_loss: 0.1000
+Epoch 23/100
+
+Epoch 23: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4132 - loss: 0.0638 - val_Bi-Acc: 0.4242 - val_loss: 0.1272
+Epoch 24/100
+
+Epoch 24: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4145 - loss: 0.0637 - val_Bi-Acc: 0.4182 - val_loss: 0.1343
+Epoch 25/100
+
+Epoch 25: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4148 - loss: 0.0625 - val_Bi-Acc: 0.4303 - val_loss: 0.0935
+Epoch 26/100
+
+Epoch 26: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4150 - loss: 0.0625 - val_Bi-Acc: 0.4364 - val_loss: 0.1026
+Epoch 27/100
+
+Epoch 27: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4149 - loss: 0.0613 - val_Bi-Acc: 0.4364 - val_loss: 0.0973
+Epoch 28/100
+
+Epoch 28: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4158 - loss: 0.0604 - val_Bi-Acc: 0.4242 - val_loss: 0.0858
+Epoch 29/100
+
+Epoch 29: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4161 - loss: 0.0602 - val_Bi-Acc: 0.4242 - val_loss: 0.0904
+Epoch 30/100
+
+Epoch 30: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4163 - loss: 0.0595 - val_Bi-Acc: 0.4303 - val_loss: 0.0841
+Epoch 31/100
+
+Epoch 31: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4162 - loss: 0.0590 - val_Bi-Acc: 0.3879 - val_loss: 0.1036
+Epoch 32/100
+
+Epoch 32: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4165 - loss: 0.0588 - val_Bi-Acc: 0.4303 - val_loss: 0.1029
+Epoch 33/100
+
+Epoch 33: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4162 - loss: 0.0583 - val_Bi-Acc: 0.4000 - val_loss: 0.0883
+Epoch 34/100
+
+Epoch 34: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4161 - loss: 0.0579 - val_Bi-Acc: 0.4242 - val_loss: 0.0959
+Epoch 35/100
+
+Epoch 35: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4166 - loss: 0.0575 - val_Bi-Acc: 0.4364 - val_loss: 0.0949
+Epoch 36/100
+
+Epoch 36: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4171 - loss: 0.0576 - val_Bi-Acc: 0.4000 - val_loss: 0.1079
+Epoch 37/100
+
+Epoch 37: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4164 - loss: 0.0575 - val_Bi-Acc: 0.4364 - val_loss: 0.0928
+Epoch 38/100
+
+Epoch 38: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0562 - val_Bi-Acc: 0.4242 - val_loss: 0.0948
+Epoch 39/100
+
+Epoch 39: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4166 - loss: 0.0565 - val_Bi-Acc: 0.4182 - val_loss: 0.0918
+Epoch 40/100
+
+Epoch 40: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4166 - loss: 0.0563 - val_Bi-Acc: 0.4242 - val_loss: 0.0916
+Epoch 41/100
+
+Epoch 41: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4167 - loss: 0.0563 - val_Bi-Acc: 0.4242 - val_loss: 0.0947
+Epoch 42/100
+
+Epoch 42: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4166 - loss: 0.0556 - val_Bi-Acc: 0.4242 - val_loss: 0.0875
+Epoch 43/100
+
+Epoch 43: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4166 - loss: 0.0554 - val_Bi-Acc: 0.4182 - val_loss: 0.0920
+Epoch 44/100
+
+Epoch 44: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4171 - loss: 0.0551 - val_Bi-Acc: 0.3818 - val_loss: 0.1033
+Epoch 45/100
+
+Epoch 45: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0548 - val_Bi-Acc: 0.4303 - val_loss: 0.0937
+Epoch 46/100
+
+Epoch 46: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4171 - loss: 0.0549 - val_Bi-Acc: 0.3758 - val_loss: 0.1008
+Epoch 47/100
+
+Epoch 47: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4166 - loss: 0.0550 - val_Bi-Acc: 0.3939 - val_loss: 0.1727
+Epoch 48/100
+
+Epoch 48: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0547 - val_Bi-Acc: 0.4242 - val_loss: 0.0921
+Epoch 49/100
+
+Epoch 49: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4167 - loss: 0.0545 - val_Bi-Acc: 0.4242 - val_loss: 0.1019
+Epoch 50/100
+
+Epoch 50: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0543 - val_Bi-Acc: 0.4000 - val_loss: 0.1019
+Epoch 51/100
+
+Epoch 51: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0542 - val_Bi-Acc: 0.4303 - val_loss: 0.0965
+Epoch 52/100
+
+Epoch 52: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0536 - val_Bi-Acc: 0.4061 - val_loss: 0.0939
+Epoch 53/100
+
+Epoch 53: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0537 - val_Bi-Acc: 0.4242 - val_loss: 0.0958
+Epoch 54/100
+
+Epoch 54: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0538 - val_Bi-Acc: 0.4121 - val_loss: 0.0886
+Epoch 55/100
+
+Epoch 55: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0536 - val_Bi-Acc: 0.4182 - val_loss: 0.0931
+Epoch 56/100
+
+Epoch 56: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0534 - val_Bi-Acc: 0.4000 - val_loss: 0.1138
+Epoch 57/100
+
+Epoch 57: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4171 - loss: 0.0535 - val_Bi-Acc: 0.4182 - val_loss: 0.0956
+Epoch 58/100
+
+Epoch 58: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0534 - val_Bi-Acc: 0.4364 - val_loss: 0.1121
+Epoch 59/100
+
+Epoch 59: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0530 - val_Bi-Acc: 0.4121 - val_loss: 0.0944
+Epoch 60/100
+
+Epoch 60: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0528 - val_Bi-Acc: 0.4121 - val_loss: 0.0919
+Epoch 61/100
+
+Epoch 61: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0528 - val_Bi-Acc: 0.4182 - val_loss: 0.0929
+Epoch 62/100
+
+Epoch 62: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0529 - val_Bi-Acc: 0.4303 - val_loss: 0.0954
+Epoch 63/100
+
+Epoch 63: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0528 - val_Bi-Acc: 0.4364 - val_loss: 0.0922
+Epoch 64/100
+
+Epoch 64: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0526 - val_Bi-Acc: 0.4000 - val_loss: 0.0983
+Epoch 65/100
+
+Epoch 65: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0526 - val_Bi-Acc: 0.4121 - val_loss: 0.0919
+Epoch 66/100
+
+Epoch 66: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0528 - val_Bi-Acc: 0.4000 - val_loss: 0.0942
+Epoch 67/100
+
+Epoch 67: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0526 - val_Bi-Acc: 0.3939 - val_loss: 0.1098
+Epoch 68/100
+
+Epoch 68: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0526 - val_Bi-Acc: 0.4000 - val_loss: 0.0901
+Epoch 69/100
+
+Epoch 69: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0523 - val_Bi-Acc: 0.4121 - val_loss: 0.0968
+Epoch 70/100
+
+Epoch 70: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0524 - val_Bi-Acc: 0.4061 - val_loss: 0.1077
+Epoch 71/100
+
+Epoch 71: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0521 - val_Bi-Acc: 0.4242 - val_loss: 0.1054
+Epoch 72/100
+
+Epoch 72: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0520 - val_Bi-Acc: 0.4182 - val_loss: 0.0928
+Epoch 73/100
+
+Epoch 73: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4172 - loss: 0.0520 - val_Bi-Acc: 0.4061 - val_loss: 0.0878
+Epoch 74/100
+
+Epoch 74: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0521 - val_Bi-Acc: 0.4000 - val_loss: 0.0929
+Epoch 75/100
+
+Epoch 75: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0520 - val_Bi-Acc: 0.4182 - val_loss: 0.0905
+Epoch 76/100
+
+Epoch 76: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0519 - val_Bi-Acc: 0.4121 - val_loss: 0.1008
+Epoch 77/100
+
+Epoch 77: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0519 - val_Bi-Acc: 0.4000 - val_loss: 0.0921
+Epoch 78/100
+
+Epoch 78: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0519 - val_Bi-Acc: 0.4061 - val_loss: 0.0906
+Epoch 79/100
+
+Epoch 79: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0517 - val_Bi-Acc: 0.4061 - val_loss: 0.0951
+Epoch 80/100
+
+Epoch 80: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0519 - val_Bi-Acc: 0.4303 - val_loss: 0.1033
+Epoch 81/100
+
+Epoch 81: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0519 - val_Bi-Acc: 0.4182 - val_loss: 0.0969
+Epoch 82/100
+
+Epoch 82: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0517 - val_Bi-Acc: 0.4061 - val_loss: 0.0946
+Epoch 83/100
+
+Epoch 83: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0516 - val_Bi-Acc: 0.4121 - val_loss: 0.0939
+Epoch 84/100
+
+Epoch 84: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0515 - val_Bi-Acc: 0.4061 - val_loss: 0.0979
+Epoch 85/100
+
+Epoch 85: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0516 - val_Bi-Acc: 0.4000 - val_loss: 0.0946
+Epoch 86/100
+
+Epoch 86: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0515 - val_Bi-Acc: 0.4121 - val_loss: 0.0920
+Epoch 87/100
+
+Epoch 87: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0514 - val_Bi-Acc: 0.4061 - val_loss: 0.0933
+Epoch 88/100
+
+Epoch 88: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0514 - val_Bi-Acc: 0.4182 - val_loss: 0.0947
+Epoch 89/100
+
+Epoch 89: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0516 - val_Bi-Acc: 0.4061 - val_loss: 0.0959
+Epoch 90/100
+
+Epoch 90: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0513 - val_Bi-Acc: 0.4000 - val_loss: 0.1086
+Epoch 91/100
+
+Epoch 91: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0513 - val_Bi-Acc: 0.4061 - val_loss: 0.0984
+Epoch 92/100
+
+Epoch 92: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0513 - val_Bi-Acc: 0.4121 - val_loss: 0.0923
+Epoch 93/100
+
+Epoch 93: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0513 - val_Bi-Acc: 0.4000 - val_loss: 0.0977
+Epoch 94/100
+
+Epoch 94: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0512 - val_Bi-Acc: 0.4242 - val_loss: 0.0976
+Epoch 95/100
+
+Epoch 95: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0512 - val_Bi-Acc: 0.4061 - val_loss: 0.1015
+Epoch 96/100
+
+Epoch 96: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0512 - val_Bi-Acc: 0.4061 - val_loss: 0.0932
+Epoch 97/100
+
+Epoch 97: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4173 - loss: 0.0513 - val_Bi-Acc: 0.4061 - val_loss: 0.0935
+Epoch 98/100
+
+Epoch 98: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0511 - val_Bi-Acc: 0.4061 - val_loss: 0.0934
+Epoch 99/100
+
+Epoch 99: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0511 - val_Bi-Acc: 0.4061 - val_loss: 0.0949
+Epoch 100/100
+
+Epoch 100: val_loss did not improve from 0.08344
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4174 - loss: 0.0510 - val_Bi-Acc: 0.4182 - val_loss: 0.0919
+Validation: {'cm': array([[79,  9],
+       [ 9, 68]]), 'tp': 68, 'fp': 9, 'fn': 9, 'tn': 79, 'precision': 0.8831168831168831, 'recall': 0.8831168831168831, 'f1_pos': 0.8831168831168831}
+Test: {'cm': array([[47,  9],
+       [ 3, 63]]), 'tp': 63, 'fp': 9, 'fn': 3, 'tn': 47, 'precision': 0.875, 'recall': 0.9545454545454546, 'f1_pos': 0.9130434782608695}
+Saved
+Not found train: 0 Not found test: 0
+Train 932 | Val 165 | Test 122
+Epoch 1/100
+
+Epoch 1: val_loss improved from None to 0.14965, saving model to FineTune_Model/FineTune_D1-D6_8.weights.h5
+583/583 - 12s - 20ms/step - Bi-Acc: 0.3599 - loss: 0.1213 - val_Bi-Acc: 0.3939 - val_loss: 0.1497
+Epoch 2/100
+
+Epoch 2: val_loss improved from 0.14965 to 0.10942, saving model to FineTune_Model/FineTune_D1-D6_8.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3680 - loss: 0.1110 - val_Bi-Acc: 0.3758 - val_loss: 0.1094
+Epoch 3/100
+
+Epoch 3: val_loss improved from 0.10942 to 0.09745, saving model to FineTune_Model/FineTune_D1-D6_8.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3749 - loss: 0.1047 - val_Bi-Acc: 0.3879 - val_loss: 0.0975
+Epoch 4/100
+
+Epoch 4: val_loss did not improve from 0.09745
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3745 - loss: 0.1008 - val_Bi-Acc: 0.2424 - val_loss: 0.2874
+Epoch 5/100
+
+Epoch 5: val_loss improved from 0.09745 to 0.09068, saving model to FineTune_Model/FineTune_D1-D6_8.weights.h5
+583/583 - 7s - 13ms/step - Bi-Acc: 0.3863 - loss: 0.0941 - val_Bi-Acc: 0.4061 - val_loss: 0.0907
+Epoch 6/100
+
+Epoch 6: val_loss improved from 0.09068 to 0.08887, saving model to FineTune_Model/FineTune_D1-D6_8.weights.h5
+583/583 - 8s - 14ms/step - Bi-Acc: 0.3858 - loss: 0.0909 - val_Bi-Acc: 0.4000 - val_loss: 0.0889
+Epoch 7/100
+
+Epoch 7: val_loss did not improve from 0.08887
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3923 - loss: 0.0864 - val_Bi-Acc: 0.4000 - val_loss: 0.0951
+Epoch 8/100
+
+Epoch 8: val_loss did not improve from 0.08887
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3924 - loss: 0.0840 - val_Bi-Acc: 0.3879 - val_loss: 0.0942
+Epoch 9/100
+
+Epoch 9: val_loss did not improve from 0.08887
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3954 - loss: 0.0826 - val_Bi-Acc: 0.4303 - val_loss: 0.0996
+Epoch 10/100
+
+Epoch 10: val_loss did not improve from 0.08887
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3976 - loss: 0.0788 - val_Bi-Acc: 0.4061 - val_loss: 0.1334
+Epoch 11/100
+
+Epoch 11: val_loss did not improve from 0.08887
+583/583 - 7s - 12ms/step - Bi-Acc: 0.3994 - loss: 0.0778 - val_Bi-Acc: 0.3394 - val_loss: 0.1708
+Epoch 12/100
+
+Epoch 12: val_loss improved from 0.08887 to 0.08791, saving model to FineTune_Model/FineTune_D1-D6_8.weights.h5
+583/583 - 8s - 13ms/step - Bi-Acc: 0.3999 - loss: 0.0764 - val_Bi-Acc: 0.4000 - val_loss: 0.0879
+Epoch 13/100
+
+Epoch 13: val_loss did not improve from 0.08791
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4010 - loss: 0.0741 - val_Bi-Acc: 0.3576 - val_loss: 0.1374
+Epoch 14/100
+
+Epoch 14: val_loss did not improve from 0.08791
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4038 - loss: 0.0723 - val_Bi-Acc: 0.3697 - val_loss: 0.1104
+Epoch 15/100
+
+Epoch 15: val_loss did not improve from 0.08791
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4034 - loss: 0.0708 - val_Bi-Acc: 0.3273 - val_loss: 0.1440
+Epoch 16/100
+
+Epoch 16: val_loss improved from 0.08791 to 0.08524, saving model to FineTune_Model/FineTune_D1-D6_8.weights.h5
+583/583 - 8s - 14ms/step - Bi-Acc: 0.4040 - loss: 0.0706 - val_Bi-Acc: 0.4000 - val_loss: 0.0852
+Epoch 17/100
+
+Epoch 17: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4052 - loss: 0.0698 - val_Bi-Acc: 0.4242 - val_loss: 0.0931
+Epoch 18/100
+
+Epoch 18: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4059 - loss: 0.0675 - val_Bi-Acc: 0.4182 - val_loss: 0.1071
+Epoch 19/100
+
+Epoch 19: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4053 - loss: 0.0668 - val_Bi-Acc: 0.4242 - val_loss: 0.0888
+Epoch 20/100
+
+Epoch 20: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4068 - loss: 0.0658 - val_Bi-Acc: 0.4303 - val_loss: 0.0861
+Epoch 21/100
+
+Epoch 21: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4072 - loss: 0.0648 - val_Bi-Acc: 0.4121 - val_loss: 0.1042
+Epoch 22/100
+
+Epoch 22: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4063 - loss: 0.0644 - val_Bi-Acc: 0.4000 - val_loss: 0.0906
+Epoch 23/100
+
+Epoch 23: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4080 - loss: 0.0634 - val_Bi-Acc: 0.3455 - val_loss: 0.1433
+Epoch 24/100
+
+Epoch 24: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4078 - loss: 0.0629 - val_Bi-Acc: 0.4182 - val_loss: 0.0902
+Epoch 25/100
+
+Epoch 25: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4087 - loss: 0.0619 - val_Bi-Acc: 0.4242 - val_loss: 0.0862
+Epoch 26/100
+
+Epoch 26: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4086 - loss: 0.0615 - val_Bi-Acc: 0.4242 - val_loss: 0.0866
+Epoch 27/100
+
+Epoch 27: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4074 - loss: 0.0614 - val_Bi-Acc: 0.4182 - val_loss: 0.0914
+Epoch 28/100
+
+Epoch 28: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4082 - loss: 0.0606 - val_Bi-Acc: 0.3515 - val_loss: 0.1391
+Epoch 29/100
+
+Epoch 29: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4089 - loss: 0.0600 - val_Bi-Acc: 0.4242 - val_loss: 0.1177
+Epoch 30/100
+
+Epoch 30: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4083 - loss: 0.0594 - val_Bi-Acc: 0.4061 - val_loss: 0.0852
+Epoch 31/100
+
+Epoch 31: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4086 - loss: 0.0588 - val_Bi-Acc: 0.3939 - val_loss: 0.0951
+Epoch 32/100
+
+Epoch 32: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0583 - val_Bi-Acc: 0.4182 - val_loss: 0.0893
+Epoch 33/100
+
+Epoch 33: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4088 - loss: 0.0583 - val_Bi-Acc: 0.4182 - val_loss: 0.0891
+Epoch 34/100
+
+Epoch 34: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4092 - loss: 0.0583 - val_Bi-Acc: 0.3091 - val_loss: 0.2022
+Epoch 35/100
+
+Epoch 35: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4091 - loss: 0.0577 - val_Bi-Acc: 0.4121 - val_loss: 0.0941
+Epoch 36/100
+
+Epoch 36: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4092 - loss: 0.0572 - val_Bi-Acc: 0.3818 - val_loss: 0.1064
+Epoch 37/100
+
+Epoch 37: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0569 - val_Bi-Acc: 0.3636 - val_loss: 0.1230
+Epoch 38/100
+
+Epoch 38: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0566 - val_Bi-Acc: 0.4242 - val_loss: 0.0965
+Epoch 39/100
+
+Epoch 39: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4093 - loss: 0.0570 - val_Bi-Acc: 0.4061 - val_loss: 0.0885
+Epoch 40/100
+
+Epoch 40: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0565 - val_Bi-Acc: 0.4000 - val_loss: 0.0953
+Epoch 41/100
+
+Epoch 41: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0561 - val_Bi-Acc: 0.3333 - val_loss: 0.1491
+Epoch 42/100
+
+Epoch 42: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4088 - loss: 0.0561 - val_Bi-Acc: 0.4182 - val_loss: 0.0964
+Epoch 43/100
+
+Epoch 43: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0558 - val_Bi-Acc: 0.3636 - val_loss: 0.1099
+Epoch 44/100
+
+Epoch 44: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0554 - val_Bi-Acc: 0.4182 - val_loss: 0.0940
+Epoch 45/100
+
+Epoch 45: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0552 - val_Bi-Acc: 0.3576 - val_loss: 0.1145
+Epoch 46/100
+
+Epoch 46: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4093 - loss: 0.0551 - val_Bi-Acc: 0.3879 - val_loss: 0.0954
+Epoch 47/100
+
+Epoch 47: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0550 - val_Bi-Acc: 0.3515 - val_loss: 0.1159
+Epoch 48/100
+
+Epoch 48: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0547 - val_Bi-Acc: 0.3333 - val_loss: 0.2000
+Epoch 49/100
+
+Epoch 49: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0547 - val_Bi-Acc: 0.3939 - val_loss: 0.1028
+Epoch 50/100
+
+Epoch 50: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0546 - val_Bi-Acc: 0.3455 - val_loss: 0.1278
+Epoch 51/100
+
+Epoch 51: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0543 - val_Bi-Acc: 0.3939 - val_loss: 0.0942
+Epoch 52/100
+
+Epoch 52: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4094 - loss: 0.0543 - val_Bi-Acc: 0.3818 - val_loss: 0.0939
+Epoch 53/100
+
+Epoch 53: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0542 - val_Bi-Acc: 0.3879 - val_loss: 0.0991
+Epoch 54/100
+
+Epoch 54: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0538 - val_Bi-Acc: 0.3879 - val_loss: 0.0992
+Epoch 55/100
+
+Epoch 55: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0538 - val_Bi-Acc: 0.3758 - val_loss: 0.1000
+Epoch 56/100
+
+Epoch 56: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0537 - val_Bi-Acc: 0.3636 - val_loss: 0.1102
+Epoch 57/100
+
+Epoch 57: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0535 - val_Bi-Acc: 0.4121 - val_loss: 0.1123
+Epoch 58/100
+
+Epoch 58: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0536 - val_Bi-Acc: 0.3515 - val_loss: 0.1230
+Epoch 59/100
+
+Epoch 59: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0532 - val_Bi-Acc: 0.4061 - val_loss: 0.1082
+Epoch 60/100
+
+Epoch 60: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0531 - val_Bi-Acc: 0.4061 - val_loss: 0.1375
+Epoch 61/100
+
+Epoch 61: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0533 - val_Bi-Acc: 0.3939 - val_loss: 0.0951
+Epoch 62/100
+
+Epoch 62: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0531 - val_Bi-Acc: 0.3879 - val_loss: 0.1007
+Epoch 63/100
+
+Epoch 63: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0530 - val_Bi-Acc: 0.3333 - val_loss: 0.1804
+Epoch 64/100
+
+Epoch 64: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0530 - val_Bi-Acc: 0.3939 - val_loss: 0.0957
+Epoch 65/100
+
+Epoch 65: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0531 - val_Bi-Acc: 0.3879 - val_loss: 0.0945
+Epoch 66/100
+
+Epoch 66: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0529 - val_Bi-Acc: 0.3576 - val_loss: 0.1104
+Epoch 67/100
+
+Epoch 67: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0527 - val_Bi-Acc: 0.3636 - val_loss: 0.1026
+Epoch 68/100
+
+Epoch 68: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0527 - val_Bi-Acc: 0.3939 - val_loss: 0.1015
+Epoch 69/100
+
+Epoch 69: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0530 - val_Bi-Acc: 0.3515 - val_loss: 0.1382
+Epoch 70/100
+
+Epoch 70: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0528 - val_Bi-Acc: 0.4000 - val_loss: 0.0965
+Epoch 71/100
+
+Epoch 71: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0526 - val_Bi-Acc: 0.3818 - val_loss: 0.1002
+Epoch 72/100
+
+Epoch 72: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0525 - val_Bi-Acc: 0.3879 - val_loss: 0.0981
+Epoch 73/100
+
+Epoch 73: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0522 - val_Bi-Acc: 0.3818 - val_loss: 0.0983
+Epoch 74/100
+
+Epoch 74: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0525 - val_Bi-Acc: 0.3758 - val_loss: 0.1042
+Epoch 75/100
+
+Epoch 75: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4097 - loss: 0.0524 - val_Bi-Acc: 0.3758 - val_loss: 0.1089
+Epoch 76/100
+
+Epoch 76: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0524 - val_Bi-Acc: 0.3697 - val_loss: 0.1102
+Epoch 77/100
+
+Epoch 77: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0522 - val_Bi-Acc: 0.3455 - val_loss: 0.1381
+Epoch 78/100
+
+Epoch 78: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0524 - val_Bi-Acc: 0.3758 - val_loss: 0.1017
+Epoch 79/100
+
+Epoch 79: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0520 - val_Bi-Acc: 0.3879 - val_loss: 0.1010
+Epoch 80/100
+
+Epoch 80: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0521 - val_Bi-Acc: 0.3758 - val_loss: 0.1067
+Epoch 81/100
+
+Epoch 81: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0519 - val_Bi-Acc: 0.3515 - val_loss: 0.1167
+Epoch 82/100
+
+Epoch 82: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0519 - val_Bi-Acc: 0.4000 - val_loss: 0.0952
+Epoch 83/100
+
+Epoch 83: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0519 - val_Bi-Acc: 0.3818 - val_loss: 0.0981
+Epoch 84/100
+
+Epoch 84: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0519 - val_Bi-Acc: 0.3636 - val_loss: 0.1111
+Epoch 85/100
+
+Epoch 85: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0519 - val_Bi-Acc: 0.4242 - val_loss: 0.1122
+Epoch 86/100
+
+Epoch 86: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0518 - val_Bi-Acc: 0.3697 - val_loss: 0.1091
+Epoch 87/100
+
+Epoch 87: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0517 - val_Bi-Acc: 0.3515 - val_loss: 0.1369
+Epoch 88/100
+
+Epoch 88: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0517 - val_Bi-Acc: 0.3879 - val_loss: 0.1101
+Epoch 89/100
+
+Epoch 89: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0519 - val_Bi-Acc: 0.3818 - val_loss: 0.1021
+Epoch 90/100
+
+Epoch 90: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0516 - val_Bi-Acc: 0.3455 - val_loss: 0.1247
+Epoch 91/100
+
+Epoch 91: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0517 - val_Bi-Acc: 0.3697 - val_loss: 0.1100
+Epoch 92/100
+
+Epoch 92: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0516 - val_Bi-Acc: 0.3818 - val_loss: 0.1008
+Epoch 93/100
+
+Epoch 93: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0517 - val_Bi-Acc: 0.3394 - val_loss: 0.1596
+Epoch 94/100
+
+Epoch 94: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0515 - val_Bi-Acc: 0.3879 - val_loss: 0.0974
+Epoch 95/100
+
+Epoch 95: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0516 - val_Bi-Acc: 0.3636 - val_loss: 0.1178
+Epoch 96/100
+
+Epoch 96: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4098 - loss: 0.0516 - val_Bi-Acc: 0.2909 - val_loss: 0.2771
+Epoch 97/100
+
+Epoch 97: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0515 - val_Bi-Acc: 0.4061 - val_loss: 0.1626
+Epoch 98/100
+
+Epoch 98: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0515 - val_Bi-Acc: 0.3697 - val_loss: 0.1154
+Epoch 99/100
+
+Epoch 99: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0516 - val_Bi-Acc: 0.4121 - val_loss: 0.0967
+Epoch 100/100
+
+Epoch 100: val_loss did not improve from 0.08524
+583/583 - 7s - 12ms/step - Bi-Acc: 0.4099 - loss: 0.0514 - val_Bi-Acc: 0.3515 - val_loss: 0.1255
+Validation: {'cm': array([[77,  7],
+       [12, 69]]), 'tp': 69, 'fp': 7, 'fn': 12, 'tn': 77, 'precision': 0.9078947368421053, 'recall': 0.8518518518518519, 'f1_pos': 0.8789808917197452}
+Test: {'cm': array([[56, 13],
+       [ 4, 49]]), 'tp': 49, 'fp': 13, 'fn': 4, 'tn': 56, 'precision': 0.7903225806451613, 'recall': 0.9245283018867925, 'f1_pos': 0.8521739130434782}
+Saved
+Not found train: 0 Not found test: 0
+Train 933 | Val 165 | Test 121
+Epoch 1/100
+
+Epoch 1: val_loss improved from None to 0.11119, saving model to FineTune_Model/FineTune_D1-D6_9.weights.h5
+584/584 - 11s - 19ms/step - Bi-Acc: 0.3609 - loss: 0.1283 - val_Bi-Acc: 0.3758 - val_loss: 0.1112
+Epoch 2/100
+
+Epoch 2: val_loss improved from 0.11119 to 0.08811, saving model to FineTune_Model/FineTune_D1-D6_9.weights.h5
+584/584 - 8s - 13ms/step - Bi-Acc: 0.3776 - loss: 0.1141 - val_Bi-Acc: 0.3697 - val_loss: 0.0881
+Epoch 3/100
+
+Epoch 3: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.3823 - loss: 0.1051 - val_Bi-Acc: 0.3697 - val_loss: 0.0904
+Epoch 4/100
+
+Epoch 4: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.3878 - loss: 0.1028 - val_Bi-Acc: 0.3515 - val_loss: 0.1356
+Epoch 5/100
+
+Epoch 5: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.3906 - loss: 0.0953 - val_Bi-Acc: 0.3879 - val_loss: 0.1005
+Epoch 6/100
+
+Epoch 6: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.3943 - loss: 0.0915 - val_Bi-Acc: 0.3818 - val_loss: 0.0924
+Epoch 7/100
+
+Epoch 7: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4032 - loss: 0.0864 - val_Bi-Acc: 0.3576 - val_loss: 0.1039
+Epoch 8/100
+
+Epoch 8: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4024 - loss: 0.0856 - val_Bi-Acc: 0.3697 - val_loss: 0.1144
+Epoch 9/100
+
+Epoch 9: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4026 - loss: 0.0832 - val_Bi-Acc: 0.3697 - val_loss: 0.0910
+Epoch 10/100
+
+Epoch 10: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4073 - loss: 0.0806 - val_Bi-Acc: 0.3758 - val_loss: 0.0990
+Epoch 11/100
+
+Epoch 11: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4095 - loss: 0.0782 - val_Bi-Acc: 0.3697 - val_loss: 0.1082
+Epoch 12/100
+
+Epoch 12: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4104 - loss: 0.0761 - val_Bi-Acc: 0.3879 - val_loss: 0.0928
+Epoch 13/100
+
+Epoch 13: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4102 - loss: 0.0754 - val_Bi-Acc: 0.3758 - val_loss: 0.0919
+Epoch 14/100
+
+Epoch 14: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4145 - loss: 0.0729 - val_Bi-Acc: 0.3697 - val_loss: 0.1105
+Epoch 15/100
+
+Epoch 15: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4136 - loss: 0.0724 - val_Bi-Acc: 0.2970 - val_loss: 0.1858
+Epoch 16/100
+
+Epoch 16: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4152 - loss: 0.0706 - val_Bi-Acc: 0.3636 - val_loss: 0.0951
+Epoch 17/100
+
+Epoch 17: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4145 - loss: 0.0701 - val_Bi-Acc: 0.3515 - val_loss: 0.1131
+Epoch 18/100
+
+Epoch 18: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4158 - loss: 0.0680 - val_Bi-Acc: 0.3515 - val_loss: 0.0956
+Epoch 19/100
+
+Epoch 19: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4176 - loss: 0.0676 - val_Bi-Acc: 0.3758 - val_loss: 0.0969
+Epoch 20/100
+
+Epoch 20: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4179 - loss: 0.0663 - val_Bi-Acc: 0.3697 - val_loss: 0.0976
+Epoch 21/100
+
+Epoch 21: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4175 - loss: 0.0653 - val_Bi-Acc: 0.3758 - val_loss: 0.0918
+Epoch 22/100
+
+Epoch 22: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4182 - loss: 0.0654 - val_Bi-Acc: 0.3636 - val_loss: 0.0972
+Epoch 23/100
+
+Epoch 23: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4181 - loss: 0.0639 - val_Bi-Acc: 0.3758 - val_loss: 0.0985
+Epoch 24/100
+
+Epoch 24: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4184 - loss: 0.0641 - val_Bi-Acc: 0.3697 - val_loss: 0.1436
+Epoch 25/100
+
+Epoch 25: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4195 - loss: 0.0626 - val_Bi-Acc: 0.3576 - val_loss: 0.1085
+Epoch 26/100
+
+Epoch 26: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4198 - loss: 0.0625 - val_Bi-Acc: 0.3697 - val_loss: 0.0944
+Epoch 27/100
+
+Epoch 27: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4200 - loss: 0.0617 - val_Bi-Acc: 0.3636 - val_loss: 0.0945
+Epoch 28/100
+
+Epoch 28: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4197 - loss: 0.0612 - val_Bi-Acc: 0.3758 - val_loss: 0.0993
+Epoch 29/100
+
+Epoch 29: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4195 - loss: 0.0608 - val_Bi-Acc: 0.3697 - val_loss: 0.0972
+Epoch 30/100
+
+Epoch 30: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4196 - loss: 0.0608 - val_Bi-Acc: 0.3758 - val_loss: 0.0932
+Epoch 31/100
+
+Epoch 31: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4200 - loss: 0.0598 - val_Bi-Acc: 0.3697 - val_loss: 0.1262
+Epoch 32/100
+
+Epoch 32: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4193 - loss: 0.0592 - val_Bi-Acc: 0.3697 - val_loss: 0.1132
+Epoch 33/100
+
+Epoch 33: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4196 - loss: 0.0591 - val_Bi-Acc: 0.3697 - val_loss: 0.1136
+Epoch 34/100
+
+Epoch 34: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4204 - loss: 0.0586 - val_Bi-Acc: 0.3758 - val_loss: 0.1003
+Epoch 35/100
+
+Epoch 35: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4197 - loss: 0.0585 - val_Bi-Acc: 0.3758 - val_loss: 0.0953
+Epoch 36/100
+
+Epoch 36: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4202 - loss: 0.0582 - val_Bi-Acc: 0.3576 - val_loss: 0.0991
+Epoch 37/100
+
+Epoch 37: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4202 - loss: 0.0579 - val_Bi-Acc: 0.3636 - val_loss: 0.0976
+Epoch 38/100
+
+Epoch 38: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4202 - loss: 0.0575 - val_Bi-Acc: 0.3697 - val_loss: 0.0885
+Epoch 39/100
+
+Epoch 39: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4208 - loss: 0.0571 - val_Bi-Acc: 0.3636 - val_loss: 0.1011
+Epoch 40/100
+
+Epoch 40: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4208 - loss: 0.0573 - val_Bi-Acc: 0.3758 - val_loss: 0.1045
+Epoch 41/100
+
+Epoch 41: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4205 - loss: 0.0565 - val_Bi-Acc: 0.3818 - val_loss: 0.0901
+Epoch 42/100
+
+Epoch 42: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4206 - loss: 0.0566 - val_Bi-Acc: 0.3758 - val_loss: 0.0952
+Epoch 43/100
+
+Epoch 43: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4208 - loss: 0.0560 - val_Bi-Acc: 0.3515 - val_loss: 0.1035
+Epoch 44/100
+
+Epoch 44: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4202 - loss: 0.0565 - val_Bi-Acc: 0.3818 - val_loss: 0.0886
+Epoch 45/100
+
+Epoch 45: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0558 - val_Bi-Acc: 0.3697 - val_loss: 0.0961
+Epoch 46/100
+
+Epoch 46: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4209 - loss: 0.0553 - val_Bi-Acc: 0.3636 - val_loss: 0.0943
+Epoch 47/100
+
+Epoch 47: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4207 - loss: 0.0555 - val_Bi-Acc: 0.3758 - val_loss: 0.1002
+Epoch 48/100
+
+Epoch 48: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4209 - loss: 0.0556 - val_Bi-Acc: 0.3636 - val_loss: 0.0962
+Epoch 49/100
+
+Epoch 49: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4209 - loss: 0.0547 - val_Bi-Acc: 0.3758 - val_loss: 0.0925
+Epoch 50/100
+
+Epoch 50: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4203 - loss: 0.0550 - val_Bi-Acc: 0.3697 - val_loss: 0.0951
+Epoch 51/100
+
+Epoch 51: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4209 - loss: 0.0547 - val_Bi-Acc: 0.3697 - val_loss: 0.0969
+Epoch 52/100
+
+Epoch 52: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0547 - val_Bi-Acc: 0.3758 - val_loss: 0.0993
+Epoch 53/100
+
+Epoch 53: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4208 - loss: 0.0546 - val_Bi-Acc: 0.3758 - val_loss: 0.0939
+Epoch 54/100
+
+Epoch 54: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4209 - loss: 0.0544 - val_Bi-Acc: 0.3697 - val_loss: 0.1174
+Epoch 55/100
+
+Epoch 55: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4208 - loss: 0.0545 - val_Bi-Acc: 0.3758 - val_loss: 0.1067
+Epoch 56/100
+
+Epoch 56: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4206 - loss: 0.0543 - val_Bi-Acc: 0.3697 - val_loss: 0.1127
+Epoch 57/100
+
+Epoch 57: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0540 - val_Bi-Acc: 0.3697 - val_loss: 0.0922
+Epoch 58/100
+
+Epoch 58: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0537 - val_Bi-Acc: 0.3697 - val_loss: 0.0927
+Epoch 59/100
+
+Epoch 59: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4209 - loss: 0.0535 - val_Bi-Acc: 0.3758 - val_loss: 0.0938
+Epoch 60/100
+
+Epoch 60: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0534 - val_Bi-Acc: 0.3576 - val_loss: 0.0983
+Epoch 61/100
+
+Epoch 61: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0538 - val_Bi-Acc: 0.3818 - val_loss: 0.0954
+Epoch 62/100
+
+Epoch 62: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0531 - val_Bi-Acc: 0.3697 - val_loss: 0.1008
+Epoch 63/100
+
+Epoch 63: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0532 - val_Bi-Acc: 0.3697 - val_loss: 0.0898
+Epoch 64/100
+
+Epoch 64: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0533 - val_Bi-Acc: 0.3818 - val_loss: 0.1088
+Epoch 65/100
+
+Epoch 65: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0531 - val_Bi-Acc: 0.3697 - val_loss: 0.0916
+Epoch 66/100
+
+Epoch 66: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0531 - val_Bi-Acc: 0.3636 - val_loss: 0.1145
+Epoch 67/100
+
+Epoch 67: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4209 - loss: 0.0531 - val_Bi-Acc: 0.3697 - val_loss: 0.0895
+Epoch 68/100
+
+Epoch 68: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0529 - val_Bi-Acc: 0.3818 - val_loss: 0.1220
+Epoch 69/100
+
+Epoch 69: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0528 - val_Bi-Acc: 0.3636 - val_loss: 0.0910
+Epoch 70/100
+
+Epoch 70: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0526 - val_Bi-Acc: 0.3818 - val_loss: 0.1027
+Epoch 71/100
+
+Epoch 71: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4209 - loss: 0.0529 - val_Bi-Acc: 0.3697 - val_loss: 0.0952
+Epoch 72/100
+
+Epoch 72: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0526 - val_Bi-Acc: 0.3697 - val_loss: 0.0890
+Epoch 73/100
+
+Epoch 73: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0524 - val_Bi-Acc: 0.3697 - val_loss: 0.0902
+Epoch 74/100
+
+Epoch 74: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0524 - val_Bi-Acc: 0.3697 - val_loss: 0.0974
+Epoch 75/100
+
+Epoch 75: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0523 - val_Bi-Acc: 0.3697 - val_loss: 0.0970
+Epoch 76/100
+
+Epoch 76: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0527 - val_Bi-Acc: 0.3515 - val_loss: 0.1101
+Epoch 77/100
+
+Epoch 77: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0524 - val_Bi-Acc: 0.3515 - val_loss: 0.0971
+Epoch 78/100
+
+Epoch 78: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0522 - val_Bi-Acc: 0.3697 - val_loss: 0.0943
+Epoch 79/100
+
+Epoch 79: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0523 - val_Bi-Acc: 0.3636 - val_loss: 0.0967
+Epoch 80/100
+
+Epoch 80: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0523 - val_Bi-Acc: 0.3636 - val_loss: 0.1005
+Epoch 81/100
+
+Epoch 81: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0522 - val_Bi-Acc: 0.3636 - val_loss: 0.0921
+Epoch 82/100
+
+Epoch 82: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0520 - val_Bi-Acc: 0.3758 - val_loss: 0.0969
+Epoch 83/100
+
+Epoch 83: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0521 - val_Bi-Acc: 0.3818 - val_loss: 0.1062
+Epoch 84/100
+
+Epoch 84: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0520 - val_Bi-Acc: 0.3576 - val_loss: 0.0914
+Epoch 85/100
+
+Epoch 85: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0519 - val_Bi-Acc: 0.3697 - val_loss: 0.0922
+Epoch 86/100
+
+Epoch 86: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0518 - val_Bi-Acc: 0.3758 - val_loss: 0.0898
+Epoch 87/100
+
+Epoch 87: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0518 - val_Bi-Acc: 0.3636 - val_loss: 0.0951
+Epoch 88/100
+
+Epoch 88: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0518 - val_Bi-Acc: 0.3636 - val_loss: 0.0916
+Epoch 89/100
+
+Epoch 89: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0519 - val_Bi-Acc: 0.3758 - val_loss: 0.0900
+Epoch 90/100
+
+Epoch 90: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0518 - val_Bi-Acc: 0.3576 - val_loss: 0.0931
+Epoch 91/100
+
+Epoch 91: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0516 - val_Bi-Acc: 0.3758 - val_loss: 0.0934
+Epoch 92/100
+
+Epoch 92: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0516 - val_Bi-Acc: 0.3758 - val_loss: 0.0947
+Epoch 93/100
+
+Epoch 93: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0517 - val_Bi-Acc: 0.3697 - val_loss: 0.0914
+Epoch 94/100
+
+Epoch 94: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0517 - val_Bi-Acc: 0.3697 - val_loss: 0.0902
+Epoch 95/100
+
+Epoch 95: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0515 - val_Bi-Acc: 0.3758 - val_loss: 0.0963
+Epoch 96/100
+
+Epoch 96: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4212 - loss: 0.0516 - val_Bi-Acc: 0.3818 - val_loss: 0.0948
+Epoch 97/100
+
+Epoch 97: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4211 - loss: 0.0515 - val_Bi-Acc: 0.3697 - val_loss: 0.0893
+Epoch 98/100
+
+Epoch 98: val_loss did not improve from 0.08811
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0516 - val_Bi-Acc: 0.3636 - val_loss: 0.0994
+Epoch 99/100
+
+Epoch 99: val_loss improved from 0.08811 to 0.08757, saving model to FineTune_Model/FineTune_D1-D6_9.weights.h5
+584/584 - 8s - 13ms/step - Bi-Acc: 0.4212 - loss: 0.0515 - val_Bi-Acc: 0.3818 - val_loss: 0.0876
+Epoch 100/100
+
+Epoch 100: val_loss did not improve from 0.08757
+584/584 - 7s - 12ms/step - Bi-Acc: 0.4210 - loss: 0.0513 - val_Bi-Acc: 0.3636 - val_loss: 0.0915
+Validation: {'cm': array([[74,  8],
+       [ 9, 74]]), 'tp': 74, 'fp': 8, 'fn': 9, 'tn': 74, 'precision': 0.9024390243902439, 'recall': 0.891566265060241, 'f1_pos': 0.896969696969697}
+Test: {'cm': array([[54,  4],
+       [11, 52]]), 'tp': 52, 'fp': 4, 'fn': 11, 'tn': 54, 'precision': 0.9285714285714286, 'recall': 0.8253968253968254, 'f1_pos': 0.8739495798319328}
+Saved

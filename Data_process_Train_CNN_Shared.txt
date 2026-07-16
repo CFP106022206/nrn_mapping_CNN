@@ -1,0 +1,438 @@
+nohup: ignoring input
+2025-09-14 21:50:50.704537: I tensorflow/core/util/port.cc:113] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-09-14 21:50:50.729804: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2025-09-14 21:50:50.729853: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2025-09-14 21:50:50.730556: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-09-14 21:50:50.734455: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-09-14 21:50:52.000930: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2025-09-14 21:51:00.933191: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-09-14 21:51:00.958520: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-09-14 21:51:00.958677: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-09-14 21:51:00.959777: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-09-14 21:51:00.960034: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-09-14 21:51:00.960102: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-09-14 21:51:00.997126: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-09-14 21:51:00.997283: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-09-14 21:51:00.998088: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2025-09-14 21:51:00.998159: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1929] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 22463 MB memory:  -> device: 0, name: NVIDIA GeForce RTX 3090, pci bus id: 0000:00:10.0, compute capability: 8.6
+
+Collecting 3-View Data Numpy Array..
+
+ Resolutions: (3, 50, 50)
+
+Collecting 3-View Data Numpy Array..
+
+ Resolutions: (3, 50, 50)
+
+Original Train data: 932 
+Valid data: 165 
+Test data: 122
+
+Total(After exchange): 1864
+Positive: 880 (47.21% of total)
+
+Balanced Weight in:
+ [0.94715447 1.05909091]
+UpSampling: After label balancing:
+True Label/Total in x_train:
+ 880 / 1968
+x_train shape: (62976, 50, 50, 3) (62976, 50, 50, 3)
+y_train shape: 62976
+x_val shape: (165, 50, 50, 3) (165, 50, 50, 3)
+y_val shape: 165
+x_test shape: (122, 50, 50, 3) (122, 50, 50, 3)
+y_test shape: 122
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                Output Shape                 Param #   Connected to                  
+==================================================================================================
+ FC (InputLayer)             [(None, 50, 50, 3)]          0         []                            
+                                                                                                  
+ EM (InputLayer)             [(None, 50, 50, 3)]          0         []                            
+                                                                                                  
+ conv1 (Conv2D)              (None, 50, 50, 32)           896       ['FC[0][0]',                  
+                                                                     'EM[0][0]']                  
+                                                                                                  
+ bn1 (BatchNormalization)    (None, 50, 50, 32)           128       ['conv1[0][0]',               
+                                                                     'conv1[1][0]']               
+                                                                                                  
+ ac1 (Activation)            (None, 50, 50, 32)           0         ['bn1[0][0]',                 
+                                                                     'bn1[1][0]']                 
+                                                                                                  
+ conv2 (Conv2D)              (None, 50, 50, 32)           9248      ['ac1[0][0]',                 
+                                                                     'ac1[1][0]']                 
+                                                                                                  
+ bn2 (BatchNormalization)    (None, 50, 50, 32)           128       ['conv2[0][0]',               
+                                                                     'conv2[1][0]']               
+                                                                                                  
+ ac2 (Activation)            (None, 50, 50, 32)           0         ['bn2[0][0]',                 
+                                                                     'bn2[1][0]']                 
+                                                                                                  
+ pool1 (MaxPooling2D)        (None, 25, 25, 32)           0         ['ac2[0][0]',                 
+                                                                     'ac2[1][0]']                 
+                                                                                                  
+ conv3 (Conv2D)              (None, 25, 25, 64)           18496     ['pool1[0][0]',               
+                                                                     'pool1[1][0]']               
+                                                                                                  
+ bn3 (BatchNormalization)    (None, 25, 25, 64)           256       ['conv3[0][0]',               
+                                                                     'conv3[1][0]']               
+                                                                                                  
+ ac3 (Activation)            (None, 25, 25, 64)           0         ['bn3[0][0]',                 
+                                                                     'bn3[1][0]']                 
+                                                                                                  
+ conv4 (Conv2D)              (None, 25, 25, 64)           36928     ['ac3[0][0]',                 
+                                                                     'ac3[1][0]']                 
+                                                                                                  
+ bn4 (BatchNormalization)    (None, 25, 25, 64)           256       ['conv4[0][0]',               
+                                                                     'conv4[1][0]']               
+                                                                                                  
+ ac4 (Activation)            (None, 25, 25, 64)           0         ['bn4[0][0]',                 
+                                                                     'bn4[1][0]']                 
+                                                                                                  
+ pool2 (MaxPooling2D)        (None, 12, 12, 64)           0         ['ac4[0][0]',                 
+                                                                     'ac4[1][0]']                 
+                                                                                                  
+ dropout (Dropout)           (None, 12, 12, 64)           0         ['pool2[0][0]']               
+                                                                                                  
+ dropout_1 (Dropout)         (None, 12, 12, 64)           0         ['pool2[1][0]']               
+                                                                                                  
+ flatten (Flatten)           (None, 9216)                 0         ['dropout[0][0]']             
+                                                                                                  
+ flatten_1 (Flatten)         (None, 9216)                 0         ['dropout_1[0][0]']           
+                                                                                                  
+ concatenate (Concatenate)   (None, 18432)                0         ['flatten[0][0]',             
+                                                                     'flatten_1[0][0]']           
+                                                                                                  
+ dropout_2 (Dropout)         (None, 18432)                0         ['concatenate[0][0]']         
+                                                                                                  
+ dense (Dense)               (None, 256)                  4718848   ['dropout_2[0][0]']           
+                                                                                                  
+ batch_normalization (Batch  (None, 256)                  1024      ['dense[0][0]']               
+ Normalization)                                                                                   
+                                                                                                  
+ activation (Activation)     (None, 256)                  0         ['batch_normalization[0][0]'] 
+                                                                                                  
+ dense_1 (Dense)             (None, 1)                    257       ['activation[0][0]']          
+                                                                                                  
+==================================================================================================
+Total params: 4786465 (18.26 MB)
+Trainable params: 4785569 (18.26 MB)
+Non-trainable params: 896 (3.50 KB)
+__________________________________________________________________________________________________
+
+Use Callbacks: [<keras.src.callbacks.ModelCheckpoint object at 0x7f670d90ce80>]
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                Output Shape                 Param #   Connected to                  
+==================================================================================================
+ FC (InputLayer)             [(None, 50, 50, 3)]          0         []                            
+                                                                                                  
+ EM (InputLayer)             [(None, 50, 50, 3)]          0         []                            
+                                                                                                  
+ conv1 (Conv2D)              (None, 50, 50, 32)           896       ['FC[0][0]',                  
+                                                                     'EM[0][0]']                  
+                                                                                                  
+ bn1 (BatchNormalization)    (None, 50, 50, 32)           128       ['conv1[0][0]',               
+                                                                     'conv1[1][0]']               
+                                                                                                  
+ ac1 (Activation)            (None, 50, 50, 32)           0         ['bn1[0][0]',                 
+                                                                     'bn1[1][0]']                 
+                                                                                                  
+ conv2 (Conv2D)              (None, 50, 50, 32)           9248      ['ac1[0][0]',                 
+                                                                     'ac1[1][0]']                 
+                                                                                                  
+ bn2 (BatchNormalization)    (None, 50, 50, 32)           128       ['conv2[0][0]',               
+                                                                     'conv2[1][0]']               
+                                                                                                  
+ ac2 (Activation)            (None, 50, 50, 32)           0         ['bn2[0][0]',                 
+                                                                     'bn2[1][0]']                 
+                                                                                                  
+ pool1 (MaxPooling2D)        (None, 25, 25, 32)           0         ['ac2[0][0]',                 
+                                                                     'ac2[1][0]']                 
+                                                                                                  
+ conv3 (Conv2D)              (None, 25, 25, 64)           18496     ['pool1[0][0]',               
+                                                                     'pool1[1][0]']               
+                                                                                                  
+ bn3 (BatchNormalization)    (None, 25, 25, 64)           256       ['conv3[0][0]',               
+                                                                     'conv3[1][0]']               
+                                                                                                  
+ ac3 (Activation)            (None, 25, 25, 64)           0         ['bn3[0][0]',                 
+                                                                     'bn3[1][0]']                 
+                                                                                                  
+ conv4 (Conv2D)              (None, 25, 25, 64)           36928     ['ac3[0][0]',                 
+                                                                     'ac3[1][0]']                 
+                                                                                                  
+ bn4 (BatchNormalization)    (None, 25, 25, 64)           256       ['conv4[0][0]',               
+                                                                     'conv4[1][0]']               
+                                                                                                  
+ ac4 (Activation)            (None, 25, 25, 64)           0         ['bn4[0][0]',                 
+                                                                     'bn4[1][0]']                 
+                                                                                                  
+ pool2 (MaxPooling2D)        (None, 12, 12, 64)           0         ['ac4[0][0]',                 
+                                                                     'ac4[1][0]']                 
+                                                                                                  
+ dropout (Dropout)           (None, 12, 12, 64)           0         ['pool2[0][0]']               
+                                                                                                  
+ dropout_1 (Dropout)         (None, 12, 12, 64)           0         ['pool2[1][0]']               
+                                                                                                  
+ flatten (Flatten)           (None, 9216)                 0         ['dropout[0][0]']             
+                                                                                                  
+ flatten_1 (Flatten)         (None, 9216)                 0         ['dropout_1[0][0]']           
+                                                                                                  
+ concatenate (Concatenate)   (None, 18432)                0         ['flatten[0][0]',             
+                                                                     'flatten_1[0][0]']           
+                                                                                                  
+ dropout_2 (Dropout)         (None, 18432)                0         ['concatenate[0][0]']         
+                                                                                                  
+ dense (Dense)               (None, 256)                  4718848   ['dropout_2[0][0]']           
+                                                                                                  
+ batch_normalization (Batch  (None, 256)                  1024      ['dense[0][0]']               
+ Normalization)                                                                                   
+                                                                                                  
+ activation (Activation)     (None, 256)                  0         ['batch_normalization[0][0]'] 
+                                                                                                  
+ dense_1 (Dense)             (None, 1)                    257       ['activation[0][0]']          
+                                                                                                  
+==================================================================================================
+Total params: 4786465 (18.26 MB)
+Trainable params: 4785569 (18.26 MB)
+Non-trainable params: 896 (3.50 KB)
+__________________________________________________________________________________________________
+Epoch 1/50
+2025-09-14 21:51:07.383703: E tensorflow/core/grappler/optimizers/meta_optimizer.cc:961] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inmodel/dropout_1/dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+2025-09-14 21:51:07.568915: I external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:454] Loaded cuDNN version 8904
+2025-09-14 21:51:07.620966: I external/local_tsl/tsl/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2025-09-14 21:51:07.673633: I external/local_tsl/tsl/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2025-09-14 21:51:08.601711: I external/local_xla/xla/service/service.cc:168] XLA service 0x7f660338c600 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+2025-09-14 21:51:08.601745: I external/local_xla/xla/service/service.cc:176]   StreamExecutor device (0): NVIDIA GeForce RTX 3090, Compute Capability 8.6
+2025-09-14 21:51:08.605005: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:269] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1757857868.664673 1207903 device_compiler.h:186] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+
+Epoch 1: val_loss improved from inf to 0.18349, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+/cluster/home/ming/anaconda3/envs/ming/lib/python3.9/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+492/492 - 19s - loss: 0.2317 - Bi-Acc: 0.3032 - val_loss: 0.1835 - val_Bi-Acc: 0.1818 - 19s/epoch - 38ms/step
+Epoch 2/50
+
+Epoch 2: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1981 - Bi-Acc: 0.2949 - val_loss: 0.1874 - val_Bi-Acc: 0.1939 - 15s/epoch - 30ms/step
+Epoch 3/50
+
+Epoch 3: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1844 - Bi-Acc: 0.2907 - val_loss: 0.2018 - val_Bi-Acc: 0.1636 - 15s/epoch - 30ms/step
+Epoch 4/50
+
+Epoch 4: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1752 - Bi-Acc: 0.2923 - val_loss: 0.1974 - val_Bi-Acc: 0.1879 - 15s/epoch - 30ms/step
+Epoch 5/50
+
+Epoch 5: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1680 - Bi-Acc: 0.2977 - val_loss: 0.2062 - val_Bi-Acc: 0.1758 - 15s/epoch - 30ms/step
+Epoch 6/50
+
+Epoch 6: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1631 - Bi-Acc: 0.3014 - val_loss: 0.2184 - val_Bi-Acc: 0.1636 - 15s/epoch - 30ms/step
+Epoch 7/50
+
+Epoch 7: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1585 - Bi-Acc: 0.3083 - val_loss: 0.2236 - val_Bi-Acc: 0.1879 - 15s/epoch - 30ms/step
+Epoch 8/50
+
+Epoch 8: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1545 - Bi-Acc: 0.3124 - val_loss: 0.2245 - val_Bi-Acc: 0.1636 - 15s/epoch - 30ms/step
+Epoch 9/50
+
+Epoch 9: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1517 - Bi-Acc: 0.3149 - val_loss: 0.2147 - val_Bi-Acc: 0.1818 - 15s/epoch - 30ms/step
+Epoch 10/50
+
+Epoch 10: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1480 - Bi-Acc: 0.3209 - val_loss: 0.1939 - val_Bi-Acc: 0.2121 - 15s/epoch - 30ms/step
+Epoch 11/50
+
+Epoch 11: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1454 - Bi-Acc: 0.3240 - val_loss: 0.2298 - val_Bi-Acc: 0.1818 - 15s/epoch - 30ms/step
+Epoch 12/50
+
+Epoch 12: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1434 - Bi-Acc: 0.3252 - val_loss: 0.2047 - val_Bi-Acc: 0.2061 - 15s/epoch - 30ms/step
+Epoch 13/50
+
+Epoch 13: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1406 - Bi-Acc: 0.3282 - val_loss: 0.2003 - val_Bi-Acc: 0.2061 - 15s/epoch - 30ms/step
+Epoch 14/50
+
+Epoch 14: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1388 - Bi-Acc: 0.3300 - val_loss: 0.1976 - val_Bi-Acc: 0.1939 - 15s/epoch - 30ms/step
+Epoch 15/50
+
+Epoch 15: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1370 - Bi-Acc: 0.3317 - val_loss: 0.1977 - val_Bi-Acc: 0.2000 - 15s/epoch - 30ms/step
+Epoch 16/50
+
+Epoch 16: val_loss did not improve from 0.18349
+492/492 - 15s - loss: 0.1349 - Bi-Acc: 0.3331 - val_loss: 0.1904 - val_Bi-Acc: 0.2424 - 15s/epoch - 30ms/step
+Epoch 17/50
+
+Epoch 17: val_loss improved from 0.18349 to 0.17393, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1330 - Bi-Acc: 0.3356 - val_loss: 0.1739 - val_Bi-Acc: 0.2667 - 15s/epoch - 31ms/step
+Epoch 18/50
+
+Epoch 18: val_loss did not improve from 0.17393
+492/492 - 15s - loss: 0.1322 - Bi-Acc: 0.3358 - val_loss: 0.1996 - val_Bi-Acc: 0.2000 - 15s/epoch - 30ms/step
+Epoch 19/50
+
+Epoch 19: val_loss did not improve from 0.17393
+492/492 - 15s - loss: 0.1300 - Bi-Acc: 0.3392 - val_loss: 0.1788 - val_Bi-Acc: 0.2485 - 15s/epoch - 30ms/step
+Epoch 20/50
+
+Epoch 20: val_loss did not improve from 0.17393
+492/492 - 15s - loss: 0.1286 - Bi-Acc: 0.3398 - val_loss: 0.1842 - val_Bi-Acc: 0.2364 - 15s/epoch - 30ms/step
+Epoch 21/50
+
+Epoch 21: val_loss did not improve from 0.17393
+492/492 - 15s - loss: 0.1274 - Bi-Acc: 0.3409 - val_loss: 0.1805 - val_Bi-Acc: 0.2424 - 15s/epoch - 30ms/step
+Epoch 22/50
+
+Epoch 22: val_loss did not improve from 0.17393
+492/492 - 15s - loss: 0.1260 - Bi-Acc: 0.3437 - val_loss: 0.1873 - val_Bi-Acc: 0.2424 - 15s/epoch - 30ms/step
+Epoch 23/50
+
+Epoch 23: val_loss did not improve from 0.17393
+492/492 - 15s - loss: 0.1251 - Bi-Acc: 0.3438 - val_loss: 0.1878 - val_Bi-Acc: 0.2303 - 15s/epoch - 30ms/step
+Epoch 24/50
+
+Epoch 24: val_loss did not improve from 0.17393
+492/492 - 15s - loss: 0.1234 - Bi-Acc: 0.3460 - val_loss: 0.1805 - val_Bi-Acc: 0.2545 - 15s/epoch - 30ms/step
+Epoch 25/50
+
+Epoch 25: val_loss did not improve from 0.17393
+492/492 - 15s - loss: 0.1227 - Bi-Acc: 0.3468 - val_loss: 0.1766 - val_Bi-Acc: 0.2545 - 15s/epoch - 30ms/step
+Epoch 26/50
+
+Epoch 26: val_loss improved from 0.17393 to 0.16491, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1220 - Bi-Acc: 0.3466 - val_loss: 0.1649 - val_Bi-Acc: 0.2727 - 15s/epoch - 31ms/step
+Epoch 27/50
+
+Epoch 27: val_loss improved from 0.16491 to 0.16347, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1207 - Bi-Acc: 0.3487 - val_loss: 0.1635 - val_Bi-Acc: 0.2788 - 15s/epoch - 31ms/step
+Epoch 28/50
+
+Epoch 28: val_loss did not improve from 0.16347
+492/492 - 15s - loss: 0.1197 - Bi-Acc: 0.3490 - val_loss: 0.1714 - val_Bi-Acc: 0.2606 - 15s/epoch - 30ms/step
+Epoch 29/50
+
+Epoch 29: val_loss improved from 0.16347 to 0.16218, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1188 - Bi-Acc: 0.3497 - val_loss: 0.1622 - val_Bi-Acc: 0.2788 - 15s/epoch - 31ms/step
+Epoch 30/50
+
+Epoch 30: val_loss did not improve from 0.16218
+492/492 - 15s - loss: 0.1174 - Bi-Acc: 0.3505 - val_loss: 0.1684 - val_Bi-Acc: 0.2727 - 15s/epoch - 30ms/step
+Epoch 31/50
+
+Epoch 31: val_loss improved from 0.16218 to 0.15564, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1170 - Bi-Acc: 0.3519 - val_loss: 0.1556 - val_Bi-Acc: 0.2848 - 15s/epoch - 31ms/step
+Epoch 32/50
+
+Epoch 32: val_loss did not improve from 0.15564
+492/492 - 15s - loss: 0.1162 - Bi-Acc: 0.3523 - val_loss: 0.1617 - val_Bi-Acc: 0.2667 - 15s/epoch - 30ms/step
+Epoch 33/50
+
+Epoch 33: val_loss did not improve from 0.15564
+492/492 - 15s - loss: 0.1155 - Bi-Acc: 0.3535 - val_loss: 0.1616 - val_Bi-Acc: 0.2727 - 15s/epoch - 30ms/step
+Epoch 34/50
+
+Epoch 34: val_loss improved from 0.15564 to 0.14621, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1149 - Bi-Acc: 0.3545 - val_loss: 0.1462 - val_Bi-Acc: 0.2970 - 15s/epoch - 31ms/step
+Epoch 35/50
+
+Epoch 35: val_loss did not improve from 0.14621
+492/492 - 15s - loss: 0.1137 - Bi-Acc: 0.3557 - val_loss: 0.1481 - val_Bi-Acc: 0.2848 - 15s/epoch - 30ms/step
+Epoch 36/50
+
+Epoch 36: val_loss did not improve from 0.14621
+492/492 - 15s - loss: 0.1131 - Bi-Acc: 0.3559 - val_loss: 0.1486 - val_Bi-Acc: 0.2970 - 15s/epoch - 30ms/step
+Epoch 37/50
+
+Epoch 37: val_loss did not improve from 0.14621
+492/492 - 15s - loss: 0.1125 - Bi-Acc: 0.3568 - val_loss: 0.1562 - val_Bi-Acc: 0.2727 - 15s/epoch - 30ms/step
+Epoch 38/50
+
+Epoch 38: val_loss did not improve from 0.14621
+492/492 - 15s - loss: 0.1118 - Bi-Acc: 0.3573 - val_loss: 0.1597 - val_Bi-Acc: 0.2727 - 15s/epoch - 30ms/step
+Epoch 39/50
+
+Epoch 39: val_loss did not improve from 0.14621
+492/492 - 15s - loss: 0.1109 - Bi-Acc: 0.3577 - val_loss: 0.1491 - val_Bi-Acc: 0.2970 - 15s/epoch - 30ms/step
+Epoch 40/50
+
+Epoch 40: val_loss did not improve from 0.14621
+492/492 - 15s - loss: 0.1102 - Bi-Acc: 0.3590 - val_loss: 0.1634 - val_Bi-Acc: 0.2667 - 15s/epoch - 30ms/step
+Epoch 41/50
+
+Epoch 41: val_loss did not improve from 0.14621
+492/492 - 15s - loss: 0.1094 - Bi-Acc: 0.3601 - val_loss: 0.1494 - val_Bi-Acc: 0.2848 - 15s/epoch - 30ms/step
+Epoch 42/50
+
+Epoch 42: val_loss did not improve from 0.14621
+492/492 - 15s - loss: 0.1088 - Bi-Acc: 0.3595 - val_loss: 0.1548 - val_Bi-Acc: 0.2848 - 15s/epoch - 30ms/step
+Epoch 43/50
+
+Epoch 43: val_loss improved from 0.14621 to 0.14366, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1080 - Bi-Acc: 0.3610 - val_loss: 0.1437 - val_Bi-Acc: 0.3030 - 15s/epoch - 31ms/step
+Epoch 44/50
+
+Epoch 44: val_loss improved from 0.14366 to 0.14116, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1074 - Bi-Acc: 0.3621 - val_loss: 0.1412 - val_Bi-Acc: 0.3030 - 15s/epoch - 31ms/step
+Epoch 45/50
+
+Epoch 45: val_loss improved from 0.14116 to 0.14065, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1064 - Bi-Acc: 0.3628 - val_loss: 0.1407 - val_Bi-Acc: 0.3030 - 15s/epoch - 31ms/step
+Epoch 46/50
+
+Epoch 46: val_loss did not improve from 0.14065
+492/492 - 15s - loss: 0.1062 - Bi-Acc: 0.3630 - val_loss: 0.1421 - val_Bi-Acc: 0.2970 - 15s/epoch - 30ms/step
+Epoch 47/50
+
+Epoch 47: val_loss improved from 0.14065 to 0.14009, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1054 - Bi-Acc: 0.3638 - val_loss: 0.1401 - val_Bi-Acc: 0.3030 - 15s/epoch - 31ms/step
+Epoch 48/50
+
+Epoch 48: val_loss improved from 0.14009 to 0.13425, saving model to ./Annotator_Model/Annotator_D1-D6_0.h5
+492/492 - 15s - loss: 0.1051 - Bi-Acc: 0.3642 - val_loss: 0.1343 - val_Bi-Acc: 0.3152 - 15s/epoch - 31ms/step
+Epoch 49/50
+
+Epoch 49: val_loss did not improve from 0.13425
+492/492 - 15s - loss: 0.1043 - Bi-Acc: 0.3651 - val_loss: 0.1343 - val_Bi-Acc: 0.3273 - 15s/epoch - 30ms/step
+Epoch 50/50
+
+Epoch 50: val_loss did not improve from 0.13425
+492/492 - 15s - loss: 0.1037 - Bi-Acc: 0.3645 - val_loss: 0.1455 - val_Bi-Acc: 0.2909 - 15s/epoch - 30ms/step
+6/6 - 0s - 182ms/epoch - 30ms/step
+Validation:
+
+Confusion Matrix for 0
+True Pos False Neg
+[73  8]
+False Pos True Neg
+[25 59]
+Precision: 0.7448979591836735
+Recall: 0.9012345679012346
+F1 Score for Neg: 0.7814569536423842
+F1 Score for Pos: 0.8156424581005587
+4/4 - 0s - 54ms/epoch - 13ms/step
+Test:
+
+Confusion Matrix for 0
+True Pos False Neg
+[45  9]
+False Pos True Neg
+[14 54]
+Precision: 0.7627118644067796
+Recall: 0.8333333333333334
+F1 Score for Neg: 0.8244274809160305
+F1 Score for Pos: 0.7964601769911505
+
+Saved

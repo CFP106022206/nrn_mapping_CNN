@@ -1,5 +1,5 @@
 # Purpose:
-# Map neuronal skeletons into two dimensional data format and group them
+# %% Map neuronal skeletons into two dimensional data format and group them
 
 ########################################################################################################################
 import os
@@ -9,21 +9,27 @@ from util import *
 from config import *
 from class_mapping import NrnMapping
 from class_ranking import NrnRanking
-from class_CNN import CNN
 ########################################################################################################################
 # Parameters
 ########################################################################################################################
+# Error Message
+error_message = True
 
-# Step 0 Augmentation
-aug_num = 0
-vibration_amplitude = {"FC": 20, "EM": 20}  # vibrate : amplitude --> 20 for fc ; 2000 for em
+# target & candidate
+target_list = ["FC"]
+candidate_list = ["EM"]
+for i in target_list:
+    config_path["name"] += i
+config_path["name"] += "_"
+for i in candidate_list:
+    config_path["name"] += i
 
 # Step 1 Linear interpolation
-interpolate_length = {"FC": 2.5, "EM": 2.5}  # 0.5 for FC data, 50 for original EM data
+interpolate_length = {"FC": 2.5, "EM": 2.5}  # minimum length of grid
 
 # Step 2 Define coordinate system
 # todo: key-independently overwrite
-weighting_keys_c = ["unit", "sn", "rsn"]  # unit, sn, rsn
+weighting_keys_c = ["sn"]  # unit, sn, rsn
 max_sn = np.inf  # the maximum acceptable value of Strahler number will appear in mapping
 grid_num = 50  # the number of grids on each side of map
 ignore_soma = False  # ignore the soma branch
@@ -31,10 +37,8 @@ normalization_of_sn = True  # normalizing the Strahler number in 2D-maps to 1
 normalization_of_moi = True  # normalizing the eigenvalues of moment of inertia with its maximum value
 
 # Step 3 Match pairs of neurons
-weighting_keys_m = ["unit"]  # unit, sn, rsn --> "unit"
-coordinate_selection = "target-orientation"  # "coordinate-orientation", "MOI-orientation", "target-orientation"
-target_list = ["FC"]
-candidate_list = ["EM"]
+weighting_keys_m = ["sn"]  # unit, sn, rsn --> "unit"
+coordinate_selection = "coordinate-orientation"  # "coordinate-orientation", "MOI-orientation", "target-orientation"
 threshold_of_exchange = 0.0  # threshold of considering the exchange of principal axes
 threshold_of_nI = 0.4  # threshold of choosing pairs of neurons by normalized inertia of moment
 threshold_in = np.cos(np.pi*50/180)  # threshold of inner product
@@ -48,9 +52,6 @@ ranking_method = rk.mask_test_gpu  # customized design
 ########################################################################################################################
 # Main Code
 ########################################################################################################################
-# Additional: make vibration data
-swc_vibration(config_path,
-              num=aug_num, vibrate_amplitude=vibration_amplitude)
 
 # STEP 1. convert the swc file into the specific data format (with linear interpolation)
 clear = False
@@ -76,18 +77,28 @@ Match = NrnRanking(config_path, grid_num, weighting_keys_m, ranking_method, coor
 Match.batch_matching_process(overwrite, target_list, candidate_list,
                              threshold_of_nI, threshold_of_distance, threshold_in)
 
-# STEP 3. B. rank each pair of neurons and output the figure of the best combination of coordinates in each pair
-overwrite = True
-map_data_saving = False
-plot = False
-Match.batch_ranking_process(overwrite, map_data_saving, plot)
+# %% example
+with open(config_path["stats"] + "match_dict" + config_path["name"] + ".pkl", "rb") as file:
+    match_dict = pickle.load(file)["sn"]
+# match_dict[target_id] --> [candidate1_id, candidate2_id, candidate3_id, ...]
 
-# STEP 4. introduce machine learning method
-'''
-my_model = CNN()
-my_model.load_data(os.getcwd() + "\\data\\statistical_results\\info_list.pkl",
-                   os.getcwd() + "\\data\\mapping_data\\")
-my_model.shuffle_data()
-my_model.set_parameter()
-my_model.fit(1000)
-'''
+# 建立pair的dataframe
+source_lst, target_lst = [], []
+for target_id, candidate_list in match_dict.items():
+    if candidate_list:  # 保留candidate 列表不為空的鍵值
+        for candidate_id in candidate_list:
+            source_lst.append(candidate_id)
+            target_lst.append(target_id)
+
+match_df = pd.DataFrame({"source_id": source_lst, "target_id": target_lst})
+match_df.to_csv('./data/statistical_results/match_list.csv', index=False)
+
+# target_id_example = list(match_dict.keys())[0]
+# print("target_id: ", target_id_example)
+# candidate_list_example = match_dict[target_id_example]
+# print("corresponding candidate_list: ", candidate_list_example)
+
+# # load map
+# with open(config_path["map2"] + target_id_example + ".pkl", "rb") as file:
+#     target_map = pickle.load(file)["sn"]
+# %%

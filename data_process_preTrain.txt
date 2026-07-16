@@ -1,0 +1,1262 @@
+2026-05-08 03:48:20.841159: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-05-08 03:48:20.849642: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:467] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1778183300.859661 2982317 cuda_dnn.cc:8579] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1778183300.863773 2982317 cuda_blas.cc:1407] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+W0000 00:00:1778183300.877842 2982317 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1778183300.877879 2982317 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1778183300.877882 2982317 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+W0000 00:00:1778183300.877884 2982317 computation_placer.cc:177] computation placer already registered. Please check linkage and avoid linking the same target more than once.
+2026-05-08 03:48:20.880757: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX512F AVX512_VNNI AVX512_BF16 AVX_VNNI, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0000 00:00:1778183344.933038 2982317 gpu_device.cc:2019] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 46258 MB memory:  -> device: 0, name: NVIDIA RTX PRO 5000 Blackwell, pci bus id: 0000:00:10.0, compute capability: 12.0
+Not found pairs: 0
+Train 160450 | Val 17828
+Epoch 1/300
+E0000 00:00:1778183354.060243 2982317 meta_optimizer.cc:967] layout failed: INVALID_ARGUMENT: Size of values 0 does not match size of permutation 4 @ fanin shape inStatefulPartitionedCall/functional_1/dropout_6/stateless_dropout/SelectV2-2-TransposeNHWCToNCHW-LayoutOptimizer
+I0000 00:00:1778183354.432556 2982570 cuda_dnn.cc:529] Loaded cuDNN version 91900
+2026-05-08 03:52:37.045732: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+2026-05-08 03:52:37.045830: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/trainers/epoch_iterator.py:164: UserWarning: Your input ran out of data; interrupting training. Make sure that your dataset or generator can generate at least `steps_per_epoch * epochs` batches. You may need to use the `.repeat()` function when building your dataset.
+  self._interrupted_warning()
+
+Epoch 1: val_loss improved from None to 0.04194, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 211s - 11ms/step - bi_acc: 0.0000e+00 - loss: 0.0618 - val_bi_acc: 0.0000e+00 - val_loss: 0.0419
+Epoch 2/300
+2026-05-08 03:56:01.697124: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+
+Epoch 2: val_loss improved from 0.04194 to 0.04100, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0510 - val_bi_acc: 0.0000e+00 - val_loss: 0.0410
+Epoch 3/300
+
+Epoch 3: val_loss improved from 0.04100 to 0.04083, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 211s - 11ms/step - bi_acc: 0.0000e+00 - loss: 0.0466 - val_bi_acc: 0.0000e+00 - val_loss: 0.0408
+Epoch 4/300
+2026-05-08 04:02:54.471157: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_4]]
+2026-05-08 04:02:54.471219: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 9161283579673671121
+2026-05-08 04:02:54.471226: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 7603902683359713346
+
+Epoch 4: val_loss improved from 0.04083 to 0.03948, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0439 - val_bi_acc: 0.0000e+00 - val_loss: 0.0395
+Epoch 5/300
+
+Epoch 5: val_loss improved from 0.03948 to 0.03868, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 208s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0424 - val_bi_acc: 0.0000e+00 - val_loss: 0.0387
+Epoch 6/300
+
+Epoch 6: val_loss improved from 0.03868 to 0.03845, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0414 - val_bi_acc: 0.0000e+00 - val_loss: 0.0385
+Epoch 7/300
+
+Epoch 7: val_loss improved from 0.03845 to 0.03840, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0408 - val_bi_acc: 0.0000e+00 - val_loss: 0.0384
+Epoch 8/300
+2026-05-08 04:16:34.668839: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+
+Epoch 8: val_loss did not improve from 0.03840
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0402 - val_bi_acc: 0.0000e+00 - val_loss: 0.0388
+Epoch 9/300
+2026-05-08 04:19:58.247621: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 9161283579673671121
+
+Epoch 9: val_loss improved from 0.03840 to 0.03824, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0399 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 10/300
+
+Epoch 10: val_loss did not improve from 0.03824
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0396 - val_bi_acc: 0.0000e+00 - val_loss: 0.0388
+Epoch 11/300
+
+Epoch 11: val_loss improved from 0.03824 to 0.03809, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0394 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 12/300
+
+Epoch 12: val_loss improved from 0.03809 to 0.03806, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0392 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 13/300
+
+Epoch 13: val_loss did not improve from 0.03806
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0390 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 14/300
+
+Epoch 14: val_loss improved from 0.03806 to 0.03803, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0389 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 15/300
+
+Epoch 15: val_loss improved from 0.03803 to 0.03798, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0388 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 16/300
+2026-05-08 04:43:35.283382: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+
+Epoch 16: val_loss improved from 0.03798 to 0.03788, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0387 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 17/300
+
+Epoch 17: val_loss did not improve from 0.03788
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0386 - val_bi_acc: 0.0000e+00 - val_loss: 0.0394
+Epoch 18/300
+
+Epoch 18: val_loss improved from 0.03788 to 0.03785, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0385 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 19/300
+
+Epoch 19: val_loss did not improve from 0.03785
+20057/20057 - 207s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0385 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 20/300
+
+Epoch 20: val_loss did not improve from 0.03785
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0384 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 21/300
+
+Epoch 21: val_loss did not improve from 0.03785
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0384 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 22/300
+
+Epoch 22: val_loss improved from 0.03785 to 0.03780, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0383 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 23/300
+
+Epoch 23: val_loss did not improve from 0.03780
+20057/20057 - 199s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0383 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 24/300
+
+Epoch 24: val_loss did not improve from 0.03780
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0382 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 25/300
+
+Epoch 25: val_loss did not improve from 0.03780
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0382 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 26/300
+
+Epoch 26: val_loss did not improve from 0.03780
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0382 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 27/300
+
+Epoch 27: val_loss did not improve from 0.03780
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0381 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 28/300
+
+Epoch 28: val_loss did not improve from 0.03780
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0381 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 29/300
+
+Epoch 29: val_loss did not improve from 0.03780
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0381 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 30/300
+
+Epoch 30: val_loss did not improve from 0.03780
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0380 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 31/300
+
+Epoch 31: val_loss did not improve from 0.03780
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0380 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 32/300
+2026-05-08 05:37:28.671600: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+
+Epoch 32: val_loss did not improve from 0.03780
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0380 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 33/300
+
+Epoch 33: val_loss did not improve from 0.03780
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0380 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 34/300
+
+Epoch 34: val_loss did not improve from 0.03780
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0380 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 35/300
+
+Epoch 35: val_loss did not improve from 0.03780
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0379 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 36/300
+
+Epoch 36: val_loss did not improve from 0.03780
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0379 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 37/300
+
+Epoch 37: val_loss improved from 0.03780 to 0.03774, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0379 - val_bi_acc: 0.0000e+00 - val_loss: 0.0377
+Epoch 38/300
+
+Epoch 38: val_loss did not improve from 0.03774
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0379 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 39/300
+
+Epoch 39: val_loss did not improve from 0.03774
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0379 - val_bi_acc: 0.0000e+00 - val_loss: 0.0402
+Epoch 40/300
+
+Epoch 40: val_loss did not improve from 0.03774
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0378 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 41/300
+
+Epoch 41: val_loss did not improve from 0.03774
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0378 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 42/300
+
+Epoch 42: val_loss improved from 0.03774 to 0.03773, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0378 - val_bi_acc: 0.0000e+00 - val_loss: 0.0377
+Epoch 43/300
+
+Epoch 43: val_loss did not improve from 0.03773
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0378 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 44/300
+
+Epoch 44: val_loss did not improve from 0.03773
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0378 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 45/300
+
+Epoch 45: val_loss did not improve from 0.03773
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0378 - val_bi_acc: 0.0000e+00 - val_loss: 0.0383
+Epoch 46/300
+
+Epoch 46: val_loss did not improve from 0.03773
+20057/20057 - 207s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0378 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 47/300
+
+Epoch 47: val_loss did not improve from 0.03773
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0378 - val_bi_acc: 0.0000e+00 - val_loss: 0.0377
+Epoch 48/300
+
+Epoch 48: val_loss did not improve from 0.03773
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 49/300
+
+Epoch 49: val_loss did not improve from 0.03773
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 50/300
+
+Epoch 50: val_loss did not improve from 0.03773
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 51/300
+
+Epoch 51: val_loss did not improve from 0.03773
+20057/20057 - 199s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 52/300
+
+Epoch 52: val_loss did not improve from 0.03773
+20057/20057 - 199s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 53/300
+
+Epoch 53: val_loss did not improve from 0.03773
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 54/300
+
+Epoch 54: val_loss did not improve from 0.03773
+20057/20057 - 199s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 55/300
+
+Epoch 55: val_loss did not improve from 0.03773
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 56/300
+
+Epoch 56: val_loss improved from 0.03773 to 0.03769, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0377
+Epoch 57/300
+
+Epoch 57: val_loss did not improve from 0.03769
+20057/20057 - 261s - 13ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0384
+Epoch 58/300
+
+Epoch 58: val_loss did not improve from 0.03769
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0377 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 59/300
+
+Epoch 59: val_loss did not improve from 0.03769
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0385
+Epoch 60/300
+
+Epoch 60: val_loss did not improve from 0.03769
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 61/300
+
+Epoch 61: val_loss did not improve from 0.03769
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 62/300
+
+Epoch 62: val_loss did not improve from 0.03769
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0377
+Epoch 63/300
+
+Epoch 63: val_loss did not improve from 0.03769
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0377
+Epoch 64/300
+2026-05-08 07:26:24.822064: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+
+Epoch 64: val_loss did not improve from 0.03769
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 65/300
+
+Epoch 65: val_loss did not improve from 0.03769
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 66/300
+
+Epoch 66: val_loss did not improve from 0.03769
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 67/300
+
+Epoch 67: val_loss did not improve from 0.03769
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 68/300
+
+Epoch 68: val_loss did not improve from 0.03769
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0383
+Epoch 69/300
+
+Epoch 69: val_loss did not improve from 0.03769
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 70/300
+
+Epoch 70: val_loss did not improve from 0.03769
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 71/300
+
+Epoch 71: val_loss did not improve from 0.03769
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 72/300
+
+Epoch 72: val_loss improved from 0.03769 to 0.03768, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0377
+Epoch 73/300
+
+Epoch 73: val_loss improved from 0.03768 to 0.03761, saving model to PreTrain_Model/pre_train_model_by_EMxFC_180K.weights.h5
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0376 - val_bi_acc: 0.0000e+00 - val_loss: 0.0376
+Epoch 74/300
+
+Epoch 74: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0387
+Epoch 75/300
+
+Epoch 75: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0377
+Epoch 76/300
+
+Epoch 76: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 77/300
+
+Epoch 77: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0397
+Epoch 78/300
+
+Epoch 78: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 79/300
+
+Epoch 79: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0409
+Epoch 80/300
+
+Epoch 80: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 81/300
+
+Epoch 81: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 82/300
+
+Epoch 82: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 83/300
+
+Epoch 83: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 84/300
+
+Epoch 84: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0385
+Epoch 85/300
+
+Epoch 85: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 86/300
+
+Epoch 86: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0384
+Epoch 87/300
+
+Epoch 87: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 88/300
+
+Epoch 88: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 89/300
+
+Epoch 89: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 90/300
+
+Epoch 90: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 91/300
+
+Epoch 91: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0385
+Epoch 92/300
+
+Epoch 92: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0650
+Epoch 93/300
+
+Epoch 93: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 94/300
+
+Epoch 94: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 95/300
+
+Epoch 95: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 96/300
+
+Epoch 96: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0440
+Epoch 97/300
+
+Epoch 97: val_loss did not improve from 0.03761
+20057/20057 - 213s - 11ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0376
+Epoch 98/300
+
+Epoch 98: val_loss did not improve from 0.03761
+20057/20057 - 208s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0375 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 99/300
+
+Epoch 99: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0398
+Epoch 100/300
+
+Epoch 100: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0404
+Epoch 101/300
+
+Epoch 101: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0394
+Epoch 102/300
+
+Epoch 102: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0868
+Epoch 103/300
+
+Epoch 103: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0393
+Epoch 104/300
+
+Epoch 104: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0434
+Epoch 105/300
+
+Epoch 105: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0531
+Epoch 106/300
+
+Epoch 106: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0388
+Epoch 107/300
+
+Epoch 107: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0387
+Epoch 108/300
+
+Epoch 108: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0395
+Epoch 109/300
+
+Epoch 109: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 110/300
+
+Epoch 110: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0385
+Epoch 111/300
+
+Epoch 111: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0383
+Epoch 112/300
+
+Epoch 112: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0406
+Epoch 113/300
+
+Epoch 113: val_loss did not improve from 0.03761
+20057/20057 - 207s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 114/300
+
+Epoch 114: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 115/300
+2026-05-08 10:18:51.215517: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 17913048383059782593
+2026-05-08 10:18:51.215601: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 9161283579673671121
+2026-05-08 10:18:51.215612: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 14296122936297479679
+2026-05-08 10:18:51.215616: I tensorflow/core/framework/local_rendezvous.cc:430] Local rendezvous send item cancelled. Key hash: 16780958045546242021
+2026-05-08 10:18:51.215623: I tensorflow/core/framework/local_rendezvous.cc:426] Local rendezvous recv item cancelled. Key hash: 7603902683359713346
+2026-05-08 10:18:51.215624: I tensorflow/core/framework/local_rendezvous.cc:430] Local rendezvous send item cancelled. Key hash: 2916595840821774500
+2026-05-08 10:18:51.215627: I tensorflow/core/framework/local_rendezvous.cc:430] Local rendezvous send item cancelled. Key hash: 8018343979923114516
+2026-05-08 10:18:51.215628: I tensorflow/core/framework/local_rendezvous.cc:430] Local rendezvous send item cancelled. Key hash: 17176097075686790896
+
+Epoch 115: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 116/300
+
+Epoch 116: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0384
+Epoch 117/300
+
+Epoch 117: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 118/300
+
+Epoch 118: val_loss did not improve from 0.03761
+20057/20057 - 207s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 119/300
+
+Epoch 119: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 120/300
+
+Epoch 120: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0398
+Epoch 121/300
+
+Epoch 121: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 122/300
+
+Epoch 122: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0390
+Epoch 123/300
+
+Epoch 123: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 124/300
+
+Epoch 124: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0394
+Epoch 125/300
+
+Epoch 125: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 126/300
+
+Epoch 126: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0673
+Epoch 127/300
+
+Epoch 127: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0398
+Epoch 128/300
+2026-05-08 11:02:48.825169: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+
+Epoch 128: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0381
+Epoch 129/300
+
+Epoch 129: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0474
+Epoch 130/300
+
+Epoch 130: val_loss did not improve from 0.03761
+20057/20057 - 199s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 131/300
+
+Epoch 131: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 132/300
+
+Epoch 132: val_loss did not improve from 0.03761
+20057/20057 - 207s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0392
+Epoch 133/300
+
+Epoch 133: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0394
+Epoch 134/300
+
+Epoch 134: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0383
+Epoch 135/300
+
+Epoch 135: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0397
+Epoch 136/300
+
+Epoch 136: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 137/300
+
+Epoch 137: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0374 - val_bi_acc: 0.0000e+00 - val_loss: 0.0491
+Epoch 138/300
+
+Epoch 138: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0389
+Epoch 139/300
+
+Epoch 139: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0396
+Epoch 140/300
+
+Epoch 140: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0383
+Epoch 141/300
+
+Epoch 141: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0467
+Epoch 142/300
+
+Epoch 142: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0444
+Epoch 143/300
+
+Epoch 143: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0415
+Epoch 144/300
+
+Epoch 144: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0562
+Epoch 145/300
+
+Epoch 145: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0547
+Epoch 146/300
+
+Epoch 146: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 147/300
+
+Epoch 147: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0380
+Epoch 148/300
+
+Epoch 148: val_loss did not improve from 0.03761
+20057/20057 - 208s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0395
+Epoch 149/300
+
+Epoch 149: val_loss did not improve from 0.03761
+20057/20057 - 207s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0378
+Epoch 150/300
+
+Epoch 150: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0395
+Epoch 151/300
+
+Epoch 151: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0405
+Epoch 152/300
+
+Epoch 152: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0379
+Epoch 153/300
+
+Epoch 153: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0489
+Epoch 154/300
+
+Epoch 154: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0421
+Epoch 155/300
+
+Epoch 155: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0387
+Epoch 156/300
+
+Epoch 156: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0392
+Epoch 157/300
+
+Epoch 157: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0438
+Epoch 158/300
+
+Epoch 158: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0389
+Epoch 159/300
+
+Epoch 159: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0397
+Epoch 160/300
+
+Epoch 160: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0436
+Epoch 161/300
+
+Epoch 161: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0462
+Epoch 162/300
+
+Epoch 162: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0995
+Epoch 163/300
+
+Epoch 163: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 164/300
+
+Epoch 164: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0451
+Epoch 165/300
+
+Epoch 165: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.1253
+Epoch 166/300
+
+Epoch 166: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 167/300
+
+Epoch 167: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0677
+Epoch 168/300
+
+Epoch 168: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0737
+Epoch 169/300
+
+Epoch 169: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0395
+Epoch 170/300
+
+Epoch 170: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0396
+Epoch 171/300
+
+Epoch 171: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0454
+Epoch 172/300
+
+Epoch 172: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0438
+Epoch 173/300
+
+Epoch 173: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0858
+Epoch 174/300
+
+Epoch 174: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 175/300
+
+Epoch 175: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0383
+Epoch 176/300
+
+Epoch 176: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0384
+Epoch 177/300
+
+Epoch 177: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0526
+Epoch 178/300
+
+Epoch 178: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0592
+Epoch 179/300
+
+Epoch 179: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0392
+Epoch 180/300
+
+Epoch 180: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0400
+Epoch 181/300
+
+Epoch 181: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0411
+Epoch 182/300
+
+Epoch 182: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0427
+Epoch 183/300
+
+Epoch 183: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0392
+Epoch 184/300
+
+Epoch 184: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0398
+Epoch 185/300
+
+Epoch 185: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0418
+Epoch 186/300
+
+Epoch 186: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0429
+Epoch 187/300
+
+Epoch 187: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0487
+Epoch 188/300
+
+Epoch 188: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0472
+Epoch 189/300
+
+Epoch 189: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0412
+Epoch 190/300
+
+Epoch 190: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0826
+Epoch 191/300
+
+Epoch 191: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0391
+Epoch 192/300
+
+Epoch 192: val_loss did not improve from 0.03761
+20057/20057 - 207s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0419
+Epoch 193/300
+
+Epoch 193: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 194/300
+
+Epoch 194: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0569
+Epoch 195/300
+
+Epoch 195: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0399
+Epoch 196/300
+
+Epoch 196: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0617
+Epoch 197/300
+
+Epoch 197: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0497
+Epoch 198/300
+
+Epoch 198: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.1308
+Epoch 199/300
+
+Epoch 199: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0382
+Epoch 200/300
+
+Epoch 200: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0509
+Epoch 201/300
+
+Epoch 201: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.3151
+Epoch 202/300
+
+Epoch 202: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0409
+Epoch 203/300
+
+Epoch 203: val_loss did not improve from 0.03761
+20057/20057 - 209s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0386
+Epoch 204/300
+
+Epoch 204: val_loss did not improve from 0.03761
+20057/20057 - 208s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0407
+Epoch 205/300
+
+Epoch 205: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0913
+Epoch 206/300
+
+Epoch 206: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0373 - val_bi_acc: 0.0000e+00 - val_loss: 0.0789
+Epoch 207/300
+
+Epoch 207: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0409
+Epoch 208/300
+
+Epoch 208: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0475
+Epoch 209/300
+
+Epoch 209: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0403
+Epoch 210/300
+
+Epoch 210: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0396
+Epoch 211/300
+
+Epoch 211: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0427
+Epoch 212/300
+
+Epoch 212: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0389
+Epoch 213/300
+
+Epoch 213: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0816
+Epoch 214/300
+
+Epoch 214: val_loss did not improve from 0.03761
+20057/20057 - 208s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0473
+Epoch 215/300
+
+Epoch 215: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.3155
+Epoch 216/300
+
+Epoch 216: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.2285
+Epoch 217/300
+
+Epoch 217: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0409
+Epoch 218/300
+
+Epoch 218: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0476
+Epoch 219/300
+
+Epoch 219: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0749
+Epoch 220/300
+
+Epoch 220: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0470
+Epoch 221/300
+
+Epoch 221: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0552
+Epoch 222/300
+
+Epoch 222: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0426
+Epoch 223/300
+
+Epoch 223: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0415
+Epoch 224/300
+
+Epoch 224: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0395
+Epoch 225/300
+
+Epoch 225: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0399
+Epoch 226/300
+
+Epoch 226: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.2601
+Epoch 227/300
+
+Epoch 227: val_loss did not improve from 0.03761
+20057/20057 - 210s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0444
+Epoch 228/300
+
+Epoch 228: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.1760
+Epoch 229/300
+
+Epoch 229: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0465
+Epoch 230/300
+
+Epoch 230: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0389
+Epoch 231/300
+
+Epoch 231: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.1761
+Epoch 232/300
+
+Epoch 232: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0407
+Epoch 233/300
+
+Epoch 233: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0729
+Epoch 234/300
+
+Epoch 234: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0391
+Epoch 235/300
+
+Epoch 235: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0387
+Epoch 236/300
+
+Epoch 236: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0390
+Epoch 237/300
+
+Epoch 237: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0395
+Epoch 238/300
+
+Epoch 238: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0453
+Epoch 239/300
+
+Epoch 239: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0575
+Epoch 240/300
+
+Epoch 240: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0447
+Epoch 241/300
+
+Epoch 241: val_loss did not improve from 0.03761
+20057/20057 - 210s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0445
+Epoch 242/300
+
+Epoch 242: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0385
+Epoch 243/300
+
+Epoch 243: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.1428
+Epoch 244/300
+
+Epoch 244: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0405
+Epoch 245/300
+
+Epoch 245: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.5528
+Epoch 246/300
+
+Epoch 246: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0385
+Epoch 247/300
+
+Epoch 247: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0425
+Epoch 248/300
+
+Epoch 248: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0630
+Epoch 249/300
+
+Epoch 249: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0677
+Epoch 250/300
+
+Epoch 250: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0390
+Epoch 251/300
+
+Epoch 251: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0583
+Epoch 252/300
+
+Epoch 252: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.4037
+Epoch 253/300
+
+Epoch 253: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.1417
+Epoch 254/300
+
+Epoch 254: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0396
+Epoch 255/300
+
+Epoch 255: val_loss did not improve from 0.03761
+20057/20057 - 208s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0409
+Epoch 256/300
+2026-05-08 18:16:19.749964: I tensorflow/core/framework/local_rendezvous.cc:407] Local rendezvous is aborting with status: OUT_OF_RANGE: End of sequence
+	 [[{{node IteratorGetNext}}]]
+	 [[IteratorGetNext/_2]]
+
+Epoch 256: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0503
+Epoch 257/300
+
+Epoch 257: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.3516
+Epoch 258/300
+
+Epoch 258: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0412
+Epoch 259/300
+
+Epoch 259: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0403
+Epoch 260/300
+
+Epoch 260: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0540
+Epoch 261/300
+
+Epoch 261: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.1299
+Epoch 262/300
+
+Epoch 262: val_loss did not improve from 0.03761
+20057/20057 - 207s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0488
+Epoch 263/300
+
+Epoch 263: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0735
+Epoch 264/300
+
+Epoch 264: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0396
+Epoch 265/300
+
+Epoch 265: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0414
+Epoch 266/300
+
+Epoch 266: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0518
+Epoch 267/300
+
+Epoch 267: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0482
+Epoch 268/300
+
+Epoch 268: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0441
+Epoch 269/300
+
+Epoch 269: val_loss did not improve from 0.03761
+20057/20057 - 209s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0455
+Epoch 270/300
+
+Epoch 270: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.4084
+Epoch 271/300
+
+Epoch 271: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0437
+Epoch 272/300
+
+Epoch 272: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0460
+Epoch 273/300
+
+Epoch 273: val_loss did not improve from 0.03761
+20057/20057 - 210s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0586
+Epoch 274/300
+
+Epoch 274: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0396
+Epoch 275/300
+
+Epoch 275: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0481
+Epoch 276/300
+
+Epoch 276: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0458
+Epoch 277/300
+
+Epoch 277: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0481
+Epoch 278/300
+
+Epoch 278: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0423
+Epoch 279/300
+
+Epoch 279: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0390
+Epoch 280/300
+
+Epoch 280: val_loss did not improve from 0.03761
+20057/20057 - 205s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0490
+Epoch 281/300
+
+Epoch 281: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0606
+Epoch 282/300
+
+Epoch 282: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0416
+Epoch 283/300
+
+Epoch 283: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0961
+Epoch 284/300
+
+Epoch 284: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0621
+Epoch 285/300
+
+Epoch 285: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0536
+Epoch 286/300
+
+Epoch 286: val_loss did not improve from 0.03761
+20057/20057 - 199s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0502
+Epoch 287/300
+
+Epoch 287: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.1895
+Epoch 288/300
+
+Epoch 288: val_loss did not improve from 0.03761
+20057/20057 - 203s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0406
+Epoch 289/300
+
+Epoch 289: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0640
+Epoch 290/300
+
+Epoch 290: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0483
+Epoch 291/300
+
+Epoch 291: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0419
+Epoch 292/300
+
+Epoch 292: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.3181
+Epoch 293/300
+
+Epoch 293: val_loss did not improve from 0.03761
+20057/20057 - 208s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0388
+Epoch 294/300
+
+Epoch 294: val_loss did not improve from 0.03761
+20057/20057 - 206s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.2662
+Epoch 295/300
+
+Epoch 295: val_loss did not improve from 0.03761
+20057/20057 - 200s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0462
+Epoch 296/300
+
+Epoch 296: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.8235
+Epoch 297/300
+
+Epoch 297: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0775
+Epoch 298/300
+
+Epoch 298: val_loss did not improve from 0.03761
+20057/20057 - 201s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.1301
+Epoch 299/300
+
+Epoch 299: val_loss did not improve from 0.03761
+20057/20057 - 204s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0457
+Epoch 300/300
+
+Epoch 300: val_loss did not improve from 0.03761
+20057/20057 - 202s - 10ms/step - bi_acc: 0.0000e+00 - loss: 0.0372 - val_bi_acc: 0.0000e+00 - val_loss: 0.0476
+/cluster/home/ming/miniconda3/envs/ming/lib/python3.10/site-packages/keras/src/saving/saving_lib.py:797: UserWarning: Skipping variable loading for optimizer 'adamw', because it has 2 variables whereas the saved optimizer has 54 variables. 
+  saveable.load_own_variables(weights_store.get(inner_path))
+Val: {'cm': array([[8902,   11],
+       [ 227, 8688]]), 'tp': 8688, 'fp': 11, 'fn': 227, 'tn': 8902, 'precision': 0.9987354868375675, 'recall': 0.9745372966909702, 'f1_pos': 0.9864880208924719}
