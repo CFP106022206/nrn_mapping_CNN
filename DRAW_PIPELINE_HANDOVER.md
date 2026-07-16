@@ -1,6 +1,6 @@
 # 全流程使用說明
 整個流程分成兩個部分：1、將swc 數據做初步篩選配對以及畫出三視圖。2、用模型預測每一對三視圖相似度。
-這份使用說明為第一部分
+這份使用說明為第一部分。第二部分為[MODEL_PIPELINE_HANDOVER.md](MODEL_PIPELINE_HANDOVER.md)
 
 這份文檔說明從 `SWC` 原始數據到 `descriptor`、`pair matching`、`standard view` 的完整流程。
 
