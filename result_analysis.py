@@ -45,14 +45,14 @@ model_name = 'FineTune_miniLR'#'FineTune_miniLR_e7' #'Annotator' #'Fine_Tune_Mod
 # 设置Seaborn样式
 plt.style.use('default')
 
-test_mode = 'cross'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
+test_mode = 'nblast'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 
 cross_num = 10      # cross validation 的 fold 數量, 只有在test_mode=='cross' 中才需要特別設置
 
 # 如果為False, 則使用完整的test set, 如需要分析指定的test set(需在模型原本的Testing資料內), 輸入指定文件路徑, 此文件為包含指定fc_id, em_id的csv
-selected_test_set = './labeled_info/D2+D6_ID.csv'#'./labeled_info/D5_conf.csv'  #False
+selected_test_set ='./labeled_info/D5_conf.csv' # './labeled_info/D2+D6_ID.csv'#'./labeled_info/D5_conf.csv'  #False
 
 label_csv_name = f'./result/test_label_{model_name}_D1-D6_'
 # label_csv_name = './result/predict_result/model_predict_'
@@ -248,7 +248,7 @@ for threshold in threshold_lst:
 
 # Find Best F1 score
 
-print('Use ROC Best F1 at threshold = ', roc_best_threshold)
+print('Use closest point on ROC at threshold = ', roc_best_threshold)
 y_pred_binary, conf_matrix = gen_conf_matrix(y_true, y_pred, threshold=roc_best_threshold)
 precision = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[1,0])
 recall = conf_matrix[0,0]/(conf_matrix[0,0] + conf_matrix[0,1])
@@ -294,7 +294,7 @@ sns.histplot(y_pred_label0, label="Label 0", color="blue", lw=0.5, alpha=0.6, bi
 sns.histplot(y_pred_label1, label="Label 1", color="red", lw=0.5, alpha=0.6, bins=bins)
 
 # 標出最佳threshold
-plt.axvline(x=roc_best_threshold, color='#A62C3A', linestyle='--', label='Threshold of max F1 score')
+plt.axvline(x=roc_best_threshold, color='#A62C3A', linestyle='--', label='Threshold')
 
 # 设置图标题和坐标轴标签
 plt.tick_params(axis='both', which='major', labelsize=12)

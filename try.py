@@ -44,3 +44,23 @@ plt.show()
 target = ['mb_4_l', 'mb_4_r']
 
 # %%
+
+from __future__ import annotations
+
+import os
+import sys
+import argparse
+import warnings
+from pathlib import Path
+
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+from matplotlib import cm as mcm
+from mpl_toolkits.mplot3d import Axes3D            # noqa: F401
+from mpl_toolkits.mplot3d.art3d import Line3DCollection
+
+warnings.filterwarnings('ignore')
+# %%

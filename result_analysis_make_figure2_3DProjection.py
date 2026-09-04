@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 """
 =============================================================================
-make_figure2.py  —  MorphoMatcher Fig.2  三視圖投影示意圖
+result_analysis_make_figure2_3DProjection.py  —  MorphoMatcher Fig.2  三視圖投影示意圖
 =============================================================================
 
 建構在專案既有的 swc_util.py 之上, 確保圖中呈現的投影
@@ -29,21 +29,23 @@ make_figure2.py  —  MorphoMatcher Fig.2  三視圖投影示意圖
 使用方式
 -----------------------------------------------------------------------------
   # 合成骨架, 測版面
-  python make_figure2.py --demo
+  python result_analysis_make_figure2_3DProjection.py --demo
 
   # 只有 SWC (投影現場重算)
-  python make_figure2.py --swc ./data/swc/FC/fru-F-500297.swc
+  python result_analysis_make_figure2_3DProjection.py --swc ./data/SWC/FC/Trh-F-000008.swc
+  # 橫式
+  python result_analysis_make_figure2_3DProjection.py --swc ./data/SWC/FC/Trh-F-000008.swc --layout side
 
   # SWC + 真實 standard views (最忠實, 建議論文用這個)
-  python make_figure2.py \
+  python result_analysis_make_figure2_3DProjection.py \
       --swc   ./data/swc/FC/fru-F-500297.swc \
       --views ./data/standard_views/FC/fru-F-500297_views.npz
 
   # 三個 view 的軸對應順序若不同, 用 --view-order 指定
-  python make_figure2.py --swc a.swc --views a.npz --view-order xz,yz,xy
+  python result_analysis_make_figure2_3DProjection.py --swc a.swc --views a.npz --view-order xz,yz,xy
 
   # 調整視角
-  python make_figure2.py --demo --elev 18 --azim -62
+  python result_analysis_make_figure2_3DProjection.py --demo --elev 18 --azim -62
 =============================================================================
 """
 
@@ -79,7 +81,7 @@ try:
 except ImportError as e:
     raise SystemExit(
         f'無法匯入 swc_util: {e}\n'
-        '請把 make_figure2.py 放在與 swc_util.py 同一個資料夾。'
+        '請把 result_analysis_make_figure2_3DProjection.py 放在與 swc_util.py 同一個資料夾。'
     )
 
 
@@ -96,10 +98,14 @@ PAPER_STYLE = {
     'xtick.labelsize':  7,
     'ytick.labelsize':  7,
     'axes.linewidth':   0.8,
-    'figure.dpi':       300,
-    'savefig.dpi':      300,
-    'savefig.bbox':     'tight',
-    'savefig.pad_inches': 0.05,
+    'figure.dpi':       600,
+    'savefig.dpi':      600,
+    # 不用 bbox='tight': 它會裁掉白邊, 使輸出的 PDF 比 figsize 窄
+    # (實測 cube 版 6.5" -> 4.88")。之後用 width=\textwidth 置入時
+    # 會被「放大」, 字級同樣跑掉。設為 None 才能保證輸出 = figsize,
+    # 搭配 width=\textwidth 為 1:1。留白由 gridspec 的 left/right 控制。
+    'savefig.bbox':     None,
+    'savefig.pad_inches': 0.0,
     'pdf.fonttype':     42,
     'ps.fonttype':      42,
     'mathtext.default': 'regular',
@@ -161,8 +167,17 @@ def truncated_cmap(name, floor=None, n=256):
     return LinearSegmentedColormap.from_list(
         f'{name}_trunc', base(np.linspace(floor, 1.0, n)))
 
-FIG_WIDTH  = 5.0
-FIG_HEIGHT = 4.2
+# 兩種 layout 各有尺寸: --layout cube 用 FIG_*, --layout combined 用 FIG_*_COMBINED
+# 寬度對齊單欄 LaTeX 的 \textwidth (A4, margin=2.2cm) = 6.535 inch,
+# 搭配 \includegraphics[width=\textwidth] 為 1:1 置入, 字級不會被縮放。
+FIG_WIDTH  = 6.5          # --layout cube
+FIG_HEIGHT = 5.5
+
+FIG_WIDTH_COMBINED  = 6.5   # --layout combined
+FIG_HEIGHT_COMBINED = 5.6   # 原 6.9; 實測有 22.7% 為純空白, 已壓掉
+
+FIG_WIDTH_SIDE  = 6.5       # --layout side (橫式, 最省高度)
+FIG_HEIGHT_SIDE = 3.3
 N_GRID     = 50          # 與 _resize_to_50 的預設一致
 
 # 平面 -> 使用哪兩個座標軸
@@ -415,11 +430,13 @@ def build_figure_combined(xyz, parent_idx, strahler, planes, lims,
     dark     = (plane_bg == 'dark')
     n        = next(iter(planes.values())).shape[0]
 
-    fig = plt.figure(figsize=(7.0, 7.4))
+    fig = plt.figure(figsize=(FIG_WIDTH_COMBINED, FIG_HEIGHT_COMBINED))
+    # mplot3d 的軸本身就保留大量內部留白, 因此 (a) 不需要太大的
+    # height_ratio; hspace 也壓到最小, 兩者合計可省下約 20% 的圖高。
     gs  = gridspec.GridSpec(2, 3, figure=fig,
-                            height_ratios=[1.30, 1.0],
-                            wspace=0.30, hspace=0.22,
-                            left=0.06, right=0.87, top=0.97, bottom=0.06)
+                            height_ratios=[1.15, 1.0],
+                            wspace=0.30, hspace=0.04,
+                            left=0.06, right=0.87, top=1.00, bottom=0.08)
 
     # ---------- (a) 3D 立方體 ----------
     ax3d = fig.add_subplot(gs[0, :], projection='3d')
@@ -528,6 +545,135 @@ def build_figure_combined(xyz, parent_idx, strahler, planes, lims,
     return fig
 
 
+def build_figure_side(xyz, parent_idx, strahler, planes, lims,
+                      elev=20, azim=-56, cmap=None, plane_bg=None,
+                      order=('xy', 'yz', 'xz'), skel_cmap=None):
+    """
+    橫式佈局: 左為 3D 立方體 (a), 右為三張 50x50 直向堆疊 (b)。
+
+    相較 combined 的上下排, 這個佈局高度只有約一半 (3.3" vs 5.6"),
+    對「單欄 + 多張大圖」的論文友善得多 —— LaTeX 的 \topfraction
+    預設只允許頂部浮動體佔頁面 70%, 過高的圖會被延後,
+    而浮動體是 FIFO, 一張卡住後面全部跟著往後推。
+    """
+    plt.rcParams.update(PAPER_STYLE)
+    cmap      = cmap or PROJ_CMAP
+    skel_cmap = skel_cmap or SKEL_CMAP
+    plane_bg  = plane_bg or PLANE_BG
+    dark      = (plane_bg == 'dark')
+    n         = next(iter(planes.values())).shape[0]
+
+    fig = plt.figure(figsize=(FIG_WIDTH_SIDE, FIG_HEIGHT_SIDE))
+    # 三欄: [0]=3D 立方體, [1]=空欄 (留給 (a) 的兩支色條), [2]=三張面板
+    # 色條放在各自說明的對象旁邊, 而非全部擠在最右側。
+    gs  = gridspec.GridSpec(3, 3, figure=fig,
+                            width_ratios=[1.52, 0.22, 1.0],
+                            wspace=0.30, hspace=0.32,
+                            left=0.01, right=0.86, top=0.90, bottom=0.11)
+
+    # ---------- (a) 3D 立方體, 佔左側整欄 ----------
+    ax3d = fig.add_subplot(gs[:, 0], projection='3d')
+    for name, H in planes.items():
+        draw_projection_plane(ax3d, H, name, lims, cmap=cmap, plane_bg=plane_bg)
+    draw_skeleton(ax3d, xyz, parent_idx, strahler=strahler, cmap=skel_cmap)
+
+    c = xyz.mean(axis=0)
+    (x0, x1), (y0, y1), (z0, z1) = lims
+    g = dict(color='#BBBBBB' if dark else '#888888',
+             linestyle=':', linewidth=0.7, zorder=8)
+    ax3d.plot([c[0], c[0]], [c[1], c[1]], [c[2], z0], **g)
+    ax3d.plot([c[0], x0],   [c[1], c[1]], [c[2], c[2]], **g)
+    ax3d.plot([c[0], c[0]], [c[1], y1],   [c[2], c[2]], **g)
+
+    ax3d.set_xlim(lims[0]); ax3d.set_ylim(lims[1]); ax3d.set_zlim(lims[2])
+    ax3d.set_box_aspect((1, 1, 1))
+    ax3d.view_init(elev=elev, azim=azim)
+    ax3d.set_xlabel('x  (µm)', labelpad=1, fontsize=7)
+    ax3d.set_ylabel('y  (µm)', labelpad=1, fontsize=7)
+    ax3d.set_zlabel('z  (µm)', labelpad=1, fontsize=7)
+    ax3d.tick_params(axis='both', which='major', pad=0, labelsize=5.5)
+    for setter, (lo, hi) in zip([ax3d.set_xticks, ax3d.set_yticks,
+                                 ax3d.set_zticks], lims):
+        setter(np.linspace(lo, hi, 3).round(-1))
+    for pane in (ax3d.xaxis.pane, ax3d.yaxis.pane, ax3d.zaxis.pane):
+        pane.set_facecolor('white'); pane.set_edgecolor(GRID_COLOR)
+        pane.set_alpha(1.0)
+    ax3d.grid(True, color=GRID_COLOR, linewidth=0.4)
+
+    lerp = lambda a, b, t: a + (b - a) * t
+    ann = dict(fontsize=6.5, fontweight='bold',
+               color='#DDDDDD' if dark else '#444444', zorder=20)
+    ax3d.text(lerp(x0, x1, 0.86), lerp(y0, y1, 0.10), z0, 'xy', **ann)
+    ax3d.text(x0, lerp(y0, y1, 0.88), lerp(z0, z1, 0.90), 'yz', **ann)
+    ax3d.text(lerp(x0, x1, 0.10), y1, lerp(z0, z1, 0.90), 'xz', **ann)
+    # (a) 標號稍後與 (b) 一起以 figure 座標放置, 兩者才會等高
+
+    # ---------- (b) 三張 50x50 直向堆疊 ----------
+    for k, name in enumerate(order):
+        axp = fig.add_subplot(gs[k, 2])
+        draw_grid_panel(axp, planes[name], f'{name} projection',
+                        cmap=cmap, plane_bg=plane_bg)
+        axp.set_title(f'{name} projection', fontsize=6.5, pad=2)
+        axp.tick_params(labelsize=5)
+        axp.set_ylabel(f'{name[1]} (px)', fontsize=6, labelpad=2.5)
+        if k == len(order) - 1:
+            axp.set_xlabel(f'{name[0]} (px)', fontsize=6, labelpad=2.5)
+        else:
+            axp.set_xticklabels([])
+        # (b) 標號稍後以 figure 座標放置; 用 transAxes 的 1.30 會超出
+        # gridspec 的 top, 在畫布外被裁掉。
+
+    # ---------- colorbars ----------
+    fig.canvas.draw()
+    # 橫式版的色條較短 (約 0.9"), 完整的 'Normalized Strahler number'
+    # 在 fontsize 5 下需 0.99", 會溢出並撞到相鄰色條的標題。
+    # 改用兩行縮寫, 完整名稱寫在圖說。
+    CBAR_LABEL = 'Normalized\nStrahler'
+
+    def add_cbar(rect, cmap_name, title):
+        sm = mcm.ScalarMappable(cmap=truncated_cmap(cmap_name),
+                                norm=plt.Normalize(0, 1))
+        sm.set_array([])
+        cax = fig.add_axes(rect)
+        cb = fig.colorbar(sm, cax=cax, ticks=[0, 0.5, 1.0])
+        cb.set_label(CBAR_LABEL, fontsize=5, labelpad=2)
+        cb.ax.tick_params(labelsize=4.5, width=0.4, length=1.5)
+        cb.outline.set_linewidth(0.5)
+        cax.set_title(title, fontsize=5.5, pad=7, color='#333333', loc='left')
+
+    b3d    = ax3d.get_position()
+    bp_top = fig.axes[1].get_position()      # (b) 第一張面板 (xy)
+    bp_bot = fig.axes[3].get_position()      # (b) 最後一張面板 (xz)
+
+    # --- (a) 旁邊兩支: 立方體同時含骨架與投影兩種色階 ---
+    x_a = b3d.x1 + 0.055
+    # 兩支之間需要足夠間隔: 上支的縱向標籤底端會撞到下支的標題。
+    add_cbar([x_a, b3d.y0 + b3d.height * 0.58, 0.011, b3d.height * 0.26],
+             skel_cmap, '3D skeleton')
+    add_cbar([x_a, b3d.y0 + b3d.height * 0.06, 0.011, b3d.height * 0.26],
+             cmap, 'Projection')
+
+    # --- (b) 右側每張面板各一支, 與該面板等高並對齊 ---
+    # 不用一支貫穿三張的長色條: 面板高僅約 0.72", 長色條會遠高於
+    # 任何單一面板, 視覺上與誰都對不齊。
+    x_b = bp_top.x1 + 0.020
+    for k in range(3):
+        bpk = fig.axes[1 + k].get_position()
+        add_cbar([x_b, bpk.y0, 0.011, bpk.height],
+                 cmap, 'Projection' if k == 0 else '')
+
+    # --- (a)(b) 標號: 兩者共用同一個 figure y, 才會上下對齊 ---
+    # 3D 軸的 bbox 上緣與面板欄的上緣不一定相同, 若各自用 transAxes
+    # 定位, 兩個標號會落在不同高度 (實測相差約 24 pt)。
+    y_lab = max(b3d.y1, bp_top.y1) + 0.015
+    fig.text(b3d.x0 + 0.015, y_lab, '(a)',
+             fontsize=10, fontweight='bold', va='bottom', ha='left')
+    fig.text(bp_top.x0 - 0.075, y_lab, '(b)',
+             fontsize=10, fontweight='bold', va='bottom', ha='left')
+
+    return fig
+
+
 def build_figure(xyz, parent_idx, strahler, planes, lims,
                  elev=20, azim=-56, show_colorbar=True,
                  cmap=None, plane_bg=None):
@@ -557,12 +703,14 @@ def build_figure(xyz, parent_idx, strahler, planes, lims,
     ax.set_box_aspect((1, 1, 1))
     ax.view_init(elev=elev, azim=azim)
 
-    ax.set_xlabel('x  (µm)', labelpad=-4)
-    ax.set_ylabel('y  (µm)', labelpad=-4)
-    ax.set_zlabel('z  (µm)', labelpad=-4)
-    ax.tick_params(axis='both', which='major', pad=-2, labelsize=6)
+    ax.set_xlabel('x  (µm)', labelpad=2)
+    ax.set_ylabel('y  (µm)', labelpad=2)
+    ax.set_zlabel('z  (µm)', labelpad=2)
+    # 3 個刻度即可。用 4 個時 x 與 y 軸最前端的標籤會在角落互相壓字
+    # (渲染成 "180-130" 之類)。與 build_figure_combined 保持一致。
+    ax.tick_params(axis='both', which='major', pad=0, labelsize=6)
     for setter, (lo, hi) in zip([ax.set_xticks, ax.set_yticks, ax.set_zticks], lims):
-        setter(np.linspace(lo, hi, 4).round(-1))
+        setter(np.linspace(lo, hi, 3).round(-1))
 
     for pane in (ax.xaxis.pane, ax.yaxis.pane, ax.zaxis.pane):
         pane.set_facecolor('white')
@@ -650,8 +798,10 @@ def main():
                     help='3D 骨架的色階 (預設 OrRd, 與投影的冷色系區隔)')
     ap.add_argument('--cmap-floor', type=float, default=CMAP_FLOOR,
                     help='色階下端截斷點 (預設 0.35), 避免低權重細枝在白底上消失')
-    ap.add_argument('--layout', default='combined', choices=['cube', 'combined'],
-                    help="combined=立方體+三張50x50攤平圖(建議) / cube=僅立方體")
+    ap.add_argument('--layout', default='combined',
+                    choices=['cube', 'combined', 'side'],
+                    help="combined=上下排(預設) / side=左右排(高度僅一半, "
+                         "適合單欄多圖) / cube=僅立方體")
     ap.add_argument('--elev', type=float, default=20)
     ap.add_argument('--azim', type=float, default=-56)
     ap.add_argument('--no-colorbar', action='store_true')
@@ -703,7 +853,12 @@ def main():
     # ---- 繪圖 ----
     print(f'[style] proj_cmap={args.cmap}, skel_cmap={args.skel_cmap}, '
           f'plane_bg={args.plane_bg}, floor={args.cmap_floor}, layout={args.layout}')
-    if args.layout == 'combined':
+    if args.layout == 'side':
+        fig = build_figure_side(xyz, parent_idx, strahler, planes, lims,
+                                elev=args.elev, azim=args.azim,
+                                cmap=args.cmap, plane_bg=args.plane_bg,
+                                order=tuple(order), skel_cmap=args.skel_cmap)
+    elif args.layout == 'combined':
         fig = build_figure_combined(xyz, parent_idx, strahler, planes, lims,
                                     elev=args.elev, azim=args.azim,
                                     cmap=args.cmap, plane_bg=args.plane_bg,

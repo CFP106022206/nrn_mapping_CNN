@@ -42,9 +42,9 @@ morphologically distinct 的神經元判成匹配」的論證。
   # 接真實資料
   python result_analysis_make_figure3_ThreeView.py \
       --pair1 fru-F-500297 1051630846 same \
-      --pair2 TH-F-000101  331662710  same \
-      --pair3 VGlut-F-700541 1702306037 diff \
-      --overlay ./brain_png/p1.png ./brain_png/p2.png ./brain_png/p3.png
+      --pair2 TH-F-100083  331662710  same \
+      --pair3 VGlut-F-400049 297251714 diff \
+      --overlay ./brain_png/fru-F-500297_1051630846_0_big.png ./brain_png/TH-F-100083_331662710_0_big.png ./brain_png/VGlut-F-400049_297251714_0_big.png
 =============================================================================
 """
 
@@ -99,6 +99,16 @@ except ImportError as e:
 # =============================================================================
 # 設定
 # =============================================================================
+# 默認資料
+PAIR_DEFAULTS = [
+    ['fru-F-500297',   '1051630846', 'same'],
+    ['TH-F-100083',    '331662710',  'same'],
+    ['VGlut-F-400049', '297251714',  'diff'],
+]
+OVERLAY_DEFAULTS = ['./brain_png/fru-F-500297_1051630846_0_big.png', 
+                    './brain_png/TH-F-100083_331662710_0_big.png', 
+                    './brain_png/VGlut-F-400049_297251714_0_big.png']
+
 # 神經元配色 — 需與外部 3D 渲染工具的設定一致
 NEURON_FC = '#D62728'      # 紅 — FlyCircuit
 NEURON_EM = '#1F3FBF'      # 藍 — hemibrain (EM)
@@ -116,8 +126,8 @@ SWC_EM_DEFAULT  = 'data/SWC/EM'
 
 VIEW_NAMES = ('xy', 'yz', 'xz')
 
-FIG_WIDTH  = 7.2
-FIG_HEIGHT = 4.6
+FIG_WIDTH  = 6.5
+FIG_HEIGHT = 4.15
 
 
 # =============================================================================
@@ -192,7 +202,7 @@ def draw_overlay_panel(ax, img, fc_id, em_id, verdict,
                        scalebar_um=None, px_per_um=None):
     """3D 疊合圖 + 所有文字標註 (由 matplotlib 繪製, 非燒進圖片)"""
     if img is not None:
-        ax.imshow(img, interpolation='bilinear', aspect='equal')
+        ax.imshow(img, interpolation='lanczos', aspect='equal')
     ax.set_xticks([]); ax.set_yticks([])
     for s in ax.spines.values():
         s.set_visible(False)
@@ -210,12 +220,10 @@ def draw_overlay_panel(ax, img, fc_id, em_id, verdict,
     # 判定標籤放在面板內部「左下角」。
     # 放在上方 (面板外或面板內頂端) 都會與欄群組標題
     # (Overlay in standard brain) 相撞, 實測重疊達 69 pt^2。
-    v = VERDICT_STYLE[verdict]
-    ax.text(0.02, 0.03, v['text'], transform=ax.transAxes,
-            fontsize=6.5, fontweight='bold', ha='left', va='bottom',
-            color=v['fg'], zorder=8,
-            bbox=dict(boxstyle='round,pad=0.28', facecolor=v['bg'],
-                      edgecolor=v['ec'], linewidth=0.7))
+    # 判定標籤不畫在影像上。
+    # 疊合圖含放大框, 會延伸到面板的任一角落, 標籤放在影像內部
+    # 一定有被遮擋的風險。改由 build_figure 放在 (cN) 標號那一行,
+    # 該處必定是空白。
 
 
 def build_figure(pairs, overlays, cmap=None, scalebar_um=None, px_per_um=None):
@@ -287,6 +295,15 @@ def build_figure(pairs, overlays, cmap=None, scalebar_um=None, px_per_um=None):
             fig.text(ax_ref.get_position().x0, y_top + 0.012, tag,
                      fontsize=8.5, fontweight='bold', va='bottom', ha='left')
 
+        # 判定標籤與 (cN) 同一行, 靠疊合圖右緣對齊
+        v = VERDICT_STYLE[pairs[r]['verdict']]
+        b_ov = fig.axes[r * 7 + 6].get_position()
+        fig.text(b_ov.x1, y_top + 0.014, v['text'],
+                 fontsize=6.5, fontweight='bold', va='bottom', ha='right',
+                 color=v['fg'],
+                 bbox=dict(boxstyle='round,pad=0.28', facecolor=v['bg'],
+                           edgecolor=v['ec'], linewidth=0.7))
+
     # ---- 欄群組標題 ----
     top = fig.axes[0].get_position()
     def group_title(c0, c1, text, color='#333333'):
@@ -345,12 +362,12 @@ def build_figure(pairs, overlays, cmap=None, scalebar_um=None, px_per_um=None):
 # =============================================================================
 def main():
     ap = argparse.ArgumentParser(description='Build MorphoMatcher Figure 3')
-    ap.add_argument('--demo', action='store_true', help='合成資料 + 佔位腦圖')
+    ap.add_argument('--demo', action='store_true', help='預設資料 + 預設腦圖')
     for i in (1, 2, 3):
         ap.add_argument(f'--pair{i}', nargs=3, metavar=('FC_ID', 'EM_ID', 'VERDICT'),
-                        default=None,
+                        default=PAIR_DEFAULTS[i - 1],
                         help='FC id, EM id, 判定 (same|diff)')
-    ap.add_argument('--overlay', nargs=3, default=None,
+    ap.add_argument('--overlay', nargs=3, default=OVERLAY_DEFAULTS,
                     help='三張 3D 疊合圖 (乾淨圖, 不含文字)')
     ap.add_argument('--fc-views', default=FC_DIR_DEFAULT)
     ap.add_argument('--em-views', default=EM_DIR_DEFAULT)
@@ -366,18 +383,17 @@ def main():
     # ---- 組出三組配對 ----
     pairs = []
     if args.demo:
-        print('[demo] 使用合成資料')
+        print('[demo] 使用預設資料')
         spec = [('fru-F-500297', '1051630846', 'same'),
-                ('TH-F-000101',  '331662710',  'same'),
-                ('VGlut-F-700541', '1702306037', 'diff')]
+                ('TH-F-100083',  '331662710',  'same'),
+                ('VGlut-F-400049', '297251714', 'diff')]
         for i, (fc, em, vd) in enumerate(spec):
             pairs.append(dict(fc_id=fc, em_id=em, verdict=vd,
                               fc_views=demo_views(3 + i * 5),
                               em_views=demo_views(4 + i * 5)))
     else:
         specs = [getattr(args, f'pair{i}') for i in (1, 2, 3)]
-        if any(s is None for s in specs):
-            raise SystemExit('請提供 --pair1 --pair2 --pair3, 或用 --demo')
+
         for fc, em, vd in specs:
             if vd not in ('same', 'diff'):
                 raise SystemExit(f'判定必須是 same 或 diff, 收到 {vd}')
@@ -394,18 +410,17 @@ def main():
         print('[warn] 否則讀者無法校準模型在區分什麼。')
 
     # ---- 疊合圖 ----
-    if args.overlay:
+    if args.demo:
+        print('[image] demo 模式, 使用佔位腦圖')
+        overlays = [demo_overlay(i + 1) for i in range(len(pairs))]
+    elif args.overlay:
         overlays = []
         for p in args.overlay:
             if not os.path.exists(p):
                 raise FileNotFoundError(f'找不到疊合圖: {p}')
             overlays.append(mpimg.imread(p))
-        shapes = {im.shape[:2] for im in overlays}
-        if len(shapes) > 1:
-            print(f'[warn] 三張疊合圖尺寸不一致 {shapes}')
-            print('[warn] 建議用相同畫布尺寸匯出, 否則腦的大小看起來會不同')
+        ...
     else:
-        print('[image] 未提供 --overlay, 使用佔位腦圖')
         overlays = [demo_overlay(i + 1) for i in range(len(pairs))]
 
     fig = build_figure(pairs, overlays, cmap=args.cmap,
