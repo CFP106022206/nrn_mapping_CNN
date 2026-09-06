@@ -2,7 +2,11 @@
 
 這份文件說明從人類標註資料切分、初始模型訓練、pseudo labeling、pre-train、fine-tune，到使用模型輸出 prediction 結果的流程。
 
-前半段 `SWC -> descriptor -> candidate pair -> standard view` 請先看 [DRAW_PIPELINE_HANDOVER.md](DRAW_PIPELINE_HANDOVER.md)。本文件假設三視圖已經存在於：
+前半段 `SWC -> descriptor -> candidate pair -> standard view` 請先看 [DRAW_PIPELINE_HANDOVER.md](DRAW_PIPELINE_HANDOVER.md)。
+線上服務版（使用者上傳單一 SWC，即時回傳相似度 CSV）見 [SERVICE_HANDOVER.md](SERVICE_HANDOVER.md) ——
+它重用本文件的模型與 `Model_predict.py` 的前處理，只是把批次流程改成單次查詢。
+
+本文件假設三視圖已經存在於：
 
 - `data/standard_views/FC/*.npz`
 - `data/standard_views/EM/*.npz`

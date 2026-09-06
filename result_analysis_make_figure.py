@@ -47,6 +47,15 @@ result_analysis_make_figure.py  —  MorphoMatcher 論文 Fig.5 完整拼圖腳�
         --out fig7_Subset2Result
         
   # 3) 產生 NBLAST 版本 (即論文的 Fig.9 / Fig.10)
+
+    Fig 8
+    python result_analysis_make_figure.py --mode nblast --layout subset \
+        --subset ./labeled_info/D5_conf.csv \
+        --overlay output_image/VT58722-F-700001_673509195_composite.png \
+                output_image/TH-F-200081_330268940_composite.png \
+                output_image/fru-M-500383_5813034306_composite.png \
+        --out fig8_Nblast_D1
+
     Fig 9
     python result_analysis_make_figure.py --mode nblast --layout subset \
         --subset ./labeled_info/D2+D6_ID.csv \

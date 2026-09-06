@@ -4,8 +4,13 @@ import argparse
 from pathlib import Path
 
 from candidate_matching import run_matching
+from nrn_service.config import RenderConfig
 from standard_draw import run_standard_draw
 from swc_descriptor_batch import batch_run
+
+# 畫圖參數的唯一真實來源。服務端 (nrn_service/) 讀的是同一份設定，
+# 所以離線畫的圖和服務端現場畫的圖保證同尺度。
+_RENDER = RenderConfig()
 
 
 def run_pipeline(
@@ -19,8 +24,8 @@ def run_pipeline(
     ratio_th: float = 0.4,
     recursive: bool = True,
     fail_fast: bool = False,
-    scale_um_per_px: float = 5.0,
-    normalize: str = "p99",
+    scale_um_per_px: float = _RENDER.scale_um_per_px,
+    normalize: str = _RENDER.normalize,
     skip_existing: bool = True,
 ) -> Path:
     descriptor_root = Path(descriptor_root)
@@ -55,6 +60,7 @@ def run_pipeline(
         scale_um_per_px=scale_um_per_px,
         normalize=normalize,
         skip_existing=skip_existing,
+        render_version=_RENDER.render_version,
     )
 
     print("[4/4] Rendering EM views")
@@ -66,6 +72,7 @@ def run_pipeline(
         scale_um_per_px=scale_um_per_px,
         normalize=normalize,
         skip_existing=skip_existing,
+        render_version=_RENDER.render_version,
     )
 
     return pairs_csv
@@ -88,8 +95,10 @@ def main() -> None:
 
     # Stage 3: rendering settings
     ap.add_argument("--views_root", default="./data/standard_views/", help="Root folder for rendered views")
-    ap.add_argument("--scale_um_per_px", type=float, default=5.0, help="Rendering scale in micrometers per pixel")
-    ap.add_argument("--normalize", choices=["max", "p99"], default="p99", help="Normalization mode for rendered views")
+    ap.add_argument("--scale_um_per_px", type=float, default=_RENDER.scale_um_per_px,
+                    help="Rendering scale in micrometers per pixel（資料庫歸檔值 5.0）")
+    ap.add_argument("--normalize", choices=["max", "p99"], default=_RENDER.normalize,
+                    help="Normalization mode for rendered views")
     ap.add_argument("--no-skip-existing", action="store_true", help="Re-render views even if output files already exist")
 
     args = ap.parse_args()

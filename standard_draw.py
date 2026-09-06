@@ -38,7 +38,10 @@
   --swc_dir        : SWC 檔案所在目錄
   --neuron_list    : 神經元 ID 列表
   --csv_id_col     : 當 neuron_list 是 .csv 時，指定哪一列是神經元 ID（例如 fc_id 或 em_id）。如果留空，會嘗試從 swc_dir 名稱推斷
-  --scale_um_per_px: 微米/像素，用於控制圖像大小。值越小圖越大（默認 1.0）
+  --scale_um_per_px: 微米/像素，用於控制圖像大小。值越小圖越大（默認 5.0）
+                     ⚠️ 資料庫中歸檔的三視圖全部是用 5.0 畫的。改這個值會讓新圖
+                        跟舊圖不在同一個尺度上，而且不會報錯，只會讓模型分數失去意義。
+                        服務端請一律從 nrn_service/config.py 的 RenderConfig 取值。
   --normalize      : 歸一化方式："max" 或 "p99"（默認 p99）
   --output_dir     : 輸出目錄（默認 ./standard_views/）
   --format         : 輸出格式："npz" 或 "png"（默認 npz）
@@ -418,7 +421,7 @@ def render_single(
     *,
     swc_path: Path,
     cache: Dict[str, NeuronCacheItem],
-    scale_um_per_px: float = 1.0,  # 微米/像素
+    scale_um_per_px: float = 5.0,  # 微米/像素（資料庫歸檔值；見檔頭說明）
     norm: str = "p99",
 ) -> Tuple[str, np.ndarray, int]:
     """
@@ -510,6 +513,10 @@ def save_views(
     grid_size: int,
     format: str = 'npz',
     file_tag: str = "",
+    *,
+    scale_um_per_px: float | None = None,
+    normalize: str | None = None,
+    render_version: str | None = None,
 ) -> None:
     """
     保存三视图
@@ -520,6 +527,10 @@ def save_views(
         views: (3, H, W) uint8 数组
         grid_size: grid 大小
         format: 'npz' 或 'png'（分别保存三个png）
+        scale_um_per_px / normalize / render_version:
+            寫進 npz 的渲染參數。這三個欄位是為了讓日後可以判斷某張圖是用哪組
+            參數畫的 —— 尺度不一致不會報錯，只會讓模型分數失去意義，所以必須
+            把參數留在檔案裡。舊的歸檔檔案沒有這些欄位，讀取端要容忍缺少。
     """
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -529,12 +540,18 @@ def save_views(
 
     if format.lower() == 'npz':
         out_path = out_dir / f"{nid}_views{tag}.npz"
-        np.savez_compressed(
-            out_path,
-            nid=np.str_(nid),
-            views=views.astype(np.uint8),
-            grid_size=np.int32(grid_size),
-        )
+        payload = {
+            "nid": np.str_(nid),
+            "views": views.astype(np.uint8),
+            "grid_size": np.int32(grid_size),
+        }
+        if scale_um_per_px is not None:
+            payload["scale_um_per_px"] = np.float32(scale_um_per_px)
+        if normalize is not None:
+            payload["normalize"] = np.str_(str(normalize))
+        if render_version is not None:
+            payload["render_version"] = np.str_(str(render_version))
+        np.savez_compressed(out_path, **payload)
         print(f"[save] {out_path.name}")
     
     elif format.lower() == 'png':
@@ -564,13 +581,15 @@ def run_standard_draw(
     *,
     csv_id_col: str | None = None,
     export_unique_list: str | Path | None = None,
-    scale_um_per_px: float = 1.0,
+    scale_um_per_px: float = 5.0,
     normalize: str = "p99",
     format: str = "npz",
     skip_existing: bool = False,
     export_missing_list: str | Path | None = None,
     max_neurons: int = 0,
+    render_version: str | None = None,
 ) -> None:
+    """render_version 會寫進新產生的 npz，方便日後判斷圖是用哪組參數畫的。"""
     swc_dir = Path(swc_dir)
 
     neuron_list_path = Path(neuron_list)
@@ -617,7 +636,12 @@ def run_standard_draw(
                 scale_um_per_px=scale_um_per_px,
                 norm=normalize,
             )
-            save_views(out_dir, nid_str, views, grid_size, format=format, file_tag="")
+            save_views(
+                out_dir, nid_str, views, grid_size, format=format, file_tag="",
+                scale_um_per_px=scale_um_per_px,
+                normalize=normalize,
+                render_version=render_version,
+            )
             success_count += 1
 
         except Exception as e:
@@ -663,7 +687,8 @@ def main():
         default="",
         help="Optional: export the unique neuron id list to this path (.txt).",
     )
-    ap.add_argument("--scale_um_per_px", type=float, default=1.0, help="Micrometers per pixel (controls image size)")
+    ap.add_argument("--scale_um_per_px", type=float, default=5.0,
+                    help="Micrometers per pixel (controls image size). 5.0 是資料庫歸檔值")
     ap.add_argument("--normalize", choices=["max", "p99"], default="p99")
     ap.add_argument("--output_dir", default='./standard_views/')
     ap.add_argument("--format", choices=["npz", "png"], default="npz", help="Output format")
@@ -678,6 +703,8 @@ def main():
         help="Optional: export missing SWC neuron ids to this path (.txt).",
     )
     ap.add_argument("--max_neurons", type=int, default=0, help="Debug limit (0=all)")
+    ap.add_argument("--render_version", default="",
+                    help="寫進 npz 的渲染參數版本字串，例如 v1_scale5.0_p99")
     args = ap.parse_args()
 
     run_standard_draw(
@@ -692,6 +719,7 @@ def main():
         skip_existing=args.skip_existing,
         export_missing_list=args.export_missing_list or None,
         max_neurons=args.max_neurons,
+        render_version=args.render_version or None,
     )
 
 
@@ -699,7 +727,7 @@ def main():
 # 快速測試函數
 def test_single_neuron(
     swc_file: str | Path,
-    scale_um_per_px: float = 1.0,
+    scale_um_per_px: float = 5.0,
     norm: str = "p99",
     output_dir: str | Path = "./test_output/",
     show_plot: bool = True,

@@ -45,7 +45,7 @@ model_name = 'FineTune_miniLR'#'FineTune_miniLR_e7' #'Annotator' #'Fine_Tune_Mod
 # 设置Seaborn样式
 plt.style.use('default')
 
-test_mode = 'nblast'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
+test_mode = 'cross'    #single: 使用單一模型產生的 test result csv, cross: 使用cross validation 覆蓋完整 data, 'nblast': 讀取nblast分數
 
 test_set_num = 0       # 指定test_set 的特殊編號, 只有在 test_mode == 'single'中才要特別設置
 

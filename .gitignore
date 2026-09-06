@@ -238,3 +238,11 @@ Annotator_Model/*
 FineTune_Model/*
 PreTrain_Model/*
 
+# --- 網頁比對服務（SERVICE_HANDOVER.md）---
+# 使用者上傳的檔案與結果，不進版控
+user_data/
+# 由 tools/ 產生的衍生索引，可隨時重建
+data/view_store/
+data/index/
+# 補齊 descriptor 前的備份
+data/_backup_descriptors_*/

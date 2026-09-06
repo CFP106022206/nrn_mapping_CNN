@@ -1,6 +1,13 @@
 # 全流程使用說明
 整個流程分成兩個部分：1、將swc 數據做初步篩選配對以及畫出三視圖。2、用模型預測每一對三視圖相似度。
-這份使用說明為第一部分。第二部分為[MODEL_PIPELINE_HANDOVER.md](MODEL_PIPELINE_HANDOVER.md)
+這份使用說明為第一部分。第二部分為[MODEL_PIPELINE_HANDOVER.md](MODEL_PIPELINE_HANDOVER.md)。
+把這兩段包成線上服務（使用者上傳 SWC → 輸出相似度 CSV）的部分見
+[SERVICE_HANDOVER.md](SERVICE_HANDOVER.md)。
+
+> ⚠️ **畫圖參數**：資料庫中歸檔的三視圖全部是用 `scale_um_per_px=5.0`、`normalize=p99` 畫的。
+> 這組參數現在集中在 [nrn_service/config.py](nrn_service/config.py) 的 `RenderConfig`，
+> `standard_draw.py` 與 `swc_pair_and_draw.py` 的預設值都已對齊。
+> 尺度不一致不會報錯，只會讓模型分數失去意義，所以新的呼叫點請一律從 config 取值。
 
 這份文檔說明從 `SWC` 原始數據到 `descriptor`、`pair matching`、`standard view` 的完整流程。
 

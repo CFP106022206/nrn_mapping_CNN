@@ -1,0 +1,15 @@
+# 服務核心（nrn_service/、match_cli.py、tools/）需要的套件
+# —— 這些在現有環境中都已經有了
+numpy
+pandas
+pyarrow
+scipy
+pillow
+tensorflow
+keras
+
+# 只有 Web 層 app.py 需要，目前環境尚未安裝：
+#   pip install fastapi uvicorn python-multipart
+fastapi
+uvicorn
+python-multipart
