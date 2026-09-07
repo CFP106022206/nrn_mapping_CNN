@@ -1,0 +1,64 @@
+### A_swc_only
+|--- cable_length_um <= 2445.79
+|   |--- cable_length_um <= 2102.41
+|   |   |--- class: 0
+|   |--- cable_length_um >  2102.41
+|   |   |--- class: 0
+|--- cable_length_um >  2445.79
+|   |--- arbor_separation <= 3.82
+|   |   |--- class: 1
+|   |--- arbor_separation >  3.82
+|   |   |--- class: 1
+  (class 1 = dense; in-sample balanced acc 0.874)
+
+### A_swc_minimal
+|--- cable_length_um <= 2445.79
+|   |--- cable_length_um <= 2102.41
+|   |   |--- class: 0
+|   |--- cable_length_um >  2102.41
+|   |   |--- class: 0
+|--- cable_length_um >  2445.79
+|   |--- arbor_separation <= 3.82
+|   |   |--- class: 1
+|   |--- arbor_separation >  3.82
+|   |   |--- class: 1
+  (class 1 = dense; in-sample balanced acc 0.874)
+
+### B_swc_neuropil
+|--- cable_length_um <= 2445.79
+|   |--- side_top2 <= 0.28
+|   |   |--- class: 0
+|   |--- side_top2 >  0.28
+|   |   |--- class: 0
+|--- cable_length_um >  2445.79
+|   |--- arbor_separation <= 3.82
+|   |   |--- class: 1
+|   |--- arbor_separation >  3.82
+|   |   |--- class: 1
+  (class 1 = dense; in-sample balanced acc 0.874)
+
+### B_neuropil_only
+|--- side_top2 <= 0.30
+|   |--- side_top2 <= 0.22
+|   |   |--- class: 1
+|   |--- side_top2 >  0.22
+|   |   |--- class: 1
+|--- side_top2 >  0.30
+|   |--- side_top2 <= 0.32
+|   |   |--- class: 0
+|   |--- side_top2 >  0.32
+|   |   |--- class: 0
+  (class 1 = dense; in-sample balanced acc 0.811)
+
+### B_minimal
+|--- cable_length_um <= 2445.79
+|   |--- side_top2 <= 0.28
+|   |   |--- class: 0
+|   |--- side_top2 >  0.28
+|   |   |--- class: 0
+|--- cable_length_um >  2445.79
+|   |--- side_top2 <= 0.29
+|   |   |--- class: 1
+|   |--- side_top2 >  0.29
+|   |   |--- class: 1
+  (class 1 = dense; in-sample balanced acc 0.874)
