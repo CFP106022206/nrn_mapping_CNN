@@ -194,18 +194,11 @@ dmypy.json
 cython_debug/
 
 # data format
-data/*
+# data/ 底下一律不追蹤內容，只保留資料夾結構（靠 .gitkeep）
+data/**
 !data/**/
 !data/**/.gitkeep
 !data/**/.gitignore
-data/**/*.csv
-data/SWC/**/*.swc
-data/standard_views/**
-!data/standard_views/**/
-!data/standard_views/**/.gitkeep
-data/pairs_label/**
-!data/pairs_label/**/
-!data/pairs_label/**/.gitkeep
 
 
 .vscode
@@ -237,6 +230,10 @@ BrainVisualizer/*
 Annotator_Model/*
 FineTune_Model/*
 PreTrain_Model/*
+
+brain_png
+output_image
+
 
 # --- 網頁比對服務（SERVICE_HANDOVER.md）---
 # 使用者上傳的檔案與結果，不進版控
