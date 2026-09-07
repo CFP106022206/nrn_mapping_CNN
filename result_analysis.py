@@ -57,7 +57,7 @@ selected_test_set ='./labeled_info/D5_conf.csv' # './labeled_info/D2+D6_ID.csv'#
 label_csv_name = f'./result/test_label_{model_name}_D1-D6_'
 # label_csv_name = './result/predict_result/model_predict_'
 
-nblast_path = './labeled_info/nblast_all_list_D2_D5_label.csv'
+nblast_path = './labeled_info/nblast_official_mean.csv'
 
 if test_mode == 'single':
     # load model predict test nrn set
@@ -712,7 +712,7 @@ model_predict = predict_df[['fc_id', 'em_id', 'model_pred', 'label']]
 D2_model = model_predict.merge(D2, on=['fc_id', 'em_id'], how='inner')
 D5_model = model_predict.merge(D5, on=['fc_id', 'em_id'], how='inner')
 
-D2_D5_nblast = pd.read_csv('./labeled_info/nblast_all_list_D2_D5_label.csv').drop(columns=['label'])
+D2_D5_nblast = pd.read_csv('./labeled_info/nblast_official_mean.csv').drop(columns=['label'])
 #Normalized score
 D2_D5_nblast['Norm score'] = (D2_D5_nblast['similarity score'] - np.min(D2_D5_nblast['similarity score']))/(np.max(D2_D5_nblast['similarity score']) - np.min(D2_D5_nblast['similarity score']))
 

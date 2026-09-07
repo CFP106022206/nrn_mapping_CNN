@@ -112,7 +112,7 @@ CONFIG = {
     'cross_num':         10,           # cross validation fold 數
     'selected_test_set': False,#'./labeled_info/D2+D6_ID.csv',   # False 表示用完整 test set
     'label_csv_prefix':  './result/test_label_{model_name}_D1-D6_',
-    'nblast_path':       './labeled_info/nblast_all_list_D2_D5_label.csv',
+    'nblast_path':       './labeled_info/nblast_official_mean.csv',
     'top_k':             5,
     'out_dir':           './Figure',
     'out_name':          'Figure5',
