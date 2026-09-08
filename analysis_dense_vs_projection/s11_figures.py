@@ -29,6 +29,8 @@ COL = {C.GROUP_PROJ: "#2a78d6", C.GROUP_DENSE: "#eb6834"}
 MARK = {C.GROUP_PROJ: "o", C.GROUP_DENSE: "s"}
 LABEL = {C.GROUP_PROJ: "Projection-type (D1)", C.GROUP_DENSE: "Dense-type (D2)"}
 INK, INK2, GRID, NEUTRAL = "#0b0b0b", "#52514e", "#d9d8d4", "#8c8b85"
+# fig5 的橫軸: 凸包密度是主指標 (rho +0.639); 改成 "revisit_r16um" 可畫次要證據版
+DENSITY = "cable_per_hull_um2"
 
 plt.rcParams.update({
     "font.size": 8, "axes.titlesize": 9, "axes.labelsize": 8,
@@ -39,8 +41,11 @@ plt.rcParams.update({
 
 
 def save(fig, name: str) -> None:
+    # PDF 預設會寫入 CreationDate, 使同樣的圖每次產生的位元組都不同 (git 會誤判為
+    # 有改動)。設為 None 讓輸出可重現。
+    meta = {"pdf": {"CreationDate": None}, "png": {}}
     for ext in ("pdf", "png"):
-        fig.savefig(C.FIG / f"{name}.{ext}")
+        fig.savefig(C.FIG / f"{name}.{ext}", metadata=meta[ext])
     plt.close(fig)
     print(f"  wrote {name}.pdf/.png")
 
@@ -225,7 +230,7 @@ def fig5_em_sponge() -> None:
     d = official_scores()
     m = pd.read_csv(C.OUT / "morphology_metrics.csv")
     m["neuron_id"] = m["neuron_id"].astype(str)
-    em = m[m.source == "EM"].drop_duplicates("neuron_id")[["neuron_id", "revisit_r16um"]]
+    em = m[m.source == "EM"].drop_duplicates("neuron_id")[["neuron_id", DENSITY]]
     d = d.merge(em, left_on="em_id", right_on="neuron_id")
     d = d[d.group == C.GROUP_DENSE]
     pos, neg = d[d.label == 1], d[d.label == 0]
@@ -234,23 +239,23 @@ def fig5_em_sponge() -> None:
     lo, hi = pos.nblast_official.quantile(0.25), pos.nblast_official.quantile(0.75)
     ax.axhspan(lo, hi, color=NEUTRAL, alpha=0.15, zorder=1)
     ax.axhline(lo, color=INK2, lw=0.9, ls="--", zorder=2)
-    ax.scatter(pos.revisit_r16um, pos.nblast_official, s=13, marker="o",
+    ax.scatter(pos[DENSITY], pos.nblast_official, s=13, marker="o",
                color=NEUTRAL, alpha=0.55, linewidths=0,
                label=f"true pairs (n={len(pos)})", zorder=3)
-    ax.scatter(neg.revisit_r16um, neg.nblast_official, s=15, marker="s",
+    ax.scatter(neg[DENSITY], neg.nblast_official, s=15, marker="s",
                color=COL[C.GROUP_DENSE], alpha=0.7, linewidths=0.3,
                edgecolors="white", label=f"non-pairs (n={len(neg)})", zorder=4)
-    b = pd.qcut(neg.revisit_r16um, 6, labels=False, duplicates="drop")
-    med = neg.groupby(b).agg(x=("revisit_r16um", "median"),
+    b = pd.qcut(neg[DENSITY], 6, labels=False, duplicates="drop")
+    med = neg.groupby(b).agg(x=(DENSITY, "median"),
                              y=("nblast_official", "median"))
     ax.plot(med.x, med.y, color=COL[C.GROUP_DENSE], lw=2.2, marker="D", ms=5, zorder=5)
-    rho = neg[["revisit_r16um", "nblast_official"]].corr(method="spearman").iloc[0, 1]
+    rho = neg[[DENSITY, "nblast_official"]].corr(method="spearman").iloc[0, 1]
     ax.text(0.03, 0.97, f"non-pairs:  Spearman ρ = {rho:+.2f}", transform=ax.transAxes,
             ha="left", va="top", fontsize=8, color=INK)
     ax.text(0.985, (lo + hi) / 2, "true-pair IQR", transform=ax.get_yaxis_transform(),
             ha="right", va="center", fontsize=7, color=INK2)
     ax.set_xscale("log")
-    ax.set_xlabel("hemibrain neuron density\n(cable length per occupied 16 µm cell)",
+    ax.set_xlabel("hemibrain neuron density\n(cable length per convex-hull volume, µm/µm³)",
                   color=INK)
     ax.set_ylabel("NBLAST score", color=INK)
     ax.set_title("Dense hemibrain neurons absorb any query", color=INK)

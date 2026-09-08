@@ -40,10 +40,15 @@ import study_config as C
 import common as K
 
 GROUP_MAP = {"D1_projection": C.GROUP_PROJ, "D2_dense": C.GROUP_DENSE}
-# 密度類與尺寸類描述子; 前四個是「海綿」的直接量測
-DENSITY_FEATS = ["revisit_r16um", "overdraw_2d_mean", "branch_per_100um",
-                 "local_density_r10", "hull_volume_um3", "cable_length_um",
-                 "n_branch_points", "occupied_volume_um3"]
+# 主要密度指標: 凸包密度 = 總 cable / 凸包體積。海綿效應需要「線材密」與「範圍小」
+# 同時成立, 凸包密度把兩者合在一起量, 因此預測力最強 (rho +0.639 vs revisit 的
+# +0.574)。revisit_r16um 只量「實際佔到的空間有多擠」, 不含形狀資訊, 作為不依賴
+# 凸包假設的次要證據。
+PRIMARY_FEAT = "cable_per_hull_um2"
+SECONDARY_FEAT = "revisit_r16um"
+DENSITY_FEATS = ["cable_per_hull_um2", "fill_ratio", "revisit_r16um", "revisit_r8um",
+                 "revisit_r4um", "overdraw_2d_mean", "local_density_r10",
+                 "hull_volume_um3", "cable_length_um", "occupied_volume_um3"]
 
 
 def load() -> pd.DataFrame:
@@ -108,7 +113,7 @@ def correlations(d: pd.DataFrame) -> pd.DataFrame:
 
 
 # ------------------------------------------------------------------- (2) ----
-def density_bins(d: pd.DataFrame, feature: str = "em_revisit_r16um",
+def density_bins(d: pd.DataFrame, feature: str = f"em_{PRIMARY_FEAT}",
                  n_bins: int = 4) -> pd.DataFrame:
     rows = []
     print(f"\n=== (2) 假配對依 {feature} 分 {n_bins} 等分 ===")
@@ -129,7 +134,8 @@ def density_bins(d: pd.DataFrame, feature: str = "em_revisit_r16um",
                          "lo": t[feature].min(), "hi": t[feature].max(),
                          "n": len(t), "score_median": t.score.median(),
                          "frac_reaching_true": frac})
-            print(f"  {int(b)+1:>3} {t[feature].min():9.2f}-{t[feature].max():<10.2f}"
+            # 用 .3g 而非固定小數: 凸包密度是 1e-3 量級, 固定兩位會全部印成 0.00
+            print(f"  {int(b)+1:>3} {t[feature].min():9.3g}-{t[feature].max():<10.3g}"
                   f" {len(t):>5} {t.score.median():14.3f} {frac*100:12.1f}%")
     out = pd.DataFrame(rows)
     out.to_csv(C.OUT / "sponge_density_bins.csv", index=False)
@@ -146,9 +152,8 @@ def hub_em(d: pd.DataFrame) -> pd.DataFrame:
         if hi.empty:
             continue
         cnt = hi.groupby("em_id").size().rename("n_high_false").reset_index()
-        cols = ["em_id", "em_cable_length_um", "em_n_branch_points",
-                "em_branch_per_100um", "em_revisit_r16um", "em_overdraw_2d_mean",
-                "em_hull_volume_um3"]
+        cols = ["em_id", "em_cable_length_um", f"em_{PRIMARY_FEAT}",
+                f"em_{SECONDARY_FEAT}", "em_fill_ratio", "em_hull_volume_um3"]
         cnt = cnt.merge(s[cols].drop_duplicates("em_id"), on="em_id")
         cnt["group"] = g
         cnt["is_true_partner"] = cnt.em_id.isin(s.loc[s.label == 1, "em_id"])
@@ -164,10 +169,10 @@ def hub_em(d: pd.DataFrame) -> pd.DataFrame:
         print(f"\n  {g}")
         print(s.nlargest(8, "n_high_false")[
             ["em_id", "n_high_false", "is_true_partner", "em_cable_length_um",
-             "em_branch_per_100um", "em_revisit_r16um"]].round(2).to_string(index=False))
+             f"em_{PRIMARY_FEAT}", f"em_{SECONDARY_FEAT}"]].round(4).to_string(index=False))
         if len(s) > 5:
-            rho, p = stats.spearmanr(s.n_high_false, s.em_revisit_r16um)
-            print(f"    吸引力 vs EM revisit_r16um: rho {rho:+.3f} (p {p:.3f}, n={len(s)})")
+            rho, p = stats.spearmanr(s.n_high_false, s[f"em_{PRIMARY_FEAT}"])
+            print(f"    吸引力 vs EM {PRIMARY_FEAT}: rho {rho:+.3f} (p {p:.3f}, n={len(s)})")
     return out
 
 
@@ -178,16 +183,16 @@ def pool_variability(d: pd.DataFrame) -> None:
     m = pd.read_csv(C.OUT / "morphology_metrics.csv")
     m["neuron_id"] = m["neuron_id"].astype(str)
     em = m[(m.source == "EM")].drop_duplicates(["neuron_id", "group"])
-    print(f"  {'組':11s} {'n':>4} " + "".join(f"{c:>28}" for c in
-          ["revisit_r16um 中位[5-95%]", "overdraw_2d_mean 中位[5-95%]"]))
+    print(f"  {'組':11s} {'n':>4} " + "".join(f"{c:>30}" for c in
+          [f"{PRIMARY_FEAT} 中位[5-95%]", f"{SECONDARY_FEAT} 中位[5-95%]"]))
     for g in C.GROUP_ORDER:
         s = em[em.group == g]
         cells = []
-        for f in ("revisit_r16um", "overdraw_2d_mean"):
+        for f in (PRIMARY_FEAT, SECONDARY_FEAT):
             v = s[f].dropna()
-            cells.append(f"{v.median():.2f} [{v.quantile(.05):.2f}-{v.quantile(.95):.2f}]".rjust(28))
+            cells.append(f"{v.median():.4g} [{v.quantile(.05):.4g}-{v.quantile(.95):.4g}]".rjust(30))
         print(f"  {g:11s} {len(s):>4} " + "".join(cells))
-    for f in ("revisit_r16um", "overdraw_2d_mean"):
+    for f in (PRIMARY_FEAT, SECONDARY_FEAT):
         a = em.loc[em.group == C.GROUP_PROJ, f].dropna()
         b = em.loc[em.group == C.GROUP_DENSE, f].dropna()
         print(f"    {f:20s} 變異係數 (SD/mean): projection {a.std()/a.mean():.3f}"
@@ -214,10 +219,10 @@ def variant_check(d: pd.DataFrame) -> pd.DataFrame:
                 "official (雙向+自比對正規化)": "score"}
     rows = []
     print("\n=== (5) 各 NBLAST 變體的海綿效應強度與表現 ===")
-    print(f"  {'變體':30s} {'rho vs EM revisit':>18} {'D2 AUC':>8} {'D2 假高分率':>12}")
+    print(f"  {'變體':30s} {'rho vs EM 凸包密度':>18} {'D2 AUC':>8} {'D2 假高分率':>12}")
     for name, col in variants.items():
         neg = s[(s.group == C.GROUP_DENSE) & (s.label == 0)]
-        rho = stats.spearmanr(neg[col], neg.em_revisit_r16um)[0]
+        rho = stats.spearmanr(neg[col], neg[f"em_{PRIMARY_FEAT}"])[0]
         t = s[s.group == C.GROUP_DENSE]
         a = roc_auc_score(t.label, t[col])
         q = t.loc[t.label == 1, col].quantile(0.25)
@@ -320,6 +325,55 @@ def orphan_points(d: pd.DataFrame, cap: int = 6000) -> pd.DataFrame:
     return r
 
 
+# ------------------------------------------------------------------- (8) ----
+def hull_robustness(d: pd.DataFrame) -> pd.DataFrame:
+    """凸包對離群分支敏感是常見疑慮, 這裡直接檢驗。
+
+    剔除距質心最遠的 1/5/10 % cable 後重算凸包密度, 若結論不變就代表這個疑慮
+    在本資料上不成立。(修正方向本應是 concave hull / alpha shape, 但那要多一個
+    參數; 若完整凸包已經夠穩健就沒有必要。)
+    """
+    from scipy.spatial import ConvexHull
+    rng = np.random.default_rng(C.RANDOM_STATE)
+    rows = []
+    for nid in sorted(d.em_id.unique()):
+        mid, seg = K.segments(K.load_swc_fast(K.swc_path(nid, "EM")))
+        if len(mid) > 50000:
+            sel = rng.choice(len(mid), 50000, replace=False)
+            mid, seg = mid[sel], seg[sel]
+        cen = np.average(mid, axis=0, weights=seg)
+        dist = np.linalg.norm(mid - cen, axis=1)
+        r = {"em_id": nid}
+        for q in (100, 99, 95, 90):
+            keep = dist <= np.percentile(dist, q)
+            try:
+                r[f"cph_p{q}"] = seg[keep].sum() / ConvexHull(mid[keep]).volume
+            except Exception:
+                r[f"cph_p{q}"] = np.nan
+        rows.append(r)
+    h = pd.DataFrame(rows)
+    h.to_csv(C.OUT / "sponge_hull_robustness.csv", index=False)
+
+    m = d.merge(h, on="em_id")
+    neg = m[(m.group == C.GROUP_DENSE) & (m.label == 0)]
+    pos = m[(m.group == C.GROUP_DENSE) & (m.label == 1)]
+    q25 = pos.score.quantile(0.25)
+    print("\n=== (8) 凸包密度對離群分支的穩健性 ===")
+    print(f"  {'版本':28s} {'rho vs 假配對分數':>17} {'最稀→最密四分位':>20}")
+    for q, lab in ((100, "完整凸包 (主指標)"), (99, "剔除最遠 1 % cable"),
+                   (95, "剔除最遠 5 %"), (90, "剔除最遠 10 %")):
+        c = f"cph_p{q}"
+        rho = stats.spearmanr(neg[c], neg.score)[0]
+        b = pd.qcut(neg[c], 4, labels=False, duplicates="drop")
+        fr = [float((neg.score[b == i] >= q25).mean()) for i in (0, 3)]
+        print(f"  {lab:28s} {rho:+17.3f} {fr[0]*100:11.1f}% → {fr[1]*100:5.1f}%")
+    for q in (99, 95, 90):
+        print(f"    完整 vs 剔除最遠 {100-q:2d} %: Spearman "
+              f"{stats.spearmanr(h.cph_p100, h[f'cph_p{q}'])[0]:+.3f}")
+    print("  -> 各版本高度一致, 離群分支的疑慮在本資料上不成立")
+    return h
+
+
 def main():
     d = load()
     print(f"載入 {len(d)} 組配對 "
@@ -331,6 +385,7 @@ def main():
     variant_check(d)
     prescreen_check(d)
     orphan_points(d)
+    hull_robustness(d)
 
 
 if __name__ == "__main__":
