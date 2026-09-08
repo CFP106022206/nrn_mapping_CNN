@@ -6,7 +6,7 @@ python candidate_matching.py
     --em_dir data/descriptors_EM
     --out_dir data/pairs_label
     --centroid_th 100
-    --ratio_th 0.4
+    --ratio_th 0.3
 '''
 
 
@@ -285,7 +285,7 @@ def run_matching(
     em_dir: str | Path = "data/descriptors_EM/",
     out_dir: str | Path = "data/pairs_label/",
     centroid_th: float = 100.0,
-    ratio_th: float = 0.4,
+    ratio_th: float = 0.3,
 ) -> Path:
     fc = load_source(fc_dir, "FC")
     em = load_source(em_dir, "EM")
@@ -338,7 +338,7 @@ def main():
     ap.add_argument("--fc_dir", default='data/descriptors_FC/', help="Folder containing centroids_FC.npy and eigvals_ratio_FC.npy")
     ap.add_argument("--em_dir", default='data/descriptors_EM/', help="Folder containing centroids_EM.npy and eigvals_ratio_EM.npy")
     ap.add_argument("--centroid_th", type=float, default=100.0, help="Centroid distance threshold")
-    ap.add_argument("--ratio_th", type=float, default=0.4, help="(r21,r31) 2D distance threshold")
+    ap.add_argument("--ratio_th", type=float, default=0.3, help="(r21,r31) 2D distance threshold")
     ap.add_argument("--out_dir", default='data/pairs_label/', help="Folder to write candidate pairs")
     args = ap.parse_args()
 

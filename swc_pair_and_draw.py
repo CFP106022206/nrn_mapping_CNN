@@ -21,7 +21,7 @@ def run_pipeline(
     pairs_out_dir: str | Path = "./data/pairs_label/",
     views_root: str | Path = "./data/standard_views/",
     centroid_th: float = 100.0,
-    ratio_th: float = 0.4,
+    ratio_th: float = 0.3,
     recursive: bool = True,
     fail_fast: bool = False,
     scale_um_per_px: float = _RENDER.scale_um_per_px,
