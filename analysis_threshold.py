@@ -381,9 +381,7 @@ def classify_pairs_orientation_from_merged(
     *,
     rod_r31_max: float = 0.35,  # 判斷是否是rod-like，需要r21接近1且r31接近0
     rod_gap_min: float = 0.4,       # r21 - r31
-    disk_r21_max: float = 0.45,
-    disk_r31_max: float = 0.45,
-    disk_gap_max: float = 0.1,
+    disk_gap_min: float = 0.30,     # 1 - r21，與 candidate_matching.py 一致
     chunk: int = 2_000_000,
 ) -> tuple[pd.DataFrame, dict]:
     """
@@ -446,8 +444,8 @@ def classify_pairs_orientation_from_merged(
         rod_a = (r31_a <= rod_r31_max) & (gap_a >= rod_gap_min)
         rod_b = (r31_b <= rod_r31_max) & (gap_b >= rod_gap_min)
 
-        disk_a = (r21_a <= disk_r21_max) & (r31_a <= disk_r31_max) & (np.abs(gap_a) <= disk_gap_max)
-        disk_b = (r21_b <= disk_r21_max) & (r31_b <= disk_r31_max) & (np.abs(gap_b) <= disk_gap_max)
+        disk_a = (1.0 - r21_a) >= disk_gap_min
+        disk_b = (1.0 - r21_b) >= disk_gap_min
 
         enable_rod = rod_a & rod_b
         enable_disk = disk_a & disk_b

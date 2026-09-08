@@ -6,7 +6,7 @@ python candidate_matching.py
     --em_dir data/descriptors_EM
     --out_dir data/pairs_label
     --centroid_th 100
-    --ratio_th 0.3
+    --ratio_th 0.4
 '''
 
 
@@ -164,18 +164,24 @@ def filter_pairs_by_orientation_rod_disk(
     # rod thresholds
     rod_r31_max: float = 0.35,  # 判斷是否是rod-like，需要r21接近1且r31接近0
     rod_gap_min: float = 0.4,       # r21 - r31
-    rod_angle_th_deg: float = 40.0,
+    rod_angle_th_deg: float = 30.0,
     # disk thresholds
-    disk_r21_max: float = 0.45,
-    disk_r31_max: float = 0.45,
-    disk_gap_max: float = 0.1,      # |r21 - r31|
-    disk_angle_th_deg: float = 40.0,
+    # 盤狀要比的軸是 v1 (最大慣量 = 盤面法線)，它良好定義的條件是 λ1 與 λ2 分開，
+    # 即 1 - r21 >= disk_gap_min，與 rod 用 r21 - r31 判斷 v3 是對稱的。
+    # 理想薄盤落在 (r21, r31) = (0.5, 0.5)；慣量張量的三角不等式 λ2 + λ3 >= λ1
+    # 保證 r21 + r31 >= 1，因此 r21 >= 0.5，1 - r21 的上限就是 0.5。
+    # (舊版寫 r21 <= 0.45 落在可及區域之外，此分支永遠不會啟動。)
+    disk_gap_min: float = 0.30,     # 1 - r21
+    disk_angle_th_deg: float = 30.0,
     chunk: int = 2_000_000,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Conditional orientation gating with two regimes:
     - rod-like pairs: compare v3 (λ3 axis)
-    - disk-like pairs: compare v1 (λ1 axis)
+    - disk-like pairs: compare v1 (λ1 axis, the normal of the plane)
+    Each regime requires the eigenvalue pair bracketing the compared axis to be
+    separated, so that the axis itself is stable: rod needs r21 - r31 to be
+    large, disk needs 1 - r21 to be large.
     Only enabled when BOTH sides are in the same regime.
     Others pass through without orientation filtering.
 
@@ -211,8 +217,10 @@ def filter_pairs_by_orientation_rod_disk(
         rod_a = (r31_a <= rod_r31_max) & (gap_a >= rod_gap_min)
         rod_b = (r31_b <= rod_r31_max) & (gap_b >= rod_gap_min)
 
-        disk_a = (r21_a <= disk_r21_max) & (r31_a <= disk_r31_max) & (np.abs(gap_a) <= disk_gap_max)
-        disk_b = (r21_b <= disk_r21_max) & (r31_b <= disk_r31_max) & (np.abs(gap_b) <= disk_gap_max)
+        # 盤狀：λ1 與 λ2 分開，v1 (盤面法線) 才是良好定義的方向。
+        # r31 >= 1 - r21，所以 r21 夠小時面內的近似各向同性是自動成立的。
+        disk_a = (1.0 - r21_a) >= disk_gap_min
+        disk_b = (1.0 - r21_b) >= disk_gap_min
 
         enable_rod = rod_a & rod_b
         enable_disk = disk_a & disk_b
@@ -285,7 +293,7 @@ def run_matching(
     em_dir: str | Path = "data/descriptors_EM/",
     out_dir: str | Path = "data/pairs_label/",
     centroid_th: float = 100.0,
-    ratio_th: float = 0.3,
+    ratio_th: float = 0.4,
 ) -> Path:
     fc = load_source(fc_dir, "FC")
     em = load_source(em_dir, "EM")
@@ -338,7 +346,7 @@ def main():
     ap.add_argument("--fc_dir", default='data/descriptors_FC/', help="Folder containing centroids_FC.npy and eigvals_ratio_FC.npy")
     ap.add_argument("--em_dir", default='data/descriptors_EM/', help="Folder containing centroids_EM.npy and eigvals_ratio_EM.npy")
     ap.add_argument("--centroid_th", type=float, default=100.0, help="Centroid distance threshold")
-    ap.add_argument("--ratio_th", type=float, default=0.3, help="(r21,r31) 2D distance threshold")
+    ap.add_argument("--ratio_th", type=float, default=0.4, help="(r21,r31) 2D distance threshold")
     ap.add_argument("--out_dir", default='data/pairs_label/', help="Folder to write candidate pairs")
     args = ap.parse_args()
 
