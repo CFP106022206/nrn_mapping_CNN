@@ -342,6 +342,25 @@ def orphan_points(d: pd.DataFrame, cap: int = 6000) -> pd.DataFrame:
     print("  -> D1 的非配對根本不在同一個位置 (NN 中位 ~44 µm), 分數因此一律很負;"
           "\n     D2 的非配對與 query 空間重疊 (NN 中位 ~9 µm, 接近真配對的 ~6 µm),"
           "\n     NBLAST 必須只靠形狀分辨, 海綿效應才在此發動")
+
+    # 孤兒率單獨當分類器 -- 用來說明「D1 的高分是空間分離送的, 不是形狀鑑別力」
+    print("\n  只用孤兒率當分類器, 對照 NBLAST 官方分數:")
+    print(f"    {'組':11s} {'n':>4} {'NBLAST AUC':>11} {'-孤兒率 AUC':>12}"
+          f" {'控孤兒率後的殘餘':>16}")
+    for g in C.GROUP_ORDER:
+        s = r[r.group == g]
+        a_nb = roc_auc_score(s.label, s.score)
+        a_or = roc_auc_score(s.label, -s.orphan_fwd)
+        resid = _partial_spearman(s.score.values, s.label.values,
+                                  s.orphan_fwd.values)[0]
+        raw = stats.spearmanr(s.score, s.label)[0]
+        print(f"    {g:11s} {len(s):>4} {a_nb:11.3f} {a_or:12.3f}"
+              f"   rho {raw:+.3f} -> {resid:+.3f}")
+    print("  -> 一個純量 (query 有多少點在 target 10 µm 內找不到近鄰) 幾乎複製了"
+          "\n     NBLAST 的 AUC (D1 0.958 vs 0.967; D2 0.805 vs 0.815)。控制它之後"
+          "\n     NBLAST 的鑑別力從 +0.803 掉到 +0.221 (D1) / +0.534 掉到 +0.165 (D2)。"
+          "\n     在本資料上 NBLAST 一階近似就是在量『空間有沒有重疊』, 形狀只是二階。"
+          "\n     D1 的 0.967 因此主要是負例挑得遠所送的, 不是形狀鑑別力的證據。")
     return r
 
 
