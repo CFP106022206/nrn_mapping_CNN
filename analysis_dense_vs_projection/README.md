@@ -42,7 +42,7 @@ D1 與 D2 有 3 個 FC、14 個 hemibrain 神經重疊; 所有組間比較都只
 | `s07_selection_rule.py` | `selection_rule_*.csv` — 交叉驗證的納入條件 |
 | `s08_expert_and_nblast.py` | `confidence_by_group.csv`, `nblast_separability.csv` |
 | `s09_soma_and_strahler.py` | `soma_*.csv`, `nblast_cable_bins.csv` |
-| `s10_em_sponge_effect.py` | `sponge_*.csv` — 海綿效應的七項驗證 |
+| `s10_em_sponge_effect.py` | `sponge_*.csv` — 海綿效應的九項驗證 |
 | `s11_figures.py` | `figures/fig1..fig5` (PDF 向量 + PNG 300 dpi) |
 
 ## 方法上必須注意的事

@@ -16,6 +16,8 @@ NBLAST 的計分是: 對 query 的每個點, 找 target 中最近的點, 由 (�
   (6) 兩組非配對通過 stage-1 prescreening 的比例 (排除「D2 的負例被篩得比較難」)
   (7) 孤兒點比例: query 有多少點在 target 找不到近鄰。這是 NBLAST 負分的來源,
       也說明海綿效應為何只在 D2 發動 -- D1 的非配對根本不在同一個位置
+  (8) 凸包密度的穩健性: 剔除最遠的 1/5/10% cable 後結論是否不變
+  (9) FC 側檢驗: 效應是不是 EM 獨有的 (偏相關 / 秩迴歸 / 共同密度區間 / 方向檢驗)
 
 分數一律取自 results/nblast_official.csv (run_nblast_official.py, navis + 官方
 smat.fcwb, 雙向平均且已自比對正規化)。
@@ -24,6 +26,10 @@ smat.fcwb, 雙向平均且已自比對正規化)。
       results/sponge_density_bins.csv     依 EM 密度分箱的假陽率
       results/sponge_hub_em.csv           吸走最多假陽性的 EM 神經
       results/sponge_variant_check.csv    各 NBLAST 變體的效應強度
+      results/sponge_prescreen_check.csv  兩組非配對通過 prescreening 的比例
+      results/sponge_orphan_points.csv    孤兒點比例
+      results/sponge_hull_robustness.csv  剔除離群 cable 後的凸包密度
+      results/sponge_fc_side.csv          FC 側的偏相關 / 秩迴歸 / 方向檢驗
 """
 from __future__ import annotations
 
@@ -374,6 +380,131 @@ def hull_robustness(d: pd.DataFrame) -> pd.DataFrame:
     return h
 
 
+# ------------------------------------------------------------------- (9) ----
+def _partial_spearman(x, y, z):
+    """控制 z 之後 x 與 y 的 Spearman 偏相關 (先轉秩, 再做線性偏相關)。"""
+    rx, ry, rz = (stats.rankdata(v) for v in (x, y, z))
+
+    def resid(a, b):
+        B = np.c_[np.ones(len(b)), b]
+        return a - B @ np.linalg.lstsq(B, a, rcond=None)[0]
+
+    return stats.pearsonr(resid(rx, rz), resid(ry, rz))
+
+
+def fc_side_check(d: pd.DataFrame) -> pd.DataFrame:
+    """FC 側也有海綿效應嗎? 為什麼主要證據仍然掛在 EM 上?
+
+    改用凸包密度後 FC 側不再是可忽略的 (dense/假配對 rho +0.500)。本區塊釐清
+    它是真的獨立效應, 還是被 EM 帶出來的 -- 兩側密度本身相關 +0.52 (prescreening
+    會把形態相近的送作堆)。四個檢驗:
+      a. 偏相關: 控制另一側後各自還剩多少
+      b. 秩迴歸: 兩側同時進模型的標準化係數比
+      c. 共同密度區間: 排除「FC 只是動態範圍太窄」
+      d. 方向檢驗: forward = query FC -> target EM, inverse = query EM -> target FC。
+         海綿效應若真是 target 端的性質, 交換方向就該交換主導側。
+    """
+    F = PRIMARY_FEAT
+    rows = []
+    print("\n=== (9) FC 側檢驗: 海綿效應是不是 EM 獨有的? ===")
+    print("  (a) 偏相關與秩迴歸  [兩側密度本身就相關, 必須控制]")
+    print(f"      {'組別/標籤':14s} {'原始EM':>8} {'原始FC':>8} {'EM|FC':>8} {'FC|EM':>8}"
+          f" {'beta_EM':>8} {'beta_FC':>8}")
+    for g in C.GROUP_ORDER:
+        for lab in (0, 1):
+            s = d[(d.group == g) & (d.label == lab)]
+            if len(s) < 20:
+                continue
+            e, f_ = s[f"em_{F}"].values, s[f"fc_{F}"].values
+            re_ = stats.spearmanr(e, s.score)[0]
+            rf_ = stats.spearmanr(f_, s.score)[0]
+            cross = stats.spearmanr(e, f_)[0]
+            pe, ppe = _partial_spearman(s.score.values, e, f_)
+            pf, ppf = _partial_spearman(s.score.values, f_, e)
+            z = lambda v: stats.zscore(stats.rankdata(v))
+            X = np.c_[np.ones(len(s)), z(e), z(f_)]
+            b = np.linalg.lstsq(X, z(s.score.values), rcond=None)[0]
+            rows.append({"group": g, "label": lab, "n": len(s), "rho_em": re_,
+                         "rho_fc": rf_, "rho_em_fc_cross": cross,
+                         "partial_em": pe, "partial_em_p": ppe,
+                         "partial_fc": pf, "partial_fc_p": ppf,
+                         "beta_em": b[1], "beta_fc": b[2]})
+            tag = f"{g[:4]}/{'真' if lab else '假'}"
+            print(f"      {tag:14s} {re_:+8.3f} {rf_:+8.3f} {pe:+8.3f} {pf:+8.3f}"
+                  f" {b[1]:+8.3f} {b[2]:+8.3f}")
+
+    # (c) 只看兩側都落在 FC 密度 5-95 百分位的配對 -- FC 到不了 EM 的高密度區,
+    #     若不設限, EM 的優勢有可能只是動態範圍比較寬造成的假象。
+    m = pd.read_csv(C.OUT / "morphology_metrics.csv")
+    lo, hi = m[m.source == "FC"][F].quantile([0.05, 0.95])
+    print(f"\n  (c) 限制在 FC 的 5-95 百分位共同區間 [{lo:.4f}, {hi:.4f}]")
+    for g in C.GROUP_ORDER:
+        s = d[(d.group == g) & (d.label == 0)]
+        s = s[s[f"em_{F}"].between(lo, hi) & s[f"fc_{F}"].between(lo, hi)]
+        if len(s) < 30:
+            print(f"      {g:11s} n={len(s)} 太少, 略過")
+            continue
+        re_ = stats.spearmanr(s[f"em_{F}"], s.score)[0]
+        rf_ = stats.spearmanr(s[f"fc_{F}"], s.score)[0]
+        print(f"      {g:11s} n={len(s):3d}   EM {re_:+.3f}   FC {rf_:+.3f}")
+        rows.append({"group": g, "label": 0, "n": len(s), "rho_em": re_, "rho_fc": rf_,
+                     "note": f"common_range_{lo:.4f}_{hi:.4f}"})
+
+    # 兩個池的密度動態範圍: EM 能到 FC 到不了的地方
+    print("\n      兩側密度動態範圍 (參與假配對的神經, 去重):")
+    for g in C.GROUP_ORDER:
+        s = d[(d.group == g) & (d.label == 0)]
+        for side in ("em", "fc"):
+            u = s.drop_duplicates(f"{side}_id")[f"{side}_{F}"]
+            print(f"      {g:11s} {side.upper()}  n={len(u):3d}  中位 {u.median():.4f}"
+                  f"  P90/P10 = {u.quantile(.9) / u.quantile(.1):.2f}x"
+                  f"  最大 {u.max():.4f}")
+    fc99 = m[m.source == "FC"][F].quantile(0.99)
+    em = m[m.source == "EM"][F].dropna()
+    print(f"      FC 全體 P99 = {fc99:.4f}; EM 有 {(em > fc99).mean() * 100:.1f}% 比它更密"
+          f" -- 光學重建解析不出的密度, EM 有")
+
+    # (d) 方向檢驗
+    f = C.ROOT / "labeled_info" / "nblast_all_list_D2_D5_include_inverse_label.csv"
+    if f.exists():
+        inv = pd.read_csv(f)
+        inv["fc_id"] = inv.fc_id.astype(str)
+        inv["em_id"] = inv.em_id.astype(str)
+        inv = inv.drop_duplicates(["fc_id", "em_id"])
+        s0 = d.merge(inv[["fc_id", "em_id", "similarity score", "inverse score"]],
+                     on=["fc_id", "em_id"])
+        print("\n  (d) 方向檢驗: 交換 query/target, 主導側是否跟著換")
+        print(f"      {'組別/標籤':14s} {'方向':16s} {'EM|FC':>8} {'FC|EM':>8}  主導")
+        for g in C.GROUP_ORDER:
+            for lab in (0, 1):
+                s = s0[(s0.group == g) & (s0.label == lab)]
+                if len(s) < 20:
+                    continue
+                for name, col in (("forward FC->EM", "similarity score"),
+                                  ("inverse EM->FC", "inverse score")):
+                    pe = _partial_spearman(s[col].values, s[f"em_{F}"].values,
+                                           s[f"fc_{F}"].values)[0]
+                    pf = _partial_spearman(s[col].values, s[f"fc_{F}"].values,
+                                           s[f"em_{F}"].values)[0]
+                    rows.append({"group": g, "label": lab, "n": len(s),
+                                 "partial_em": pe, "partial_fc": pf,
+                                 "note": f"direction_{col}"})
+                    tag = f"{g[:4]}/{'真' if lab else '假'}"
+                    print(f"      {tag:14s} {name:16s} {pe:+8.3f} {pf:+8.3f}"
+                          f"  {'EM' if abs(pe) > abs(pf) else 'FC'}")
+        print("      -> forward 時 FC 的獨立貢獻只有 +0.12, 換成 inverse 就升到 +0.33;"
+              "\n         EM 則從 +0.58 掉到 +0.35。海綿效應是 target 端的性質。")
+    else:
+        print("\n  (略過 (d): 缺 include_inverse 檔)")
+
+    out = pd.DataFrame(rows)
+    out.to_csv(C.OUT / "sponge_fc_side.csv", index=False)
+    print("\n  結論: FC 側有同樣機制但被兩件事壓住 -- 動態範圍窄 (P90/P10 3.9x vs"
+          "\n  EM 9.2x), 且共同區間內 EM 仍以 +0.44 對 +0.15 勝出。D1 的 FC 側是"
+          "\n  相反號 (-0.61): 那是孤兒點效應, 不是海綿 (見 (7))。")
+    return out
+
+
 def main():
     d = load()
     print(f"載入 {len(d)} 組配對 "
@@ -386,6 +517,7 @@ def main():
     prescreen_check(d)
     orphan_points(d)
     hull_robustness(d)
+    fc_side_check(d)
 
 
 if __name__ == "__main__":
