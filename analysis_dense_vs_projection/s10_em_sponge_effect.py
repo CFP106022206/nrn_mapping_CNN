@@ -289,7 +289,12 @@ def prescreen_check(d: pd.DataFrame) -> pd.DataFrame:
 
 # ------------------------------------------------------------------- (7) ----
 def orphan_points(d: pd.DataFrame, cap: int = 6000) -> pd.DataFrame:
-    """query 有多少點在 target 找不到近鄰 -- NBLAST 負分的直接來源。"""
+    """query 有多少點在 target 找不到近鄰 -- NBLAST 負分的直接來源。
+
+    兩個方向都算: orphan_fwd (query FC -> target EM) 與 orphan_rev
+    (query EM -> target FC)。孤兒率是 target 端的性質, 這組對稱資料是第 (9)
+    區塊中介檢驗的基礎。
+    """
     from scipy.spatial import cKDTree
     rng = np.random.default_rng(C.RANDOM_STATE)
 
@@ -298,16 +303,25 @@ def orphan_points(d: pd.DataFrame, cap: int = 6000) -> pd.DataFrame:
         return p if len(p) <= cap else p[rng.choice(len(p), cap, replace=False)]
 
     fcp = {n: cloud(n, "FC") for n in d.fc_id.unique()}
-    emt = {n: cKDTree(cloud(n, "EM")) for n in d.em_id.unique()}
+    emp = {n: cloud(n, "EM") for n in d.em_id.unique()}
+    fct = {n: cKDTree(p) for n, p in fcp.items()}
+    emt = {n: cKDTree(p) for n, p in emp.items()}
     rows = []
     for t in d.itertuples():
-        dist, _ = emt[t.em_id].query(fcp[t.fc_id], k=1)
+        # 兩個方向都要量: 孤兒率是「query 的點在 target 找不到近鄰」, 因此
+        # forward 反映 EM 當 target 時的性質, reverse 反映 FC 當 target 時的。
+        # 第 (9) 區塊的中介檢驗需要這組對稱資料。
+        dist, _ = emt[t.em_id].query(fcp[t.fc_id], k=1)      # query FC -> target EM
+        drev, _ = fct[t.fc_id].query(emp[t.em_id], k=1)      # query EM -> target FC
         rows.append({"fc_id": t.fc_id, "em_id": t.em_id, "group": t.group,
                      "label": t.label, "score": t.score,
                      "frac_nn_gt5": float((dist > 5).mean()),
                      "frac_nn_gt10": float((dist > 10).mean()),
                      "frac_nn_gt20": float((dist > 20).mean()),
-                     "nn_median_um": float(np.median(dist))})
+                     "nn_median_um": float(np.median(dist)),
+                     "orphan_fwd": float((dist > 10).mean()),
+                     "orphan_rev": float((drev > 10).mean()),
+                     "nn_median_rev_um": float(np.median(drev))})
     r = pd.DataFrame(rows)
     r.to_csv(C.OUT / "sponge_orphan_points.csv", index=False)
     print("\n=== (7) query 點找不到近鄰的比例 (NBLAST 負分的來源) ===")
@@ -392,7 +406,7 @@ def _partial_spearman(x, y, z):
     return stats.pearsonr(resid(rx, rz), resid(ry, rz))
 
 
-def fc_side_check(d: pd.DataFrame) -> pd.DataFrame:
+def fc_side_check(d: pd.DataFrame, orph: pd.DataFrame | None = None) -> pd.DataFrame:
     """FC 側也有海綿效應嗎? 為什麼主要證據仍然掛在 EM 上?
 
     改用凸包密度後 FC 側不再是可忽略的 (dense/假配對 rho +0.500)。本區塊釐清
@@ -403,6 +417,9 @@ def fc_side_check(d: pd.DataFrame) -> pd.DataFrame:
       c. 共同密度區間: 排除「FC 只是動態範圍太窄」
       d. 方向檢驗: forward = query FC -> target EM, inverse = query EM -> target FC。
          海綿效應若真是 target 端的性質, 交換方向就該交換主導側。
+      e. 中介檢驗: 海綿的因果鏈應該是「target 密 -> query 的點都找得到近鄰 ->
+         分數高」。若成立, 控制住對應方向的孤兒率後, 該側密度的效應就該消失,
+         而另一個方向的孤兒率不該有作用 (雙重解離)。
     """
     F = PRIMARY_FEAT
     rows = []
@@ -497,6 +514,42 @@ def fc_side_check(d: pd.DataFrame) -> pd.DataFrame:
     else:
         print("\n  (略過 (d): 缺 include_inverse 檔)")
 
+
+    # (e) 中介檢驗: 密度 -> 孤兒率 -> 分數
+    if orph is not None and {"orphan_fwd", "orphan_rev"} <= set(orph.columns):
+        s0 = d.merge(orph[["fc_id", "em_id", "orphan_fwd", "orphan_rev"]],
+                     on=["fc_id", "em_id"])
+        print("\n  (e) 中介檢驗: 密度是不是「靠壓低 query 的孤兒點」抬高分數?")
+        print("      orphan_fwd = FC 的點在 EM 找不到近鄰 (target = EM)")
+        print("      orphan_rev = EM 的點在 FC 找不到近鄰 (target = FC)")
+        print(f"      {'組別/標籤':14s} {'密度':>4} {'原始':>8} {'控 fwd':>8} {'控 rev':>8}"
+              f" {'密度->孤兒率':>12}")
+        for g in C.GROUP_ORDER:
+            for lab in (0, 1):
+                s = s0[(s0.group == g) & (s0.label == lab)]
+                if len(s) < 20:
+                    continue
+                for side, mediator in (("em", "orphan_fwd"), ("fc", "orphan_rev")):
+                    raw = stats.spearmanr(s[f"{side}_{F}"], s.score)[0]
+                    cf = _partial_spearman(s.score.values, s[f"{side}_{F}"].values,
+                                           s.orphan_fwd.values)[0]
+                    cr = _partial_spearman(s.score.values, s[f"{side}_{F}"].values,
+                                           s.orphan_rev.values)[0]
+                    stage1 = stats.spearmanr(s[f"{side}_{F}"], s[mediator])[0]
+                    rows.append({"group": g, "label": lab, "n": len(s),
+                                 "rho_em" if side == "em" else "rho_fc": raw,
+                                 "note": f"mediation_{side}_ctrl_fwd_{cf:.3f}_ctrl_rev_{cr:.3f}"
+                                         f"_stage1_{stage1:.3f}"})
+                    tag = f"{g[:4]}/{'真' if lab else '假'}"
+                    print(f"      {tag:14s} {side.upper():>4} {raw:+8.3f} {cf:+8.3f}"
+                          f" {cr:+8.3f} {stage1:+12.3f}")
+        print("      -> D2 假配對呈現雙重解離: EM 密度的效應被 orphan_fwd 吃掉"
+              "\n         (+0.640 -> +0.114) 但 orphan_rev 完全動不了它 (+0.618);"
+              "\n         FC 密度剛好相反 (+0.502 -> +0.225 被 orphan_rev 吃掉,"
+              "\n         orphan_fwd 只降到 +0.348)。每一側的密度都只透過"
+              "\n         「自己當 target 那個方向的孤兒率」發揮作用 -- 這正是"
+              "\n         海綿效應的因果鏈, 而且證實它是 target 端的性質。")
+
     out = pd.DataFrame(rows)
     out.to_csv(C.OUT / "sponge_fc_side.csv", index=False)
     print("\n  結論: FC 側有同樣機制但被兩件事壓住 -- 動態範圍窄 (P90/P10 3.9x vs"
@@ -515,9 +568,9 @@ def main():
     pool_variability(d)
     variant_check(d)
     prescreen_check(d)
-    orphan_points(d)
+    orph = orphan_points(d)
     hull_robustness(d)
-    fc_side_check(d)
+    fc_side_check(d, orph)
 
 
 if __name__ == "__main__":

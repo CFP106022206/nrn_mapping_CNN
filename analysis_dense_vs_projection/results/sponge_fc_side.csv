@@ -13,3 +13,11 @@ dense,0,414,,,,0.5819611047705453,,0.12187205971064585,,,,direction_similarity s
 dense,0,414,,,,0.35302172148039734,,0.32934505738629977,,,,direction_inverse score
 dense,1,268,,,,0.4231433647862128,,-0.12461273007896169,,,,direction_similarity score
 dense,1,268,,,,0.043854230609686046,,0.19964186037579795,,,,direction_inverse score
+projection,0,123,-0.2706033198260087,,,,,,,,,mediation_em_ctrl_fwd_-0.218_ctrl_rev_-0.185_stage1_0.209
+projection,0,123,,-0.6094076273668321,,,,,,,,mediation_fc_ctrl_fwd_-0.205_ctrl_rev_-0.263_stage1_0.570
+projection,1,97,0.38637516032118135,,,,,,,,,mediation_em_ctrl_fwd_0.194_ctrl_rev_0.230_stage1_-0.341
+projection,1,97,,0.0857794792176687,,,,,,,,mediation_fc_ctrl_fwd_0.056_ctrl_rev_0.067_stage1_-0.061
+dense,0,415,0.6402271163336106,,,,,,,,,mediation_em_ctrl_fwd_0.114_ctrl_rev_0.618_stage1_-0.657
+dense,0,415,,0.5022636422723441,,,,,,,,mediation_fc_ctrl_fwd_0.348_ctrl_rev_0.225_stage1_-0.461
+dense,1,271,0.3785047834944553,,,,,,,,,mediation_em_ctrl_fwd_0.141_ctrl_rev_0.375_stage1_-0.357
+dense,1,271,,0.31229755270744236,,,,,,,,mediation_fc_ctrl_fwd_0.250_ctrl_rev_0.174_stage1_-0.264
