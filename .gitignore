@@ -233,6 +233,7 @@ PreTrain_Model/*
 
 brain_png
 output_image
+logs
 
 
 # --- 網頁比對服務（SERVICE_HANDOVER.md）---

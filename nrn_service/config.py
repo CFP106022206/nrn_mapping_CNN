@@ -79,7 +79,7 @@ class MatchConfig:
     rod_angle_th_deg: float = 35.0    # rod-like 的方向夾角門檻
     disk_angle_th_deg: float = 30.0   # disk-like 的方向夾角門檻
     # 通過三段過濾後再按 descriptor 距離取前 K，用來保證單次查詢的延遲上限。
-    # 實測每次查詢的候選數 p90 約 2400、最大約 5800。
+    # 實測每次查詢的候選數 p90 約 2920、最大約 6498。
     top_k_candidates: int = 2000
 
 

@@ -17,9 +17,10 @@
     # python3 match_cli.py --batch_side FC --top_n 5 --out result/fc_all_top5_annotator.csv > logs/batch_fc_top5.log 2>&1 &
     # python3 match_cli.py --batch_side EM --top_n 5 --out result/em_all_top5_annotator.csv > logs/batch_em_top5.log 2>&1 &
 
-    python3 match_cli.py --batch_side FC --top_n 5 --out result/fc_all_top5.csv > logs/batch_fc_top5.log 2>&1 &
-    python3 match_cli.py --batch_side EM --top_n 5 --out result/em_all_top5.csv > logs/batch_em_top5.log 2>&1 &
-
+    python3 match_cli.py --batch_side FC --top_n 5 --top_k 0 --out result/fc_all_top5_notrunc.csv > logs/batch_fc_notrunc.log 2>&1 &
+    python3 match_cli.py --batch_side EM --top_n 5 --top_k 0 --out result/em_all_top5_notrunc.csv > logs/batch_em_notrunc.log 2>&1 &
+    # top_k=0 代表不截斷候選，否則預設只取前 2000 個候選（線上查詢的延遲護欄），
+    
     # 先試 200 顆確認沒問題再跑全部
     python3 match_cli.py --batch_side FC --limit 200 --out trial.csv
 
