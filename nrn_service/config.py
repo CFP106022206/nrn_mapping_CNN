@@ -73,7 +73,10 @@ class MatchConfig:
 
     centroid_th: float = 100.0        # 質心距離門檻 (um)
     ratio_th: float = 0.4             # (r21, r31) 2D 距離門檻
-    rod_angle_th_deg: float = 30.0    # rod-like 的方向夾角門檻
+    # rod 用 35° 而非 30°：v3 在 FC/EM 之間有系統性抖動，用 D1-D6 人工標註量測，
+    # 30° 會切掉 9 對真 pair（6 對信心度 >=0.8，含 2 對 1.0），35° 讓高信心損失歸零，
+    # 代價是候選池少砍 3.3pp。disk 維持 30°（標註中 disk 正樣本角度 max 僅 26.7°）。
+    rod_angle_th_deg: float = 35.0    # rod-like 的方向夾角門檻
     disk_angle_th_deg: float = 30.0   # disk-like 的方向夾角門檻
     # 通過三段過濾後再按 descriptor 距離取前 K，用來保證單次查詢的延遲上限。
     # 實測每次查詢的候選數 p90 約 2400、最大約 5800。

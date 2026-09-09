@@ -164,7 +164,11 @@ def filter_pairs_by_orientation_rod_disk(
     # rod thresholds
     rod_r31_max: float = 0.35,  # 判斷是否是rod-like，需要r21接近1且r31接近0
     rod_gap_min: float = 0.4,       # r21 - r31
-    rod_angle_th_deg: float = 30.0,
+    # 35 而非 30：v3 跨 modality 有系統性抖動。用 D1-D6 人工標註 (label>=0.5) 量測，
+    # 被 gate 管到的 361 對真 pair 角度 p95=21.5°、p99=33.4°；30° 會切掉 9 對，
+    # 其中 6 對信心度 >=0.8（含 2 對 1.0），且已確認它們真的從 top5 輸出消失。
+    # 35° 讓高信心損失歸零，代價只是候選池少砍 3.3pp（-42.2% -> -38.9%）。
+    rod_angle_th_deg: float = 35.0,
     # disk thresholds
     # 盤狀要比的軸是 v1 (最大慣量 = 盤面法線)，它良好定義的條件是 λ1 與 λ2 分開，
     # 即 1 - r21 >= disk_gap_min，與 rod 用 r21 - r31 判斷 v3 是對稱的。
@@ -172,6 +176,8 @@ def filter_pairs_by_orientation_rod_disk(
     # 保證 r21 + r31 >= 1，因此 r21 >= 0.5，1 - r21 的上限就是 0.5。
     # (舊版寫 r21 <= 0.45 落在可及區域之外，此分支永遠不會啟動。)
     disk_gap_min: float = 0.30,     # 1 - r21
+    # disk 維持 30°：標註中 disk 正樣本角度最大只有 26.7°（高信心者 15.5°），
+    # 30° 未殺到任何一對；且 disk pair 僅佔配對約 0.5%，門檻高低對候選池影響 <0.1pp。
     disk_angle_th_deg: float = 30.0,
     chunk: int = 2_000_000,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -318,7 +324,7 @@ def run_matching(
         em.ratios2d,
         fc.eigvecs,
         em.eigvecs,
-        rod_angle_th_deg=30.0,
+        rod_angle_th_deg=35.0,
         disk_angle_th_deg=30.0,
     )
 
