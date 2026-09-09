@@ -23,6 +23,13 @@
     # 先試 200 顆確認沒問題再跑全部
     python3 match_cli.py --batch_side FC --limit 200 --out trial.csv
 
+    # 取消候選截斷（--top_k 0）。config 的 top_k_candidates 是線上查詢的延遲護欄，
+    # 離線全庫掃描沒有延遲壓力，但它會改變輸出：候選被截掉時，第 2001 名之後的
+    # 會遞補進來打分，所以截斷與否的結果不同（EM->FC 約 53% 的 source 會受影響）。
+    # 用這個參數跑對照，不要去改 config —— 改了忘記還原，線上服務就沒有延遲上限了。
+    python3 match_cli.py --batch_side FC --top_n 5 --top_k 0 --out result/fc_all_top5_notrunc.csv
+    python3 match_cli.py --batch_side EM --top_n 5 --top_k 0 --out result/em_all_top5_notrunc.csv
+
     # 掃描一整個目錄的新 SWC（會走完整計算路徑，並在 user_data/ 留紀錄）
     python3 match_cli.py --batch_dir /path/to/swc_folder --query_side FC --out result.csv
 
@@ -38,6 +45,7 @@
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import sys
 import time
 from pathlib import Path
@@ -224,15 +232,31 @@ def main() -> int:
                     help="批次模式：只跑前 N 顆，用來先試跑（0 = 全部）")
     ap.add_argument("--min_score", type=float, default=0.0,
                     help="批次模式：只保留分數 >= 此值的結果（0 = 不過濾，與既有 pipeline 一致）")
+    ap.add_argument("--top_k", type=int, default=None,
+                    help=f"覆蓋候選上限 MatchConfig.top_k_candidates（0 = 不截斷）。"
+                         f"預設沿用 config 的 {cfg.match.top_k_candidates}")
     args = ap.parse_args()
 
     if not (args.batch_side or args.query_side):
         ap.error("--swc / --neuron_id 模式必須指定 --query_side")
 
+    # 候選上限是「線上單次查詢的延遲護欄」，離線全庫掃描沒有延遲壓力，
+    # 但它會改變輸出：候選被截掉時，第 top_k+1 名之後的遞補進來打分。
+    # 所以這裡用命令列覆蓋，而不是改 config —— config 的線上預設值保持不動。
+    if args.top_k is not None:
+        if args.top_k < 0:
+            ap.error("--top_k 不能是負數（0 = 不截斷）")
+        cfg = dataclasses.replace(
+            cfg, match=dataclasses.replace(cfg.match, top_k_candidates=args.top_k)
+        )
+
     svc = NeuronMatchService(cfg)
+    top_k = cfg.match.top_k_candidates
     print(
         f"[service] 啟動 {svc.startup_timings['total']:.1f}s  "
-        f"({svc.db.summary()})",
+        f"({svc.db.summary()})  "
+        f"rod={cfg.match.rod_angle_th_deg:.0f}° disk={cfg.match.disk_angle_th_deg:.0f}° "
+        f"top_k={'不截斷' if top_k == 0 else top_k}",
         flush=True,
     )
 
