@@ -17,19 +17,18 @@
     # python3 match_cli.py --batch_side FC --top_n 5 --out result/fc_all_top5_annotator.csv > logs/batch_fc_top5.log 2>&1 &
     # python3 match_cli.py --batch_side EM --top_n 5 --out result/em_all_top5_annotator.csv > logs/batch_em_top5.log 2>&1 &
 
-    python3 match_cli.py --batch_side FC --top_n 5 --top_k 0 --out result/fc_all_top5_notrunc.csv > logs/batch_fc_notrunc.log 2>&1 &
-    python3 match_cli.py --batch_side EM --top_n 5 --top_k 0 --out result/em_all_top5_notrunc.csv > logs/batch_em_notrunc.log 2>&1 &
-    # top_k=0 代表不截斷候選，否則預設只取前 2000 個候選（線上查詢的延遲護欄），
-    
+    python3 match_cli.py --batch_side FC --top_n 5 --out result/fc_all_top5_notrunc.csv > logs/batch_fc_notrunc.log 2>&1 &
+    python3 match_cli.py --batch_side EM --top_n 5 --out result/em_all_top5_notrunc.csv > logs/batch_em_notrunc.log 2>&1 &
+
     # 先試 200 顆確認沒問題再跑全部
     python3 match_cli.py --batch_side FC --limit 200 --out trial.csv
 
-    # 取消候選截斷（--top_k 0）。config 的 top_k_candidates 是線上查詢的延遲護欄，
-    # 離線全庫掃描沒有延遲壓力，但它會改變輸出：候選被截掉時，第 2001 名之後的
-    # 會遞補進來打分，所以截斷與否的結果不同（EM->FC 約 53% 的 source 會受影響）。
-    # 用這個參數跑對照，不要去改 config —— 改了忘記還原，線上服務就沒有延遲上限了。
-    python3 match_cli.py --batch_side FC --top_n 5 --top_k 0 --out result/fc_all_top5_notrunc.csv
-    python3 match_cli.py --batch_side EM --top_n 5 --top_k 0 --out result/em_all_top5_notrunc.csv
+    # --top_k 覆蓋候選上限。config 現在預設 0（不截斷），所以一般不必指定；
+    # 只有要重現舊的截斷行為、或想量延遲上限時才用。
+    # 注意截斷不只是省時間，它會改變輸出：候選被截掉時第 K+1 名之後的會遞補進來
+    # 打分，所以截斷版不是完整版的子集。實測 150 顆，top_k=2000 時 EM->FC 只有
+    # 73.3% 的查詢給出和不截斷一樣的 top5（FC->EM 85.3%）。
+    python3 match_cli.py --batch_side EM --top_n 5 --top_k 2000 --out result/em_trunc2000.csv
 
     # 掃描一整個目錄的新 SWC（會走完整計算路徑，並在 user_data/ 留紀錄）
     python3 match_cli.py --batch_dir /path/to/swc_folder --query_side FC --out result.csv

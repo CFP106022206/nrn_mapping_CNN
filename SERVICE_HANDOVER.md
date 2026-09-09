@@ -234,7 +234,7 @@ uvicorn app:app --host 0.0.0.0 --port 8000
 | `RenderConfig.scale_um_per_px` | `5.0` | **不要動**。資料庫歸檔的三視圖全部是這個值 |
 | `RenderConfig.render_version` | `v1_scale5.0_p99` | 改了畫圖參數就要改這個，快取才會失效 |
 | `ModelConfig.weights` | `FineTune_Model/FineTune_miniLR_D1-D6_0.weights.h5` | 換模型要一併改 `model_id` |
-| `MatchConfig.top_k_candidates` | `2000` | 候選上限，保證延遲上限 |
+| `MatchConfig.top_k_candidates` | `0` | 候選上限，`0` = 不截斷（預設）。設非 0 可換回延遲上限，但會改變輸出，不只是省時間（見 §10.8）|
 | `MatchConfig.centroid_th / ratio_th` | `100.0 / 0.4` | 與離線 `candidate_matching.py` 對齊 |
 | `MatchConfig.rod_angle_th_deg / disk_angle_th_deg` | `35.0 / 30.0` | 方向性過濾的夾角門檻，用 D1-D6 標註校準過（見 §10.7）|
 | `ServiceConfig.default_top_n` | `5` | 輸出幾對 |
@@ -484,6 +484,46 @@ python3 tools/pack_views.py --check --side EM
 把軸對應排列到最佳後特徵值偏差仍達 0.48。
 
 > ⚠️ 改了這個值就要重跑離線批次，`result/*_all_top5.csv` 才會反映新門檻。
+
+### 10.8 候選上限不只是延遲護欄，它會改變輸出
+
+`top_k_candidates` 原本設 `2000`，用意是保證單次查詢的延遲上限。問題是它**同時改變了
+結果**：三段過濾後按 descriptor 距離排序取前 K，被截掉時第 K+1 名之後的候選會遞補
+進來打分，所以**截斷版不是完整版的子集** —— 有些神經元的分數會因此變高，有些真配對
+會被擠掉。
+
+而且離線全庫掃描走的是同一條路徑（`match_cli.py --batch_side` → `match_one`），
+所以歸檔的 `result/*_all_top5.csv` 也一起被這個護欄扭曲了。
+
+實測 150 顆，與「不截斷」的完整答案比較：
+
+| top_k | FC→EM top5 一致 | FC→EM top-1 | EM→FC top5 一致 | EM→FC top-1 |
+|---|---|---|---|---|
+| 2000（舊預設）| 85.3% | 96.0% | **73.3%** | 91.3% |
+| 3000 | 97.3% | 98.7% | 88.7% | 97.3% |
+| 4000 | 98.7% | 100.0% | 94.0% | 98.7% |
+
+EM→FC 有超過四分之一的查詢在 `2000` 之下拿到的不是完整答案。
+
+**現在預設改成 `0`（不截斷）。** 依據是全庫實測的單次查詢延遲（不含模型載入）：
+
+| | 中位 | p90 | p99 | 最大 | 超過 1 秒 |
+|---|---|---|---|---|---|
+| EM→FC（12767 顆全跑）| 352 ms | 862 ms | 1373 ms | **2014 ms** | 805 顆 (6.3%) |
+| FC→EM（22286 顆全跑）| 227 ms | — | 996 ms | **1620 ms** | 215 顆 (1.0%) |
+
+超過 2 秒的整個 EM 資料庫只有 1 顆（`976351031`，7958 個候選）。網頁一次只查一顆，
+最壞 2 秒可接受；相較之下超大 EM 骨架光 render 就要 6.2 秒（見 §9），打分階段不是
+尾巴的主角。副作用是離線 CSV 與線上服務終於會給出一致的結果。
+
+參數保留著：若之後併發成為瓶頸、或資料庫長大很多，設成非 0 就能換回延遲上限。
+`match_cli.py` 也有 `--top_k` 可以單次覆蓋，不必動 config。
+
+> ⚠️ 併發是另一回事，`top_k` 解決不了。`app.py` 的 `/match` 是 `async def` 卻同步
+> 呼叫 `svc.query()`，會佔住整個 asyncio event loop —— 查詢期間連 `/health` 都回不了。
+> 要處理併發得把它改成 `def`（FastAPI 會丟到 threadpool）並對打分加鎖。
+> sqlite 那邊已經是安全的（`check_same_thread=False` + `RLock`），但模型目前沒有鎖。
+> 尚未處理，留給接手前端整合的人。
 
 ---
 
