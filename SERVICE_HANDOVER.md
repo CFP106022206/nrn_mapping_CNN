@@ -188,7 +188,7 @@ Trh-F-000040,820856726,0.5896449,2
 |---|---|---|
 | `400` | 上傳檔有問題 | 「座標數量級不對（max\|coord\| = 277120 > 5000）。這通常表示 SWC 還是原始的 nm 或 voxel 單位，必須先 warp 到 standard brain」 |
 | `400` | 檔名不合法 | 「檔名含有不允許的字元」 |
-| `404` | 找不到任何候選 | 「在目標資料庫中找不到任何幾何特徵相近的候選」（常見原因見 §12.1 右腦問題）|
+| `404` | 找不到任何候選 | 「在目標資料庫中找不到任何幾何特徵相近的候選」（常見原因見 §13.1 右腦問題）|
 | `501` | 用了尚未實作的功能 | 「mirror（左右腦鏡像）尚未實作」 |
 | `503` | 服務還在啟動 | 「服務尚未完成啟動」（模型載入約 3 秒）|
 
@@ -234,9 +234,9 @@ uvicorn app:app --host 0.0.0.0 --port 8000
 | `RenderConfig.scale_um_per_px` | `5.0` | **不要動**。資料庫歸檔的三視圖全部是這個值 |
 | `RenderConfig.render_version` | `v1_scale5.0_p99` | 改了畫圖參數就要改這個，快取才會失效 |
 | `ModelConfig.weights` | `FineTune_Model/FineTune_miniLR_D1-D6_0.weights.h5` | 換模型要一併改 `model_id` |
-| `MatchConfig.top_k_candidates` | `0` | 候選上限，`0` = 不截斷（預設）。設非 0 可換回延遲上限，但會改變輸出，不只是省時間（見 §10.8）|
+| `MatchConfig.top_k_candidates` | `0` | 候選上限，`0` = 不截斷（預設）。設非 0 可換回延遲上限，但會改變輸出，不只是省時間（見 §11.8）|
 | `MatchConfig.centroid_th / ratio_th` | `100.0 / 0.4` | 與離線 `candidate_matching.py` 對齊 |
-| `MatchConfig.rod_angle_th_deg / disk_angle_th_deg` | `35.0 / 30.0` | 方向性過濾的夾角門檻，用 D1-D6 標註校準過（見 §10.7）|
+| `MatchConfig.rod_angle_th_deg / disk_angle_th_deg` | `35.0 / 30.0` | 方向性過濾的夾角門檻，用 D1-D6 標註校準過（見 §11.7）|
 | `ServiceConfig.default_top_n` | `5` | 輸出幾對 |
 
 ---
@@ -279,6 +279,8 @@ python3 tools/build_curated_index.py --side FC
 
 `tools/` 底下的三支程式**不是給網頁端用的**，也不會被 `app.py` 或 `match_cli.py`
 在執行時呼叫。它們是你事先跑好、產生衍生資料的工具，兩個入口都吃它們的產物。
+
+要從 SWC **整批重建**資料庫（新增大量神經元、換環境、改畫圖參數），見 §9。
 
 | 產物 | 由誰產生 | 誰在用 | 什麼時候要重跑 |
 |---|---|---|---|
@@ -323,7 +325,7 @@ neuron id              offset(位元組)     H    佔用 3*H*H
 | | 存什麼 | 是誰的屬性 | 存在哪 |
 |---|---|---|---|
 | npz / view store | `(3,H,H)` 原始三視圖 | **一顆神經元**的 | 永久 |
-| 50×50 | 模型輸入 | **一對**的（取決於搭配對象，見 §10.6）| 不存，每次現算 0.38 ms |
+| 50×50 | 模型輸入 | **一對**的（取決於搭配對象，見 §11.6）| 不存，每次現算 0.38 ms |
 | `result_full.csv` | 分數與排名 | 一次查詢的 | `user_data/`，同一份檔案重傳才命中 |
 
 ### 8.2 忘記重跑 `pack_views` 會怎樣
@@ -369,7 +371,180 @@ python3 tools/pack_views.py --check --side EM
 
 ---
 
-## 9. 實測數據
+## 9. 從 SWC 重建資料庫
+
+適用情況：新增或替換大量 SWC、在新環境從零建立、改了畫圖參數。
+**單一使用者上傳要入庫**不用走這裡，用 `tools/promote_upload.py`（見 §7）。
+
+### 9.1 服務需要哪些資料，缺了會怎樣
+
+| 資料 | 由誰產生 | 缺了會怎樣 |
+|---|---|---|
+| `data/SWC/{FC,EM}/*.swc` | 原始資料 | — |
+| `data/descriptors_{FC,EM}/` | `swc_descriptor_batch.py` | ❌ 該神經元**永遠不會成為候選**，而且**沒有任何警告** |
+| `data/standard_views/{FC,EM}/*_views.npz` | `standard_draw.py` | ❌ 作為候選時被**安靜略過**，只留一行警告；用 `--neuron_id` 查它會直接報錯 |
+| `data/view_store/` | `tools/pack_views.py` | 可選。缺了自動退回逐檔讀 npz，結果相同只是慢 |
+| `data/index/` | `tools/build_curated_index.py` | 可選。缺了認不出「同內容、換了檔名」的上傳 |
+
+`match_cli.py` 和 `app.py` **只會替「查詢的那一顆」算 descriptor 和畫圖**，
+資料庫那一側是唯讀的，不會自動補齊。所以前兩列必須事先建好。
+
+### 9.2 ⚠️ 不要用 `swc_pair_and_draw.py` 建服務用的資料庫
+
+`swc_pair_and_draw.py`（見 DRAW_PIPELINE_HANDOVER.md）的第 4 步是用
+`pairs_FC_EM.csv` 當畫圖名單，**只畫有出現在配對裡的神經元**。
+這對離線批次足夠，但服務不行：使用者上傳的新神經元可能和資料庫裡**任何一顆**配對，
+所以每一顆有 descriptor 的神經元都必須有三視圖。
+
+服務用的資料庫，三視圖名單要用 `data/descriptors_{side}/neuron_ids_{side}.npy`（步驟 3）。
+
+### 9.3 完整步驟
+
+**步驟 0：確認沒有服務或批次在跑**
+
+```bash
+ps -eo pid,etime,args | grep -E "match_cli|uvicorn|app:app" | grep -v grep
+```
+
+有輸出就先停掉。步驟 5 的 `pack_views.py` 會原地覆寫被 mmap 映射中的檔案（見 §8）。
+
+**步驟 1：放好 SWC，備份舊 descriptor**
+
+```bash
+cd /cluster/home/ming/Project/nrn_mapping_CNN      # 所有路徑都相對於專案根目錄
+BK=data/_backup_descriptors_$(date +%Y%m%d)
+mkdir -p "$BK" logs
+cp -r data/descriptors_FC data/descriptors_EM "$BK"/
+```
+
+**步驟 2：descriptor**（FC、EM 互不相依，可以平行）
+
+```bash
+python3 swc_descriptor_batch.py --input ./data/SWC/FC --out ./data/descriptors_FC --source FC \
+    > logs/rebuild_desc_FC.log 2>&1 &
+python3 swc_descriptor_batch.py --input ./data/SWC/EM --out ./data/descriptors_EM --source EM \
+    > logs/rebuild_desc_EM.log 2>&1 &
+wait
+ls data/descriptors_FC/errors_FC.parquet data/descriptors_EM/errors_EM.parquet 2>/dev/null \
+    || echo "沒有 errors 檔 = 全部成功"
+```
+
+- **沒有增量模式**：每次都整側重算，覆寫 `descriptors_*.parquet` 與四個 `.npy`。
+- **列順序會變**（檔案清單排序後重新對齊）。流程裡一律用 neuron id 對照，不受影響；
+  但若外部有存 row index，那些會失效。
+- 算不出來的 SWC 寫進 `errors_{side}.parquet`，其餘照常輸出。
+
+**步驟 3：三視圖**（必須等步驟 2 完成，因為要用它產生的 `neuron_ids_*.npy`）
+
+```bash
+for S in FC EM; do
+  python3 standard_draw.py --swc_dir data/SWC/$S \
+      --neuron_list data/descriptors_$S/neuron_ids_$S.npy \
+      --output_dir data/standard_views/$S \
+      --scale_um_per_px 5.0 --normalize p99 --format npz \
+      --render_version v1_scale5.0_p99 \
+      --skip_existing \
+      > logs/rebuild_views_$S.log 2>&1 &
+done
+wait
+tail -3 logs/rebuild_views_FC.log logs/rebuild_views_EM.log    # 看 Success / Failed 數
+```
+
+- `--scale_um_per_px 5.0 --normalize p99` 雖然已是預設值，仍明確寫出（見 §11.1）。
+- `--render_version` 要和 `nrn_service/config.py` 的 `RenderConfig.render_version` 一致。
+- `--skip_existing` 只畫缺的。**改了畫圖參數時必須拿掉**，見 §9.6。
+
+**步驟 4：一致性檢查**
+
+```bash
+python3 - <<'PY'
+import numpy as np
+from pathlib import Path
+ok = True
+for s in ("FC", "EM"):
+    swc  = {p.stem for p in Path(f"data/SWC/{s}").glob("*.swc")}
+    desc = set(np.load(f"data/descriptors_{s}/neuron_ids_{s}.npy", allow_pickle=True).astype(str))
+    view = {p.name[:-len("_views.npz")] for p in Path(f"data/standard_views/{s}").glob("*_views.npz")}
+    print(f"{s}: SWC={len(swc)} descriptor={len(desc)} views={len(view)} | "
+          f"缺descriptor={len(swc-desc)} 缺views={len(desc-view)} 孤兒views={len(view-swc)}")
+    ok &= (swc == desc) and desc <= view
+print("OK: 三個集合一致" if ok else "NOT OK: 請看上面缺什麼")
+PY
+```
+
+預期輸出（2026-09-11 的狀態）：
+
+```
+FC: SWC=28612 descriptor=28612 views=28612 | 缺descriptor=0 缺views=0 孤兒views=0
+EM: SWC=12767 descriptor=12767 views=12767 | 缺descriptor=0 缺views=0 孤兒views=0
+OK: 三個集合一致
+```
+
+`缺descriptor` 不為 0 通常是 `errors_*.parquet` 裡那些算不出來的 SWC。
+`孤兒views`（有圖但 SWC 已刪）無害，不會被選為候選。
+
+**步驟 5：打包與索引**
+
+```bash
+python3 tools/pack_views.py
+python3 tools/build_curated_index.py
+python3 tools/pack_views.py --check        # 可選：逐檔比對打包檔與 npz
+```
+
+**步驟 6：重啟服務**（KDTree、view store、sha256 索引都是啟動時載入的）
+
+### 9.4 耗時
+
+單一程序執行。叢集檔案系統上**讀檔是主導成本**，所以分冷快取（第一次讀這些檔）和熱快取
+（剛跑過批次、檔案已在記憶體快取中）兩種情況。規劃時請以冷快取為準。
+
+| 步驟 | FC（28,612 顆）| EM（12,767 顆）|
+|---|---|---|
+| 2. descriptor | 冷約 7 分 / 熱約 1 分 | 冷 **11 分（2026-09-06 全量實測）**/ 熱約 6 分 |
+| 3. 三視圖（全部重畫）| 冷約 11 分 / 熱約 5 分 | 冷約 45~60 分 / 熱約 27 分 |
+| 5. `pack_views.py` | 冷 ≤ 2.5 分 | 冷 ≤ 0.7 分 |
+| 5. `build_curated_index.py` | 兩側合計：冷超過 2 分 / 熱約 15 秒 | |
+
+- **合計**：FC、EM 兩條鏈平行時由 EM 主導，**冷快取約 1~1.5 小時、熱快取約 35 分鐘**。
+- EM 三視圖是瓶頸：骨架節點數長尾（最大 181,741 節點，單顆約 6 秒），
+  平均比中位數慢約 40%（熱快取實測 mean 128 ms / median 92 ms）。
+- 只新增少量神經元時，步驟 3 有 `--skip_existing`，幾乎不花時間；主要成本是步驟 2 的整側重算。
+
+### 9.5 不同情況要跑哪些步驟
+
+| 情況 | 2. descriptor | 3. 三視圖 | 5. 打包 | 5. 索引 |
+|---|---|---|---|---|
+| 新增 SWC | 整側重算 | `--skip_existing` 只補新的 | 要 | 要 |
+| 刪除 SWC | 整側重算 | 可不處理（舊圖成為無害的孤兒）| 要 | 要 |
+| 修改既有 SWC 內容 | 整側重算 | **刪掉該顆舊圖**再用 `--skip_existing` 補 | 要 | 要 |
+| 改了畫圖參數 | 不用 | **全部重畫**，見 §9.6 | 要 | 不用 |
+| 從零建立 | 全部 | 全部 | 要 | 要 |
+
+「修改既有 SWC 內容」那列：`--skip_existing` 只看檔案在不在，**不會發現內容變了**，
+不刪舊圖就會留著舊版三視圖。
+
+### 9.6 ⚠️ 改畫圖參數之前
+
+**先想清楚要不要改。** 現有模型（Annotator、FineTune）全部是用 `scale_um_per_px=5.0`
+畫的圖訓練的。改了 scale，所有三視圖的尺度都變了，模型等於在看它沒見過的輸入，
+**分數會失去意義，而且不會報錯**。除非同時重新訓練模型，否則不要改。
+
+真的要改時，四件事缺一不可：
+
+1. 改 `nrn_service/config.py` 的 `RenderConfig`（`scale_um_per_px` / `normalize`），
+   **並換一個新的 `render_version` 字串**。
+2. 步驟 3 **拿掉 `--skip_existing`**、`--render_version` 換成新字串，全部重畫。
+   保留 `--skip_existing` 的話舊圖一張都不會被重畫。
+3. 重跑 `pack_views.py`。
+4. 重新訓練模型。
+
+`user_data/` 的上傳快取以 `render_version` 為 key，換字串後自動失效，不用手動清。
+但**服務端讀資料庫三視圖時不檢查 `render_version`**（`service.py` 建立 ViewStore 時傳 `None`），
+所以第 2、3 步漏做的話，服務會**安靜地混用新舊兩種尺度的圖**。
+
+---
+
+## 10. 實測數據
 
 環境：本機 GPU（NVIDIA RTX PRO 5000）。
 
@@ -395,9 +570,9 @@ python3 tools/pack_views.py --check --side EM
 
 ---
 
-## 10. 設計上踩過的坑
+## 11. 設計上踩過的坑
 
-### 10.1 `scale_um_per_px` 的預設值
+### 11.1 `scale_um_per_px` 的預設值
 
 歸檔的三視圖全部是用 `5.0` 畫的（已用 bit-for-bit 重畫驗證：隨機 200 顆 FC 神經元
 用 `scale=5.0, normalize=p99` 重畫，200/200 與歸檔完全相同）。
@@ -407,13 +582,13 @@ python3 tools/pack_views.py --check --side EM
 現在預設值已改成 `5.0`，而且新產生的 npz 會寫入 `scale_um_per_px / normalize / render_version`。
 服務端一律從 `nrn_service/config.py` 取值，不依賴函式預設值。
 
-### 10.2 模型對空白輸入會給高分
+### 11.2 模型對空白輸入會給高分
 
 實測 `FineTune_miniLR_D1-D6_0` 對全零輸入輸出 **0.678**。
 如果某顆神經元 render 出空圖，它會直接排到結果前段。
 所以 `validation.validate_views` 會擋掉 `views.max()==0`，候選端也會過濾。
 
-### 10.3 keras 會對每個不同的 batch 大小重新 trace
+### 11.3 keras 會對每個不同的 batch 大小重新 trace
 
 因為每次查詢的候選數都不一樣，等於**每次查詢都在付 0.8～2.0 秒的編譯成本**
 （實測 N=198 第一次 1.13 s、第二次 0.058 s；換成 N=197 又是 0.78 s）。
@@ -422,12 +597,12 @@ python3 tools/pack_views.py --check --side EM
 同一種形狀。補上去的是全零列，推論時 BatchNormalization 用 moving statistics，
 每一列彼此獨立，不影響真實資料的分數。補齊後所有 N 都是 0.07～0.26 秒。
 
-### 10.4 sqlite 每次重開連線要 150～200 ms
+### 11.4 sqlite 每次重開連線要 150～200 ms
 
 原本每個操作都 `sqlite3.connect` + `PRAGMA journal_mode=WAL`，一次查詢兩個操作就
 吃掉 355 ms，是當時最大的固定成本。改成長駐單一連線 + `synchronous=NORMAL` 後降到 ~1 ms。
 
-### 10.5 HTTP header 不能直接放中文
+### 11.5 HTTP header 不能直接放中文
 
 警告訊息是中文，直接塞進 `X-Warnings` 會讓整個回應拋 `UnicodeEncodeError`
 （HTTP header 只允許 latin-1），前端會收到 500 而不是結果。
@@ -436,14 +611,14 @@ python3 tools/pack_views.py --check --side EM
 也只能用 ASCII —— 這點剛好由 `validation.sanitize_neuron_id` 保證了
 （只允許英數字、`.`、`_`、`-`）。
 
-### 10.6 三視圖不能預先算好 50×50 快取
+### 11.6 三視圖不能預先算好 50×50 快取
 
 `_pad_to_same_size` 是**成對**做的（補到「這一對裡較大的那張」），
 同一顆神經元搭配不同對象，補零後的大小不同。所以只能逐對前處理。
 好在只要 0.38 ms/對，不是瓶頸。真正的瓶頸是讀檔，已由 view store 解決
 （memmap 取圖 0.0024 ms/張，比讀 npz 快 143 倍）。
 
-### 10.7 方向性過濾的角度門檻是 recall 取捨，不是精度工具
+### 11.7 方向性過濾的角度門檻是 recall 取捨，不是精度工具
 
 `rod_angle_th_deg` 原本設 30°，用 D1-D6 人工標註（`label >= 0.5` 視為真 pair，
 624 對）量測後改成 **35°**。三件事值得記著：
@@ -485,7 +660,7 @@ python3 tools/pack_views.py --check --side EM
 
 > ⚠️ 改了這個值就要重跑離線批次，`result/*_all_top5.csv` 才會反映新門檻。
 
-### 10.8 候選上限不只是延遲護欄，它會改變輸出
+### 11.8 候選上限不只是延遲護欄，它會改變輸出
 
 `top_k_candidates` 原本設 `2000`，用意是保證單次查詢的延遲上限。問題是它**同時改變了
 結果**：三段過濾後按 descriptor 距離排序取前 K，被截掉時第 K+1 名之後的候選會遞補
@@ -513,7 +688,7 @@ EM→FC 有超過四分之一的查詢在 `2000` 之下拿到的不是完整答�
 | FC→EM（22286 顆全跑）| 227 ms | — | 996 ms | **1620 ms** | 215 顆 (1.0%) |
 
 超過 2 秒的整個 EM 資料庫只有 1 顆（`976351031`，7958 個候選）。網頁一次只查一顆，
-最壞 2 秒可接受；相較之下超大 EM 骨架光 render 就要 6.2 秒（見 §9），打分階段不是
+最壞 2 秒可接受；相較之下超大 EM 骨架光 render 就要 6.2 秒（見 §10），打分階段不是
 尾巴的主角。副作用是離線 CSV 與線上服務終於會給出一致的結果。
 
 參數保留著：若之後併發成為瓶頸、或資料庫長大很多，設成非 0 就能換回延遲上限。
@@ -527,7 +702,7 @@ EM→FC 有超過四分之一的查詢在 `2000` 之下拿到的不是完整答�
 
 ---
 
-## 11. 正確性驗證
+## 12. 正確性驗證
 
 | 驗證項目 | 結果 |
 |---|---|
@@ -540,9 +715,9 @@ EM→FC 有超過四分之一的查詢在 `2000` 之下拿到的不是完整答�
 
 ---
 
-## 12. 已知限制
+## 13. 已知限制
 
-### 12.1 右腦上傳會回空表（已知，暫不處理）
+### 13.1 右腦上傳會回空表（已知，暫不處理）
 
 EM 資料庫只覆蓋單側腦（質心 x 範圍 −268～68），FC 兩側都有（−435～430）。
 實測 500 顆隨機 FC 神經元，**117 顆（23%）在 EM 側找不到任何候選**；
@@ -553,14 +728,14 @@ EM 資料庫只覆蓋單側腦（質心 x 範圍 −268～68），FC 兩側都�
 目前傳 `True` 會丟 `NotImplementedError`（不會安靜地給錯誤結果）。
 要啟用需要：算 descriptor 與畫圖之前先把 `swc.xyz[:, 0]` 取負，並決定鏡像結果要不要標註在輸出裡。
 
-### 12.2 模型只用單一 fold
+### 13.2 模型只用單一 fold
 
 目前用 `FineTune_miniLR_D1-D6_0`，是 10-fold 交叉驗證的第 0 折。
 對**新上傳的神經元**沒有問題；但對當初落在其他 9 折訓練集裡的標註 pair，
 分數會偏樂觀。要更穩健可以改成 10 個 fold 取平均（成本從 0.1 s 變 1 s，
 還能順便給出不確定度），但目前依討論先用單一模型。
 
-### 12.3 FastAPI 層尚未實際執行
+### 13.3 FastAPI 層尚未實際執行
 
 `app.py` 已完成但目前環境沒有安裝 `fastapi`，所以只做過語法檢查，
 沒有實際啟動測試過。核心服務（`nrn_service/`、`match_cli.py`、`tools/`）
@@ -570,20 +745,20 @@ EM 資料庫只覆蓋單側腦（質心 x 範圍 −268～68），FC 兩側都�
 pip install fastapi uvicorn python-multipart
 ```
 
-### 12.4 跨網域（CORS）尚未設定
+### 13.4 跨網域（CORS）尚未設定
 
 如果前端網頁不是掛在同一個網域，瀏覽器會擋掉對這個服務的請求。
 要在 `app.py` 加上 `CORSMiddleware` 並列出允許的來源網址；
 因為還不知道前端網頁最後會放在哪裡，目前沒有加。見 §4.5。
 
-### 12.5 只能單一 worker
+### 13.5 只能單一 worker
 
 不要用 `uvicorn --workers N`：每個 worker 都會各自載入模型與整個資料庫索引，
 記憶體會乘上 N。要擴充吞吐量請在前面放一層 queue。
 
 ---
 
-## 13. 資料庫目前狀態
+## 14. 資料庫目前狀態
 
 2026-09-06 補齊之後：
 
@@ -602,3 +777,5 @@ pip install fastapi uvicorn python-multipart
 data/view_store/views_{FC,EM}.bin + *_meta.npz      tools/pack_views.py
 data/index/curated_index_{FC,EM}.parquet           tools/build_curated_index.py
 ```
+
+從 SWC 重建上述資料的完整流程見 §9。
