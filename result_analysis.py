@@ -125,8 +125,8 @@ elif test_mode == 'nblast':
     roc_color='darkorange'
     plot_title = 'NBlast Score'
 
-# binary label in y_true(for soft label)
-y_true = np.array([1 if y > 0.5 else 0 for y in y_true])
+# binary label in y_true(for soft label): 專家信心 >= 0.5 為正例
+y_true = np.array([1 if y >= 0.5 else 0 for y in y_true])
 
 # Normalized
 pred_min = np.min(y_pred)  
@@ -216,7 +216,7 @@ def gen_conf_matrix(y_true, y_pred, threshold):
 
     y_pred_binary = []
     for score in y_pred:
-        if score > threshold:
+        if score >= threshold:   # 與 sklearn roc_curve 的門檻定義一致
             y_pred_binary.append(1)
         else:
             y_pred_binary.append(0)
@@ -330,7 +330,7 @@ if test_mode == 'nblast':
 else:
     predict_df_clear = predict_df[['fc_id', 'em_id', 'label', 'model_pred']].copy()
 # 二元化label(for soft label)
-predict_df_clear['bi_label'] = [1 if x > 0.5 else 0 for x in predict_df_clear['label']]
+predict_df_clear['bi_label'] = [1 if x >= 0.5 else 0 for x in predict_df_clear['label']]
 
 grouped = predict_df_clear.groupby('fc_id')
 

@@ -311,7 +311,8 @@ def make_demo_data(n_pos=575, n_neg=644, seed=0):
 # 指標計算  —  複製自 result_analysis.py 的邏輯
 # =============================================================================
 def gen_conf_matrix(y_true, y_pred, threshold):
-    y_bin = (np.asarray(y_pred) > threshold).astype(int)
+    # >= 與 sklearn roc_curve 的門檻定義一致, 報出的指標才會落在 ROC 上選定的那一點
+    y_bin = (np.asarray(y_pred) >= threshold).astype(int)
     cm = confusion_matrix(np.asarray(y_true).tolist(), y_bin.tolist(), labels=[1, 0])
     return y_bin, cm
 
@@ -319,8 +320,8 @@ def gen_conf_matrix(y_true, y_pred, threshold):
 def compute_all_metrics(y_true, y_pred):
     """回傳計算 Fig.5 所需的全部量"""
 
-    # 二值化 soft label
-    y_true = np.array([1 if v > 0.5 else 0 for v in y_true])
+    # 二值化 soft label: 專家信心 >= 0.5 為正例
+    y_true = np.array([1 if v >= 0.5 else 0 for v in y_true])
 
     # min-max normalize
     lo, hi = np.min(y_pred), np.max(y_pred)
@@ -347,8 +348,8 @@ def compute_all_metrics(y_true, y_pred):
         y_bin, cm = gen_conf_matrix(y_true, y_pred, t)
         denom_p = cm[0, 0] + cm[1, 0]     # 模型判為 positive 的總數
         denom_r = cm[0, 0] + cm[0, 1]     # 實際 positive 的總數
-        # threshold = 1.0 時模型不會判任何 positive, precision 在數學上未定義
-        # 依 sklearn precision_recall_curve 的慣例取 1.0
+        # 比較用 >=, threshold = 1.0 時分數最高的樣本仍判為 positive, denom_p 不會是 0;
+        # 保留防呆: 若沒有任何 positive, 依 sklearn precision_recall_curve 的慣例取 1.0
         prec_lst.append(cm[0, 0] / denom_p if denom_p else 1.0)
         rec_lst.append(cm[0, 0] / denom_r if denom_r else 0.0)
         f1_lst.append(f1_score(y_true, y_bin, average=None)[1] if denom_p else 0.0)
@@ -375,7 +376,7 @@ def compute_all_metrics(y_true, y_pred):
 def compute_recall_at_k(df, top_k=5):
     """複製自 result_analysis.py 的 ranking analysis"""
     d = df[['fc_id', 'em_id', 'label', 'model_pred']].copy()
-    d['bi_label'] = [1 if v > 0.5 else 0 for v in d['label']]
+    d['bi_label'] = [1 if v >= 0.5 else 0 for v in d['label']]
 
     groups = {}
     for name, g in d.groupby('fc_id'):
