@@ -25,9 +25,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import study_config as C
 import common as K
 
-SPREAD_FEATURES = ["region_top2", "side_top2", "region_balance21", "side_balance21",
-                   "region_top1", "region_top3_sum", "region_n_above_20pct",
-                   "side_n_above_20pct", "other_fraction", "region_neff_simpson"]
+# 佔比的分母一律為 volume (含 other), 見 s02
+SPREAD_FEATURES = ["regiontot_top2", "sidetot_top2", "regiontot_balance21", "sidetot_balance21",
+                   "regiontot_top1", "regiontot_top3_sum", "regiontot_n_above_20pct",
+                   "sidetot_n_above_20pct", "other_fraction", "regiontot_neff_simpson"]
 SIZE_FEATURE = "cable_length_um"
 MATCH_TOL = np.log(1.25)          # cable 長度容許 +-25 %
 MATCH_TOLS = [1.25, 1.5, 2.0]     # 配對視窗的敏感度掃描

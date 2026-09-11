@@ -73,7 +73,7 @@ def fig1_headline(fc: pd.DataFrame, contrast: pd.DataFrame) -> None:
     rng = np.random.default_rng(C.RANDOM_STATE)
     panels = [("cable_length_um", "Total cable length", "µm", True),
               ("n_branch_points", "Branch points", "count", True),
-              ("side_top2", "Second-compartment share", "fraction of arbor", False),
+              ("sidetot_top2", "Second-compartment share", "fraction of total tracing", False),
               ("arbor_separation", "Two-lobe separation", "centroid dist. / spread", False)]
     fig, axes = plt.subplots(1, 4, figsize=(9.2, 2.9))
     for ax, (f, title, ylab, log) in zip(axes, panels):
@@ -104,7 +104,7 @@ def fig2_rule(fc: pd.DataFrame, rules: pd.DataFrame | None) -> None:
     fig, ax = plt.subplots(figsize=(4.6, 3.6))
     for g in C.GROUP_ORDER:
         d = fc[fc.group == g]
-        ax.scatter(d.cable_length_um, d.side_top2, s=18, marker=MARK[g], color=COL[g],
+        ax.scatter(d.cable_length_um, d.sidetot_top2, s=18, marker=MARK[g], color=COL[g],
                    alpha=0.7, linewidths=0.4, edgecolors="white",
                    label=f"{LABEL[g]}  (n={len(d)})", zorder=3)
     ax.set_xscale("log")
@@ -121,7 +121,7 @@ def fig2_rule(fc: pd.DataFrame, rules: pd.DataFrame | None) -> None:
         ax.text(0.97, 0.04, f"dense-type region\nbalanced acc. {r.balanced_acc_cv_mean:.2f}",
                 transform=ax.transAxes, ha="right", va="bottom", fontsize=7, color=INK2)
     ax.set_xlabel("Total cable length (µm, log scale)", color=INK)
-    ax.set_ylabel("Second-compartment share of the arbor", color=INK)
+    ax.set_ylabel("Second-compartment share of total tracing", color=INK)
     ax.set_title("A two-term inclusion criterion", color=INK)
     ax.legend(loc="upper right", labelcolor=INK2, frameon=True, framealpha=0.92,
               facecolor="white", edgecolor=GRID)
@@ -278,7 +278,7 @@ def main() -> None:
     f = C.OUT / "selection_rule_thresholds.csv"
     if f.exists():
         r = pd.read_csv(f)
-        r = r[r.feature_2 == "side_top2"].sort_values("balanced_acc_cv_mean",
+        r = r[r.feature_2 == "sidetot_top2"].sort_values("balanced_acc_cv_mean",
                                                       ascending=False)
         rules = r if len(r) else None
 

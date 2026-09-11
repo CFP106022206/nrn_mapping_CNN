@@ -4,22 +4,23 @@
       (29 個解剖腦區 x {左, 右}) 的 voxel 數, 外加 `volume` (總量) 與
       `other` (落在所有具名 neuropil 之外的 voxel)。
 輸出: results/neuropil_metrics.csv
+      results/neuropil_profile_region.npy  各腦區佔 volume 的比例 (n x 29)
+      results/neuropil_region_names.csv
 
-每個集中度統計量都算兩種正規化:
+每個集中度統計量都算兩種層級:
   * side 層級 (58 格) -- 一顆同時分布在 mb_4_l 與 mb_4_r 的神經算成兩格
   * region 層級 (29 格) -- 同一顆神經算成一個腦區, 因此統計量衡量的是
     「跨腦區投射」而不是「左右對稱」。
-region 層級才是對應形態學主張 (「dense = 單一 neuropil」對「projection =
-兩個 neuropil」) 的版本。
 
-分母另外分成兩種, 兩種都算 (已驗證 neuropil 總和 + other == volume, 100 % 吻合):
-  * 分母 = 58 個 neuropil 的總和 (排除 other) -- 問的是「落在具名腦區內的那部分
-    arbor 是怎麼分布的」, 前綴 side_ / region_
-  * 分母 = volume (含 other) -- 問的是「佔這顆神經的總體積多少比例」, 前綴
-    sidetot_ / regiontot_
-兩者不等價: other 佔比本身在兩組間就有差 (projection 0.225 vs dense 0.161),
-所以排除 other 會系統性地把 other 較多的那一組的佔比灌大。要主張「佔總體積
-百分之多少」時必須用含 other 的版本。
+分母一律是 volume (= 58 個 neuropil + other, 已驗證 100 % 吻合), 也就是這顆神經
+完整的 tracing 點數。只用具名 neuropil 當分母會系統性地灌大 other 較多那一組的
+佔比 (other 佔比 D1 0.225 vs D2 0.161), 因此不提供那個版本。前綴 sidetot_ /
+regiontot_ 標明分母含 other。
+
+  * 排序類 (top1 / top2 / top3_sum / balance21 / dominance_gap / n_above_*):
+    只在具名 compartment 之間排序 (other 不是一個腦區, 不參與排名), 但除以 volume。
+  * 分布類 (hhi / entropy / neff_*): 把 other 補成額外一格, 整條分布才加總為 1,
+    熵與 HHI 才有定義。
 """
 from __future__ import annotations
 
@@ -33,13 +34,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import study_config as C
 
 
-def concentration_stats(P: np.ndarray, prefix: str, min_share: float) -> dict:
-    """列和為 1 的矩陣 P (n x k) 的集中度 / 分散度描述子。"""
+def concentration_stats(P: np.ndarray, other_share: np.ndarray, prefix: str,
+                        min_share: float) -> dict:
+    """集中度 / 分散度描述子。
+
+    P (n x k): 各具名 compartment 佔 volume 的比例, 列和 = 1 - other_share。
+    """
     S = np.sort(P, axis=1)[:, ::-1]
     p1, p2, p3 = S[:, 0], S[:, 1], S[:, 2]
+    F = np.column_stack([P, other_share])          # 補上 other 一格, 列和 = 1
     with np.errstate(divide="ignore", invalid="ignore"):
-        H = -np.nansum(np.where(P > 0, P * np.log(P), 0.0), axis=1)
-    hhi = (P ** 2).sum(axis=1)
+        H = -np.nansum(np.where(F > 0, F * np.log(F), 0.0), axis=1)
+    hhi = (F ** 2).sum(axis=1)
     return {
         f"{prefix}_top1": p1,
         f"{prefix}_top2": p2,
@@ -87,21 +93,18 @@ def main() -> pd.DataFrame:
 
     tot = V.sum(axis=1)
     ok = (tot > 0) & (volume > 0)
-    # 分母一: 只算落在具名 neuropil 內的部分
-    P = np.divide(V, tot[:, None], out=np.zeros_like(V), where=tot[:, None] > 0)
-    Q = np.divide(R, tot[:, None], out=np.zeros_like(R), where=tot[:, None] > 0)
-    # 分母二: 總體積 (含 other), 對應「佔總體積百分之多少」的說法
+    # 分母 = volume (完整 tracing 點數, 含 other)
     Pt = np.divide(V, volume[:, None], out=np.zeros_like(V), where=volume[:, None] > 0)
     Qt = np.divide(R, volume[:, None], out=np.zeros_like(R), where=volume[:, None] > 0)
+    other_share = np.divide(other, volume, out=np.zeros_like(other), where=volume > 0)
+    assert np.allclose((Pt.sum(axis=1) + other_share)[ok], 1.0), "neuropil 總和 + other != volume"
 
     out = {"neuron_id": fc["neuron_id"], "group": fc["group"],
            "exclusive": fc["exclusive"], "n_pairs": fc["n_pairs"]}
-    out.update(concentration_stats(P, "side", C.MIN_SHARE))
-    out.update(concentration_stats(Q, "region", C.MIN_SHARE))
-    out.update(concentration_stats(Pt, "sidetot", C.MIN_SHARE))
-    out.update(concentration_stats(Qt, "regiontot", C.MIN_SHARE))
+    out.update(concentration_stats(Pt, other_share, "sidetot", C.MIN_SHARE))
+    out.update(concentration_stats(Qt, other_share, "regiontot", C.MIN_SHARE))
 
-    top_region = np.array(regions)[Q.argmax(axis=1)]
+    top_region = np.array(regions)[Qt.argmax(axis=1)]
     lr = np.zeros(V.shape[0])
     for i, r in enumerate(top_region):
         li = npil_cols.index(f"{r}_l") if f"{r}_l" in npil_cols else None
@@ -111,7 +114,7 @@ def main() -> pd.DataFrame:
 
     out.update({
         "top_region": top_region,
-        "second_region": np.array(regions)[np.argsort(Q, axis=1)[:, -2]],
+        "second_region": np.array(regions)[np.argsort(Qt, axis=1)[:, -2]],
         # 主腦區的偏側性: 1 = 完全單側, 0 = 左右對稱
         "top_region_laterality": lr,
         # 重建結果中落在所有具名 neuropil 之外的比例 (通常是纖維束)
@@ -124,10 +127,10 @@ def main() -> pd.DataFrame:
     df = pd.DataFrame(out)
     df = df[ok]
     df.to_csv(C.OUT / "neuropil_metrics.csv", index=False)
-    np.save(C.OUT / "neuropil_profile_region.npy", Q)
+    np.save(C.OUT / "neuropil_profile_region.npy", Qt)
     pd.Series(regions).to_csv(C.OUT / "neuropil_region_names.csv", index=False, header=["region"])
-    print(df.groupby("group")[["region_top1", "region_top2", "regiontot_top1",
-                               "regiontot_top2", "other_fraction"]].median().round(3))
+    print(df.groupby("group")[["regiontot_top1", "regiontot_top2", "sidetot_top2",
+                               "other_fraction"]].median().round(3))
     return df
 
 

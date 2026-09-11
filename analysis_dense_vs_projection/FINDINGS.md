@@ -6,8 +6,8 @@ AUC 為該描述子單獨使用時的可分離度（0.5 = 隨機）；p 為 Mann
 **NBLAST 分數一律為 `run_nblast_official.py` 的輸出**（navis + 官方 `smat.fcwb`，
 dotprops k=5、1 µm 重採樣、雙向平均且自比對正規化）。
 
-**佔比的分母含 `other`**（= `volume`），也就是「佔該神經總重建量的百分之多少」。
-例外是 §2 規則所用的 `side_top2`（分母為具名 neuropil 總和），該處另附含 other 的版本。
+**所有腦區佔比的分母一律含 `other`**（= `volume`，即完整的 tracing 點數），也就是「佔該神經總重建量的百分之多少」。
+程式已不再計算排除 other 的版本。
 
 ---
 
@@ -43,23 +43,28 @@ DFP = dorsofrontal protocerebrum（細分為 SDFP / IDFP）。MB↔DFP 的細胞
 | Cable length, FC | 1 722 µm | **4 817 µm** | **0.905** | 4e-28 |
 | Cable length, EM | 2 318 µm | **6 584 µm** | 0.819 | 2e-26 |
 | Branch points, FC | 74 | **230** | 0.886 | 1e-25 |
-| 第二 compartment 佔比, FC（`side_top2`，分母不含 other） | **0.325** | 0.162 | 0.884 | 5e-25 |
+| 第二 compartment 佔比, FC（`sidetot_top2`） | **0.251** | 0.136 | 0.846 | 1e-20 |
 
 `cable_length`、`n_branch_points`、`n_tips`、`occupied_volume` 相互 Spearman
 **≥ 0.96**，是**同一個大小軸**。扣除 cable 長度後，分支數的殘餘判別力僅 AUC 0.569
 （FC，p = 0.063），且方向相反（D1 每單位 cable 的分支略多）。
 
-**佔位拓撲是第二條獨立軸**：`side_top2` AUC 0.884，依 cable 長度 1:1 配對後
-（±25 %）仍有 **0.808**。組內 log(cable) 與佔位分散度的相關 |ρ| ≤ 0.35。
+**佔位拓撲是第二條獨立軸**：`sidetot_top2` AUC 0.846，依 cable 長度 1:1 配對後
+（±25 %，40 對）仍有 **0.804**。組內 log(cable) 與佔位分散度的相關 |ρ| ≤ 0.30。
 
-**可引用的納入條件**（`s07`，10-fold × 10 重複，門檻在每個訓練 fold 內重擬合）：
-cable ≥ 2 000 µm **且** 第二 compartment 佔比 ≤ 0.32 → balanced accuracy
-**0.881 ± 0.071**（precision 0.91 / recall 0.93）。
+**可引用的納入條件**（`s07`）。數字是「只看一顆 FC 神經，判斷它屬於 D1 或 D2」的交叉驗證
+balanced accuracy（10-fold × 10 重複，門檻在每個訓練 fold 內重擬合，不是擬合準確率）：
 
-> ⚠️ 規則中的 `side_top2` 分母為 58 個具名 neuropil 的總和（**不含** `other`），左右半腦分開計。
-> 若全文統一用「佔總重建量」（含 `other`），應改引 `cable ≥ 2 000 µm 且 sidetot_top2 ≤ 0.244`
-> → **0.861 ± 0.068**（precision 0.905 / recall 0.905），**略低於只用 cable 的 0.871 ± 0.066**。
-> 詳見 `PAPER_SUBSETS_D1_D2.md` §2.3。
+| 規則（判為 D2） | CV balanced accuracy |
+|---|---|
+| **cable ≥ 2 474 µm** | **0.871 ± 0.066** |
+| cable ≥ 2 000 µm 且 `sidetot_top2` ≤ 0.244 | 0.861 ± 0.068（precision 0.905 / recall 0.905） |
+| cable ≥ 2 398 µm 且 `regiontot_top2` ≤ 0.369 | 0.854 ± 0.072 |
+| logistic：cable + `sidetot_top2` + `arbor_separation` | 0.878（AUC 0.934） |
+
+**cable 長度單獨就是最好的明確規則**，加入佔位集中度不會更準。佔位拓撲的價值在於它是
+獨立的第二條軸，不在於提升分類。舊版報告的 `cable ≥ 2 000 µm 且 side_top2 ≤ 0.32` → 0.881
+用的是不含 other 的分母，已停用。詳見 `PAPER_SUBSETS_D1_D2.md` §2.3。
 
 ---
 

@@ -32,14 +32,14 @@
 | 軸 | 代表指標 | D1 | D2 | AUC (FC / EM) |
 |---|---|---|---|---|
 | **大小** | 神經突總長度 cable length | 1 722 µm | **4 817 µm** | 0.905 / 0.819 |
-| **佔位拓撲** | 第二 compartment 佔比（`side_top2`，分母不含 other） | **0.325** | 0.162 | 0.884 |
+| **佔位拓撲** | 第二 compartment 佔總 tracing 比（`sidetot_top2`） | **0.251** | 0.136 | 0.846 |
 
 `cable_length`、`branch_points`、`n_tips`、`occupied_volume` 彼此 Spearman **≥ 0.96**
 ——**是同一條軸，不是四個獨立證據**。扣除 cable 長度後，分支數的殘餘判別力僅
 AUC 0.569（p = 0.063），且方向相反。
 
 佔位拓撲是**獨立**的第二條軸：依 cable 長度 1:1 配對（±25 %）後，第二 compartment
-佔比仍有 AUC **0.808**（全體 0.884）。
+佔比仍有 AUC **0.804**（全體 0.846）。
 
 ### D1 的解剖身分
 
@@ -58,14 +58,17 @@ DFP = dorsofrontal protocerebrum。細胞型別歸屬（MBON / DAN 等）本分�
 
 ### 可引用的納入條件
 
-cable ≥ 2 000 µm **且** 第二 compartment 佔比 ≤ 0.32
-→ 交叉驗證 balanced accuracy **0.881 ± 0.071**（precision 0.91 / recall 0.93）。
-門檻在每個訓練 fold 內重新擬合，不是擬合準確率。
+數字是「只看一顆 FC 神經，判斷它屬於 D1 或 D2」的交叉驗證 balanced accuracy
+（10-fold × 10 重複，門檻在每個訓練 fold 內重新擬合，不是擬合準確率）：
 
-> ⚠️ 規則中的 `side_top2` 分母為 58 個具名 neuropil 的總和（**不含** `other`），左右半腦分開計。
-> 若全文統一用「佔總重建量」（含 `other`），應改引 `cable ≥ 2 000 µm 且 sidetot_top2 ≤ 0.244`
-> → **0.861 ± 0.068**（precision 0.905 / recall 0.905），**略低於只用 cable 的 0.871 ± 0.066**。
-> 詳見 `PAPER_SUBSETS_D1_D2.md` §2.3。
+| 規則（判為 D2） | CV balanced accuracy |
+|---|---|
+| **cable ≥ 2 474 µm** | **0.871 ± 0.066** |
+| cable ≥ 2 000 µm 且第二 compartment 佔比（`sidetot_top2`）≤ 0.244 | 0.861 ± 0.068（precision 0.905 / recall 0.905） |
+
+**cable 長度單獨就是最好的明確規則**；佔位集中度是獨立的軸，但不會讓分類更準。
+舊版的 `cable ≥ 2 000 µm 且 side_top2 ≤ 0.32` → 0.881 用的是不含 other 的分母，已停用。
+詳見 `PAPER_SUBSETS_D1_D2.md` §2.3。
 
 ---
 
@@ -358,7 +361,7 @@ bash analysis_dense_vs_projection/run_all.sh     # 約 12 分鐘
 | 程式 | 產出 / 對應結論 |
 |---|---|
 | `s01_build_neuron_lists.py` | 神經名單。兩組有 3 FC / 14 EM 重疊，組間比較只用互斥名單 |
-| `s02_neuropil_metrics.py` | neuropil 佔位集中度（side / region × 兩種分母） |
+| `s02_neuropil_metrics.py` | neuropil 佔位集中度（side / region；分母一律含 other） |
 | `s03_morphology_metrics.py` | 骨架幾何、多尺度密度、三視圖自我遮蔽（§1、§2 的 EM 密度指標） |
 | `s04_group_contrast.py` | 所有描述子依 AUC 排名 |
 | `s05_size_control.py` | 尺寸配對後佔位訊號是否還在（§1 第二條軸） |
@@ -393,6 +396,9 @@ bash analysis_dense_vs_projection/run_all.sh     # 約 12 分鐘
    48 633 筆 100 % 吻合。`other`（纖維束等）佔比兩組本就不同（D1 0.225 vs
    D2 0.161），排除它會把 `other` 多的那組灌大。「前兩腦區合計」排除 other 時
    AUC 0.716、含 other 時掉到 0.557，**不可作為準則**。
+   現在程式已不再計算排除 other 的版本（舊數字見 commit `dd26660`）。第二 compartment
+   佔比同樣受影響：排除 other 時 AUC 0.884、規則 0.881，含 other 後為 0.846、0.861——
+   **舊版較高的數字是分母造成的**。
 3. **密度指標要掃尺度。** 1 µm 重採樣搭配 2 µm 格子時 cable 幾乎不會重複經過同一格，
    指標飽和在 1 而測不出東西。`s03` 因此掃 4 / 8 / 16 µm 並加上三視圖投影。
 4. **`neuron1x1Coding_Ver2.csv` 只有 FlyCircuit**（48 633 筆全是 FC id），且其數值是

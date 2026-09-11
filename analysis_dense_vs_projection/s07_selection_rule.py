@@ -33,9 +33,9 @@ import study_config as C
 FEATURE_SETS = {
     "A_swc_only": ["cable_length_um", "n_branch_points", "arbor_separation", "span_um"],
     "A_swc_minimal": ["cable_length_um", "arbor_separation"],
-    "B_swc_neuropil": ["cable_length_um", "side_top2", "arbor_separation"],
-    "B_neuropil_only": ["side_top2", "region_balance21", "side_n_above_20pct"],
-    "B_minimal": ["cable_length_um", "side_top2"],
+    "B_swc_neuropil": ["cable_length_um", "sidetot_top2", "arbor_separation"],
+    "B_neuropil_only": ["sidetot_top2", "regiontot_balance21", "sidetot_n_above_20pct"],
+    "B_minimal": ["cable_length_um", "sidetot_top2"],
 }
 
 
@@ -168,13 +168,10 @@ def main() -> pd.DataFrame:
     rules = [
         single_threshold_rule(df, "cable_length_um", ">="),
         single_threshold_rule(df, "n_branch_points", ">="),
-        single_threshold_rule(df, "side_top2", "<="),
-        conjunctive_rule(df, "cable_length_um", "side_top2", ">=", "<="),
-        # 同一條規則, 但佔比的分母含 other (= 佔總重建量)。side_top2 的分母只算
-        # 具名 neuropil; 論文若統一用「佔總重建量」的定義, 應引用這一條。
+        single_threshold_rule(df, "sidetot_top2", "<="),
         conjunctive_rule(df, "cable_length_um", "sidetot_top2", ">=", "<="),
-        conjunctive_rule(df, "cable_length_um", "region_top2", ">=", "<="),
-        conjunctive_rule(df, "n_branch_points", "side_top2", ">=", "<="),
+        conjunctive_rule(df, "cable_length_um", "regiontot_top2", ">=", "<="),
+        conjunctive_rule(df, "n_branch_points", "sidetot_top2", ">=", "<="),
         conjunctive_rule(df, "cable_length_um", "arbor_separation", ">=", "<="),
     ]
     rdf = pd.DataFrame(rules).sort_values("balanced_acc_cv_mean", ascending=False)

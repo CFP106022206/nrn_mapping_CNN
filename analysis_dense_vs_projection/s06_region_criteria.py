@@ -4,11 +4,9 @@
   (1) D5 是不是主要橫跨「兩個特定腦區」? D2+D6 是不是主要集中在「單一腦區」?
   (2) 如果是, 佔位比例的門檻該訂在哪裡?
 
-佔比一律同時給兩種分母 (已驗證 neuropil 總和 + other == volume):
-  share_*        分母 = 58 個 neuropil 的總和 (排除 other)
-  share_*_total  分母 = volume (含 other) -- 「佔總體積百分之多少」用這個
-訂門檻時以 _total 版本為準, 因為 other 佔比本身兩組就有差 (0.225 vs 0.161),
-排除 other 會把 other 多的那一組灌大。
+佔比的分母一律是 volume (= 58 個 neuropil + other, 已驗證完全相等), 即完整的
+tracing 點數, 欄位以 _total 結尾標明。不提供排除 other 的版本: other 佔比本身兩組
+就有差 (0.225 vs 0.161), 排除它會把 other 多的那一組灌大。
 
 輸出: results/region_identity.csv       每顆 FC 神經的前兩名腦區與佔比
       results/region_top1_counts.csv    各組主腦區的出現次數
@@ -67,13 +65,11 @@ def build() -> pd.DataFrame:
         "region_1": np.array(regions)[r1], "region_2": np.array(regions)[r2],
         "vox_1": v1, "vox_2": v2, "vox_neuropil": tot,
         "vox_total": volume, "vox_other": other, "other_frac": other / volume,
-        # 分母 = 具名 neuropil 總和 (排除 other)
-        "share_1": v1 / tot, "share_2": v2 / tot, "share_12": (v1 + v2) / tot,
-        # 分母 = 總體積 (含 other) -- 對應「佔總體積百分之多少」
+        # 分母 = volume (完整 tracing 點數, 含 other)
         "share_1_total": v1 / volume, "share_2_total": v2 / volume,
         "share_12_total": (v1 + v2) / volume,
         "side_1": np.array(npil_cols)[s1], "side_2": np.array(npil_cols)[s2],
-        "side_share_1": sv1 / tot, "side_share_2": sv2 / tot,
+        "side_share_1_total": sv1 / volume, "side_share_2_total": sv2 / volume,
         "top2_sides_same_region": same_region_lr,
     })
     df["region_pair"] = [" + ".join(sorted([a, b])) for a, b in zip(df.region_1, df.region_2)]
@@ -119,12 +115,12 @@ def threshold_scan(df: pd.DataFrame) -> pd.DataFrame:
     proj = df[df.group == C.GROUP_PROJ]
     rows = []
 
-    for col in ("share_1", "share_1_total"):
+    for col in ("share_1_total",):
         for t in np.arange(0.30, 0.86, 0.05):
             rows.append({"rule": f"{col} >= {t:.2f}", "target": C.GROUP_DENSE,
                          "coverage_of_target": (dense[col] >= t).mean(),
                          "false_intake_from_other": (proj[col] >= t).mean()})
-    for col in ("share_2", "share_2_total"):
+    for col in ("share_2_total",):
         for t in np.arange(0.10, 0.46, 0.02):
             rows.append({"rule": f"{col} >= {t:.2f}", "target": C.GROUP_PROJ,
                          "coverage_of_target": (proj[col] >= t).mean(),
@@ -132,7 +128,7 @@ def threshold_scan(df: pd.DataFrame) -> pd.DataFrame:
             rows.append({"rule": f"{col} <= {t:.2f}", "target": C.GROUP_DENSE,
                          "coverage_of_target": (dense[col] <= t).mean(),
                          "false_intake_from_other": (proj[col] <= t).mean()})
-    for col in ("share_12", "share_12_total"):
+    for col in ("share_12_total",):
         for t in np.arange(0.50, 1.01, 0.05):
             rows.append({"rule": f"{col} >= {t:.2f}", "target": C.GROUP_PROJ,
                          "coverage_of_target": (proj[col] >= t).mean(),
@@ -151,8 +147,8 @@ def threshold_scan(df: pd.DataFrame) -> pd.DataFrame:
 
     print("\n" + "=" * 78)
     print("(4) 各佔位量的分位數 (供訂門檻)")
-    for f in ("share_1", "share_1_total", "share_2", "share_2_total",
-              "share_12", "share_12_total", "other_frac", "vox_1", "vox_total"):
+    for f in ("share_1_total", "share_2_total", "share_12_total",
+              "other_frac", "vox_1", "vox_total"):
         print(f"\n  {f}")
         print(df.groupby("group")[f].describe(
             percentiles=[.05, .10, .25, .5, .75, .90, .95])

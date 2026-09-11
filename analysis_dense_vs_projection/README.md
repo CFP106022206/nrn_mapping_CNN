@@ -34,7 +34,7 @@ D1 與 D2 有 3 個 FC、14 個 hemibrain 神經重疊; 所有組間比較都只
 |---|---|
 | `run_nblast_official.py` | `nblast_official.csv` — **獨立於主流程**, 需 navis。用官方 `smat.fcwb` 與雙向平均重算 898 組標註配對 |
 | `s01_build_neuron_lists.py` | `neuron_roster.csv`, `pairs.csv` |
-| `s02_neuropil_metrics.py` | `neuropil_metrics.csv` — 佔位集中度, side/region × 兩種分母 |
+| `s02_neuropil_metrics.py` | `neuropil_metrics.csv` — 佔位集中度, side/region, 分母一律含 other |
 | `s03_morphology_metrics.py` | `morphology_metrics.csv` — 骨架幾何、多尺度密度、三視圖自我遮蔽 |
 | `s04_group_contrast.py` | `contrast_*.csv` — 每個描述子的 AUC / Cliff's δ / 最佳切點 |
 | `s05_size_control.py` | 尺寸配對後的 neuropil 訊號與敏感度掃描 |
@@ -53,7 +53,7 @@ D1 與 D2 有 3 個 FC、14 個 hemibrain 神經重疊; 所有組間比較都只
 * **佔比的分母要含 `other`。** 檔案中 58 個 neuropil 總和 + `other` = `volume`,
   48633 筆 100 % 吻合。`other` (纖維束等) 佔比兩組本就不同 (D1 0.225 vs D2 0.161),
   排除它會把 `other` 多的那組灌大。「前兩腦區合計」在排除 other 時 AUC 0.716、
-  含 other 時掉到 0.557, 不可作為準則。
+  含 other 時掉到 0.557, 不可作為準則。程式已不再計算排除 other 的版本。
 * **密度指標要掃尺度。** 1 µm 重採樣搭配 2 µm 格子時, cable 幾乎不會重複經過同一格,
   指標飽和在 1 而測不出東西。`s03` 因此掃 4/8/16 µm 並加上三視圖投影。
 * **NBLAST 分數只用 `run_nblast_official.py` 的輸出。** repository 內原有兩套分數

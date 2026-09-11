@@ -26,9 +26,9 @@
 
 ### B_swc_neuropil
 |--- cable_length_um <= 2445.79
-|   |--- side_top2 <= 0.28
+|   |--- cable_length_um <= 2102.41
 |   |   |--- class: 0
-|   |--- side_top2 >  0.28
+|   |--- cable_length_um >  2102.41
 |   |   |--- class: 0
 |--- cable_length_um >  2445.79
 |   |--- arbor_separation <= 3.82
@@ -38,27 +38,27 @@
   (class 1 = dense; in-sample balanced acc 0.874)
 
 ### B_neuropil_only
-|--- side_top2 <= 0.30
-|   |--- side_top2 <= 0.22
+|--- sidetot_top2 <= 0.24
+|   |--- sidetot_top2 <= 0.16
 |   |   |--- class: 1
-|   |--- side_top2 >  0.22
+|   |--- sidetot_top2 >  0.16
 |   |   |--- class: 1
-|--- side_top2 >  0.30
-|   |--- side_top2 <= 0.32
+|--- sidetot_top2 >  0.24
+|   |--- regiontot_balance21 <= 0.86
 |   |   |--- class: 0
-|   |--- side_top2 >  0.32
+|   |--- regiontot_balance21 >  0.86
 |   |   |--- class: 0
-  (class 1 = dense; in-sample balanced acc 0.811)
+  (class 1 = dense; in-sample balanced acc 0.749)
 
 ### B_minimal
 |--- cable_length_um <= 2445.79
-|   |--- side_top2 <= 0.28
+|   |--- cable_length_um <= 2102.41
 |   |   |--- class: 0
-|   |--- side_top2 >  0.28
+|   |--- cable_length_um >  2102.41
 |   |   |--- class: 0
 |--- cable_length_um >  2445.79
-|   |--- side_top2 <= 0.29
+|   |--- sidetot_top2 <= 0.23
 |   |   |--- class: 1
-|   |--- side_top2 >  0.29
+|   |--- sidetot_top2 >  0.23
 |   |   |--- class: 1
   (class 1 = dense; in-sample balanced acc 0.874)
