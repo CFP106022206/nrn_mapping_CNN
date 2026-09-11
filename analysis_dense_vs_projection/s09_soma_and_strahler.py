@@ -190,8 +190,8 @@ def load_official_scores() -> pd.DataFrame:
     d["group"] = d["group"].map(GROUP_MAP)
     d = d.rename(columns={"nblast_official": "score"})
     # conf 是專家信心 (0-1); label 是二值化後的真/假, 與
-    # result_analysis_make_figure.py 的 compute_all_metrics() 一致 (>0.5 為真)
-    d["label"] = (d["conf"] > 0.5).astype(int)
+    # result_analysis_make_figure.py 的 compute_all_metrics() 一致 (專家信心 >= 0.5 為真)
+    d["label"] = (d["conf"] >= C.POS_CONF).astype(int)
     return d.dropna(subset=["score"])
 
 

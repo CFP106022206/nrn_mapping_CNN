@@ -79,7 +79,7 @@ def nblast_separability() -> pd.DataFrame:
     d0 = pd.read_csv(f)
     d0["group"] = d0["group"].map({"D1_projection": C.GROUP_PROJ,
                                    "D2_dense": C.GROUP_DENSE})
-    d0["label"] = (d0["conf"] > 0.5).astype(int)
+    d0["label"] = (d0["conf"] >= C.POS_CONF).astype(int)
     rows = []
     for grp, d in d0.groupby("group"):
         pos = d.loc[d.label == 1, "nblast_official"].to_numpy(float)

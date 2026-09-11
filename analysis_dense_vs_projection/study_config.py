@@ -33,4 +33,5 @@ META_COLS = ["volume", "other"]
 VOXEL_UM = 2.0          # 佔位/密度指標所用的 voxel 邊長 (um)
 RESAMPLE_UM = 1.0       # 點雲類指標的骨架重採樣步長 (um)
 MIN_SHARE = 0.05        # 一個 neuropil 佔到 arbor 的 5 % 以上才算數
+POS_CONF = 0.5          # 專家信心 (0-1) >= 此值為正例; 與論文和 result_analysis_make_figure.py 一致
 RANDOM_STATE = 0

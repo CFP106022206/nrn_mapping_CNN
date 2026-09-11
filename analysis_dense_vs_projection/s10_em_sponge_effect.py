@@ -47,8 +47,8 @@ import common as K
 
 GROUP_MAP = {"D1_projection": C.GROUP_PROJ, "D2_dense": C.GROUP_DENSE}
 # 主要密度指標: 凸包密度 = 總 cable / 凸包體積。海綿效應需要「線材密」與「範圍小」
-# 同時成立, 凸包密度把兩者合在一起量, 因此預測力最強 (rho +0.639 vs revisit 的
-# +0.574)。revisit_r16um 只量「實際佔到的空間有多擠」, 不含形狀資訊, 作為不依賴
+# 同時成立, 凸包密度把兩者合在一起量, 因此預測力最強 (rho +0.634 vs revisit 的
+# +0.585)。revisit_r16um 只量「實際佔到的空間有多擠」, 不含形狀資訊, 作為不依賴
 # 凸包假設的次要證據。
 PRIMARY_FEAT = "cable_per_hull_um2"
 SECONDARY_FEAT = "revisit_r16um"
@@ -66,7 +66,7 @@ def load() -> pd.DataFrame:
     d["fc_id"] = d["fc_id"].astype(str)
     d["em_id"] = d["em_id"].astype(str)
     d["group"] = d["group"].map(GROUP_MAP)
-    d["label"] = (d["conf"] > 0.5).astype(int)
+    d["label"] = (d["conf"] >= C.POS_CONF).astype(int)
     d = d.rename(columns={"nblast_official": "score"}).dropna(subset=["score"])
 
     m = pd.read_csv(C.OUT / "morphology_metrics.csv")
@@ -339,7 +339,7 @@ def orphan_points(d: pd.DataFrame, cap: int = 6000) -> pd.DataFrame:
         s = r[(r.group == g) & (r.label == 0)]
         rho, p = stats.spearmanr(s.frac_nn_gt10, s.score)
         print(f"    {g:11s} rho {rho:+.3f} (p {p:.1e}, n={len(s)})")
-    print("  -> D1 的非配對根本不在同一個位置 (NN 中位 ~44 µm), 分數因此一律很負;"
+    print("  -> D1 的非配對根本不在同一個位置 (NN 中位 ~45 µm), 分數因此一律很負;"
           "\n     D2 的非配對與 query 空間重疊 (NN 中位 ~9 µm, 接近真配對的 ~6 µm),"
           "\n     NBLAST 必須只靠形狀分辨, 海綿效應才在此發動")
 
@@ -357,10 +357,10 @@ def orphan_points(d: pd.DataFrame, cap: int = 6000) -> pd.DataFrame:
         print(f"    {g:11s} {len(s):>4} {a_nb:11.3f} {a_or:12.3f}"
               f"   rho {raw:+.3f} -> {resid:+.3f}")
     print("  -> 一個純量 (query 有多少點在 target 10 µm 內找不到近鄰) 幾乎複製了"
-          "\n     NBLAST 的 AUC (D1 0.958 vs 0.967; D2 0.805 vs 0.815)。控制它之後"
-          "\n     NBLAST 的鑑別力從 +0.803 掉到 +0.221 (D1) / +0.534 掉到 +0.165 (D2)。"
+          "\n     NBLAST 的 AUC (D1 0.942 vs 0.954; D2 0.819 vs 0.834)。控制它之後"
+          "\n     NBLAST 的鑑別力從 +0.783 掉到 +0.239 (D1) / +0.574 掉到 +0.202 (D2)。"
           "\n     在本資料上 NBLAST 一階近似就是在量『空間有沒有重疊』, 形狀只是二階。"
-          "\n     D1 的 0.967 因此主要是負例挑得遠所送的, 不是形狀鑑別力的證據。")
+          "\n     D1 的 0.954 因此主要來自非配對候選在空間上本來就離得遠, 不是形狀鑑別力的證據。")
     return r
 
 
@@ -428,8 +428,8 @@ def _partial_spearman(x, y, z):
 def fc_side_check(d: pd.DataFrame, orph: pd.DataFrame | None = None) -> pd.DataFrame:
     """FC 側也有海綿效應嗎? 為什麼主要證據仍然掛在 EM 上?
 
-    改用凸包密度後 FC 側不再是可忽略的 (dense/假配對 rho +0.500)。本區塊釐清
-    它是真的獨立效應, 還是被 EM 帶出來的 -- 兩側密度本身相關 +0.52 (prescreening
+    改用凸包密度後 FC 側不再是可忽略的 (dense/假配對 rho +0.496)。本區塊釐清
+    它是真的獨立效應, 還是被 EM 帶出來的 -- 兩側密度本身相關 +0.50 (prescreening
     會把形態相近的送作堆)。四個檢驗:
       a. 偏相關: 控制另一側後各自還剩多少
       b. 秩迴歸: 兩側同時進模型的標準化係數比
@@ -528,7 +528,7 @@ def fc_side_check(d: pd.DataFrame, orph: pd.DataFrame | None = None) -> pd.DataF
                     tag = f"{g[:4]}/{'真' if lab else '假'}"
                     print(f"      {tag:14s} {name:16s} {pe:+8.3f} {pf:+8.3f}"
                           f"  {'EM' if abs(pe) > abs(pf) else 'FC'}")
-        print("      -> forward 時 FC 的獨立貢獻只有 +0.12, 換成 inverse 就升到 +0.33;"
+        print("      -> forward 時 FC 的獨立貢獻只有 +0.13, 換成 inverse 就升到 +0.33;"
               "\n         EM 則從 +0.58 掉到 +0.35。海綿效應是 target 端的性質。")
     else:
         print("\n  (略過 (d): 缺 include_inverse 檔)")
@@ -563,17 +563,17 @@ def fc_side_check(d: pd.DataFrame, orph: pd.DataFrame | None = None) -> pd.DataF
                     print(f"      {tag:14s} {side.upper():>4} {raw:+8.3f} {cf:+8.3f}"
                           f" {cr:+8.3f} {stage1:+12.3f}")
         print("      -> D2 假配對呈現雙重解離: EM 密度的效應被 orphan_fwd 吃掉"
-              "\n         (+0.640 -> +0.114) 但 orphan_rev 完全動不了它 (+0.618);"
-              "\n         FC 密度剛好相反 (+0.502 -> +0.225 被 orphan_rev 吃掉,"
-              "\n         orphan_fwd 只降到 +0.348)。每一側的密度都只透過"
+              "\n         (+0.635 -> +0.114) 但 orphan_rev 完全動不了它 (+0.633);"
+              "\n         FC 密度剛好相反 (+0.498 -> +0.243 被 orphan_rev 吃掉,"
+              "\n         orphan_fwd 只降到 +0.344)。每一側的密度都只透過"
               "\n         「自己當 target 那個方向的孤兒率」發揮作用 -- 這正是"
               "\n         海綿效應的因果鏈, 而且證實它是 target 端的性質。")
 
     out = pd.DataFrame(rows)
     out.to_csv(C.OUT / "sponge_fc_side.csv", index=False)
-    print("\n  結論: FC 側有同樣機制但被兩件事壓住 -- 動態範圍窄 (P90/P10 3.9x vs"
-          "\n  EM 9.2x), 且共同區間內 EM 仍以 +0.44 對 +0.15 勝出。D1 的 FC 側是"
-          "\n  相反號 (-0.61): 那是孤兒點效應, 不是海綿 (見 (7))。")
+    print("\n  結論: FC 側有同樣機制但被兩件事壓住 -- 動態範圍窄 (P90/P10 3.5x vs"
+          "\n  EM 9.7x), 且共同區間內 EM 仍以 +0.43 對 +0.16 勝出。D1 的 FC 側是"
+          "\n  相反號 (-0.62): 那是孤兒點效應, 不是海綿 (見 (7))。")
     return out
 
 

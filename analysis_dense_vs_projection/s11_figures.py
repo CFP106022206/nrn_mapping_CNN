@@ -29,7 +29,7 @@ COL = {C.GROUP_PROJ: "#2a78d6", C.GROUP_DENSE: "#eb6834"}
 MARK = {C.GROUP_PROJ: "o", C.GROUP_DENSE: "s"}
 LABEL = {C.GROUP_PROJ: "Projection-type (D1)", C.GROUP_DENSE: "Dense-type (D2)"}
 INK, INK2, GRID, NEUTRAL = "#0b0b0b", "#52514e", "#d9d8d4", "#8c8b85"
-# fig5 的橫軸: 凸包密度是主指標 (rho +0.639); 改成 "revisit_r16um" 可畫次要證據版
+# fig5 的橫軸: 凸包密度是主指標 (rho +0.634); 改成 "revisit_r16um" 可畫次要證據版
 DENSITY = "cable_per_hull_um2"
 
 plt.rcParams.update({
@@ -61,7 +61,7 @@ def official_scores() -> pd.DataFrame:
     d = pd.read_csv(C.OUT / "nblast_official.csv")
     d["group"] = d["group"].map({"D1_projection": C.GROUP_PROJ,
                                  "D2_dense": C.GROUP_DENSE})
-    d["label"] = (d["conf"] > 0.5).astype(int)
+    d["label"] = (d["conf"] >= C.POS_CONF).astype(int)
     d["em_id"] = d["em_id"].astype(str)
     d["fc_id"] = d["fc_id"].astype(str)
     return d
@@ -224,8 +224,8 @@ def fig4_soma_distance() -> None:
 def fig5_em_sponge() -> None:
     """只畫 D2。
 
-    D1 的曲線是平的, 但那是因為 D1 的非配對是人工挑的、空間上離得遠 (query 點
-    的最近鄰中位 44 µm, D2 只有 9 µm), 並排會讓讀者誤以為 D1 本質上比較容易。
+    D1 的曲線是平的, 因為 D1 的非配對候選在空間上本來就離得遠 (query 點
+    的最近鄰中位 45 µm, D2 只有 9 µm), 海綿效應沒有空間接觸就不會發動, 並排只會多一條沒有資訊的平線。
     """
     d = official_scores()
     m = pd.read_csv(C.OUT / "morphology_metrics.csv")

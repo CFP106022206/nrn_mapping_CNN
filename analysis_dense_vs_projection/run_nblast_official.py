@@ -48,7 +48,7 @@ OUT = Path(__file__).resolve().parent / "results"
 LABEL_DIR = ROOT / "labeled_info"
 
 # 每個 sub dataset 的人工標註配對來源。這些檔案的 `label` 欄是專家信心 (0-1),
-# 不是二值標籤; 二值化留給下游 (>0.5 為真), 與 result_analysis_make_figure.py
+# 不是二值標籤; 二值化留給下游 (專家信心 >= 0.5 為真), 與 result_analysis_make_figure.py
 # 的 compute_all_metrics() 一致。
 PAIR_SOURCES = {
     "D1_projection": [LABEL_DIR / "D5_conf.csv"],

@@ -26,6 +26,7 @@ python3 s07_selection_rule.py          # 交叉驗證的納入條件, ~3 min
 python3 s08_expert_and_nblast.py       # 專家信心 + 官方 NBLAST 可分離度
 python3 s09_soma_and_strahler.py       # soma 距離、Strahler 稀釋、cable 分箱
 python3 s10_em_sponge_effect.py        # hemibrain 海綿效應 (NBLAST 失效的主因)
+python3 s12_cnn_sponge_effect.py       # MorphoMatcher 並排: 海綿效應是否為 NBLAST 特有
 python3 s11_figures.py                 # 論文用圖 fig1-fig5
 
 echo
