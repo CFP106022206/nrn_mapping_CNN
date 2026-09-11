@@ -7,6 +7,7 @@ AUC 為該描述子單獨使用時的可分離度（0.5 = 隨機）；p 為 Mann
 dotprops k=5、1 µm 重採樣、雙向平均且自比對正規化）。
 
 **佔比的分母含 `other`**（= `volume`），也就是「佔該神經總重建量的百分之多少」。
+例外是 §2 規則所用的 `side_top2`（分母為具名 neuropil 總和），該處另附含 other 的版本。
 
 ---
 
@@ -19,14 +20,16 @@ D1 以蕈狀體為錨點人工標定；D2 其後以 stage-1 prescreening（`cand
 
 | 條件 | D1 (n=103) | D2 對照 (n=147) |
 |---|---|---|
-| `mb_4` 或 `dfp_5` 在前兩名腦區 | **100.0 %** | 51.0 % |
+| **主腦區（佔比最大者）為 MB 或 DFP** | **98.1 %** | 34.0 % |
+| 　其中主腦區為 MB | 61.2 % | **0.0 %** |
+| `mb_4` 或 `dfp_5` 在前兩名腦區 | 100.0 % | 51.0 % |
 | `mb_4` 在前兩名 | 97.1 % | 15.0 % |
-| **`mb_4` 與 `dfp_5` 各佔總體積 ≥ 5 %** | **92.2 %** | 21.8 % |
+| `mb_4` 與 `dfp_5` 各佔總體積 ≥ 5 % | 92.2 % | 21.8 % |
 | 前兩名剛好是 {`mb_4`, `dfp_5`} | 85.4 % | 13.6 % |
 | 主腦區種類數 | **4** | **12** |
 
-D1 中位佔比：`mb_4` 34.8 %、`dfp_5` 31.4 %、合計 68.4 %。93.2 % 為同側投射
-（非跨半腦）。**注意**：仍有 8.7 % 的 D1 第二腦區佔比 < 10 %，不能說「全部都跨兩腦區」。
+D1 中位佔比：`mb_4` 34.8 %、`dfp_5` 31.4 %、合計 68.4 %。前兩名 compartment 在同一半腦者
+90.3 %（D2 82.3 %，差距不大）。**注意**：仍有 8.7 % 的 D1 第二腦區佔比 < 10 %，不能說「全部都跨兩腦區」。
 
 DFP = dorsofrontal protocerebrum（細分為 SDFP / IDFP）。MB↔DFP 的細胞型別歸屬
 （MBON / DAN 等）本分析無法判定，需另行確認。
@@ -40,7 +43,7 @@ DFP = dorsofrontal protocerebrum（細分為 SDFP / IDFP）。MB↔DFP 的細胞
 | Cable length, FC | 1 722 µm | **4 817 µm** | **0.905** | 4e-28 |
 | Cable length, EM | 2 318 µm | **6 584 µm** | 0.819 | 2e-26 |
 | Branch points, FC | 74 | **230** | 0.886 | 1e-25 |
-| 第二 compartment 佔比, FC | **0.325** | 0.162 | 0.884 | 5e-25 |
+| 第二 compartment 佔比, FC（`side_top2`，分母不含 other） | **0.325** | 0.162 | 0.884 | 5e-25 |
 
 `cable_length`、`n_branch_points`、`n_tips`、`occupied_volume` 相互 Spearman
 **≥ 0.96**，是**同一個大小軸**。扣除 cable 長度後，分支數的殘餘判別力僅 AUC 0.569
@@ -52,6 +55,11 @@ DFP = dorsofrontal protocerebrum（細分為 SDFP / IDFP）。MB↔DFP 的細胞
 **可引用的納入條件**（`s07`，10-fold × 10 重複，門檻在每個訓練 fold 內重擬合）：
 cable ≥ 2 000 µm **且** 第二 compartment 佔比 ≤ 0.32 → balanced accuracy
 **0.881 ± 0.071**（precision 0.91 / recall 0.93）。
+
+> ⚠️ 規則中的 `side_top2` 分母為 58 個具名 neuropil 的總和（**不含** `other`），左右半腦分開計。
+> 若全文統一用「佔總重建量」（含 `other`），應改引 `cable ≥ 2 000 µm 且 sidetot_top2 ≤ 0.244`
+> → **0.861 ± 0.068**（precision 0.905 / recall 0.905），**略低於只用 cable 的 0.871 ± 0.066**。
+> 詳見 `PAPER_SUBSETS_D1_D2.md` §2.3。
 
 ---
 

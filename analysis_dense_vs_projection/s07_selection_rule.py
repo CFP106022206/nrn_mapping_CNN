@@ -170,6 +170,9 @@ def main() -> pd.DataFrame:
         single_threshold_rule(df, "n_branch_points", ">="),
         single_threshold_rule(df, "side_top2", "<="),
         conjunctive_rule(df, "cable_length_um", "side_top2", ">=", "<="),
+        # 同一條規則, 但佔比的分母含 other (= 佔總重建量)。side_top2 的分母只算
+        # 具名 neuropil; 論文若統一用「佔總重建量」的定義, 應引用這一條。
+        conjunctive_rule(df, "cable_length_um", "sidetot_top2", ">=", "<="),
         conjunctive_rule(df, "cable_length_um", "region_top2", ">=", "<="),
         conjunctive_rule(df, "n_branch_points", "side_top2", ">=", "<="),
         conjunctive_rule(df, "cable_length_um", "arbor_separation", ">=", "<="),

@@ -32,7 +32,7 @@
 | 軸 | 代表指標 | D1 | D2 | AUC (FC / EM) |
 |---|---|---|---|---|
 | **大小** | 神經突總長度 cable length | 1 722 µm | **4 817 µm** | 0.905 / 0.819 |
-| **佔位拓撲** | 第二 compartment 佔總體積比 | **0.325** | 0.162 | 0.884 |
+| **佔位拓撲** | 第二 compartment 佔比（`side_top2`，分母不含 other） | **0.325** | 0.162 | 0.884 |
 
 `cable_length`、`branch_points`、`n_tips`、`occupied_volume` 彼此 Spearman **≥ 0.96**
 ——**是同一條軸，不是四個獨立證據**。扣除 cable 長度後，分支數的殘餘判別力僅
@@ -45,11 +45,13 @@ AUC 0.569（p = 0.063），且方向相反。
 
 | 條件 | D1 (n=103) | D2 對照 (n=147) |
 |---|---|---|
-| `mb_4` 或 `dfp_5` 在前兩名腦區 | **100.0 %** | 51.0 % |
-| **`mb_4` 與 `dfp_5` 各佔總體積 ≥ 5 %** | **92.2 %** | 21.8 % |
+| **主腦區（佔比最大者）為 MB 或 DFP** | **98.1 %** | 34.0 % |
+| 　其中主腦區為 MB | 61.2 % | **0.0 %** |
+| `mb_4` 或 `dfp_5` 在前兩名腦區 | 100.0 % | 51.0 % |
+| `mb_4` 與 `dfp_5` 各佔總體積 ≥ 5 % | 92.2 % | 21.8 % |
 | 主腦區種類數 | **4** | **12** |
 
-D1 中位佔比：MB 34.8 %、DFP 31.4 %、合計 68.4 %；93.2 % 為同側投射。
+D1 中位佔比：MB 34.8 %、DFP 31.4 %、合計 68.4 %；前兩名 compartment 在同一半腦者 90.3 %（D2 82.3 %，差距不大）。
 DFP = dorsofrontal protocerebrum。細胞型別歸屬（MBON / DAN 等）本分析無法判定。
 
 > ⚠️ 仍有 8.7 % 的 D1 第二腦區佔比 < 10 %，**不能**說「全部都跨兩腦區」。
@@ -59,6 +61,11 @@ DFP = dorsofrontal protocerebrum。細胞型別歸屬（MBON / DAN 等）本分�
 cable ≥ 2 000 µm **且** 第二 compartment 佔比 ≤ 0.32
 → 交叉驗證 balanced accuracy **0.881 ± 0.071**（precision 0.91 / recall 0.93）。
 門檻在每個訓練 fold 內重新擬合，不是擬合準確率。
+
+> ⚠️ 規則中的 `side_top2` 分母為 58 個具名 neuropil 的總和（**不含** `other`），左右半腦分開計。
+> 若全文統一用「佔總重建量」（含 `other`），應改引 `cable ≥ 2 000 µm 且 sidetot_top2 ≤ 0.244`
+> → **0.861 ± 0.068**（precision 0.905 / recall 0.905），**略低於只用 cable 的 0.871 ± 0.066**。
+> 詳見 `PAPER_SUBSETS_D1_D2.md` §2.3。
 
 ---
 
@@ -450,5 +457,6 @@ bash analysis_dense_vs_projection/run_all.sh     # 約 12 分鐘
 
 - `README.md`——輸入資料、流程對照表、方法警告
 - `FINDINGS.md`——全部數字與否證清單（本文件的詳細版）
-- `results/`——39 個結果 CSV
+- `PAPER_SUBSETS_D1_D2.md`——論文 D1 / D2 小節的定義、標題與用詞依據
+- `results/`——40 個結果 CSV
 - `results/figures/`——fig1–fig5，PDF（向量，投稿用）+ PNG（300 dpi）
