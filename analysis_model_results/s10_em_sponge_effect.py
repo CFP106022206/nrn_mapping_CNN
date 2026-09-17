@@ -18,6 +18,7 @@ NBLAST 的計分是: 對 query 的每個點, 找 target 中最近的點, 由 (�
       也說明海綿效應為何只在 D2 發動 -- D1 的非配對根本不在同一個位置
   (8) 凸包密度的穩健性: 剔除最遠的 1/5/10% cable 後結論是否不變
   (9) FC 側檢驗: 效應是不是 EM 獨有的 (偏相關 / 秩迴歸 / 共同密度區間 / 方向檢驗)
+ (10) ⭐ 關鍵實驗: 有效密度 -- query 所在空間裡的 target 密度, D2 滿足而 D1 不滿足
 
 分數一律取自 results/nblast_official.csv (run_nblast_official.py, navis + 官方
 smat.fcwb, 雙向平均且已自比對正規化)。
@@ -30,6 +31,7 @@ smat.fcwb, 雙向平均且已自比對正規化)。
       results/sponge_orphan_points.csv    孤兒點比例
       results/sponge_hull_robustness.csv  剔除離群 cable 後的凸包密度
       results/sponge_fc_side.csv          FC 側的偏相關 / 秩迴歸 / 方向檢驗
+      results/sponge_effective_density.csv 關鍵實驗: 每組配對的有效密度
 """
 from __future__ import annotations
 
@@ -577,6 +579,116 @@ def fc_side_check(d: pd.DataFrame, orph: pd.DataFrame | None = None) -> pd.DataF
     return out
 
 
+# ------------------------------------------------------------------ (10) ----
+def effective_density(d: pd.DataFrame, orph: pd.DataFrame | None = None) -> pd.DataFrame:
+    """⭐ 關鍵實驗: 有效密度 -- query 所在的空間裡, target 有多密。
+
+    海綿效應要兩件事同時成立: target 密, 而且密在 query 所在的位置。只看 target 自身的
+    凸包密度會得到錯誤的方向 (D1 的 EM 其實比 D2 更密)。把同一個密度定義 (cable 長度 /
+    凸包體積) 改成在 query 的凸包內量 target, 位置與密度就合成一個數:
+
+        有效密度 = 落在 FC query 凸包內的 EM cable 長度 / FC query 凸包體積 (µm/µm³)
+
+    它完全由幾何決定, 不經過 NBLAST 計分。本區塊回答:
+      (a) D2 滿足而 D1 不滿足的條件: 非配對的有效密度是否跟真配對一樣高
+      (b) 同一條曲線能否同時解釋兩組的假陽性
+      (c) 知道有效密度之後, 組別是否還帶資訊
+    輸出: results/sponge_effective_density.csv (每組配對一列)
+    """
+    from scipy.spatial import ConvexHull, Delaunay
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import StratifiedKFold, cross_val_score
+
+    def cloud(nid, src):
+        pts, _ = K.resample_cable(K.load_swc_fast(K.swc_path(nid, src)), C.RESAMPLE_UM)
+        return pts
+
+    hull = {}
+    for n in d.fc_id.unique():
+        pts = cloud(n, "FC")
+        h = ConvexHull(pts)
+        hull[n] = (Delaunay(pts[h.vertices]), h.volume)
+    em_pts = {n: cloud(n, "EM") for n in d.em_id.unique()}
+
+    rows = []
+    for t in d.itertuples():
+        tri, vol = hull[t.fc_id]
+        l_in = float((tri.find_simplex(em_pts[t.em_id]) >= 0).sum() * C.RESAMPLE_UM)
+        rows.append({"fc_id": t.fc_id, "em_id": t.em_id, "group": t.group, "label": t.label,
+                     "score": t.score, "em_density": getattr(t, f"em_{PRIMARY_FEAT}"),
+                     "em_cable_in_query_hull_um": l_in, "query_hull_um3": vol,
+                     "eff_density": l_in / vol})
+    r = pd.DataFrame(rows)
+    if orph is not None and "orphan_fwd" in orph:
+        # 合併鍵必須含 group: 有少數配對同時出現在兩組, 只用 (fc_id, em_id) 會重複列
+        r = r.merge(orph[["fc_id", "em_id", "group", "orphan_fwd"]]
+                    .drop_duplicates(["fc_id", "em_id", "group"]),
+                    on=["fc_id", "em_id", "group"], how="left")
+    r.to_csv(C.OUT / "sponge_effective_density.csv", index=False)
+
+    P, D = C.GROUP_PROJ, C.GROUP_DENSE
+    thr = r.loc[r.label == 1, "score"].quantile(0.25)
+    neg = r[r.label == 0].copy()
+    print("\n=== (10) ⭐ 關鍵實驗: 有效密度 (query 凸包內的 EM cable / query 凸包體積) ===")
+    print(f"  配對 n={len(r)}; 達標線 = 真配對分數 25% 分位 {thr:.3f}")
+
+    print("\n  (a) D2 滿足、D1 不滿足的條件")
+    print(f"      {'':28s} {'D1':>10} {'D2':>10}")
+    stats_rows = {}
+    for g in (P, D):
+        s, t = r[r.group == g], neg[neg.group == g]
+        stats_rows[g] = {
+            "真配對 有效密度中位": s.loc[s.label == 1, "eff_density"].median(),
+            "非配對 有效密度中位": t.eff_density.median(),
+            "非配對 有效密度 = 0 的比例": (t.eff_density == 0).mean(),
+            "有效密度區分真/假 AUC": roc_auc_score(s.label, s.eff_density),
+            "非配對 EM 自身密度中位": t.em_density.median(),
+            "NBLAST AUC": roc_auc_score(s.label, s.score),
+            "非配對 達真配對水準": (t.score >= thr).mean(),
+        }
+    for k in stats_rows[P]:
+        a, b = stats_rows[P][k], stats_rows[D][k]
+        pct = "比例" in k or "達" in k
+        fmt = (lambda v: f"{v * 100:9.1f}%") if pct else (lambda v: f"{v:10.4f}")
+        print(f"      {k:28s} {fmt(a)} {fmt(b)}")
+    print("      -> D2 的非配對在 query 所在空間裡的 target 密度與真配對一樣高 (AUC 約 0.5),"
+          "\n         最近鄰計分分不出來; D1 的非配對近乎 0, 天然分得開。"
+          "\n         EM 自身密度的方向相反 (D1 較密), 所以不是「target 密」本身, 而是「密在 query 那裡」。")
+
+    print("\n  (b) 同一條曲線: 非配對依有效密度四等分 (兩組合併)")
+    neg["q"] = pd.qcut(neg.eff_density.rank(method="first"), 4, labels=[1, 2, 3, 4])
+    out_rows = []
+    for q, s in neg.groupby("q", observed=True):
+        n1, n2 = int((s.group == P).sum()), int((s.group == D).sum())
+        frac = float((s.score >= thr).mean())
+        out_rows.append({"quartile": int(q), "lo": s.eff_density.min(), "hi": s.eff_density.max(),
+                         "n_D1": n1, "n_D2": n2, "frac_high": frac})
+        print(f"      Q{q}  {s.eff_density.min():.4f}-{s.eff_density.max():.4f}  "
+              f"D1 {n1:3d} / D2 {n2:3d}  分數中位 {s.score.median():+.3f}  達標 {frac * 100:5.1f}%")
+    for g in (P, D):
+        t = neg[neg.group == g]
+        print(f"      {g:11s} rho(有效密度, 分數) = {stats.spearmanr(t.eff_density, t.score)[0]:+.3f}"
+              f"   rho(EM 自身密度, 分數) = {stats.spearmanr(t.em_density, t.score)[0]:+.3f}")
+
+    print("\n  (c) 知道有效密度之後, 組別還帶資訊嗎 (目標: 非配對是否達真配對水準)")
+    y = (neg.score >= thr).astype(int).to_numpy()
+    z = lambda v: stats.zscore(stats.rankdata(v))
+    grp = (neg.group == D).astype(float).to_numpy()
+    cv = StratifiedKFold(5, shuffle=True, random_state=C.RANDOM_STATE)
+    for name, X in (("只用組別", grp[:, None]),
+                    ("只用 EM 自身密度", z(neg.em_density)[:, None]),
+                    ("只用有效密度", z(neg.eff_density)[:, None]),
+                    ("有效密度 + 組別", np.c_[z(neg.eff_density), grp])):
+        a = cross_val_score(LogisticRegression(max_iter=1000), X, y, cv=cv, scoring="roc_auc")
+        print(f"      {name:16s} 5-fold AUC = {a.mean():.3f} ± {a.std():.3f}")
+
+    if "orphan_fwd" in neg:
+        print(f"\n  (d) 與孤兒率的關係: rho(有效密度, orphan_fwd) = "
+              f"{stats.spearmanr(neg.eff_density, neg.orphan_fwd)[0]:+.3f}"
+              "  -- 同一件事的兩面: 有效密度從 target 量, 孤兒率從 query 量")
+    return r
+
+
 def main():
     d = load()
     print(f"載入 {len(d)} 組配對 "
@@ -590,6 +702,7 @@ def main():
     orph = orphan_points(d)
     hull_robustness(d)
     fc_side_check(d, orph)
+    effective_density(d, orph)
 
 
 if __name__ == "__main__":

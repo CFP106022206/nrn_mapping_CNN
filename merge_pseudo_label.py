@@ -61,5 +61,20 @@ total_final = pd.concat([total_pos, total_neg], ignore_index=True)
 total_final = total_final[["fc_id", "em_id", "predict_mean"]].copy()
 total_final.rename(columns={"predict_mean": "label"}, inplace=True)
 # %%
+# 最後把關：pseudo label 裡不可以出現任何被人工標註過的神經（只要一邊出現就算）。
+# 剔除本身應該在 make_pseudo_candidates.py 就做掉了，這裡只負責在沒做時大聲失敗，
+# 不要默默產出會讓預訓練階段失去 fold-clean 的名單。
+from make_pseudo_candidates import expert_neurons  # noqa: E402
+
+fc_exp, em_exp = expert_neurons()
+hit = total_final.fc_id.astype(str).str.strip().isin(fc_exp) | \
+      total_final.em_id.astype(str).str.strip().isin(em_exp)
+if hit.any():
+    raise RuntimeError(
+        f"pseudo label 中有 {int(hit.sum()):,} 組配對的某一側是人工標註過的神經。"
+        f"請先用 make_pseudo_candidates.py 產生乾淨的候選池，重跑 Model_predict.sh。"
+    )
+print(f"把關通過：{len(total_final):,} 組 pseudo label，無任何專家標註神經")
+
 total_final.to_csv("data/pairs_label/EMxFC_all_high_confidence.csv", index=False)
 # %%

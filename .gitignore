@@ -244,3 +244,27 @@ data/view_store/
 data/index/
 # 補齊 descriptor 前的備份
 data/_backup_descriptors_*/
+
+# === Model weights ===
+# 一律不進版控（檔案體積大且可重新訓練產生）；
+# 母資料夾以 .gitkeep 留下路徑，讓程式碼裡的相對路徑仍然成立。
+*.h5
+*.hdf5
+*.keras
+*.ckpt
+*.ckpt.*
+*.pth
+*.pt
+*.onnx
+*.tflite
+
+# 權重資料夾：只保留路徑
+Annotator_Model_backup_singleview_20260918/*
+RankTune_Model/*
+
+# .gitkeep 永遠追蹤（必須放在所有忽略規則之後才生效）
+!**/.gitkeep
+
+# === 大型中間分數檔（可由 dump_pool_scores.py / probe_frozen_head.py 重跑重建）===
+analysis_hubness_debias/scores/
+analysis_hubness_debias/results/*.parquet

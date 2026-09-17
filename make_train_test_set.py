@@ -1,3 +1,7 @@
+# [legacy] 舊 pipeline 的分割產生器, 不要再執行。
+# 現行分割由 make_cross_val_set.py 產生於 ./train_test_split/ (模型與論文結果都以該版為準)。
+# 本檔會寫入 ./data/ 底下的另一套分割, 兩套內容不同, 混用會造成訓練/評估對不上。
+# 路徑刻意保留為 ./data/: 若改指向 train_test_split 會覆寫現行分割。
 '''
 1, Make Train/Test Set from D1~D4 or D1~D5
 2, Load Each Set and train model

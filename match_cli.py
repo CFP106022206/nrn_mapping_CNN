@@ -255,6 +255,7 @@ def main() -> int:
     print(
         f"[service] 啟動 {svc.startup_timings['total']:.1f}s  "
         f"({svc.db.summary()})  "
+        f"model={cfg.model.model_id}  "
         f"rod={cfg.match.rod_angle_th_deg:.0f}° disk={cfg.match.disk_angle_th_deg:.0f}° "
         f"top_k={'不截斷' if top_k == 0 else top_k}",
         flush=True,

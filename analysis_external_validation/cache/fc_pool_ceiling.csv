@@ -1,0 +1,2736 @@
+fc_id,vfb_type,pool_size,n_correct_in_pool,chance_pct
+5-HT1B-F-000000,adult gamma Kenyon cell,2885,376,13.0329
+5-HT1B-F-000001,adult gamma Kenyon cell,296,0,0.0
+5-HT1B-F-000002,adult gamma Kenyon cell,444,0,0.0
+5-HT1B-F-000003,adult gamma Kenyon cell,190,0,0.0
+5-HT1B-F-000004,adult gamma Kenyon cell,1492,0,0.0
+5-HT1B-F-200001,adult gamma Kenyon cell,2659,376,14.1407
+5-HT1B-F-300001,adult gamma Kenyon cell,2663,376,14.1194
+5-HT1B-F-400001,adult gamma Kenyon cell,2770,376,13.574
+5-HT1B-F-400003,adult gamma Kenyon cell,469,0,0.0
+5-HT1B-F-500011,adult gamma Kenyon cell,494,0,0.0
+5-HT1B-M-000001,adult gamma Kenyon cell,327,0,0.0
+5-HT1B-M-000002,adult gamma Kenyon cell,2523,376,14.9029
+5-HT1B-M-000004,adult gamma Kenyon cell,2773,376,13.5593
+5-HT1B-M-000005,adult gamma Kenyon cell,527,0,0.0
+5-HT1B-M-000007,adult gamma Kenyon cell,2968,376,12.6685
+5-HT1B-M-000008,adult gamma Kenyon cell,3001,376,12.5292
+5-HT1B-M-200000,adult gamma Kenyon cell,2946,376,12.7631
+5-HT1B-M-200001,adult gamma Kenyon cell,709,0,0.0
+5-HT1B-M-200002,adult gamma Kenyon cell,436,0,0.0
+5-HT1B-M-300002,adult gamma Kenyon cell,483,0,0.0
+5-HT1B-M-300003,adult antennal lobe projection neuron VA1v vPN,6,0,0.0
+5-HT1B-M-400000,adult gamma Kenyon cell,2648,376,14.1994
+5-HT1B-M-400011,adult gamma Kenyon cell,2813,376,13.3665
+5-HT1B-M-400014,adult gamma Kenyon cell,2837,376,13.2534
+5-HT1B-M-400016,adult gamma Kenyon cell,534,0,0.0
+5-HT1B-M-400019,adult gamma Kenyon cell,2642,376,14.2316
+5-HT1B-M-700001,adult gamma Kenyon cell,450,0,0.0
+5-HT1B-M-700002,alpha/beta surface Kenyon cell,1301,0,0.0
+5-HT1B-M-700003,gamma dorsal Kenyon cell,2880,49,1.7014
+Cha-F-000003,alpha/beta core Kenyon cell,5847,111,1.8984
+Cha-F-000011,alpha/beta core Kenyon cell,5743,111,1.9328
+Cha-F-000012,lobula columnar neuron LC12,743,19,2.5572
+Cha-F-000017,lobula columnar neuron LC10,1559,280,17.9602
+Cha-F-000022,alpha/beta core Kenyon cell,6440,111,1.7236
+Cha-F-000024,alpha/beta core Kenyon cell,6387,111,1.7379
+Cha-F-000032,lobula columnar neuron LC11,577,14,2.4263
+Cha-F-000034,alpha/beta core Kenyon cell,6098,111,1.8203
+Cha-F-000035,alpha/beta core Kenyon cell,5732,111,1.9365
+Cha-F-000037,alpha/beta surface Kenyon cell,1106,0,0.0
+Cha-F-000038,alpha/beta posterior Kenyon cell,5963,40,0.6708
+Cha-F-000039,lobula columnar neuron LC6,1296,36,2.7778
+Cha-F-000040,adult gamma Kenyon cell,474,0,0.0
+Cha-F-000046,alpha/beta core Kenyon cell,371,0,0.0
+Cha-F-000057,alpha/beta core Kenyon cell,3107,111,3.5726
+Cha-F-000061,lobula columnar neuron LC10,1432,289,20.1816
+Cha-F-000064,lobula columnar neuron LC10,1142,256,22.4168
+Cha-F-000073,alpha/beta core Kenyon cell,3003,111,3.6963
+Cha-F-000075,alpha/beta surface Kenyon cell,5827,139,2.3854
+Cha-F-000076,alpha/beta surface Kenyon cell,742,0,0.0
+Cha-F-000092,alpha/beta core Kenyon cell,285,0,0.0
+Cha-F-000093,adult multiglomerular antennal lobe projection neuron vPN,9,0,0.0
+Cha-F-000094,alpha/beta surface Kenyon cell,3058,139,4.5455
+Cha-F-000101,lobula columnar neuron LC12,692,21,3.0347
+Cha-F-000102,alpha/beta core Kenyon cell,1051,0,0.0
+Cha-F-000104,alpha/beta surface Kenyon cell,5969,139,2.3287
+Cha-F-000108,adult alpha'/beta' Kenyon cell,1233,0,0.0
+Cha-F-000111,alpha/beta surface Kenyon cell,1308,0,0.0
+Cha-F-000113,alpha/beta core Kenyon cell,5482,111,2.0248
+Cha-F-000114,alpha/beta core Kenyon cell,1181,0,0.0
+Cha-F-000118,lobula columnar neuron LC12,835,35,4.1916
+Cha-F-000124,lobula columnar neuron LC12,1044,24,2.2989
+Cha-F-000129,lobula columnar neuron LC10,1622,294,18.1258
+Cha-F-000141,alpha/beta surface Kenyon cell,6187,139,2.2466
+Cha-F-000143,alpha/beta surface Kenyon cell,716,0,0.0
+Cha-F-000148,adult gamma Kenyon cell,518,0,0.0
+Cha-F-000151,alpha/beta core Kenyon cell,2355,69,2.9299
+Cha-F-000157,alpha/beta surface Kenyon cell,6360,139,2.1855
+Cha-F-000172,alpha/beta core Kenyon cell,269,0,0.0
+Cha-F-000182,alpha/beta surface Kenyon cell,3145,139,4.4197
+Cha-F-000183,antennal lobe projection neuron of ALl1 lineage,375,0,0.0
+Cha-F-000187,alpha/beta surface Kenyon cell,3072,139,4.5247
+Cha-F-000198,lobula columnar neuron LC12,640,7,1.0938
+Cha-F-000200,adult gamma Kenyon cell,605,0,0.0
+Cha-F-000213,lobula columnar neuron LC4,513,20,3.8986
+Cha-F-000217,alpha/beta core Kenyon cell,165,0,0.0
+Cha-F-000218,lobula columnar neuron LC12,729,14,1.9204
+Cha-F-000228,gamma dorsal Kenyon cell,276,0,0.0
+Cha-F-000231,lobula columnar neuron LC10,1341,295,21.9985
+Cha-F-000239,adult multiglomerular antennal lobe projection neuron,1328,0,0.0
+Cha-F-000240,adult gamma Kenyon cell,547,0,0.0
+Cha-F-000248,lobula columnar neuron LC10,1324,273,20.6193
+Cha-F-000250,adult multiglomerular antennal lobe projection neuron,2306,0,0.0
+Cha-F-000271,adult multiglomerular antennal lobe projection neuron,256,0,0.0
+Cha-F-000288,alpha/beta core Kenyon cell,5492,111,2.0211
+Cha-F-000297,adult gamma Kenyon cell,321,0,0.0
+Cha-F-000302,adult gamma Kenyon cell,2515,366,14.5527
+Cha-F-000311,adult alpha'/beta' Kenyon cell,6232,188,3.0167
+Cha-F-000312,adult gamma Kenyon cell,387,0,0.0
+Cha-F-000323,alpha/beta core Kenyon cell,397,0,0.0
+Cha-F-000332,adult gamma Kenyon cell,459,0,0.0
+Cha-F-000335,lobula columnar neuron LC12,632,22,3.481
+Cha-F-000336,lobula columnar neuron LC4,707,16,2.2631
+Cha-F-000353,adult multiglomerular antennal lobe projection neuron,124,0,0.0
+Cha-F-000357,lobula columnar neuron LC12,891,17,1.908
+Cha-F-000375,adult gamma Kenyon cell,2795,376,13.4526
+Cha-F-000389,lobula columnar neuron LC12,513,12,2.3392
+Cha-F-100004,alpha/beta surface Kenyon cell,6209,139,2.2387
+Cha-F-100017,lobula columnar neuron LC12,416,15,3.6058
+Cha-F-100035,alpha/beta core Kenyon cell,1187,0,0.0
+Cha-F-100040,lobula columnar neuron LC4,390,18,4.6154
+Cha-F-100042,lobula columnar neuron LC12,958,17,1.7745
+Cha-F-100043,alpha/beta posterior Kenyon cell,1163,0,0.0
+Cha-F-100045,alpha/beta core Kenyon cell,6211,111,1.7872
+Cha-F-100049,alpha/beta surface Kenyon cell,6324,139,2.198
+Cha-F-100059,adult antennal lobe projection neuron VA1d adPN,3065,2,0.0653
+Cha-F-100066,adult alpha'/beta' Kenyon cell,271,0,0.0
+Cha-F-100067,lobula columnar neuron LC10,1677,209,12.4627
+Cha-F-100070,alpha/beta core Kenyon cell,1137,0,0.0
+Cha-F-100073,adult antennal lobe projection neuron DL2v adPN,284,0,0.0
+Cha-F-100074,alpha/beta core Kenyon cell,1237,0,0.0
+Cha-F-100076,alpha/beta core Kenyon cell,390,0,0.0
+Cha-F-100080,alpha/beta core Kenyon cell,6355,111,1.7467
+Cha-F-100082,antennal lobe projection neuron of ALl1 lineage,2277,0,0.0
+Cha-F-100085,antennal lobe projection neuron of ALl1 lineage,3172,0,0.0
+Cha-F-100089,adult gamma Kenyon cell,3029,376,12.4133
+Cha-F-100096,alpha/beta core Kenyon cell,1332,0,0.0
+Cha-F-100097,alpha/beta core Kenyon cell,3015,111,3.6816
+Cha-F-100101,lobula columnar neuron LC12,505,18,3.5644
+Cha-F-100107,alpha/beta core Kenyon cell,1452,0,0.0
+Cha-F-100110,alpha/beta surface Kenyon cell,371,0,0.0
+Cha-F-100115,alpha/beta core Kenyon cell,3111,111,3.568
+Cha-F-100120,alpha/beta core Kenyon cell,3104,111,3.576
+Cha-F-100125,adult alpha'/beta' Kenyon cell,6234,188,3.0157
+Cha-F-100140,alpha/beta core Kenyon cell,456,0,0.0
+Cha-F-100154,adult gamma Kenyon cell,457,0,0.0
+Cha-F-100159,alpha/beta core Kenyon cell,415,0,0.0
+Cha-F-100160,alpha/beta core Kenyon cell,3130,102,3.2588
+Cha-F-100162,adult gamma Kenyon cell,2749,376,13.6777
+Cha-F-100163,antennal lobe projection neuron of ALl1 lineage,929,0,0.0
+Cha-F-100167,adult gamma Kenyon cell,425,0,0.0
+Cha-F-100175,adult gamma Kenyon cell,538,0,0.0
+Cha-F-100178,alpha/beta core Kenyon cell,3005,111,3.6938
+Cha-F-100184,adult gamma Kenyon cell,241,0,0.0
+Cha-F-100187,gamma dorsal Kenyon cell,2665,49,1.8386
+Cha-F-100188,alpha/beta surface Kenyon cell,1486,0,0.0
+Cha-F-100197,adult gamma Kenyon cell,423,0,0.0
+Cha-F-100198,lobula columnar neuron LC9,2043,84,4.1116
+Cha-F-100200,alpha/beta surface Kenyon cell,352,0,0.0
+Cha-F-100209,alpha/beta core Kenyon cell,3094,111,3.5876
+Cha-F-100215,lobula columnar neuron LC12,730,23,3.1507
+Cha-F-100218,adult alpha'/beta' Kenyon cell,451,0,0.0
+Cha-F-100220,alpha/beta core Kenyon cell,3197,111,3.472
+Cha-F-100222,alpha/beta core Kenyon cell,3016,88,2.9178
+Cha-F-100224,lobula columnar neuron LC12,653,49,7.5038
+Cha-F-100226,lobula columnar neuron LC12,919,23,2.5027
+Cha-F-100227,alpha/beta core Kenyon cell,6401,111,1.7341
+Cha-F-100232,alpha/beta core Kenyon cell,476,0,0.0
+Cha-F-100233,adult gamma Kenyon cell,2646,376,14.2101
+Cha-F-100241,adult gamma Kenyon cell,2705,376,13.9002
+Cha-F-100243,alpha/beta surface Kenyon cell,1174,0,0.0
+Cha-F-100251,alpha/beta core Kenyon cell,1385,0,0.0
+Cha-F-100257,adult alpha'/beta' Kenyon cell,3090,188,6.0841
+Cha-F-100272,adult gamma Kenyon cell,424,0,0.0
+Cha-F-100277,adult multiglomerular antennal lobe projection neuron,2146,0,0.0
+Cha-F-100283,alpha/beta posterior Kenyon cell,357,0,0.0
+Cha-F-100306,adult gamma Kenyon cell,410,0,0.0
+Cha-F-100314,adult alpha'/beta' Kenyon cell,2714,188,6.927
+Cha-F-100323,alpha/beta surface Kenyon cell,278,0,0.0
+Cha-F-100325,adult gamma Kenyon cell,2719,376,13.8286
+Cha-F-100326,adult gamma Kenyon cell,2382,376,15.7851
+Cha-F-100334,alpha/beta surface Kenyon cell,3018,139,4.6057
+Cha-F-100342,lobula columnar neuron LC4,387,19,4.9096
+Cha-F-100347,alpha/beta core Kenyon cell,6561,111,1.6918
+Cha-F-100360,alpha/beta surface Kenyon cell,795,0,0.0
+Cha-F-200004,alpha/beta surface Kenyon cell,1168,0,0.0
+Cha-F-200005,adult gamma Kenyon cell,2731,376,13.7679
+Cha-F-200017,gamma dorsal Kenyon cell,550,0,0.0
+Cha-F-200029,adult gamma Kenyon cell,2361,342,14.4854
+Cha-F-200035,adult gamma Kenyon cell,500,0,0.0
+Cha-F-200036,alpha/beta core Kenyon cell,3124,111,3.5531
+Cha-F-200041,adult gamma Kenyon cell,377,0,0.0
+Cha-F-200047,alpha/beta surface Kenyon cell,1128,0,0.0
+Cha-F-200052,adult gamma Kenyon cell,2953,364,12.3264
+Cha-F-200054,alpha/beta surface Kenyon cell,335,0,0.0
+Cha-F-200059,alpha/beta core Kenyon cell,1293,0,0.0
+Cha-F-200062,adult gamma Kenyon cell,413,0,0.0
+Cha-F-200063,alpha/beta core Kenyon cell,3123,111,3.5543
+Cha-F-200071,alpha/beta surface Kenyon cell,6291,139,2.2095
+Cha-F-200072,lobula columnar neuron LC6,1216,31,2.5493
+Cha-F-200079,lobula columnar neuron LC10,1418,214,15.0917
+Cha-F-200081,lobula columnar neuron LC12,1105,24,2.1719
+Cha-F-200083,alpha/beta surface Kenyon cell,6330,139,2.1959
+Cha-F-200085,alpha/beta core Kenyon cell,2809,111,3.9516
+Cha-F-200094,lobula columnar neuron LC9,1803,49,2.7177
+Cha-F-200102,alpha/beta core Kenyon cell,2906,111,3.8197
+Cha-F-200105,alpha/beta surface Kenyon cell,1272,0,0.0
+Cha-F-200108,alpha/beta core Kenyon cell,1305,0,0.0
+Cha-F-200109,alpha/beta surface Kenyon cell,1055,0,0.0
+Cha-F-200120,alpha/beta core Kenyon cell,6320,111,1.7563
+Cha-F-200126,lobula columnar neuron LC10,1837,247,13.4458
+Cha-F-200138,alpha/beta core Kenyon cell,6094,111,1.8215
+Cha-F-200141,lobula columnar neuron LC12,893,14,1.5677
+Cha-F-200143,lobula columnar neuron LC12,686,22,3.207
+Cha-F-200150,adult gamma Kenyon cell,520,0,0.0
+Cha-F-200157,lobula columnar neuron LC12,1168,31,2.6541
+Cha-F-200159,alpha/beta core Kenyon cell,2986,111,3.7173
+Cha-F-200166,alpha/beta core Kenyon cell,2625,78,2.9714
+Cha-F-200195,lobula columnar neuron LC9,1902,41,2.1556
+Cha-F-200196,alpha/beta core Kenyon cell,370,0,0.0
+Cha-F-200203,lobula columnar neuron LC11,780,15,1.9231
+Cha-F-200209,alpha/beta core Kenyon cell,6597,111,1.6826
+Cha-F-200216,lobula columnar neuron LC11,774,15,1.938
+Cha-F-200223,alpha/beta posterior Kenyon cell,723,0,0.0
+Cha-F-200234,alpha/beta surface Kenyon cell,421,0,0.0
+Cha-F-200245,lobula columnar neuron LC10,1082,182,16.8207
+Cha-F-200249,alpha/beta surface Kenyon cell,6317,139,2.2004
+Cha-F-200251,alpha/beta surface Kenyon cell,6449,139,2.1554
+Cha-F-200257,lobula columnar neuron LC4,484,16,3.3058
+Cha-F-200263,adult gamma Kenyon cell,455,0,0.0
+Cha-F-200265,adult multiglomerular antennal lobe projection neuron vPN,220,0,0.0
+Cha-F-200267,alpha/beta core Kenyon cell,3344,111,3.3194
+Cha-F-200269,lobula columnar neuron LC9,1447,35,2.4188
+Cha-F-200271,lobula columnar neuron LC9,1609,80,4.972
+Cha-F-200284,adult gamma Kenyon cell,360,0,0.0
+Cha-F-200290,adult alpha'/beta' Kenyon cell,596,0,0.0
+Cha-F-200292,lobula columnar neuron LC10,1782,301,16.8911
+Cha-F-200294,adult alpha'/beta' Kenyon cell,612,0,0.0
+Cha-F-200297,lobula columnar neuron LC12,721,50,6.9348
+Cha-F-200300,adult gamma Kenyon cell,2648,376,14.1994
+Cha-F-200307,alpha/beta core Kenyon cell,6384,111,1.7387
+Cha-F-200314,adult alpha'/beta' Kenyon cell,3001,188,6.2646
+Cha-F-200323,lobula columnar neuron LC9,1848,38,2.0563
+Cha-F-200326,adult gamma Kenyon cell,524,0,0.0
+Cha-F-200337,alpha/beta core Kenyon cell,3101,111,3.5795
+Cha-F-200338,lobula columnar neuron LC12,873,20,2.291
+Cha-F-200343,lobula columnar neuron LC9,2101,62,2.951
+Cha-F-200346,lobula columnar neuron LC11,673,11,1.6345
+Cha-F-200347,lobula columnar neuron LC10,1225,236,19.2653
+Cha-F-200352,adult gamma Kenyon cell,186,0,0.0
+Cha-F-200353,alpha/beta surface Kenyon cell,1338,0,0.0
+Cha-F-200356,alpha/beta core Kenyon cell,3057,108,3.5329
+Cha-F-200372,lobula columnar neuron LC10,1370,292,21.3139
+Cha-F-300000,alpha/beta surface Kenyon cell,1018,0,0.0
+Cha-F-300003,adult gamma Kenyon cell,615,0,0.0
+Cha-F-300011,alpha/beta core Kenyon cell,412,0,0.0
+Cha-F-300013,alpha/beta core Kenyon cell,4988,111,2.2253
+Cha-F-300018,adult gamma Kenyon cell,2811,376,13.376
+Cha-F-300021,alpha/beta surface Kenyon cell,888,0,0.0
+Cha-F-300028,lobula columnar neuron LC9,1855,81,4.3666
+Cha-F-300030,alpha/beta core Kenyon cell,2959,111,3.7513
+Cha-F-300036,adult multiglomerular antennal lobe projection neuron,387,0,0.0
+Cha-F-300040,adult alpha'/beta' Kenyon cell,1654,0,0.0
+Cha-F-300044,alpha/beta core Kenyon cell,933,0,0.0
+Cha-F-300051,lobula columnar neuron LC12,716,22,3.0726
+Cha-F-300056,alpha/beta core Kenyon cell,1378,0,0.0
+Cha-F-300059,alpha/beta core Kenyon cell,1532,0,0.0
+Cha-F-300060,adult gamma Kenyon cell,2677,376,14.0456
+Cha-F-300070,alpha/beta surface Kenyon cell,5740,139,2.4216
+Cha-F-300071,adult gamma Kenyon cell,466,0,0.0
+Cha-F-300075,alpha/beta core Kenyon cell,5842,111,1.9
+Cha-F-300077,alpha/beta core Kenyon cell,2239,64,2.8584
+Cha-F-300090,adult gamma Kenyon cell,2488,376,15.1125
+Cha-F-300091,lobula columnar neuron LC12,1002,19,1.8962
+Cha-F-300092,alpha/beta core Kenyon cell,4732,111,2.3457
+Cha-F-300094,lobula columnar neuron LC10,1437,264,18.3716
+Cha-F-300099,alpha/beta core Kenyon cell,6225,111,1.7831
+Cha-F-300101,alpha/beta core Kenyon cell,2287,110,4.8098
+Cha-F-300103,alpha/beta core Kenyon cell,555,0,0.0
+Cha-F-300104,adult uniglomerular antennal lobe projection neuron,341,0,0.0
+Cha-F-300107,antennal lobe projection neuron of ALl1 lineage,1809,0,0.0
+Cha-F-300108,alpha/beta core Kenyon cell,1205,0,0.0
+Cha-F-300109,alpha/beta surface Kenyon cell,1445,0,0.0
+Cha-F-300117,alpha/beta surface Kenyon cell,1299,0,0.0
+Cha-F-300119,antennal lobe projection neuron of ALl1 lineage,1400,0,0.0
+Cha-F-300121,lobula columnar neuron LC12,845,60,7.1006
+Cha-F-300123,alpha/beta surface Kenyon cell,3038,139,4.5754
+Cha-F-300125,adult gamma Kenyon cell,458,0,0.0
+Cha-F-300135,lobula columnar neuron LC10,1623,295,18.1762
+Cha-F-300138,lobula columnar neuron LC6,1739,31,1.7826
+Cha-F-300140,alpha/beta surface Kenyon cell,5845,139,2.3781
+Cha-F-300143,adult alpha'/beta' Kenyon cell,2394,125,5.2214
+Cha-F-300144,alpha/beta core Kenyon cell,6356,111,1.7464
+Cha-F-300149,lobula columnar neuron LC4,613,19,3.0995
+Cha-F-300150,adult alpha'/beta' Kenyon cell,5709,188,3.293
+Cha-F-300153,lobula columnar neuron LC6,1531,31,2.0248
+Cha-F-300165,alpha/beta surface Kenyon cell,1123,0,0.0
+Cha-F-300167,lobula columnar neuron LC12,768,51,6.6406
+Cha-F-300176,alpha/beta surface Kenyon cell,920,0,0.0
+Cha-F-300182,alpha/beta core Kenyon cell,6484,111,1.7119
+Cha-F-300185,lobula columnar neuron LC10,1690,287,16.9822
+Cha-F-300190,adult gamma Kenyon cell,382,0,0.0
+Cha-F-300191,antennal lobe projection neuron of ALl1 lineage,1094,0,0.0
+Cha-F-300192,adult gamma Kenyon cell,513,0,0.0
+Cha-F-300193,lobula columnar neuron LC9,1540,47,3.0519
+Cha-F-300198,lobula columnar neuron LC10,1689,262,15.5121
+Cha-F-300200,adult gamma Kenyon cell,630,0,0.0
+Cha-F-300203,alpha/beta posterior Kenyon cell,637,0,0.0
+Cha-F-300206,alpha/beta core Kenyon cell,5141,111,2.1591
+Cha-F-300207,antennal lobe projection neuron of ALl1 lineage,995,0,0.0
+Cha-F-300210,alpha/beta surface Kenyon cell,1248,0,0.0
+Cha-F-300214,alpha/beta core Kenyon cell,443,0,0.0
+Cha-F-300218,adult gamma Kenyon cell,2927,376,12.8459
+Cha-F-300224,adult gamma Kenyon cell,2648,376,14.1994
+Cha-F-300226,alpha/beta surface Kenyon cell,5988,139,2.3213
+Cha-F-300230,alpha/beta core Kenyon cell,3164,111,3.5082
+Cha-F-300237,adult alpha'/beta' Kenyon cell,2636,188,7.132
+Cha-F-300238,adult antennal lobe projection neuron DP1l,51,0,0.0
+Cha-F-300244,adult alpha'/beta' Kenyon cell,3089,188,6.0861
+Cha-F-300247,alpha/beta surface Kenyon cell,1202,0,0.0
+Cha-F-300252,adult antennal lobe projection neuron DA1,3025,1,0.0331
+Cha-F-300254,lobula columnar neuron LC12,894,20,2.2371
+Cha-F-300266,alpha/beta surface Kenyon cell,5910,139,2.3519
+Cha-F-300271,alpha/beta core Kenyon cell,1247,0,0.0
+Cha-F-300289,alpha/beta core Kenyon cell,5153,111,2.1541
+Cha-F-300290,lobula columnar neuron LC10,1455,277,19.0378
+Cha-F-300301,adult alpha'/beta' Kenyon cell,1360,0,0.0
+Cha-F-300312,alpha/beta core Kenyon cell,299,0,0.0
+Cha-F-300313,adult gamma Kenyon cell,378,0,0.0
+Cha-F-300319,adult gamma Kenyon cell,2802,376,13.419
+Cha-F-300320,adult gamma Kenyon cell,369,0,0.0
+Cha-F-300324,lobula columnar neuron LC4,927,11,1.1866
+Cha-F-400000,alpha/beta core Kenyon cell,443,0,0.0
+Cha-F-400004,lobula columnar neuron LC12,697,46,6.5997
+Cha-F-400005,adult gamma Kenyon cell,2862,376,13.1377
+Cha-F-400014,alpha/beta core Kenyon cell,235,0,0.0
+Cha-F-400016,lobula columnar neuron LC6,2052,36,1.7544
+Cha-F-400020,adult gamma Kenyon cell,2588,376,14.5286
+Cha-F-400021,lobula columnar neuron LC12,1206,21,1.7413
+Cha-F-400022,adult gamma Kenyon cell,394,0,0.0
+Cha-F-400027,alpha/beta core Kenyon cell,2960,111,3.75
+Cha-F-400030,alpha/beta core Kenyon cell,4439,111,2.5006
+Cha-F-400033,alpha/beta core Kenyon cell,6407,111,1.7325
+Cha-F-400040,alpha/beta core Kenyon cell,5651,111,1.9643
+Cha-F-400042,adult gamma Kenyon cell,2562,376,14.676
+Cha-F-400043,alpha/beta core Kenyon cell,309,0,0.0
+Cha-F-400044,alpha/beta core Kenyon cell,3150,111,3.5238
+Cha-F-400047,adult gamma Kenyon cell,2806,376,13.3999
+Cha-F-400048,alpha/beta surface Kenyon cell,361,0,0.0
+Cha-F-400052,alpha/beta surface Kenyon cell,3551,139,3.9144
+Cha-F-400057,alpha/beta core Kenyon cell,1290,0,0.0
+Cha-F-400058,lobula columnar neuron LC10,1479,215,14.5368
+Cha-F-400060,lobula columnar neuron LC12,701,19,2.7104
+Cha-F-400063,alpha/beta surface Kenyon cell,6275,139,2.2151
+Cha-F-400064,alpha/beta surface Kenyon cell,432,0,0.0
+Cha-F-400077,lobula columnar neuron LC9,1926,84,4.3614
+Cha-F-400085,alpha/beta core Kenyon cell,4099,110,2.6836
+Cha-F-400089,adult gamma Kenyon cell,2587,376,14.5342
+Cha-F-400093,alpha/beta surface Kenyon cell,5884,139,2.3623
+Cha-F-400099,alpha/beta core Kenyon cell,1129,0,0.0
+Cha-F-400103,alpha/beta core Kenyon cell,5658,111,1.9618
+Cha-F-400109,lobula columnar neuron LC10,1441,242,16.7939
+Cha-F-400111,alpha/beta core Kenyon cell,2988,85,2.8447
+Cha-F-400124,alpha/beta surface Kenyon cell,1571,0,0.0
+Cha-F-400131,alpha/beta core Kenyon cell,3041,111,3.6501
+Cha-F-400134,alpha/beta core Kenyon cell,3108,111,3.5714
+Cha-F-400141,alpha/beta core Kenyon cell,992,0,0.0
+Cha-F-400143,alpha/beta core Kenyon cell,1299,0,0.0
+Cha-F-400153,lobula columnar neuron LC12,2199,88,4.0018
+Cha-F-400156,alpha/beta core Kenyon cell,268,0,0.0
+Cha-F-400158,alpha/beta surface Kenyon cell,6234,139,2.2297
+Cha-F-400161,alpha/beta core Kenyon cell,3072,111,3.6133
+Cha-F-400167,alpha/beta core Kenyon cell,6121,111,1.8134
+Cha-F-400168,alpha/beta surface Kenyon cell,1239,0,0.0
+Cha-F-400178,adult gamma Kenyon cell,2771,376,13.5691
+Cha-F-400180,lobula columnar neuron LC12,781,20,2.5608
+Cha-F-400181,alpha/beta surface Kenyon cell,1244,0,0.0
+Cha-F-400185,alpha/beta surface Kenyon cell,2846,139,4.884
+Cha-F-400188,adult alpha'/beta' Kenyon cell,3079,188,6.1059
+Cha-F-400190,lobula columnar neuron LC9,1612,75,4.6526
+Cha-F-400206,alpha/beta core Kenyon cell,3612,109,3.0177
+Cha-F-400217,alpha/beta core Kenyon cell,3040,111,3.6513
+Cha-F-400218,alpha/beta core Kenyon cell,1598,0,0.0
+Cha-F-400226,alpha/beta core Kenyon cell,3933,110,2.7968
+Cha-F-400227,lobula columnar neuron LC12,761,19,2.4967
+Cha-F-400228,lobula columnar neuron LC14,232,0,0.0
+Cha-F-400231,lobula columnar neuron LC14,476,2,0.4202
+Cha-F-400232,alpha/beta core Kenyon cell,553,0,0.0
+Cha-F-400236,alpha/beta core Kenyon cell,3340,107,3.2036
+Cha-F-500003,antennal lobe projection neuron of ALl1 lineage,1,0,0.0
+Cha-F-500006,adult antennal lobe projection neuron DA1,30,0,0.0
+Cha-F-500012,alpha/beta core Kenyon cell,1199,0,0.0
+Cha-F-500014,alpha/beta surface Kenyon cell,6027,139,2.3063
+Cha-F-500016,alpha/beta core Kenyon cell,224,0,0.0
+Cha-F-500017,alpha/beta core Kenyon cell,2879,111,3.8555
+Cha-F-500018,alpha/beta core Kenyon cell,5455,111,2.0348
+Cha-F-500023,adult gamma Kenyon cell,2618,376,14.3621
+Cha-F-500026,adult gamma Kenyon cell,2421,376,15.5308
+Cha-F-500033,alpha/beta core Kenyon cell,6348,111,1.7486
+Cha-F-500034,alpha/beta core Kenyon cell,1447,0,0.0
+Cha-F-500035,adult gamma Kenyon cell,2732,376,13.7628
+Cha-F-500038,lobula columnar neuron LC6,1813,29,1.5996
+Cha-F-500039,alpha/beta surface Kenyon cell,1189,0,0.0
+Cha-F-500047,alpha/beta surface Kenyon cell,399,0,0.0
+Cha-F-500056,adult uniglomerular antennal lobe projection neuron,105,0,0.0
+Cha-F-500057,alpha/beta surface Kenyon cell,2806,139,4.9537
+Cha-F-500068,lobula columnar neuron LC12,1003,30,2.991
+Cha-F-500069,alpha/beta surface Kenyon cell,355,0,0.0
+Cha-F-500074,adult gamma Kenyon cell,419,0,0.0
+Cha-F-500075,alpha/beta core Kenyon cell,6425,111,1.7276
+Cha-F-500077,alpha/beta core Kenyon cell,277,0,0.0
+Cha-F-500078,adult antennal lobe projection neuron DC3 adPN,3144,1,0.0318
+Cha-F-500080,lobula columnar neuron LC10,1669,209,12.5225
+Cha-F-500082,alpha/beta core Kenyon cell,1443,0,0.0
+Cha-F-500095,adult gamma Kenyon cell,520,0,0.0
+Cha-F-500096,alpha/beta core Kenyon cell,3178,111,3.4928
+Cha-F-500098,lobula columnar neuron LC10,1375,233,16.9455
+Cha-F-500099,lobula columnar neuron LC12,556,12,2.1583
+Cha-F-500102,alpha/beta surface Kenyon cell,5946,139,2.3377
+Cha-F-500103,alpha/beta core Kenyon cell,2400,69,2.875
+Cha-F-500115,adult alpha'/beta' Kenyon cell,475,0,0.0
+Cha-F-500117,lobula columnar neuron LC10,1591,285,17.9133
+Cha-F-500122,adult alpha'/beta' Kenyon cell,515,0,0.0
+Cha-F-500124,alpha/beta core Kenyon cell,1235,0,0.0
+Cha-F-500132,lobula columnar neuron LC12,676,27,3.9941
+Cha-F-500133,alpha/beta surface Kenyon cell,2438,135,5.5373
+Cha-F-500143,adult multiglomerular antennal lobe projection neuron,810,0,0.0
+Cha-F-500145,lobula columnar neuron LC10,1277,291,22.7878
+Cha-F-500146,alpha/beta surface Kenyon cell,1202,0,0.0
+Cha-F-500158,alpha/beta core Kenyon cell,396,0,0.0
+Cha-F-500160,lobula columnar neuron LC12,952,57,5.9874
+Cha-F-500162,alpha/beta core Kenyon cell,1367,0,0.0
+Cha-F-500165,alpha/beta surface Kenyon cell,6045,139,2.2994
+Cha-F-500170,lobula columnar neuron LC10,1314,222,16.895
+Cha-F-500192,adult gamma Kenyon cell,460,0,0.0
+Cha-F-500195,alpha/beta core Kenyon cell,1292,0,0.0
+Cha-F-600002,adult gamma Kenyon cell,472,0,0.0
+Cha-F-600011,alpha/beta surface Kenyon cell,5823,139,2.3871
+Cha-F-600012,lobula columnar neuron LC12,936,18,1.9231
+Cha-F-600014,alpha/beta core Kenyon cell,6307,111,1.7599
+Cha-F-600016,lobula columnar neuron LC12,640,22,3.4375
+Cha-F-600017,alpha/beta surface Kenyon cell,418,0,0.0
+Cha-F-600020,alpha/beta surface Kenyon cell,730,0,0.0
+Cha-F-600021,adult gamma Kenyon cell,2717,376,13.8388
+Cha-F-600022,alpha/beta core Kenyon cell,5742,111,1.9331
+Cha-F-600023,adult gamma Kenyon cell,2639,376,14.2478
+Cha-F-600027,alpha/beta core Kenyon cell,3236,111,3.4302
+Cha-F-600040,alpha/beta core Kenyon cell,6313,111,1.7583
+Cha-F-600043,alpha/beta core Kenyon cell,1428,0,0.0
+Cha-F-600046,alpha/beta core Kenyon cell,1265,0,0.0
+Cha-F-600049,alpha/beta surface Kenyon cell,1213,0,0.0
+Cha-F-600053,lobula columnar neuron LC4,804,16,1.99
+Cha-F-600055,adult gamma Kenyon cell,2747,375,13.6513
+Cha-F-600060,lobula columnar neuron LC12,860,22,2.5581
+Cha-F-600076,lobula columnar neuron LC12,859,27,3.1432
+Cha-F-600094,alpha/beta core Kenyon cell,4304,110,2.5558
+Cha-F-600096,alpha/beta surface Kenyon cell,911,0,0.0
+Cha-F-600100,alpha/beta surface Kenyon cell,930,0,0.0
+Cha-F-600103,alpha/beta surface Kenyon cell,1363,0,0.0
+Cha-F-600111,alpha/beta core Kenyon cell,5118,111,2.1688
+Cha-F-600117,alpha/beta surface Kenyon cell,5891,139,2.3595
+Cha-F-600119,alpha/beta core Kenyon cell,4232,110,2.5992
+Cha-F-600121,alpha/beta core Kenyon cell,5895,111,1.883
+Cha-F-600127,alpha/beta core Kenyon cell,3078,111,3.6062
+Cha-F-600128,lobula columnar neuron LC10,1342,224,16.6915
+Cha-F-600132,lobula columnar neuron LC10,1627,296,18.193
+Cha-F-600137,lobula columnar neuron LC10,1523,239,15.6927
+Cha-F-600150,lobula columnar neuron LC10,1789,292,16.322
+Cha-F-600157,alpha/beta surface Kenyon cell,2649,86,3.2465
+Cha-F-600169,lobula columnar neuron LC11,572,17,2.972
+Cha-F-600180,lobula columnar neuron LC10,1434,238,16.5969
+Cha-F-700000,alpha/beta surface Kenyon cell,5248,139,2.6486
+Cha-F-700003,adult gamma Kenyon cell,517,0,0.0
+Cha-F-700004,alpha/beta core Kenyon cell,6134,111,1.8096
+Cha-F-700005,alpha/beta core Kenyon cell,1113,0,0.0
+Cha-F-700008,alpha/beta surface Kenyon cell,557,0,0.0
+Cha-F-700013,alpha/beta surface Kenyon cell,794,0,0.0
+Cha-F-700014,lobula columnar neuron LC14,174,0,0.0
+Cha-F-700019,alpha/beta surface Kenyon cell,343,0,0.0
+Cha-F-700022,alpha/beta core Kenyon cell,300,0,0.0
+Cha-F-700024,alpha/beta core Kenyon cell,6110,111,1.8167
+Cha-F-700034,alpha/beta core Kenyon cell,5588,111,1.9864
+Cha-F-700043,alpha/beta surface Kenyon cell,389,0,0.0
+Cha-F-700047,alpha/beta core Kenyon cell,3934,110,2.7961
+Cha-F-700053,alpha/beta core Kenyon cell,5574,111,1.9914
+Cha-F-700062,alpha/beta core Kenyon cell,1412,0,0.0
+Cha-F-700066,alpha/beta surface Kenyon cell,455,0,0.0
+Cha-F-700071,alpha/beta surface Kenyon cell,5664,139,2.4541
+Cha-F-700072,alpha/beta core Kenyon cell,1207,0,0.0
+Cha-F-700080,lobula columnar neuron LC12,1029,24,2.3324
+Cha-F-700084,lobula columnar neuron LC12,729,54,7.4074
+Cha-F-700085,alpha/beta core Kenyon cell,408,0,0.0
+Cha-F-700091,lobula columnar neuron LC10,1246,258,20.7063
+Cha-F-700092,lobula columnar neuron LC11,876,18,2.0548
+Cha-F-700095,adult gamma Kenyon cell,2798,376,13.4382
+Cha-F-700096,alpha/beta core Kenyon cell,1307,0,0.0
+Cha-F-700111,adult gamma Kenyon cell,2713,376,13.8592
+Cha-F-700113,alpha/beta surface Kenyon cell,3150,139,4.4127
+Cha-F-700119,lobula columnar neuron LC12,1073,24,2.2367
+Cha-F-700124,alpha/beta surface Kenyon cell,6337,139,2.1935
+Cha-F-700125,antennal lobe projection neuron of ALl1 lineage,1079,0,0.0
+Cha-F-700136,adult alpha'/beta' Kenyon cell,2870,187,6.5157
+Cha-F-700140,alpha/beta core Kenyon cell,1669,0,0.0
+Cha-F-700143,alpha/beta surface Kenyon cell,3117,139,4.4594
+Cha-F-700149,lobula columnar neuron LC10,1516,299,19.723
+Cha-F-700152,alpha/beta core Kenyon cell,967,0,0.0
+Cha-F-700161,alpha/beta surface Kenyon cell,6250,139,2.224
+Cha-F-700167,lobula columnar neuron LC10,1517,299,19.71
+Cha-F-700171,alpha/beta core Kenyon cell,1197,0,0.0
+Cha-F-700172,alpha/beta core Kenyon cell,3931,110,2.7983
+Cha-F-700184,lobula columnar neuron LC12,560,49,8.75
+Cha-F-700189,alpha/beta posterior Kenyon cell,871,0,0.0
+Cha-F-700191,adult antennal lobe projection neuron VM2 adPN,479,0,0.0
+Cha-F-700192,lobula columnar neuron LC4,288,16,5.5556
+Cha-F-700193,alpha/beta core Kenyon cell,6397,111,1.7352
+Cha-F-700195,alpha/beta core Kenyon cell,229,0,0.0
+Cha-F-800001,lobula columnar neuron LC12,470,15,3.1915
+Cha-F-800002,alpha/beta core Kenyon cell,3210,111,3.4579
+Cha-F-800006,alpha/beta core Kenyon cell,1315,0,0.0
+Cha-F-800008,alpha/beta surface Kenyon cell,3995,139,3.4793
+Cha-F-800010,alpha/beta core Kenyon cell,287,0,0.0
+Cha-F-800017,adult gamma Kenyon cell,2766,376,13.5936
+Cha-F-800018,lobula columnar neuron LC12,723,23,3.1812
+Cha-F-800030,alpha/beta core Kenyon cell,5972,111,1.8587
+Cha-F-800035,alpha/beta core Kenyon cell,5740,111,1.9338
+Cha-F-800041,adult alpha'/beta' Kenyon cell,1385,0,0.0
+Cha-F-800044,alpha/beta core Kenyon cell,387,0,0.0
+Cha-F-800046,adult gamma Kenyon cell,2845,376,13.2162
+Cha-F-800055,lobula columnar neuron LC10,1606,235,14.6326
+Cha-F-800056,gamma dorsal Kenyon cell,2553,49,1.9193
+Cha-F-800064,adult gamma Kenyon cell,2711,376,13.8694
+Cha-F-900003,alpha/beta core Kenyon cell,2792,111,3.9756
+Cha-F-900005,alpha/beta core Kenyon cell,5593,111,1.9846
+Cha-F-900006,alpha/beta core Kenyon cell,1483,0,0.0
+Cha-F-900007,lobula columnar neuron LC12,941,17,1.8066
+Cha-F-900008,alpha/beta surface Kenyon cell,5080,139,2.7362
+Cha-F-900012,lobula columnar neuron LC12,961,27,2.8096
+Cha-F-900013,alpha/beta core Kenyon cell,3187,111,3.4829
+Cha-F-900021,alpha/beta surface Kenyon cell,229,0,0.0
+Cha-F-900031,lobula columnar neuron LC10,1183,263,22.2316
+Cha-F-900034,alpha/beta surface Kenyon cell,3181,139,4.3697
+Cha-F-900036,lobula columnar neuron LC12,762,16,2.0997
+Cha-F-900037,alpha/beta core Kenyon cell,814,0,0.0
+GH146-F-300000,adult multiglomerular antennal lobe projection neuron,456,0,0.0
+GH146-M-300000,adult multiglomerular antennal lobe projection neuron vPN,2064,0,0.0
+GH146-M-300001,adult multiglomerular antennal lobe projection neuron vPN,61,0,0.0
+Gad1-F-000000,alpha/beta posterior Kenyon cell,2670,37,1.3858
+Gad1-F-000002,alpha/beta core Kenyon cell,1187,0,0.0
+Gad1-F-000003,alpha/beta surface Kenyon cell,2880,139,4.8264
+Gad1-F-000005,adult gamma Kenyon cell,2678,376,14.0403
+Gad1-F-000007,alpha/beta surface Kenyon cell,6507,139,2.1362
+Gad1-F-000009,adult alpha'/beta' Kenyon cell,5921,188,3.1751
+Gad1-F-000011,alpha/beta core Kenyon cell,1011,0,0.0
+Gad1-F-000014,alpha/beta posterior Kenyon cell,5865,40,0.682
+Gad1-F-000017,alpha/beta surface Kenyon cell,6168,139,2.2536
+Gad1-F-000018,lobula columnar neuron LC9,1707,46,2.6948
+Gad1-F-000021,alpha/beta core Kenyon cell,5257,111,2.1115
+Gad1-F-000022,adult gamma Kenyon cell,497,0,0.0
+Gad1-F-000026,gamma dorsal Kenyon cell,2691,49,1.8209
+Gad1-F-000027,lobula columnar neuron LC12,668,18,2.6946
+Gad1-F-000029,alpha/beta surface Kenyon cell,6129,139,2.2679
+Gad1-F-000032,adult alpha'/beta' Kenyon cell,508,0,0.0
+Gad1-F-000033,adult gamma Kenyon cell,2526,376,14.8852
+Gad1-F-000036,alpha/beta core Kenyon cell,3084,111,3.5992
+Gad1-F-000037,alpha/beta core Kenyon cell,1419,0,0.0
+Gad1-F-000038,lobula columnar neuron LC4,801,14,1.7478
+Gad1-F-000043,adult gamma Kenyon cell,2439,376,15.4162
+Gad1-F-000045,adult gamma Kenyon cell,534,0,0.0
+Gad1-F-000046,alpha/beta core Kenyon cell,2984,111,3.7198
+Gad1-F-000047,alpha/beta surface Kenyon cell,3122,139,4.4523
+Gad1-F-000048,adult gamma Kenyon cell,523,0,0.0
+Gad1-F-000051,alpha/beta surface Kenyon cell,1199,0,0.0
+Gad1-F-000065,lobula columnar neuron LC12,578,20,3.4602
+Gad1-F-000068,alpha/beta core Kenyon cell,4061,110,2.7087
+Gad1-F-000071,adult alpha'/beta' Kenyon cell,2786,188,6.748
+Gad1-F-000090,adult multiglomerular antennal lobe projection neuron vPN,253,0,0.0
+Gad1-F-000094,adult gamma Kenyon cell,2456,376,15.3094
+Gad1-F-000095,alpha/beta surface Kenyon cell,1073,0,0.0
+Gad1-F-000103,adult uniglomerular antennal lobe projection neuron,2899,0,0.0
+Gad1-F-100002,alpha/beta surface Kenyon cell,998,0,0.0
+Gad1-F-100005,alpha/beta core Kenyon cell,5740,111,1.9338
+Gad1-F-100006,adult antennal lobe projection neuron VM2 adPN,2615,1,0.0382
+Gad1-F-100007,alpha/beta surface Kenyon cell,2955,139,4.7039
+Gad1-F-100010,alpha/beta core Kenyon cell,3186,111,3.484
+Gad1-F-100012,lobula columnar neuron LC12,826,29,3.5109
+Gad1-F-100014,alpha/beta core Kenyon cell,3046,111,3.6441
+Gad1-F-100016,adult gamma Kenyon cell,410,0,0.0
+Gad1-F-100017,adult alpha'/beta' Kenyon cell,5664,188,3.3192
+Gad1-F-100019,adult alpha'/beta' Kenyon cell,434,0,0.0
+Gad1-F-100020,adult alpha'/beta' Kenyon cell,1525,0,0.0
+Gad1-F-100021,adult gamma Kenyon cell,2830,376,13.2862
+Gad1-F-100022,adult alpha'/beta' Kenyon cell,6052,188,3.1064
+Gad1-F-100024,adult alpha'/beta' Kenyon cell,2796,188,6.7239
+Gad1-F-100026,adult gamma Kenyon cell,327,0,0.0
+Gad1-F-100028,adult alpha'/beta' Kenyon cell,5840,188,3.2192
+Gad1-F-100029,alpha/beta core Kenyon cell,1149,0,0.0
+Gad1-F-100030,lobula columnar neuron LC12,531,46,8.6629
+Gad1-F-100032,alpha/beta posterior Kenyon cell,2779,39,1.4034
+Gad1-F-100038,alpha/beta core Kenyon cell,3147,111,3.5272
+Gad1-F-100040,lobula columnar neuron LC13,870,15,1.7241
+Gad1-F-100042,alpha/beta surface Kenyon cell,399,0,0.0
+Gad1-F-100043,adult gamma Kenyon cell,497,0,0.0
+Gad1-F-100046,lobula columnar neuron LC12,781,51,6.5301
+Gad1-F-100047,adult gamma Kenyon cell,2672,376,14.0719
+Gad1-F-100048,alpha/beta core Kenyon cell,2917,111,3.8053
+Gad1-F-100050,alpha/beta surface Kenyon cell,6364,139,2.1842
+Gad1-F-100057,alpha/beta core Kenyon cell,6085,111,1.8242
+Gad1-F-100058,lobula columnar neuron LC12,749,54,7.2096
+Gad1-F-100059,alpha/beta core Kenyon cell,449,0,0.0
+Gad1-F-100061,antennal lobe projection neuron of ALl1 lineage,1117,0,0.0
+Gad1-F-100062,adult alpha'/beta' Kenyon cell,3061,188,6.1418
+Gad1-F-100080,lobula columnar neuron LC10,1274,290,22.763
+Gad1-F-200000,alpha/beta core Kenyon cell,6249,111,1.7763
+Gad1-F-200002,alpha/beta surface Kenyon cell,1485,0,0.0
+Gad1-F-200004,alpha/beta surface Kenyon cell,3311,139,4.1981
+Gad1-F-200005,alpha/beta core Kenyon cell,1527,0,0.0
+Gad1-F-200006,alpha/beta surface Kenyon cell,751,0,0.0
+Gad1-F-200009,alpha/beta core Kenyon cell,3283,111,3.3811
+Gad1-F-200010,adult antennal lobe projection neuron DA1,244,0,0.0
+Gad1-F-200011,alpha/beta core Kenyon cell,6180,111,1.7961
+Gad1-F-200012,alpha/beta surface Kenyon cell,3010,139,4.6179
+Gad1-F-200013,alpha/beta core Kenyon cell,510,0,0.0
+Gad1-F-200014,adult alpha'/beta' Kenyon cell,6287,188,2.9903
+Gad1-F-200017,alpha/beta core Kenyon cell,1491,0,0.0
+Gad1-F-200019,alpha/beta surface Kenyon cell,806,0,0.0
+Gad1-F-200020,adult gamma Kenyon cell,124,0,0.0
+Gad1-F-200021,adult gamma Kenyon cell,2670,376,14.0824
+Gad1-F-200024,adult gamma Kenyon cell,2546,376,14.7683
+Gad1-F-200025,alpha/beta core Kenyon cell,1535,0,0.0
+Gad1-F-200026,alpha/beta core Kenyon cell,6153,111,1.804
+Gad1-F-200028,adult gamma Kenyon cell,2574,376,14.6076
+Gad1-F-200031,lobula columnar neuron LC12,1043,23,2.2052
+Gad1-F-200036,alpha/beta surface Kenyon cell,3043,139,4.5679
+Gad1-F-200038,adult gamma Kenyon cell,493,0,0.0
+Gad1-F-200041,alpha/beta surface Kenyon cell,1374,0,0.0
+Gad1-F-200045,adult gamma Kenyon cell,66,0,0.0
+Gad1-F-200049,adult gamma Kenyon cell,301,0,0.0
+Gad1-F-200052,alpha/beta core Kenyon cell,2799,111,3.9657
+Gad1-F-200054,alpha/beta core Kenyon cell,423,0,0.0
+Gad1-F-200055,alpha/beta core Kenyon cell,483,0,0.0
+Gad1-F-200056,alpha/beta surface Kenyon cell,5771,139,2.4086
+Gad1-F-200057,adult antennal lobe projection neuron VM7 adPN,606,0,0.0
+Gad1-F-200059,alpha/beta surface Kenyon cell,775,0,0.0
+Gad1-F-200061,adult gamma Kenyon cell,434,0,0.0
+Gad1-F-200063,adult alpha'/beta' Kenyon cell,550,0,0.0
+Gad1-F-200064,adult antennal lobe projection neuron DA1,2674,1,0.0374
+Gad1-F-200068,adult alpha'/beta' Kenyon cell,460,0,0.0
+Gad1-F-200069,adult alpha'/beta' Kenyon cell,394,0,0.0
+Gad1-F-200070,adult gamma Kenyon cell,450,0,0.0
+Gad1-F-200071,adult alpha'/beta' Kenyon cell,484,0,0.0
+Gad1-F-200072,adult gamma Kenyon cell,536,0,0.0
+Gad1-F-200073,adult antennal lobe projection neuron DL1 adPN,260,0,0.0
+Gad1-F-200076,alpha/beta core Kenyon cell,3927,110,2.8011
+Gad1-F-200079,alpha/beta surface Kenyon cell,1534,0,0.0
+Gad1-F-200080,alpha/beta core Kenyon cell,6241,111,1.7786
+Gad1-F-200082,adult alpha'/beta' Kenyon cell,1746,0,0.0
+Gad1-F-200085,adult gamma Kenyon cell,2691,376,13.9725
+Gad1-F-200086,alpha/beta surface Kenyon cell,343,0,0.0
+Gad1-F-200091,lobula columnar neuron LC12,752,15,1.9947
+Gad1-F-200092,gamma dorsal Kenyon cell,471,0,0.0
+Gad1-F-200094,alpha/beta core Kenyon cell,1505,0,0.0
+Gad1-F-200095,adult uniglomerular antennal lobe projection neuron V,2697,0,0.0
+Gad1-F-200097,adult alpha'/beta' Kenyon cell,2855,188,6.5849
+Gad1-F-200104,alpha/beta core Kenyon cell,6309,111,1.7594
+Gad1-F-200105,adult alpha'/beta' Kenyon cell,2604,188,7.2197
+Gad1-F-200107,adult multiglomerular antennal lobe projection neuron,1328,0,0.0
+Gad1-F-200109,alpha/beta core Kenyon cell,5405,111,2.0537
+Gad1-F-200111,alpha/beta surface Kenyon cell,1199,0,0.0
+Gad1-F-200112,lobula columnar neuron LC10,1793,295,16.4529
+Gad1-F-200113,alpha/beta surface Kenyon cell,6094,139,2.2809
+Gad1-F-200116,lobula columnar neuron LC12,749,50,6.6756
+Gad1-F-200117,alpha/beta core Kenyon cell,6370,111,1.7425
+Gad1-F-200118,adult gamma Kenyon cell,2685,376,14.0037
+Gad1-F-200119,alpha/beta core Kenyon cell,168,0,0.0
+Gad1-F-200131,adult alpha'/beta' Kenyon cell,460,0,0.0
+Gad1-F-200139,antennal lobe projection neuron of ALl1 lineage,322,0,0.0
+Gad1-F-200141,alpha/beta core Kenyon cell,2243,110,4.9041
+Gad1-F-300001,adult gamma Kenyon cell,498,0,0.0
+Gad1-F-300002,adult alpha'/beta' Kenyon cell,2736,188,6.8713
+Gad1-F-300005,antennal lobe projection neuron of ALl1 lineage,2854,0,0.0
+Gad1-F-300007,adult alpha'/beta' Kenyon cell,1553,0,0.0
+Gad1-F-300009,gamma dorsal Kenyon cell,2686,49,1.8243
+Gad1-F-300010,adult alpha'/beta' Kenyon cell,3197,188,5.8805
+Gad1-F-300013,adult alpha'/beta' Kenyon cell,3036,183,6.0277
+Gad1-F-300014,alpha/beta core Kenyon cell,1077,0,0.0
+Gad1-F-300015,adult antennal lobe projection neuron VM7 adPN,2675,0,0.0
+Gad1-F-300016,lobula columnar neuron LC14,386,0,0.0
+Gad1-F-300017,alpha/beta surface Kenyon cell,322,0,0.0
+Gad1-F-300018,adult alpha'/beta' Kenyon cell,2427,167,6.8809
+Gad1-F-300019,adult alpha'/beta' Kenyon cell,3011,188,6.2438
+Gad1-F-300022,lobula columnar neuron LC11,949,19,2.0021
+Gad1-F-300023,adult gamma Kenyon cell,2637,376,14.2586
+Gad1-F-300024,alpha/beta core Kenyon cell,411,0,0.0
+Gad1-F-300025,adult alpha'/beta' Kenyon cell,457,0,0.0
+Gad1-F-300026,alpha/beta surface Kenyon cell,5687,139,2.4442
+Gad1-F-300028,adult gamma Kenyon cell,2644,376,14.2209
+Gad1-F-300030,alpha/beta core Kenyon cell,5126,111,2.1654
+Gad1-F-300034,alpha/beta surface Kenyon cell,6007,139,2.314
+Gad1-F-300036,adult multiglomerular antennal lobe projection neuron,331,0,0.0
+Gad1-F-300039,adult gamma Kenyon cell,444,0,0.0
+Gad1-F-300042,alpha/beta posterior Kenyon cell,2696,40,1.4837
+Gad1-F-300043,adult alpha'/beta' Kenyon cell,471,0,0.0
+Gad1-F-300047,adult alpha'/beta' Kenyon cell,3204,188,5.8677
+Gad1-F-300050,lobula columnar neuron LC12,767,21,2.7379
+Gad1-F-300054,lobula columnar neuron LC11,776,11,1.4175
+Gad1-F-300055,lobula columnar neuron LC10,1543,236,15.2949
+Gad1-F-300065,alpha/beta core Kenyon cell,1471,0,0.0
+Gad1-F-300068,alpha/beta core Kenyon cell,3118,111,3.56
+Gad1-F-300069,alpha/beta core Kenyon cell,3048,111,3.6417
+Gad1-F-300075,alpha/beta surface Kenyon cell,1421,0,0.0
+Gad1-F-300077,lobula columnar neuron LC12,806,15,1.861
+Gad1-F-300078,adult alpha'/beta' Kenyon cell,2342,125,5.3373
+Gad1-F-300087,alpha/beta posterior Kenyon cell,2823,39,1.3815
+Gad1-F-300089,alpha/beta surface Kenyon cell,1341,0,0.0
+Gad1-F-300090,alpha/beta core Kenyon cell,6390,111,1.7371
+Gad1-F-300092,alpha/beta surface Kenyon cell,2451,101,4.1208
+Gad1-F-300094,adult gamma Kenyon cell,582,0,0.0
+Gad1-F-300096,adult alpha'/beta' Kenyon cell,5707,188,3.2942
+Gad1-F-300097,adult alpha'/beta' Kenyon cell,6112,188,3.0759
+Gad1-F-300103,alpha/beta surface Kenyon cell,1512,0,0.0
+Gad1-F-300106,alpha/beta core Kenyon cell,6011,111,1.8466
+Gad1-F-300107,adult alpha'/beta' Kenyon cell,3058,188,6.1478
+Gad1-F-300109,lobula columnar neuron LC12,619,16,2.5848
+Gad1-F-300110,adult alpha'/beta' Kenyon cell,1124,0,0.0
+Gad1-F-300112,alpha/beta core Kenyon cell,380,0,0.0
+Gad1-F-300114,alpha/beta surface Kenyon cell,366,0,0.0
+Gad1-F-300117,alpha/beta surface Kenyon cell,2848,139,4.8806
+Gad1-F-300119,alpha/beta core Kenyon cell,2900,111,3.8276
+Gad1-F-300128,alpha/beta core Kenyon cell,1550,0,0.0
+Gad1-F-300138,alpha/beta surface Kenyon cell,823,0,0.0
+Gad1-F-400000,adult alpha'/beta' Kenyon cell,386,0,0.0
+Gad1-F-400001,alpha/beta surface Kenyon cell,2926,139,4.7505
+Gad1-F-400002,adult alpha'/beta' Kenyon cell,525,0,0.0
+Gad1-F-400003,lobula columnar neuron LC12,699,21,3.0043
+Gad1-F-400004,alpha/beta core Kenyon cell,1443,0,0.0
+Gad1-F-400008,adult gamma Kenyon cell,2879,376,13.0601
+Gad1-F-400009,adult gamma Kenyon cell,452,0,0.0
+Gad1-F-400010,alpha/beta core Kenyon cell,5794,111,1.9158
+Gad1-F-400012,alpha/beta surface Kenyon cell,6122,139,2.2705
+Gad1-F-400013,adult gamma Kenyon cell,425,0,0.0
+Gad1-F-400014,alpha/beta core Kenyon cell,376,0,0.0
+Gad1-F-400015,alpha/beta core Kenyon cell,1491,0,0.0
+Gad1-F-400016,alpha/beta core Kenyon cell,1404,0,0.0
+Gad1-F-400018,adult gamma Kenyon cell,2711,376,13.8694
+Gad1-F-400019,alpha/beta core Kenyon cell,415,0,0.0
+Gad1-F-400021,alpha/beta core Kenyon cell,367,0,0.0
+Gad1-F-400026,adult gamma Kenyon cell,2461,375,15.2377
+Gad1-F-400028,gamma dorsal Kenyon cell,433,0,0.0
+Gad1-F-400029,alpha/beta surface Kenyon cell,5850,139,2.3761
+Gad1-F-400030,lobula columnar neuron LC9,1928,81,4.2012
+Gad1-F-400031,alpha/beta core Kenyon cell,6367,111,1.7434
+Gad1-F-400037,alpha/beta core Kenyon cell,240,0,0.0
+Gad1-F-400038,adult alpha'/beta' Kenyon cell,3147,188,5.9739
+Gad1-F-400040,alpha/beta surface Kenyon cell,1483,0,0.0
+Gad1-F-400041,alpha/beta surface Kenyon cell,347,0,0.0
+Gad1-F-400042,adult gamma Kenyon cell,543,0,0.0
+Gad1-F-400047,alpha/beta surface Kenyon cell,6073,139,2.2888
+Gad1-F-400048,alpha/beta surface Kenyon cell,5422,139,2.5636
+Gad1-F-400050,adult gamma Kenyon cell,2316,376,16.2349
+Gad1-F-400051,alpha/beta core Kenyon cell,492,0,0.0
+Gad1-F-400052,adult gamma Kenyon cell,2396,376,15.6928
+Gad1-F-400056,adult alpha'/beta' Kenyon cell,233,0,0.0
+Gad1-F-400059,alpha/beta surface Kenyon cell,6049,139,2.2979
+Gad1-F-400062,adult gamma Kenyon cell,2653,376,14.1726
+Gad1-F-400065,lobula columnar neuron LC12,984,24,2.439
+Gad1-F-400067,alpha/beta core Kenyon cell,6080,111,1.8257
+Gad1-F-400068,alpha/beta core Kenyon cell,1203,0,0.0
+Gad1-F-400069,alpha/beta core Kenyon cell,5845,111,1.8991
+Gad1-F-400070,alpha/beta core Kenyon cell,276,0,0.0
+Gad1-F-400071,alpha/beta core Kenyon cell,5859,111,1.8945
+Gad1-F-400072,antennal lobe projection neuron of ALl1 lineage,3086,0,0.0
+Gad1-F-400073,alpha/beta core Kenyon cell,406,0,0.0
+Gad1-F-400074,alpha/beta posterior Kenyon cell,5310,40,0.7533
+Gad1-F-400075,adult antennal lobe projection neuron DL2v adPN,183,0,0.0
+Gad1-F-400078,adult gamma Kenyon cell,470,0,0.0
+Gad1-F-400080,lobula columnar neuron LC12,831,20,2.4067
+Gad1-F-400081,adult alpha'/beta' Kenyon cell,2809,188,6.6928
+Gad1-F-400082,adult alpha'/beta' Kenyon cell,401,0,0.0
+Gad1-F-400084,alpha/beta surface Kenyon cell,375,0,0.0
+Gad1-F-400085,alpha/beta core Kenyon cell,2894,111,3.8355
+Gad1-F-400088,adult antennal lobe projection neuron DA1 vPN,3,0,0.0
+Gad1-F-400089,adult gamma Kenyon cell,2504,375,14.976
+Gad1-F-400093,adult alpha'/beta' Kenyon cell,2501,188,7.517
+Gad1-F-400095,adult alpha'/beta' Kenyon cell,2653,188,7.0863
+Gad1-F-400097,adult alpha'/beta' Kenyon cell,1315,0,0.0
+Gad1-F-400098,alpha/beta posterior Kenyon cell,160,0,0.0
+Gad1-F-400101,adult alpha'/beta' Kenyon cell,3122,188,6.0218
+Gad1-F-400105,alpha/beta surface Kenyon cell,1357,0,0.0
+Gad1-F-400110,alpha/beta surface Kenyon cell,3156,139,4.4043
+Gad1-F-400117,lobula columnar neuron LC12,814,24,2.9484
+Gad1-F-500000,alpha/beta core Kenyon cell,490,0,0.0
+Gad1-F-500003,alpha/beta surface Kenyon cell,6029,139,2.3055
+Gad1-F-500005,alpha/beta core Kenyon cell,5214,111,2.1289
+Gad1-F-500007,gamma dorsal Kenyon cell,395,0,0.0
+Gad1-F-500008,adult alpha'/beta' Kenyon cell,430,0,0.0
+Gad1-F-500009,alpha/beta surface Kenyon cell,6113,139,2.2738
+Gad1-F-500010,alpha/beta surface Kenyon cell,1309,0,0.0
+Gad1-F-500011,alpha/beta core Kenyon cell,1289,0,0.0
+Gad1-F-500012,alpha/beta core Kenyon cell,5131,111,2.1633
+Gad1-F-500013,adult multiglomerular antennal lobe projection neuron,311,0,0.0
+Gad1-F-500015,alpha/beta core Kenyon cell,2723,111,4.0764
+Gad1-F-500017,alpha/beta surface Kenyon cell,6086,139,2.2839
+Gad1-F-500020,lobula columnar neuron LC9,1868,40,2.1413
+Gad1-F-500021,alpha/beta surface Kenyon cell,3181,139,4.3697
+Gad1-F-500022,alpha/beta surface Kenyon cell,2861,139,4.8584
+Gad1-F-500029,alpha/beta surface Kenyon cell,318,0,0.0
+Gad1-F-500032,alpha/beta surface Kenyon cell,5841,139,2.3797
+Gad1-F-500033,alpha/beta posterior Kenyon cell,5458,40,0.7329
+Gad1-F-500034,alpha/beta surface Kenyon cell,333,0,0.0
+Gad1-F-500037,alpha/beta core Kenyon cell,358,0,0.0
+Gad1-F-500043,lobula columnar neuron LC14,1558,10,0.6418
+Gad1-F-500044,alpha/beta core Kenyon cell,5928,111,1.8725
+Gad1-F-500045,adult alpha'/beta' Kenyon cell,562,0,0.0
+Gad1-F-500046,alpha/beta core Kenyon cell,6301,111,1.7616
+Gad1-F-500048,lobula columnar neuron LC12,503,13,2.5845
+Gad1-F-500050,alpha/beta surface Kenyon cell,3037,139,4.5769
+Gad1-F-500051,alpha/beta surface Kenyon cell,248,0,0.0
+Gad1-F-500053,lobula columnar neuron LC9,1841,81,4.3998
+Gad1-F-500055,alpha/beta core Kenyon cell,5612,111,1.9779
+Gad1-F-500056,gamma dorsal Kenyon cell,2898,49,1.6908
+Gad1-F-500059,alpha/beta surface Kenyon cell,809,0,0.0
+Gad1-F-500060,lobula columnar neuron LC10,1752,234,13.3562
+Gad1-F-500063,alpha/beta surface Kenyon cell,369,0,0.0
+Gad1-F-500064,adult alpha'/beta' Kenyon cell,2888,188,6.5097
+Gad1-F-500066,alpha/beta surface Kenyon cell,3062,139,4.5395
+Gad1-F-500067,adult gamma Kenyon cell,550,0,0.0
+Gad1-F-500068,adult antennal lobe projection neuron VM7 adPN,556,0,0.0
+Gad1-F-500070,lobula columnar neuron LC12,892,18,2.0179
+Gad1-F-500073,alpha/beta core Kenyon cell,6227,111,1.7826
+Gad1-F-500077,adult antennal lobe projection neuron VA1v vPN,4,0,0.0
+Gad1-F-500078,alpha/beta core Kenyon cell,5423,111,2.0468
+Gad1-F-500079,alpha/beta core Kenyon cell,261,0,0.0
+Gad1-F-500084,alpha/beta core Kenyon cell,3273,111,3.3914
+Gad1-F-500087,adult gamma Kenyon cell,456,0,0.0
+Gad1-F-500088,adult multiglomerular antennal lobe projection neuron vPN,1103,0,0.0
+Gad1-F-500094,adult gamma Kenyon cell,503,0,0.0
+Gad1-F-500095,adult gamma Kenyon cell,2527,375,14.8397
+Gad1-F-500097,adult alpha'/beta' Kenyon cell,1406,0,0.0
+Gad1-F-500099,adult alpha'/beta' Kenyon cell,2100,63,3.0
+Gad1-F-500100,adult gamma Kenyon cell,2343,376,16.0478
+Gad1-F-600012,adult gamma Kenyon cell,2553,375,14.6886
+Gad1-F-600013,alpha/beta core Kenyon cell,1649,0,0.0
+Gad1-F-600015,alpha/beta core Kenyon cell,2876,111,3.8595
+Gad1-F-600016,alpha/beta posterior Kenyon cell,439,0,0.0
+Gad1-F-600017,alpha/beta core Kenyon cell,1473,0,0.0
+Gad1-F-600019,alpha/beta core Kenyon cell,316,0,0.0
+Gad1-F-600020,alpha/beta surface Kenyon cell,297,0,0.0
+Gad1-F-600022,adult gamma Kenyon cell,477,0,0.0
+Gad1-F-600024,alpha/beta core Kenyon cell,5936,111,1.8699
+Gad1-F-600026,alpha/beta surface Kenyon cell,456,0,0.0
+Gad1-F-600028,lobula columnar neuron LC12,731,22,3.0096
+Gad1-F-600029,alpha/beta core Kenyon cell,1519,0,0.0
+Gad1-F-600031,adult alpha'/beta' Kenyon cell,544,0,0.0
+Gad1-F-600034,lobula columnar neuron LC12,564,21,3.7234
+Gad1-F-600039,adult gamma Kenyon cell,314,0,0.0
+Gad1-F-600043,alpha/beta core Kenyon cell,1019,0,0.0
+Gad1-F-600047,alpha/beta core Kenyon cell,6463,111,1.7175
+Gad1-F-600049,alpha/beta surface Kenyon cell,4925,139,2.8223
+Gad1-F-600054,lobula columnar neuron LC10,1435,287,20.0
+Gad1-F-600055,alpha/beta core Kenyon cell,379,0,0.0
+Gad1-F-600056,alpha/beta surface Kenyon cell,6314,139,2.2015
+Gad1-F-600058,alpha/beta surface Kenyon cell,6009,139,2.3132
+Gad1-F-600064,alpha/beta surface Kenyon cell,333,0,0.0
+Gad1-F-600066,gamma dorsal Kenyon cell,401,0,0.0
+Gad1-F-600073,alpha/beta posterior Kenyon cell,2870,39,1.3589
+Gad1-F-600074,lobula columnar neuron LC6,1528,35,2.2906
+Gad1-F-600076,adult gamma Kenyon cell,376,0,0.0
+Gad1-F-600078,adult alpha'/beta' Kenyon cell,429,0,0.0
+Gad1-F-600085,alpha/beta core Kenyon cell,3028,111,3.6658
+Gad1-F-600091,adult alpha'/beta' Kenyon cell,558,0,0.0
+Gad1-F-600095,adult alpha'/beta' Kenyon cell,2666,188,7.0518
+Gad1-F-700000,lobula columnar neuron LC9,2090,73,3.4928
+Gad1-F-700001,alpha/beta core Kenyon cell,6419,111,1.7292
+Gad1-F-700002,alpha/beta surface Kenyon cell,5267,139,2.6391
+Gad1-F-700004,adult gamma Kenyon cell,2429,376,15.4796
+Gad1-F-700006,alpha/beta core Kenyon cell,1414,0,0.0
+Gad1-F-700007,alpha/beta core Kenyon cell,5971,111,1.859
+Gad1-F-700008,alpha/beta surface Kenyon cell,272,0,0.0
+Gad1-F-700009,alpha/beta core Kenyon cell,521,0,0.0
+Gad1-F-700010,adult gamma Kenyon cell,2734,376,13.7527
+Gad1-F-700011,alpha/beta surface Kenyon cell,1183,0,0.0
+Gad1-F-700014,adult alpha'/beta' Kenyon cell,2789,188,6.7408
+Gad1-F-700017,adult gamma Kenyon cell,205,0,0.0
+Gad1-F-700019,antennal lobe projection neuron of ALl1 lineage,529,0,0.0
+Gad1-F-700020,adult gamma Kenyon cell,391,0,0.0
+Gad1-F-700023,lobula columnar neuron LC12,579,44,7.5993
+Gad1-F-700025,alpha/beta core Kenyon cell,5779,111,1.9207
+Gad1-F-700026,adult gamma Kenyon cell,2773,376,13.5593
+Gad1-F-700030,adult gamma Kenyon cell,493,0,0.0
+Gad1-F-700031,adult gamma Kenyon cell,2588,376,14.5286
+Gad1-F-700033,adult gamma Kenyon cell,2824,376,13.3144
+Gad1-F-700041,alpha/beta posterior Kenyon cell,278,0,0.0
+Gad1-F-700046,alpha/beta core Kenyon cell,894,0,0.0
+Gad1-F-700051,alpha/beta surface Kenyon cell,1179,0,0.0
+Gad1-F-700053,adult multiglomerular antennal lobe projection neuron,1562,0,0.0
+Gad1-F-800006,alpha/beta core Kenyon cell,3028,111,3.6658
+Gad1-F-800011,alpha/beta core Kenyon cell,1264,0,0.0
+Gad1-F-800012,alpha/beta core Kenyon cell,1524,0,0.0
+Gad1-F-800015,adult gamma Kenyon cell,560,0,0.0
+Gad1-F-800016,alpha/beta core Kenyon cell,2920,111,3.8014
+Gad1-F-800017,alpha/beta posterior Kenyon cell,348,0,0.0
+Gad1-F-800020,alpha/beta core Kenyon cell,5118,111,2.1688
+Gad1-F-800021,alpha/beta core Kenyon cell,383,0,0.0
+Gad1-F-800023,adult gamma Kenyon cell,2336,374,16.0103
+Gad1-F-800024,alpha/beta core Kenyon cell,2993,111,3.7087
+Gad1-F-800027,alpha/beta surface Kenyon cell,3041,138,4.538
+Gad1-F-800029,alpha/beta core Kenyon cell,1500,0,0.0
+Gad1-F-800036,adult antennal lobe projection neuron VM4 adPN,2385,0,0.0
+Gad1-F-800039,lobula columnar neuron LC12,698,22,3.1519
+Gad1-F-800042,adult antennal lobe projection neuron VA1d adPN,3003,2,0.0666
+Gad1-F-800043,alpha/beta surface Kenyon cell,4865,139,2.8571
+Gad1-F-800047,adult alpha'/beta' Kenyon cell,5920,188,3.1757
+Gad1-F-800049,antennal lobe projection neuron of ALl1 lineage,3090,0,0.0
+Gad1-F-800053,alpha/beta core Kenyon cell,3040,111,3.6513
+Gad1-F-800056,adult alpha'/beta' Kenyon cell,2633,188,7.1401
+Gad1-F-800057,lobula columnar neuron LC12,822,21,2.5547
+Gad1-F-800060,alpha/beta core Kenyon cell,1308,0,0.0
+Gad1-F-800063,lobula columnar neuron LC12,861,17,1.9744
+Gad1-F-800069,adult gamma Kenyon cell,427,0,0.0
+Gad1-F-800075,alpha/beta core Kenyon cell,1353,0,0.0
+Gad1-F-800077,alpha/beta surface Kenyon cell,2806,101,3.5994
+Gad1-F-900000,adult gamma Kenyon cell,2568,369,14.3692
+Gad1-F-900003,alpha/beta core Kenyon cell,6158,111,1.8025
+Gad1-F-900004,adult gamma Kenyon cell,456,0,0.0
+Gad1-F-900005,adult gamma Kenyon cell,465,0,0.0
+Gad1-F-900006,gamma dorsal Kenyon cell,2617,49,1.8724
+Gad1-F-900007,alpha/beta core Kenyon cell,3008,111,3.6902
+Gad1-F-900010,alpha/beta core Kenyon cell,1316,0,0.0
+Gad1-F-900015,alpha/beta surface Kenyon cell,6112,139,2.2742
+Gad1-F-900016,alpha/beta core Kenyon cell,304,0,0.0
+Gad1-F-900018,alpha/beta core Kenyon cell,1478,0,0.0
+Gad1-F-900020,adult gamma Kenyon cell,2574,376,14.6076
+Gad1-F-900021,alpha/beta surface Kenyon cell,3275,139,4.2443
+Gad1-F-900024,alpha/beta surface Kenyon cell,2799,139,4.9661
+Gad1-F-900026,alpha/beta surface Kenyon cell,1100,0,0.0
+Gad1-F-900027,adult multiglomerular antennal lobe projection neuron vPN,110,0,0.0
+Gad1-F-900028,alpha/beta core Kenyon cell,1332,0,0.0
+Gad1-F-900031,alpha/beta core Kenyon cell,5805,111,1.9121
+Gad1-F-900035,adult uniglomerular antennal lobe projection neuron,6554,0,0.0
+Gad1-F-900036,alpha/beta posterior Kenyon cell,6190,40,0.6462
+Gad1-F-900043,lobula columnar neuron LC6,1100,31,2.8182
+Gad1-F-900044,alpha/beta core Kenyon cell,3014,111,3.6828
+Gad1-F-900048,alpha/beta core Kenyon cell,288,0,0.0
+Gad1-F-900051,alpha/beta core Kenyon cell,1122,0,0.0
+Gad1-F-900055,lobula columnar neuron LC12,745,24,3.2215
+TH-F-100032,adult gamma Kenyon cell,2604,375,14.4009
+Tdc2-F-000007,adult multiglomerular antennal lobe projection neuron,2139,0,0.0
+Trh-F-000008,antennal lobe projection neuron of ALl1 lineage,1800,0,0.0
+Trh-F-000009,adult multiglomerular antennal lobe projection neuron,300,0,0.0
+Trh-F-000032,adult multiglomerular antennal lobe projection neuron vPN,1552,0,0.0
+Trh-F-000041,antennal lobe projection neuron of ALl1 lineage,648,0,0.0
+Trh-F-000043,antennal lobe projection neuron of ALl1 lineage,653,0,0.0
+Trh-F-000062,adult multiglomerular antennal lobe projection neuron adPN,436,0,0.0
+Trh-F-100032,adult multiglomerular antennal lobe projection neuron,351,0,0.0
+Trh-F-100037,antennal lobe projection neuron of ALl1 lineage,385,0,0.0
+Trh-F-100038,antennal lobe projection neuron of ALl1 lineage,2170,0,0.0
+Trh-F-300016,antennal lobe projection neuron of ALl1 lineage,35,0,0.0
+Trh-F-300080,adult multiglomerular antennal lobe projection neuron vPN,1949,0,0.0
+Trh-F-400000,adult multiglomerular antennal lobe projection neuron vPN,1086,0,0.0
+Trh-F-400014,adult multiglomerular antennal lobe projection neuron vPN,794,0,0.0
+Trh-F-400030,adult multiglomerular antennal lobe projection neuron vPN,785,0,0.0
+Trh-F-400067,adult multiglomerular antennal lobe projection neuron vPN,1556,0,0.0
+Trh-F-500004,adult multiglomerular antennal lobe projection neuron vPN,1612,0,0.0
+Trh-F-500027,adult multiglomerular antennal lobe projection neuron vPN,2057,0,0.0
+Trh-F-500036,adult multiglomerular antennal lobe projection neuron vPN,1980,0,0.0
+Trh-F-500046,adult multiglomerular antennal lobe projection neuron vPN,1825,0,0.0
+Trh-F-500049,adult multiglomerular antennal lobe projection neuron vPN,1814,0,0.0
+Trh-F-500059,adult multiglomerular antennal lobe projection neuron vPN,1767,0,0.0
+Trh-F-500061,adult multiglomerular antennal lobe projection neuron vPN,1680,0,0.0
+Trh-F-500077,adult multiglomerular antennal lobe projection neuron vPN,1793,0,0.0
+Trh-F-500112,alpha/beta posterior Kenyon cell,358,0,0.0
+Trh-F-500114,adult multiglomerular antennal lobe projection neuron vPN,225,0,0.0
+Trh-F-500124,adult multiglomerular antennal lobe projection neuron vPN,293,0,0.0
+Trh-F-500135,adult multiglomerular antennal lobe projection neuron vPN,147,0,0.0
+Trh-F-500152,adult multiglomerular antennal lobe projection neuron vPN,145,0,0.0
+Trh-F-500199,adult multiglomerular antennal lobe projection neuron vPN,1777,0,0.0
+Trh-F-500200,adult multiglomerular antennal lobe projection neuron vPN,177,0,0.0
+Trh-F-500211,adult multiglomerular antennal lobe projection neuron vPN,1780,0,0.0
+Trh-F-500213,adult multiglomerular antennal lobe projection neuron vPN,1874,0,0.0
+Trh-F-500217,adult multiglomerular antennal lobe projection neuron vPN,2053,0,0.0
+Trh-F-500220,adult multiglomerular antennal lobe projection neuron vPN,2086,0,0.0
+Trh-F-600007,adult multiglomerular antennal lobe projection neuron vPN,1908,0,0.0
+Trh-F-600011,adult multiglomerular antennal lobe projection neuron vPN,211,0,0.0
+Trh-F-600014,adult multiglomerular antennal lobe projection neuron vPN,193,0,0.0
+Trh-F-600015,antennal lobe projection neuron of ALl1 lineage,2508,0,0.0
+Trh-F-600066,adult multiglomerular antennal lobe projection neuron vPN,1628,0,0.0
+Trh-F-600072,adult multiglomerular antennal lobe projection neuron vPN,1685,0,0.0
+Trh-F-600076,alpha/beta core Kenyon cell,5736,111,1.9351
+Trh-F-600077,adult multiglomerular antennal lobe projection neuron vPN,210,0,0.0
+Trh-F-600084,adult multiglomerular antennal lobe projection neuron vPN,134,0,0.0
+Trh-F-600092,adult multiglomerular antennal lobe projection neuron vPN,1680,0,0.0
+Trh-F-600095,adult multiglomerular antennal lobe projection neuron vPN,8,0,0.0
+Trh-F-600099,alpha/beta surface Kenyon cell,5905,139,2.3539
+Trh-F-600104,adult multiglomerular antennal lobe projection neuron vPN,1840,0,0.0
+Trh-F-600108,adult multiglomerular antennal lobe projection neuron vPN,1857,0,0.0
+Trh-F-700013,alpha/beta surface Kenyon cell,1081,0,0.0
+Trh-F-700019,adult multiglomerular antennal lobe projection neuron vPN,1940,0,0.0
+Trh-F-700021,adult multiglomerular antennal lobe projection neuron vPN,2101,0,0.0
+Trh-F-700032,adult multiglomerular antennal lobe projection neuron vPN,1247,0,0.0
+Trh-F-700034,adult multiglomerular antennal lobe projection neuron vPN,136,0,0.0
+Trh-F-700035,adult multiglomerular antennal lobe projection neuron vPN,193,0,0.0
+Trh-F-700038,adult multiglomerular antennal lobe projection neuron vPN,1197,0,0.0
+Trh-F-800002,adult multiglomerular antennal lobe projection neuron vPN,1832,0,0.0
+Trh-F-900010,adult multiglomerular antennal lobe projection neuron vPN,204,0,0.0
+Trh-F-900012,alpha/beta surface Kenyon cell,6314,139,2.2015
+Trh-F-900029,alpha/beta posterior Kenyon cell,231,0,0.0
+Trh-F-900031,adult multiglomerular antennal lobe projection neuron vPN,1892,0,0.0
+Trh-M-000008,antennal lobe projection neuron of ALl1 lineage,517,0,0.0
+Trh-M-000070,adult multiglomerular antennal lobe projection neuron,654,0,0.0
+Trh-M-100037,adult multiglomerular antennal lobe projection neuron,2108,0,0.0
+Trh-M-400028,adult multiglomerular antennal lobe projection neuron vPN,1590,0,0.0
+Trh-M-400040,adult multiglomerular antennal lobe projection neuron vPN,864,0,0.0
+Trh-M-400043,adult multiglomerular antennal lobe projection neuron vPN,199,0,0.0
+Trh-M-400074,adult multiglomerular antennal lobe projection neuron vPN,1765,0,0.0
+Trh-M-400082,adult multiglomerular antennal lobe projection neuron vPN,329,0,0.0
+Trh-M-500005,adult multiglomerular antennal lobe projection neuron vPN,211,0,0.0
+Trh-M-500007,adult multiglomerular antennal lobe projection neuron vPN,211,0,0.0
+Trh-M-500015,adult multiglomerular antennal lobe projection neuron vPN,2644,0,0.0
+Trh-M-500018,adult multiglomerular antennal lobe projection neuron vPN,256,0,0.0
+Trh-M-500043,adult multiglomerular antennal lobe projection neuron vPN,909,0,0.0
+Trh-M-500053,adult multiglomerular antennal lobe projection neuron vPN,313,0,0.0
+Trh-M-500061,adult multiglomerular antennal lobe projection neuron vPN,1897,0,0.0
+Trh-M-500094,adult multiglomerular antennal lobe projection neuron vPN,314,0,0.0
+Trh-M-500106,adult multiglomerular antennal lobe projection neuron vPN,977,0,0.0
+Trh-M-500146,adult multiglomerular antennal lobe projection neuron vPN,213,0,0.0
+Trh-M-500165,adult multiglomerular antennal lobe projection neuron vPN,1682,0,0.0
+Trh-M-500180,adult multiglomerular antennal lobe projection neuron vPN,118,0,0.0
+Trh-M-600013,adult multiglomerular antennal lobe projection neuron vPN,479,0,0.0
+Trh-M-600014,adult multiglomerular antennal lobe projection neuron vPN,223,0,0.0
+Trh-M-600032,adult multiglomerular antennal lobe projection neuron vPN,138,0,0.0
+Trh-M-600062,adult multiglomerular antennal lobe projection neuron vPN,1726,0,0.0
+Trh-M-600076,adult multiglomerular antennal lobe projection neuron vPN,1419,0,0.0
+Trh-M-600105,adult multiglomerular antennal lobe projection neuron vPN,148,0,0.0
+Trh-M-600114,adult multiglomerular antennal lobe projection neuron vPN,1753,0,0.0
+Trh-M-700005,adult multiglomerular antennal lobe projection neuron vPN,275,0,0.0
+Trh-M-700009,adult multiglomerular antennal lobe projection neuron vPN,185,0,0.0
+Trh-M-700024,adult multiglomerular antennal lobe projection neuron vPN,886,0,0.0
+Trh-M-700025,adult multiglomerular antennal lobe projection neuron vPN,271,0,0.0
+Trh-M-700027,adult multiglomerular antennal lobe projection neuron vPN,1586,0,0.0
+Trh-M-700058,adult multiglomerular antennal lobe projection neuron vPN,1598,0,0.0
+Trh-M-700069,adult multiglomerular antennal lobe projection neuron vPN,280,0,0.0
+Trh-M-700084,adult multiglomerular antennal lobe projection neuron vPN,1713,0,0.0
+Trh-M-900012,adult multiglomerular antennal lobe projection neuron vPN,257,0,0.0
+Trh-M-900023,adult multiglomerular antennal lobe projection neuron vPN,1709,0,0.0
+Trh-M-900034,adult multiglomerular antennal lobe projection neuron vPN,168,0,0.0
+Trh-M-900035,adult multiglomerular antennal lobe projection neuron vPN,1643,0,0.0
+VGlut-F-000028,adult gamma Kenyon cell,2473,375,15.1638
+VGlut-F-000035,adult uniglomerular antennal lobe projection neuron,282,0,0.0
+VGlut-F-000055,adult antennal lobe projection neuron DL1 adPN,3296,0,0.0
+VGlut-F-000066,adult antennal lobe projection neuron DL1 adPN,421,0,0.0
+VGlut-F-000075,adult alpha'/beta' Kenyon cell,2854,158,5.5361
+VGlut-F-000106,adult antennal lobe projection neuron DL2d adPN,2941,1,0.034
+VGlut-F-000118,adult gamma Kenyon cell,1999,375,18.7594
+VGlut-F-000126,adult antennal lobe projection neuron DL1 adPN,3325,0,0.0
+VGlut-F-000137,alpha/beta core Kenyon cell,1184,0,0.0
+VGlut-F-000173,adult gamma Kenyon cell,2773,376,13.5593
+VGlut-F-000203,adult gamma Kenyon cell,2694,376,13.9569
+VGlut-F-000206,antennal lobe projection neuron of ALl1 lineage,341,0,0.0
+VGlut-F-000247,adult gamma Kenyon cell,2528,376,14.8734
+VGlut-F-000259,antennal lobe projection neuron of ALl1 lineage,209,0,0.0
+VGlut-F-000260,adult gamma Kenyon cell,405,0,0.0
+VGlut-F-000263,lobula columnar neuron LC12,630,24,3.8095
+VGlut-F-000276,antennal lobe projection neuron of ALl1 lineage,1158,0,0.0
+VGlut-F-000280,adult antennal lobe projection neuron DA1,156,0,0.0
+VGlut-F-000302,alpha/beta surface Kenyon cell,5806,139,2.3941
+VGlut-F-000308,adult gamma Kenyon cell,1867,376,20.1393
+VGlut-F-000321,adult multiglomerular antennal lobe projection neuron,162,0,0.0
+VGlut-F-000341,adult gamma Kenyon cell,2868,376,13.1102
+VGlut-F-000342,gamma dorsal Kenyon cell,308,0,0.0
+VGlut-F-000344,adult uniglomerular antennal lobe projection neuron,2304,0,0.0
+VGlut-F-000349,lobula columnar neuron LC12,863,16,1.854
+VGlut-F-000359,alpha/beta core Kenyon cell,2915,111,3.8079
+VGlut-F-000370,antennal lobe projection neuron of ALl1 lineage,200,0,0.0
+VGlut-F-000371,gamma dorsal Kenyon cell,458,0,0.0
+VGlut-F-000391,adult antennal lobe projection neuron DL2v adPN,3299,2,0.0606
+VGlut-F-000397,alpha/beta core Kenyon cell,1312,0,0.0
+VGlut-F-000420,alpha/beta surface Kenyon cell,5553,139,2.5032
+VGlut-F-000425,lobula columnar neuron LC12,532,12,2.2556
+VGlut-F-000426,adult antennal lobe projection neuron DL1 adPN,242,0,0.0
+VGlut-F-000430,adult multiglomerular antennal lobe projection neuron,1028,0,0.0
+VGlut-F-000463,antennal lobe projection neuron of ALl1 lineage,1313,0,0.0
+VGlut-F-000476,alpha/beta surface Kenyon cell,359,0,0.0
+VGlut-F-000478,adult gamma Kenyon cell,395,0,0.0
+VGlut-F-000485,adult multiglomerular antennal lobe projection neuron,135,0,0.0
+VGlut-F-000520,gamma dorsal Kenyon cell,2789,49,1.7569
+VGlut-F-000554,adult gamma Kenyon cell,282,0,0.0
+VGlut-F-000563,adult antennal lobe projection neuron DL4 adPN,3163,0,0.0
+VGlut-F-000575,adult multiglomerular antennal lobe projection neuron vPN,7,0,0.0
+VGlut-F-000584,adult gamma Kenyon cell,513,0,0.0
+VGlut-F-000590,lobula columnar neuron LC12,793,16,2.0177
+VGlut-F-000593,adult antennal lobe projection neuron DL1 adPN,3690,0,0.0
+VGlut-F-000606,adult antennal lobe projection neuron DL2d adPN,242,0,0.0
+VGlut-F-000624,antennal lobe projection neuron of ALl1 lineage,526,0,0.0
+VGlut-F-000625,lobula columnar neuron LC4,633,13,2.0537
+VGlut-F-000629,adult gamma Kenyon cell,400,0,0.0
+VGlut-F-000651,adult multiglomerular antennal lobe projection neuron,308,0,0.0
+VGlut-F-000655,adult antennal lobe projection neuron DA1,42,0,0.0
+VGlut-F-000656,adult antennal lobe projection neuron VA1v adPN,30,0,0.0
+VGlut-F-000662,adult gamma Kenyon cell,328,0,0.0
+VGlut-F-000674,alpha/beta core Kenyon cell,5684,111,1.9529
+VGlut-F-100003,adult multiglomerular antennal lobe projection neuron,2168,0,0.0
+VGlut-F-100043,lobula columnar neuron LC4,495,16,3.2323
+VGlut-F-100069,adult gamma Kenyon cell,511,0,0.0
+VGlut-F-100071,alpha/beta surface Kenyon cell,6119,139,2.2716
+VGlut-F-100074,alpha/beta surface Kenyon cell,4661,139,2.9822
+VGlut-F-100079,alpha/beta surface Kenyon cell,901,0,0.0
+VGlut-F-100083,adult alpha'/beta' Kenyon cell,1555,0,0.0
+VGlut-F-100102,antennal lobe projection neuron of ALl1 lineage,1218,0,0.0
+VGlut-F-100109,alpha/beta core Kenyon cell,355,0,0.0
+VGlut-F-100130,adult gamma Kenyon cell,2595,376,14.4894
+VGlut-F-100136,alpha/beta core Kenyon cell,1418,0,0.0
+VGlut-F-100143,gamma dorsal Kenyon cell,41,0,0.0
+VGlut-F-100144,lobula columnar neuron LC4,507,16,3.1558
+VGlut-F-100163,alpha/beta surface Kenyon cell,1195,0,0.0
+VGlut-F-100177,alpha/beta core Kenyon cell,5864,111,1.8929
+VGlut-F-100184,adult multiglomerular antennal lobe projection neuron,2496,0,0.0
+VGlut-F-100195,alpha/beta surface Kenyon cell,1101,0,0.0
+VGlut-F-100203,adult gamma Kenyon cell,467,0,0.0
+VGlut-F-100206,adult multiglomerular antennal lobe projection neuron,116,0,0.0
+VGlut-F-100216,lobula columnar neuron LC6,1488,35,2.3522
+VGlut-F-100221,adult uniglomerular antennal lobe projection neuron,3224,0,0.0
+VGlut-F-100222,alpha/beta surface Kenyon cell,3000,137,4.5667
+VGlut-F-100224,adult gamma Kenyon cell,2660,376,14.1353
+VGlut-F-100225,alpha/beta core Kenyon cell,378,0,0.0
+VGlut-F-100227,lobula columnar neuron LC12,843,19,2.2539
+VGlut-F-100233,alpha/beta core Kenyon cell,4767,111,2.3285
+VGlut-F-100244,alpha/beta surface Kenyon cell,1815,0,0.0
+VGlut-F-100246,adult multiglomerular antennal lobe projection neuron vPN,278,0,0.0
+VGlut-F-100252,adult gamma Kenyon cell,2438,375,15.3815
+VGlut-F-100264,antennal lobe projection neuron of ALl1 lineage,326,0,0.0
+VGlut-F-100267,adult multiglomerular antennal lobe projection neuron,60,0,0.0
+VGlut-F-100268,gamma dorsal Kenyon cell,2541,49,1.9284
+VGlut-F-100272,antennal lobe projection neuron of ALl1 lineage,1998,0,0.0
+VGlut-F-100284,alpha/beta surface Kenyon cell,5827,139,2.3854
+VGlut-F-100307,lobula columnar neuron LC4,843,12,1.4235
+VGlut-F-100316,alpha/beta core Kenyon cell,1403,0,0.0
+VGlut-F-100349,antennal lobe projection neuron of ALl1 lineage,2335,0,0.0
+VGlut-F-100359,adult gamma Kenyon cell,2505,376,15.01
+VGlut-F-100361,adult gamma Kenyon cell,2634,376,14.2749
+VGlut-F-100366,adult multiglomerular antennal lobe projection neuron,1607,0,0.0
+VGlut-F-100367,antennal lobe projection neuron of ALl1 lineage,121,0,0.0
+VGlut-F-100368,adult antennal lobe projection neuron VM5d adPN,517,0,0.0
+VGlut-F-100369,adult antennal lobe projection neuron DL2d adPN,169,0,0.0
+VGlut-F-100370,adult antennal lobe projection neuron VA1v adPN,2457,2,0.0814
+VGlut-F-100376,adult antennal lobe projection neuron VM5v adPN,2773,2,0.0721
+VGlut-F-100378,adult antennal lobe projection neuron VC3 adPN,2865,0,0.0
+VGlut-F-100381,adult antennal lobe projection neuron VA1v adPN,61,0,0.0
+VGlut-F-100392,adult gamma Kenyon cell,484,0,0.0
+VGlut-F-200000,adult multiglomerular antennal lobe projection neuron,1343,0,0.0
+VGlut-F-200002,adult multiglomerular antennal lobe projection neuron,1267,0,0.0
+VGlut-F-200028,lobula columnar neuron LC4,486,17,3.4979
+VGlut-F-200029,adult uniglomerular antennal lobe projection neuron adPN,38,0,0.0
+VGlut-F-200047,adult uniglomerular antennal lobe projection neuron,2935,0,0.0
+VGlut-F-200072,adult gamma Kenyon cell,1730,163,9.422
+VGlut-F-200098,alpha/beta surface Kenyon cell,3509,139,3.9612
+VGlut-F-200108,alpha/beta core Kenyon cell,3096,111,3.5853
+VGlut-F-200115,antennal lobe projection neuron of ALl1 lineage,890,0,0.0
+VGlut-F-200120,alpha/beta core Kenyon cell,1216,0,0.0
+VGlut-F-200132,adult gamma Kenyon cell,2319,376,16.2139
+VGlut-F-200159,adult antennal lobe projection neuron VM5d adPN,650,0,0.0
+VGlut-F-200188,antennal lobe projection neuron of ALl1 lineage,220,0,0.0
+VGlut-F-200192,adult gamma Kenyon cell,2266,369,16.2842
+VGlut-F-200194,adult gamma Kenyon cell,1968,374,19.0041
+VGlut-F-200208,adult gamma Kenyon cell,2839,376,13.2441
+VGlut-F-200218,alpha/beta surface Kenyon cell,807,0,0.0
+VGlut-F-200219,adult gamma Kenyon cell,258,0,0.0
+VGlut-F-200231,alpha/beta posterior Kenyon cell,6019,40,0.6646
+VGlut-F-200247,adult gamma Kenyon cell,499,0,0.0
+VGlut-F-200267,antennal lobe projection neuron of ALl1 lineage,2289,0,0.0
+VGlut-F-200268,alpha/beta surface Kenyon cell,5833,139,2.383
+VGlut-F-200269,adult multiglomerular antennal lobe projection neuron,25,0,0.0
+VGlut-F-200282,alpha/beta surface Kenyon cell,2110,0,0.0
+VGlut-F-200298,adult gamma Kenyon cell,356,0,0.0
+VGlut-F-200300,alpha/beta core Kenyon cell,264,0,0.0
+VGlut-F-200323,adult antennal lobe projection neuron DL1 adPN,269,0,0.0
+VGlut-F-200334,alpha/beta surface Kenyon cell,458,0,0.0
+VGlut-F-200348,adult antennal lobe projection neuron DL2d adPN,324,0,0.0
+VGlut-F-200350,alpha/beta surface Kenyon cell,6017,139,2.3101
+VGlut-F-200354,adult multiglomerular antennal lobe projection neuron,2111,0,0.0
+VGlut-F-200385,lobula columnar neuron LC4,433,17,3.9261
+VGlut-F-200386,adult multiglomerular antennal lobe projection neuron adPN,236,0,0.0
+VGlut-F-200402,alpha/beta core Kenyon cell,1536,0,0.0
+VGlut-F-200421,adult gamma Kenyon cell,403,0,0.0
+VGlut-F-200443,alpha/beta core Kenyon cell,1378,0,0.0
+VGlut-F-200445,alpha/beta posterior Kenyon cell,457,0,0.0
+VGlut-F-200455,adult antennal lobe projection neuron DL1 adPN,363,0,0.0
+VGlut-F-200497,antennal lobe projection neuron of ALl1 lineage,187,0,0.0
+VGlut-F-200517,adult multiglomerular antennal lobe projection neuron vPN,229,0,0.0
+VGlut-F-200533,alpha/beta surface Kenyon cell,2952,139,4.7087
+VGlut-F-200559,adult antennal lobe projection neuron VM5d adPN,2469,2,0.081
+VGlut-F-200560,adult antennal lobe projection neuron DL2v adPN,323,0,0.0
+VGlut-F-200565,adult antennal lobe projection neuron VC4 adPN,371,0,0.0
+VGlut-F-200566,adult antennal lobe projection neuron VA1d adPN,117,0,0.0
+VGlut-F-200567,adult antennal lobe projection neuron VM7 adPN,650,0,0.0
+VGlut-F-200568,adult uniglomerular antennal lobe projection neuron,290,0,0.0
+VGlut-F-200569,antennal lobe projection neuron of ALl1 lineage,2605,0,0.0
+VGlut-F-200571,adult multiglomerular antennal lobe projection neuron vPN,1128,0,0.0
+VGlut-F-200574,adult antennal lobe projection neuron DA1,2724,1,0.0367
+VGlut-F-200577,alpha/beta core Kenyon cell,3090,111,3.5922
+VGlut-F-200580,alpha/beta core Kenyon cell,466,0,0.0
+VGlut-F-200583,alpha/beta core Kenyon cell,5557,111,1.9975
+VGlut-F-200584,adult gamma Kenyon cell,2923,376,12.8635
+VGlut-F-200586,alpha/beta core Kenyon cell,361,0,0.0
+VGlut-F-200597,adult antennal lobe projection neuron VA1v adPN,31,0,0.0
+VGlut-F-200598,antennal lobe projection neuron of ALl1 lineage,2865,0,0.0
+VGlut-F-300043,adult multiglomerular antennal lobe projection neuron,1016,0,0.0
+VGlut-F-300085,adult multiglomerular antennal lobe projection neuron adPN,1227,0,0.0
+VGlut-F-300101,alpha/beta surface Kenyon cell,1025,0,0.0
+VGlut-F-300116,adult multiglomerular antennal lobe projection neuron,301,0,0.0
+VGlut-F-300146,alpha/beta surface Kenyon cell,6111,139,2.2746
+VGlut-F-300168,alpha/beta surface Kenyon cell,6117,139,2.2724
+VGlut-F-300183,adult multiglomerular antennal lobe projection neuron,91,0,0.0
+VGlut-F-300189,adult gamma Kenyon cell,2661,375,14.0924
+VGlut-F-300190,antennal lobe projection neuron of ALl1 lineage,1087,0,0.0
+VGlut-F-300224,alpha/beta core Kenyon cell,6168,111,1.7996
+VGlut-F-300235,adult multiglomerular antennal lobe projection neuron adPN,1565,0,0.0
+VGlut-F-300236,alpha/beta surface Kenyon cell,1166,0,0.0
+VGlut-F-300237,antennal lobe projection neuron of ALl1 lineage,157,0,0.0
+VGlut-F-300238,adult gamma Kenyon cell,2449,375,15.3124
+VGlut-F-300239,lobula columnar neuron LC4,421,19,4.5131
+VGlut-F-300242,adult multiglomerular antennal lobe projection neuron,72,0,0.0
+VGlut-F-300254,adult multiglomerular antennal lobe projection neuron,853,0,0.0
+VGlut-F-300256,gamma dorsal Kenyon cell,94,0,0.0
+VGlut-F-300263,adult multiglomerular antennal lobe projection neuron adPN,2719,0,0.0
+VGlut-F-300274,adult multiglomerular antennal lobe projection neuron vPN,75,0,0.0
+VGlut-F-300277,lobula columnar neuron LC4,601,19,3.1614
+VGlut-F-300297,alpha/beta surface Kenyon cell,5590,139,2.4866
+VGlut-F-300310,alpha/beta core Kenyon cell,1572,0,0.0
+VGlut-F-300327,adult multiglomerular antennal lobe projection neuron adPN,2230,0,0.0
+VGlut-F-300336,adult gamma Kenyon cell,125,0,0.0
+VGlut-F-300369,adult multiglomerular antennal lobe projection neuron,2675,0,0.0
+VGlut-F-300371,adult uniglomerular antennal lobe projection neuron,6555,0,0.0
+VGlut-F-300377,antennal lobe projection neuron of ALl1 lineage,210,0,0.0
+VGlut-F-300383,antennal lobe projection neuron of ALl1 lineage,300,0,0.0
+VGlut-F-300450,adult uniglomerular antennal lobe projection neuron,185,0,0.0
+VGlut-F-300451,alpha/beta surface Kenyon cell,325,0,0.0
+VGlut-F-300458,adult antennal lobe projection neuron DL2d adPN,119,0,0.0
+VGlut-F-300463,adult gamma Kenyon cell,2654,375,14.1296
+VGlut-F-300466,alpha/beta core Kenyon cell,6301,111,1.7616
+VGlut-F-300469,alpha/beta surface Kenyon cell,5454,139,2.5486
+VGlut-F-300491,antennal lobe projection neuron of ALl1 lineage,6542,0,0.0
+VGlut-F-300495,adult antennal lobe projection neuron DL2d adPN,3116,1,0.0321
+VGlut-F-300496,alpha/beta surface Kenyon cell,5983,139,2.3232
+VGlut-F-300505,adult alpha'/beta' Kenyon cell,444,0,0.0
+VGlut-F-300532,adult multiglomerular antennal lobe projection neuron vPN,48,0,0.0
+VGlut-F-300550,alpha/beta core Kenyon cell,447,0,0.0
+VGlut-F-300552,adult gamma Kenyon cell,2135,375,17.5644
+VGlut-F-300555,adult multiglomerular antennal lobe projection neuron adPN,1553,0,0.0
+VGlut-F-300564,adult multiglomerular antennal lobe projection neuron vPN,1925,0,0.0
+VGlut-F-300573,adult uniglomerular antennal lobe projection neuron,2760,0,0.0
+VGlut-F-300575,adult multiglomerular antennal lobe projection neuron adPN,1687,0,0.0
+VGlut-F-300596,adult uniglomerular antennal lobe projection neuron,172,0,0.0
+VGlut-F-300605,antennal lobe projection neuron of ALl1 lineage,155,0,0.0
+VGlut-F-300622,adult uniglomerular antennal lobe projection neuron,2478,0,0.0
+VGlut-F-300623,adult multiglomerular antennal lobe projection neuron adPN,2976,0,0.0
+VGlut-F-300627,adult multiglomerular antennal lobe projection neuron vPN,1093,0,0.0
+VGlut-F-300628,adult multiglomerular antennal lobe projection neuron adPN,293,0,0.0
+VGlut-F-300629,antennal lobe projection neuron of ALl1 lineage,282,0,0.0
+VGlut-F-300635,adult uniglomerular antennal lobe projection neuron,397,0,0.0
+VGlut-F-300636,adult multiglomerular antennal lobe projection neuron vPN,796,0,0.0
+VGlut-F-300641,adult antennal lobe projection neuron DL2v adPN,3160,2,0.0633
+VGlut-F-300646,adult antennal lobe projection neuron DL2v adPN,3299,2,0.0606
+VGlut-F-300655,alpha/beta surface Kenyon cell,1188,0,0.0
+VGlut-F-400000,adult uniglomerular antennal lobe projection neuron,234,0,0.0
+VGlut-F-400008,antennal lobe projection neuron of ALl1 lineage,3010,0,0.0
+VGlut-F-400011,adult multiglomerular antennal lobe projection neuron,1044,0,0.0
+VGlut-F-400023,adult antennal lobe projection neuron DL2d adPN,92,0,0.0
+VGlut-F-400053,alpha/beta surface Kenyon cell,6208,139,2.239
+VGlut-F-400059,adult antennal lobe projection neuron DL2d adPN,2829,1,0.0353
+VGlut-F-400067,antennal lobe projection neuron of ALl1 lineage,349,0,0.0
+VGlut-F-400086,adult multiglomerular antennal lobe projection neuron vPN,55,0,0.0
+VGlut-F-400096,adult multiglomerular antennal lobe projection neuron vPN,763,0,0.0
+VGlut-F-400102,alpha/beta posterior Kenyon cell,2758,40,1.4503
+VGlut-F-400111,adult multiglomerular antennal lobe projection neuron vPN,1931,0,0.0
+VGlut-F-400113,lobula columnar neuron LC12,369,18,4.878
+VGlut-F-400115,alpha/beta surface Kenyon cell,1252,0,0.0
+VGlut-F-400130,lobula columnar neuron LC9,1186,32,2.6981
+VGlut-F-400138,adult antennal lobe projection neuron DL2d adPN,3131,1,0.0319
+VGlut-F-400141,alpha/beta surface Kenyon cell,1197,0,0.0
+VGlut-F-400149,alpha/beta core Kenyon cell,5797,111,1.9148
+VGlut-F-400151,adult multiglomerular antennal lobe projection neuron vPN,854,0,0.0
+VGlut-F-400165,adult multiglomerular antennal lobe projection neuron vPN,226,0,0.0
+VGlut-F-400167,adult multiglomerular antennal lobe projection neuron vPN,1754,0,0.0
+VGlut-F-400168,alpha/beta surface Kenyon cell,5556,139,2.5018
+VGlut-F-400172,adult multiglomerular antennal lobe projection neuron vPN,264,0,0.0
+VGlut-F-400176,adult antennal lobe projection neuron DL2d adPN,2933,1,0.0341
+VGlut-F-400178,adult multiglomerular antennal lobe projection neuron vPN,1683,0,0.0
+VGlut-F-400202,lobula columnar neuron LC4,627,20,3.1898
+VGlut-F-400218,adult antennal lobe projection neuron DL2v adPN,3181,2,0.0629
+VGlut-F-400225,adult multiglomerular antennal lobe projection neuron vPN,1723,0,0.0
+VGlut-F-400229,alpha/beta surface Kenyon cell,1228,0,0.0
+VGlut-F-400245,antennal lobe projection neuron of ALl1 lineage,1125,0,0.0
+VGlut-F-400260,adult antennal lobe projection neuron DL2d adPN,117,0,0.0
+VGlut-F-400263,adult multiglomerular antennal lobe projection neuron vPN,1421,0,0.0
+VGlut-F-400280,adult antennal lobe projection neuron DL2d adPN,199,0,0.0
+VGlut-F-400286,alpha/beta surface Kenyon cell,5918,139,2.3488
+VGlut-F-400290,adult antennal lobe projection neuron VC3 adPN,2840,0,0.0
+VGlut-F-400292,adult multiglomerular antennal lobe projection neuron,194,0,0.0
+VGlut-F-400303,adult gamma Kenyon cell,217,0,0.0
+VGlut-F-400306,adult gamma Kenyon cell,424,0,0.0
+VGlut-F-400315,lobula columnar neuron LC4,532,22,4.1353
+VGlut-F-400370,adult multiglomerular antennal lobe projection neuron,279,0,0.0
+VGlut-F-400372,adult multiglomerular antennal lobe projection neuron,116,0,0.0
+VGlut-F-400376,adult multiglomerular antennal lobe projection neuron adPN,138,0,0.0
+VGlut-F-400379,adult gamma Kenyon cell,16,0,0.0
+VGlut-F-400385,adult alpha'/beta' Kenyon cell,2622,154,5.8734
+VGlut-F-400402,adult antennal lobe projection neuron DL2v adPN,174,0,0.0
+VGlut-F-400407,adult multiglomerular antennal lobe projection neuron adPN,207,0,0.0
+VGlut-F-400408,adult multiglomerular antennal lobe projection neuron vPN,188,0,0.0
+VGlut-F-400417,antennal lobe projection neuron of ALl1 lineage,1070,0,0.0
+VGlut-F-400432,adult antennal lobe projection neuron DL2v adPN,171,0,0.0
+VGlut-F-400434,adult multiglomerular antennal lobe projection neuron adPN,1305,0,0.0
+VGlut-F-400444,adult antennal lobe projection neuron DL2d adPN,105,0,0.0
+VGlut-F-400462,adult antennal lobe projection neuron DL2d adPN,3162,1,0.0316
+VGlut-F-400465,lobula columnar neuron LC4,407,19,4.6683
+VGlut-F-400471,alpha/beta surface Kenyon cell,4145,139,3.3534
+VGlut-F-400479,alpha/beta surface Kenyon cell,1315,0,0.0
+VGlut-F-400485,alpha/beta posterior Kenyon cell,1256,0,0.0
+VGlut-F-400487,alpha/beta core Kenyon cell,719,0,0.0
+VGlut-F-400488,alpha/beta core Kenyon cell,2205,83,3.7642
+VGlut-F-400493,lobula columnar neuron LC12,613,15,2.447
+VGlut-F-400497,alpha/beta surface Kenyon cell,761,0,0.0
+VGlut-F-400499,lobula columnar neuron LC9,2270,42,1.8502
+VGlut-F-400506,alpha/beta surface Kenyon cell,1317,0,0.0
+VGlut-F-400514,antennal lobe projection neuron of ALl1 lineage,39,0,0.0
+VGlut-F-400522,adult antennal lobe projection neuron DM6 adPN,457,0,0.0
+VGlut-F-400531,adult antennal lobe projection neuron DL2d adPN,3108,1,0.0322
+VGlut-F-400532,adult antennal lobe projection neuron DL2d adPN,279,0,0.0
+VGlut-F-400533,adult antennal lobe projection neuron DL2d adPN,254,0,0.0
+VGlut-F-400572,alpha/beta core Kenyon cell,1216,0,0.0
+VGlut-F-400609,alpha/beta posterior Kenyon cell,897,0,0.0
+VGlut-F-400620,adult multiglomerular antennal lobe projection neuron,258,0,0.0
+VGlut-F-400622,alpha/beta surface Kenyon cell,1429,0,0.0
+VGlut-F-400634,adult multiglomerular antennal lobe projection neuron vPN,1820,0,0.0
+VGlut-F-400658,adult antennal lobe projection neuron VA1v adPN,86,0,0.0
+VGlut-F-400662,adult multiglomerular antennal lobe projection neuron adPN,3062,0,0.0
+VGlut-F-400663,adult antennal lobe projection neuron DL2d adPN,184,0,0.0
+VGlut-F-400664,adult antennal lobe projection neuron DM6 adPN,333,0,0.0
+VGlut-F-400668,adult antennal lobe projection neuron DL2v adPN,115,0,0.0
+VGlut-F-400677,adult antennal lobe projection neuron VM2 adPN,460,0,0.0
+VGlut-F-400678,antennal lobe projection neuron of ALl1 lineage,2797,0,0.0
+VGlut-F-400695,adult antennal lobe projection neuron VM2 adPN,2985,1,0.0335
+VGlut-F-400708,adult multiglomerular antennal lobe projection neuron,269,0,0.0
+VGlut-F-400717,alpha/beta surface Kenyon cell,492,0,0.0
+VGlut-F-400719,adult antennal lobe projection neuron DL2v adPN,3084,2,0.0649
+VGlut-F-400733,adult gamma Kenyon cell,2145,375,17.4825
+VGlut-F-400735,adult gamma Kenyon cell,141,0,0.0
+VGlut-F-400738,alpha/beta surface Kenyon cell,4009,139,3.4672
+VGlut-F-400739,adult antennal lobe projection neuron VM5v adPN,2879,2,0.0695
+VGlut-F-400752,gamma dorsal Kenyon cell,269,0,0.0
+VGlut-F-400763,alpha/beta surface Kenyon cell,6050,139,2.2975
+VGlut-F-400764,alpha/beta surface Kenyon cell,964,0,0.0
+VGlut-F-400772,alpha/beta surface Kenyon cell,5375,139,2.586
+VGlut-F-400777,alpha/beta surface Kenyon cell,2933,139,4.7392
+VGlut-F-400785,alpha/beta core Kenyon cell,6171,111,1.7987
+VGlut-F-400791,adult antennal lobe projection neuron DM6 adPN,3094,3,0.097
+VGlut-F-400794,antennal lobe projection neuron of ALl1 lineage,380,0,0.0
+VGlut-F-400813,alpha/beta surface Kenyon cell,908,0,0.0
+VGlut-F-400830,lobula columnar neuron LC9,1717,44,2.5626
+VGlut-F-400833,lobula columnar neuron LC9,1960,76,3.8776
+VGlut-F-400869,adult uniglomerular antennal lobe projection neuron,81,0,0.0
+VGlut-F-400875,adult antennal lobe projection neuron VA1v adPN,40,0,0.0
+VGlut-F-400916,alpha/beta core Kenyon cell,5935,111,1.8703
+VGlut-F-400917,adult antennal lobe projection neuron VL2a vPN,6,0,0.0
+VGlut-F-400918,adult alpha'/beta' Kenyon cell,3076,186,6.0468
+VGlut-F-400927,adult antennal lobe projection neuron VC3 adPN,281,0,0.0
+VGlut-F-500021,alpha/beta surface Kenyon cell,5675,139,2.4493
+VGlut-F-500022,adult antennal lobe projection neuron DL2d adPN,113,0,0.0
+VGlut-F-500024,alpha/beta surface Kenyon cell,5786,139,2.4024
+VGlut-F-500026,adult antennal lobe projection neuron DL2v adPN,3194,2,0.0626
+VGlut-F-500031,adult multiglomerular antennal lobe projection neuron adPN,1407,0,0.0
+VGlut-F-500038,antennal lobe projection neuron of ALl1 lineage,165,0,0.0
+VGlut-F-500039,adult multiglomerular antennal lobe projection neuron vPN,1889,0,0.0
+VGlut-F-500055,alpha/beta posterior Kenyon cell,1124,0,0.0
+VGlut-F-500056,alpha/beta core Kenyon cell,6112,111,1.8161
+VGlut-F-500058,adult uniglomerular antennal lobe projection neuron,2999,0,0.0
+VGlut-F-500063,alpha/beta surface Kenyon cell,1401,0,0.0
+VGlut-F-500075,adult antennal lobe projection neuron DL2d adPN,2896,1,0.0345
+VGlut-F-500076,adult antennal lobe projection neuron DL2v adPN,204,0,0.0
+VGlut-F-500077,adult multiglomerular antennal lobe projection neuron,185,0,0.0
+VGlut-F-500082,adult antennal lobe projection neuron VC4 adPN,420,0,0.0
+VGlut-F-500085,adult multiglomerular antennal lobe projection neuron adPN,1380,0,0.0
+VGlut-F-500092,adult multiglomerular antennal lobe projection neuron vPN,1784,0,0.0
+VGlut-F-500094,adult multiglomerular antennal lobe projection neuron,991,0,0.0
+VGlut-F-500102,alpha/beta surface Kenyon cell,1026,0,0.0
+VGlut-F-500107,adult antennal lobe projection neuron VM7 adPN,557,0,0.0
+VGlut-F-500110,lobula columnar neuron LC12,852,57,6.6901
+VGlut-F-500111,alpha/beta surface Kenyon cell,6008,139,2.3136
+VGlut-F-500114,adult multiglomerular antennal lobe projection neuron vPN,1725,0,0.0
+VGlut-F-500118,adult antennal lobe projection neuron DL2v adPN,139,0,0.0
+VGlut-F-500131,lobula columnar neuron LC12,638,33,5.1724
+VGlut-F-500143,adult antennal lobe projection neuron DL2d adPN,3156,1,0.0317
+VGlut-F-500145,adult uniglomerular antennal lobe projection neuron,9,0,0.0
+VGlut-F-500146,adult antennal lobe projection neuron VM5d adPN,513,0,0.0
+VGlut-F-500157,antennal lobe projection neuron of ALl1 lineage,168,0,0.0
+VGlut-F-500159,adult multiglomerular antennal lobe projection neuron,1235,0,0.0
+VGlut-F-500160,adult antennal lobe projection neuron DL2d adPN,3092,1,0.0323
+VGlut-F-500169,adult antennal lobe projection neuron DL2d adPN,71,0,0.0
+VGlut-F-500178,adult antennal lobe projection neuron DL2d adPN,3154,1,0.0317
+VGlut-F-500183,adult multiglomerular antennal lobe projection neuron adPN,339,0,0.0
+VGlut-F-500189,adult antennal lobe projection neuron DL2v adPN,252,0,0.0
+VGlut-F-500192,alpha/beta surface Kenyon cell,1357,0,0.0
+VGlut-F-500197,adult multiglomerular antennal lobe projection neuron vPN,201,0,0.0
+VGlut-F-500199,adult multiglomerular antennal lobe projection neuron vPN,80,0,0.0
+VGlut-F-500202,adult antennal lobe projection neuron DL2d adPN,282,0,0.0
+VGlut-F-500203,alpha/beta surface Kenyon cell,808,0,0.0
+VGlut-F-500205,adult multiglomerular antennal lobe projection neuron vPN,206,0,0.0
+VGlut-F-500211,adult antennal lobe projection neuron DL2d adPN,3041,1,0.0329
+VGlut-F-500227,alpha/beta surface Kenyon cell,1048,0,0.0
+VGlut-F-500230,adult multiglomerular antennal lobe projection neuron vPN,116,0,0.0
+VGlut-F-500237,adult antennal lobe projection neuron DL2v adPN,3196,2,0.0626
+VGlut-F-500240,alpha/beta posterior Kenyon cell,325,0,0.0
+VGlut-F-500248,adult antennal lobe projection neuron DL2d adPN,3117,1,0.0321
+VGlut-F-500257,adult antennal lobe projection neuron DL2d adPN,260,0,0.0
+VGlut-F-500258,alpha/beta surface Kenyon cell,6136,139,2.2653
+VGlut-F-500259,adult antennal lobe projection neuron DL2d adPN,3053,1,0.0328
+VGlut-F-500290,adult multiglomerular antennal lobe projection neuron,595,0,0.0
+VGlut-F-500295,lobula columnar neuron LC12,1046,22,2.1033
+VGlut-F-500298,adult antennal lobe projection neuron DL2d adPN,310,0,0.0
+VGlut-F-500299,antennal lobe projection neuron of ALl1 lineage,1219,0,0.0
+VGlut-F-500300,adult multiglomerular antennal lobe projection neuron vPN,1874,0,0.0
+VGlut-F-500303,adult antennal lobe projection neuron DL2v adPN,3243,2,0.0617
+VGlut-F-500309,alpha/beta surface Kenyon cell,5590,139,2.4866
+VGlut-F-500310,alpha/beta surface Kenyon cell,917,0,0.0
+VGlut-F-500318,alpha/beta core Kenyon cell,437,0,0.0
+VGlut-F-500320,alpha/beta core Kenyon cell,398,0,0.0
+VGlut-F-500322,adult multiglomerular antennal lobe projection neuron adPN,1583,0,0.0
+VGlut-F-500327,alpha/beta surface Kenyon cell,1197,0,0.0
+VGlut-F-500333,adult antennal lobe projection neuron DL2v adPN,3151,2,0.0635
+VGlut-F-500334,adult antennal lobe projection neuron DL2d adPN,3119,1,0.0321
+VGlut-F-500340,lobula columnar neuron LC12,978,17,1.7382
+VGlut-F-500344,alpha/beta core Kenyon cell,6374,111,1.7414
+VGlut-F-500345,alpha/beta surface Kenyon cell,593,0,0.0
+VGlut-F-500349,adult antennal lobe projection neuron DL2d adPN,3286,1,0.0304
+VGlut-F-500352,alpha/beta posterior Kenyon cell,1248,0,0.0
+VGlut-F-500357,adult antennal lobe projection neuron VA1v adPN,2707,2,0.0739
+VGlut-F-500358,adult multiglomerular antennal lobe projection neuron,1609,0,0.0
+VGlut-F-500372,antennal lobe projection neuron of ALl1 lineage,1058,0,0.0
+VGlut-F-500377,adult antennal lobe projection neuron DL2d adPN,3153,1,0.0317
+VGlut-F-500383,alpha/beta core Kenyon cell,4946,111,2.2442
+VGlut-F-500389,adult antennal lobe projection neuron VM5d adPN,518,0,0.0
+VGlut-F-500393,adult antennal lobe projection neuron VC4 adPN,115,0,0.0
+VGlut-F-500402,adult gamma Kenyon cell,2677,375,14.0082
+VGlut-F-500406,adult antennal lobe projection neuron DM6 adPN,417,0,0.0
+VGlut-F-500407,adult multiglomerular antennal lobe projection neuron adPN,2873,0,0.0
+VGlut-F-500412,adult uniglomerular antennal lobe projection neuron,107,0,0.0
+VGlut-F-500413,adult antennal lobe projection neuron VM2 adPN,393,0,0.0
+VGlut-F-500420,adult antennal lobe projection neuron VM5v adPN,393,0,0.0
+VGlut-F-500424,adult antennal lobe projection neuron VM7 adPN,593,0,0.0
+VGlut-F-500429,adult antennal lobe projection neuron VM5d adPN,648,0,0.0
+VGlut-F-500431,adult uniglomerular antennal lobe projection neuron,2697,0,0.0
+VGlut-F-500447,adult antennal lobe projection neuron DL2d adPN,3271,1,0.0306
+VGlut-F-500450,adult antennal lobe projection neuron VM2 adPN,631,0,0.0
+VGlut-F-500455,adult antennal lobe projection neuron VC3 adPN,2703,0,0.0
+VGlut-F-500461,adult uniglomerular antennal lobe projection neuron,140,0,0.0
+VGlut-F-500467,alpha/beta surface Kenyon cell,1190,0,0.0
+VGlut-F-500471,adult multiglomerular antennal lobe projection neuron adPN,1660,0,0.0
+VGlut-F-500473,adult multiglomerular antennal lobe projection neuron vPN,1422,0,0.0
+VGlut-F-500474,alpha/beta core Kenyon cell,3692,61,1.6522
+VGlut-F-500483,alpha/beta core Kenyon cell,418,0,0.0
+VGlut-F-500485,alpha/beta core Kenyon cell,6016,111,1.8451
+VGlut-F-500486,adult multiglomerular antennal lobe projection neuron adPN,2748,0,0.0
+VGlut-F-500497,adult antennal lobe projection neuron DL2v adPN,210,0,0.0
+VGlut-F-500502,adult antennal lobe projection neuron DL2d adPN,3049,1,0.0328
+VGlut-F-500516,adult antennal lobe projection neuron VM7 adPN,665,0,0.0
+VGlut-F-500529,adult multiglomerular antennal lobe projection neuron,1515,0,0.0
+VGlut-F-500535,lobula columnar neuron LC12,776,21,2.7062
+VGlut-F-500536,alpha/beta surface Kenyon cell,5876,139,2.3656
+VGlut-F-500537,adult antennal lobe projection neuron DL2d adPN,140,0,0.0
+VGlut-F-500548,adult antennal lobe projection neuron DL2d adPN,229,0,0.0
+VGlut-F-500556,adult gamma Kenyon cell,2365,376,15.8985
+VGlut-F-500561,alpha/beta surface Kenyon cell,1191,0,0.0
+VGlut-F-500563,adult antennal lobe projection neuron DL2d adPN,3198,1,0.0313
+VGlut-F-500566,antennal lobe projection neuron of ALl1 lineage,1304,0,0.0
+VGlut-F-500567,alpha/beta surface Kenyon cell,926,0,0.0
+VGlut-F-500570,adult multiglomerular antennal lobe projection neuron,259,0,0.0
+VGlut-F-500580,adult antennal lobe projection neuron DL2d adPN,401,0,0.0
+VGlut-F-500582,adult antennal lobe projection neuron DL2d adPN,3243,1,0.0308
+VGlut-F-500586,adult antennal lobe projection neuron VA1v adPN,2824,2,0.0708
+VGlut-F-500589,alpha/beta core Kenyon cell,3236,111,3.4302
+VGlut-F-500594,adult antennal lobe projection neuron DL2v adPN,159,0,0.0
+VGlut-F-500595,antennal lobe projection neuron of ALl1 lineage,209,0,0.0
+VGlut-F-500602,adult antennal lobe projection neuron DL2d adPN,3043,1,0.0329
+VGlut-F-500607,adult antennal lobe projection neuron VM7 adPN,645,0,0.0
+VGlut-F-500609,adult antennal lobe projection neuron VC3 adPN,2881,0,0.0
+VGlut-F-500635,adult antennal lobe projection neuron DL2d adPN,231,0,0.0
+VGlut-F-500638,adult antennal lobe projection neuron DL2d adPN,3036,1,0.0329
+VGlut-F-500640,alpha/beta surface Kenyon cell,970,0,0.0
+VGlut-F-500644,alpha/beta surface Kenyon cell,887,0,0.0
+VGlut-F-500645,lobula columnar neuron LC12,932,58,6.2232
+VGlut-F-500652,alpha/beta surface Kenyon cell,750,0,0.0
+VGlut-F-500659,adult antennal lobe projection neuron DL2d adPN,237,0,0.0
+VGlut-F-500660,alpha/beta surface Kenyon cell,306,0,0.0
+VGlut-F-500676,alpha/beta surface Kenyon cell,1126,0,0.0
+VGlut-F-500678,alpha/beta surface Kenyon cell,5895,139,2.3579
+VGlut-F-500679,alpha/beta surface Kenyon cell,302,0,0.0
+VGlut-F-500682,adult multiglomerular antennal lobe projection neuron,858,0,0.0
+VGlut-F-500683,alpha/beta core Kenyon cell,931,0,0.0
+VGlut-F-500684,alpha/beta surface Kenyon cell,6421,139,2.1648
+VGlut-F-500687,adult multiglomerular antennal lobe projection neuron vPN,188,0,0.0
+VGlut-F-500689,alpha/beta surface Kenyon cell,1473,0,0.0
+VGlut-F-500692,alpha/beta core Kenyon cell,1306,0,0.0
+VGlut-F-500701,alpha/beta core Kenyon cell,881,0,0.0
+VGlut-F-500702,adult multiglomerular antennal lobe projection neuron,1285,0,0.0
+VGlut-F-500703,adult multiglomerular antennal lobe projection neuron,242,0,0.0
+VGlut-F-500713,alpha/beta core Kenyon cell,1391,0,0.0
+VGlut-F-500714,alpha/beta core Kenyon cell,5006,111,2.2173
+VGlut-F-500715,adult multiglomerular antennal lobe projection neuron,1129,0,0.0
+VGlut-F-500719,antennal lobe projection neuron of ALl1 lineage,179,0,0.0
+VGlut-F-500721,adult multiglomerular antennal lobe projection neuron vPN,1845,0,0.0
+VGlut-F-500727,adult antennal lobe projection neuron DL2d adPN,241,0,0.0
+VGlut-F-500733,lobula columnar neuron LC12,1086,16,1.4733
+VGlut-F-500742,adult multiglomerular antennal lobe projection neuron,58,0,0.0
+VGlut-F-500751,adult antennal lobe projection neuron DL2v adPN,3062,2,0.0653
+VGlut-F-500755,alpha/beta surface Kenyon cell,6056,139,2.2952
+VGlut-F-500756,alpha/beta surface Kenyon cell,321,0,0.0
+VGlut-F-500761,adult multiglomerular antennal lobe projection neuron vPN,1783,0,0.0
+VGlut-F-500763,adult multiglomerular antennal lobe projection neuron,232,0,0.0
+VGlut-F-500772,adult antennal lobe projection neuron DL2d adPN,3070,1,0.0326
+VGlut-F-500774,adult uniglomerular antennal lobe projection neuron,2966,0,0.0
+VGlut-F-500781,adult antennal lobe projection neuron DM6 adPN,3016,3,0.0995
+VGlut-F-500786,antennal lobe projection neuron of ALl1 lineage,157,0,0.0
+VGlut-F-500787,adult multiglomerular antennal lobe projection neuron vPN,1844,0,0.0
+VGlut-F-500800,alpha/beta surface Kenyon cell,1253,0,0.0
+VGlut-F-500801,alpha/beta surface Kenyon cell,6348,139,2.1897
+VGlut-F-500809,adult multiglomerular antennal lobe projection neuron vPN,1646,0,0.0
+VGlut-F-500814,lobula columnar neuron LC12,796,19,2.3869
+VGlut-F-500817,adult multiglomerular antennal lobe projection neuron vPN,92,0,0.0
+VGlut-F-500822,lobula columnar neuron LC12,797,13,1.6311
+VGlut-F-500824,adult multiglomerular antennal lobe projection neuron vPN,199,0,0.0
+VGlut-F-500826,adult antennal lobe projection neuron DL2d adPN,2942,1,0.034
+VGlut-F-500829,adult multiglomerular antennal lobe projection neuron vPN,45,0,0.0
+VGlut-F-500839,adult antennal lobe projection neuron DL2d adPN,3268,1,0.0306
+VGlut-F-500848,adult multiglomerular antennal lobe projection neuron vPN,1940,0,0.0
+VGlut-F-500852,adult multiglomerular antennal lobe projection neuron adPN,133,0,0.0
+VGlut-F-500856,adult uniglomerular antennal lobe projection neuron,156,0,0.0
+VGlut-F-500857,antennal lobe projection neuron of ALl1 lineage,391,0,0.0
+VGlut-F-500864,adult antennal lobe projection neuron DL2d adPN,3265,1,0.0306
+VGlut-F-500868,adult antennal lobe projection neuron DL2d adPN,233,0,0.0
+VGlut-F-500870,adult antennal lobe projection neuron DL2d adPN,214,0,0.0
+VGlut-F-600005,adult antennal lobe projection neuron DL2d adPN,159,0,0.0
+VGlut-F-600006,adult antennal lobe projection neuron DL2d adPN,3147,1,0.0318
+VGlut-F-600007,adult multiglomerular antennal lobe projection neuron,172,0,0.0
+VGlut-F-600008,alpha/beta core Kenyon cell,4082,110,2.6948
+VGlut-F-600009,adult multiglomerular antennal lobe projection neuron,264,0,0.0
+VGlut-F-600011,adult antennal lobe projection neuron DL2d adPN,3182,1,0.0314
+VGlut-F-600013,alpha/beta surface Kenyon cell,6171,139,2.2525
+VGlut-F-600016,adult antennal lobe projection neuron DL2d adPN,249,0,0.0
+VGlut-F-600018,adult antennal lobe projection neuron DL2d adPN,3092,1,0.0323
+VGlut-F-600023,adult multiglomerular antennal lobe projection neuron vPN,1850,0,0.0
+VGlut-F-600026,antennal lobe projection neuron of ALl1 lineage,1364,0,0.0
+VGlut-F-600027,adult multiglomerular antennal lobe projection neuron,877,0,0.0
+VGlut-F-600043,lobula columnar neuron LC4,619,19,3.0695
+VGlut-F-600045,adult multiglomerular antennal lobe projection neuron,248,0,0.0
+VGlut-F-600048,antennal lobe projection neuron of ALl1 lineage,1249,0,0.0
+VGlut-F-600056,adult multiglomerular antennal lobe projection neuron,247,0,0.0
+VGlut-F-600057,adult multiglomerular antennal lobe projection neuron,1214,0,0.0
+VGlut-F-600060,adult multiglomerular antennal lobe projection neuron vPN,17,0,0.0
+VGlut-F-600061,antennal lobe projection neuron of ALl1 lineage,965,0,0.0
+VGlut-F-600067,antennal lobe projection neuron of ALl1 lineage,2704,0,0.0
+VGlut-F-600071,adult multiglomerular antennal lobe projection neuron,997,0,0.0
+VGlut-F-600073,adult multiglomerular antennal lobe projection neuron,231,0,0.0
+VGlut-F-600082,adult antennal lobe projection neuron VM7 adPN,2782,0,0.0
+VGlut-F-600093,adult antennal lobe projection neuron DL2d adPN,174,0,0.0
+VGlut-F-600100,adult multiglomerular antennal lobe projection neuron,1352,0,0.0
+VGlut-F-600103,alpha/beta surface Kenyon cell,5905,139,2.3539
+VGlut-F-600104,adult antennal lobe projection neuron DL2d adPN,3104,1,0.0322
+VGlut-F-600105,adult multiglomerular antennal lobe projection neuron,66,0,0.0
+VGlut-F-600106,adult multiglomerular antennal lobe projection neuron,106,0,0.0
+VGlut-F-600107,antennal lobe projection neuron of ALl1 lineage,2620,0,0.0
+VGlut-F-600111,adult multiglomerular antennal lobe projection neuron,1354,0,0.0
+VGlut-F-600116,adult antennal lobe projection neuron VC3 adPN,518,0,0.0
+VGlut-F-600123,adult multiglomerular antennal lobe projection neuron,1822,0,0.0
+VGlut-F-600131,adult multiglomerular antennal lobe projection neuron,226,0,0.0
+VGlut-F-600140,adult multiglomerular antennal lobe projection neuron,1171,0,0.0
+VGlut-F-600143,alpha/beta surface Kenyon cell,1613,0,0.0
+VGlut-F-600145,adult antennal lobe projection neuron DL2d adPN,3147,1,0.0318
+VGlut-F-600146,adult antennal lobe projection neuron DL2d adPN,310,0,0.0
+VGlut-F-600149,adult multiglomerular antennal lobe projection neuron,1271,0,0.0
+VGlut-F-600154,alpha/beta surface Kenyon cell,247,0,0.0
+VGlut-F-600175,adult uniglomerular antennal lobe projection neuron,377,0,0.0
+VGlut-F-600207,adult gamma Kenyon cell,197,0,0.0
+VGlut-F-600208,adult antennal lobe projection neuron VM7 adPN,549,0,0.0
+VGlut-F-600209,antennal lobe projection neuron of ALl1 lineage,2561,0,0.0
+VGlut-F-600222,lobula columnar neuron LC9,2164,43,1.9871
+VGlut-F-600225,adult gamma Kenyon cell,2588,373,14.4127
+VGlut-F-600231,alpha/beta surface Kenyon cell,5822,139,2.3875
+VGlut-F-600232,adult antennal lobe projection neuron DL2d adPN,3220,1,0.0311
+VGlut-F-600243,adult antennal lobe projection neuron VM2 adPN,474,0,0.0
+VGlut-F-600245,adult multiglomerular antennal lobe projection neuron adPN,530,0,0.0
+VGlut-F-600248,adult antennal lobe projection neuron VC3 adPN,507,0,0.0
+VGlut-F-600251,adult antennal lobe projection neuron DL2d adPN,3191,1,0.0313
+VGlut-F-600253,adult multiglomerular antennal lobe projection neuron adPN,2586,0,0.0
+VGlut-F-600254,antennal lobe projection neuron of ALl1 lineage,991,0,0.0
+VGlut-F-600255,alpha/beta core Kenyon cell,1518,0,0.0
+VGlut-F-600262,antennal lobe projection neuron of ALl1 lineage,192,0,0.0
+VGlut-F-600271,adult gamma Kenyon cell,2408,374,15.5316
+VGlut-F-600286,gamma dorsal Kenyon cell,2376,47,1.9781
+VGlut-F-600292,alpha/beta surface Kenyon cell,3497,136,3.889
+VGlut-F-600298,adult multiglomerular antennal lobe projection neuron,1113,0,0.0
+VGlut-F-600300,adult multiglomerular antennal lobe projection neuron,1517,0,0.0
+VGlut-F-600301,adult multiglomerular antennal lobe projection neuron,178,0,0.0
+VGlut-F-600303,alpha/beta surface Kenyon cell,5569,139,2.496
+VGlut-F-600304,lobula columnar neuron LC12,547,19,3.4735
+VGlut-F-600305,lobula columnar neuron LC12,670,14,2.0896
+VGlut-F-600310,adult multiglomerular antennal lobe projection neuron,320,0,0.0
+VGlut-F-600314,adult antennal lobe projection neuron DL2d adPN,3224,1,0.031
+VGlut-F-600316,adult antennal lobe projection neuron VM5d adPN,3015,2,0.0663
+VGlut-F-600322,adult antennal lobe projection neuron VM2 adPN,592,0,0.0
+VGlut-F-600326,adult antennal lobe projection neuron DA1,45,0,0.0
+VGlut-F-600327,adult antennal lobe projection neuron DL2v adPN,234,0,0.0
+VGlut-F-600332,antennal lobe projection neuron of ALl1 lineage,1216,0,0.0
+VGlut-F-600340,adult antennal lobe projection neuron VC3 adPN,441,0,0.0
+VGlut-F-600347,adult antennal lobe projection neuron VM5d adPN,3110,2,0.0643
+VGlut-F-600348,antennal lobe projection neuron of ALl1 lineage,819,0,0.0
+VGlut-F-600353,adult antennal lobe projection neuron DL2v adPN,3228,2,0.062
+VGlut-F-600366,adult multiglomerular antennal lobe projection neuron adPN,1964,0,0.0
+VGlut-F-600371,adult antennal lobe projection neuron DL2d adPN,313,0,0.0
+VGlut-F-600375,adult antennal lobe projection neuron DL2d adPN,303,0,0.0
+VGlut-F-600378,alpha/beta surface Kenyon cell,2832,139,4.9082
+VGlut-F-600379,adult multiglomerular antennal lobe projection neuron adPN,200,0,0.0
+VGlut-F-600384,adult multiglomerular antennal lobe projection neuron,330,0,0.0
+VGlut-F-600390,adult antennal lobe projection neuron DL2d adPN,3093,1,0.0323
+VGlut-F-600405,adult antennal lobe projection neuron DL2d adPN,3159,1,0.0317
+VGlut-F-600409,adult antennal lobe projection neuron VA1v adPN,151,0,0.0
+VGlut-F-600421,alpha/beta surface Kenyon cell,2986,138,4.6216
+VGlut-F-600438,adult antennal lobe projection neuron DL2d adPN,3232,1,0.0309
+VGlut-F-600439,alpha/beta surface Kenyon cell,1330,0,0.0
+VGlut-F-600442,adult antennal lobe projection neuron DL2d adPN,3219,1,0.0311
+VGlut-F-600443,adult antennal lobe projection neuron DL2d adPN,3172,1,0.0315
+VGlut-F-600445,adult antennal lobe projection neuron DL2d adPN,3088,1,0.0324
+VGlut-F-600450,adult antennal lobe projection neuron DA1,2867,1,0.0349
+VGlut-F-600452,adult antennal lobe projection neuron DM6 adPN,3241,3,0.0926
+VGlut-F-600458,adult antennal lobe projection neuron DM6 adPN,3253,3,0.0922
+VGlut-F-600459,adult antennal lobe projection neuron DM6 adPN,494,0,0.0
+VGlut-F-600471,adult antennal lobe projection neuron DL2v adPN,3015,2,0.0663
+VGlut-F-600477,adult multiglomerular antennal lobe projection neuron,1288,0,0.0
+VGlut-F-600479,adult antennal lobe projection neuron DL2d adPN,288,0,0.0
+VGlut-F-600482,adult antennal lobe projection neuron DL2v adPN,3179,2,0.0629
+VGlut-F-600485,alpha/beta surface Kenyon cell,1241,0,0.0
+VGlut-F-600492,adult uniglomerular antennal lobe projection neuron,287,0,0.0
+VGlut-F-600493,lobula columnar neuron LC4,822,14,1.7032
+VGlut-F-600494,adult antennal lobe projection neuron DL2d adPN,102,0,0.0
+VGlut-F-600508,antennal lobe projection neuron of ALl1 lineage,220,0,0.0
+VGlut-F-600511,alpha/beta surface Kenyon cell,1183,0,0.0
+VGlut-F-600512,alpha/beta surface Kenyon cell,1214,0,0.0
+VGlut-F-600517,alpha/beta surface Kenyon cell,1198,0,0.0
+VGlut-F-600522,lobula columnar neuron LC12,2606,92,3.5303
+VGlut-F-600523,antennal lobe projection neuron of ALl1 lineage,1488,0,0.0
+VGlut-F-600525,adult multiglomerular antennal lobe projection neuron,296,0,0.0
+VGlut-F-600556,adult multiglomerular antennal lobe projection neuron vPN,1738,0,0.0
+VGlut-F-600558,adult antennal lobe projection neuron DL2d adPN,3285,1,0.0304
+VGlut-F-600585,alpha/beta surface Kenyon cell,5573,139,2.4942
+VGlut-F-600601,adult multiglomerular antennal lobe projection neuron,1003,0,0.0
+VGlut-F-600607,adult gamma Kenyon cell,2331,376,16.1304
+VGlut-F-600611,alpha/beta surface Kenyon cell,870,0,0.0
+VGlut-F-600624,lobula columnar neuron LC6,1738,37,2.1289
+VGlut-F-600641,antennal lobe projection neuron of ALl1 lineage,188,0,0.0
+VGlut-F-600645,alpha/beta surface Kenyon cell,5975,139,2.3264
+VGlut-F-600646,lobula columnar neuron LC12,706,15,2.1246
+VGlut-F-600668,adult multiglomerular antennal lobe projection neuron,277,0,0.0
+VGlut-F-600669,adult multiglomerular antennal lobe projection neuron vPN,1272,0,0.0
+VGlut-F-600679,alpha/beta core Kenyon cell,3026,111,3.6682
+VGlut-F-600680,alpha/beta core Kenyon cell,5848,111,1.8981
+VGlut-F-600682,alpha/beta surface Kenyon cell,1226,0,0.0
+VGlut-F-600684,alpha/beta core Kenyon cell,1065,0,0.0
+VGlut-F-600686,alpha/beta surface Kenyon cell,6285,139,2.2116
+VGlut-F-600688,alpha/beta surface Kenyon cell,5074,139,2.7395
+VGlut-F-600690,adult multiglomerular antennal lobe projection neuron,138,0,0.0
+VGlut-F-600691,adult multiglomerular antennal lobe projection neuron vPN,274,0,0.0
+VGlut-F-600693,lobula columnar neuron LC4,438,17,3.8813
+VGlut-F-600696,lobula columnar neuron LC4,795,15,1.8868
+VGlut-F-600700,lobula columnar neuron LC12,2298,77,3.3507
+VGlut-F-600707,gamma dorsal Kenyon cell,209,0,0.0
+VGlut-F-600714,alpha/beta core Kenyon cell,1256,0,0.0
+VGlut-F-600724,alpha/beta surface Kenyon cell,1358,0,0.0
+VGlut-F-600725,adult antennal lobe projection neuron DL2d adPN,3224,1,0.031
+VGlut-F-600734,alpha/beta surface Kenyon cell,1009,0,0.0
+VGlut-F-600736,alpha/beta surface Kenyon cell,6067,139,2.2911
+VGlut-F-600737,antennal lobe projection neuron of ALl1 lineage,211,0,0.0
+VGlut-F-600743,alpha/beta surface Kenyon cell,353,0,0.0
+VGlut-F-600745,adult multiglomerular antennal lobe projection neuron,1623,0,0.0
+VGlut-F-600746,adult antennal lobe projection neuron DL2d adPN,342,0,0.0
+VGlut-F-600747,alpha/beta surface Kenyon cell,3019,139,4.6042
+VGlut-F-600748,antennal lobe projection neuron of ALl1 lineage,2489,0,0.0
+VGlut-F-600749,alpha/beta surface Kenyon cell,2889,139,4.8114
+VGlut-F-600750,lobula columnar neuron LC12,750,15,2.0
+VGlut-F-600751,adult antennal lobe projection neuron DL2d adPN,3114,1,0.0321
+VGlut-F-600753,antennal lobe projection neuron of ALl1 lineage,211,0,0.0
+VGlut-F-600754,alpha/beta surface Kenyon cell,407,0,0.0
+VGlut-F-600757,adult multiglomerular antennal lobe projection neuron vPN,2065,0,0.0
+VGlut-F-600758,adult multiglomerular antennal lobe projection neuron,265,0,0.0
+VGlut-F-600762,lobula columnar neuron LC12,806,54,6.6998
+VGlut-F-600767,adult uniglomerular antennal lobe projection neuron,2797,0,0.0
+VGlut-F-600770,adult multiglomerular antennal lobe projection neuron adPN,184,0,0.0
+VGlut-F-600772,adult uniglomerular antennal lobe projection neuron,233,0,0.0
+VGlut-F-600783,antennal lobe projection neuron of ALl1 lineage,383,0,0.0
+VGlut-F-600787,adult antennal lobe projection neuron VM5d adPN,2734,2,0.0732
+VGlut-F-600791,antennal lobe projection neuron of ALl1 lineage,394,0,0.0
+VGlut-F-600793,adult multiglomerular antennal lobe projection neuron,889,0,0.0
+VGlut-F-600795,antennal lobe projection neuron of ALl1 lineage,165,0,0.0
+VGlut-F-600797,adult antennal lobe projection neuron DL2v adPN,141,0,0.0
+VGlut-F-600798,adult antennal lobe projection neuron DL2d adPN,3059,1,0.0327
+VGlut-F-700008,adult antennal lobe projection neuron DL2d adPN,3092,1,0.0323
+VGlut-F-700016,alpha/beta core Kenyon cell,712,0,0.0
+VGlut-F-700021,antennal lobe projection neuron of ALl1 lineage,1096,0,0.0
+VGlut-F-700022,adult multiglomerular antennal lobe projection neuron vPN,37,0,0.0
+VGlut-F-700040,adult antennal lobe projection neuron DA1,55,0,0.0
+VGlut-F-700044,adult multiglomerular antennal lobe projection neuron vPN,1797,0,0.0
+VGlut-F-700045,lobula columnar neuron LC12,564,17,3.0142
+VGlut-F-700047,adult multiglomerular antennal lobe projection neuron,1364,0,0.0
+VGlut-F-700052,adult multiglomerular antennal lobe projection neuron,1196,0,0.0
+VGlut-F-700056,adult antennal lobe projection neuron VM5v adPN,2824,2,0.0708
+VGlut-F-700062,antennal lobe projection neuron of ALl1 lineage,173,0,0.0
+VGlut-F-700063,adult multiglomerular antennal lobe projection neuron,1079,0,0.0
+VGlut-F-700064,adult multiglomerular antennal lobe projection neuron,141,0,0.0
+VGlut-F-700072,antennal lobe projection neuron of ALl1 lineage,358,0,0.0
+VGlut-F-700075,adult antennal lobe projection neuron DL2d adPN,390,0,0.0
+VGlut-F-700076,adult multiglomerular antennal lobe projection neuron vPN,1798,0,0.0
+VGlut-F-700079,antennal lobe projection neuron of ALl1 lineage,197,0,0.0
+VGlut-F-700101,adult antennal lobe projection neuron DL2d adPN,3152,1,0.0317
+VGlut-F-700103,adult antennal lobe projection neuron DL2d adPN,268,0,0.0
+VGlut-F-700104,adult antennal lobe projection neuron DL2d adPN,307,0,0.0
+VGlut-F-700107,adult antennal lobe projection neuron DL2v adPN,3152,2,0.0635
+VGlut-F-700109,adult antennal lobe projection neuron DL2d adPN,106,0,0.0
+VGlut-F-700115,antennal lobe projection neuron of ALl1 lineage,1501,0,0.0
+VGlut-F-700117,alpha/beta core Kenyon cell,5894,111,1.8833
+VGlut-F-700123,adult antennal lobe projection neuron DL2d adPN,144,0,0.0
+VGlut-F-700124,adult antennal lobe projection neuron DL2v adPN,3038,2,0.0658
+VGlut-F-700131,adult antennal lobe projection neuron VA1v adPN,75,0,0.0
+VGlut-F-700132,adult uniglomerular antennal lobe projection neuron,2292,0,0.0
+VGlut-F-700147,adult antennal lobe projection neuron DL2v adPN,3142,2,0.0637
+VGlut-F-700152,adult antennal lobe projection neuron DL2d adPN,3189,1,0.0314
+VGlut-F-700153,adult antennal lobe projection neuron DL2d adPN,3057,1,0.0327
+VGlut-F-700154,adult multiglomerular antennal lobe projection neuron,1291,0,0.0
+VGlut-F-700164,antennal lobe projection neuron of ALl1 lineage,1280,0,0.0
+VGlut-F-700165,adult antennal lobe projection neuron VA1v adPN,2440,2,0.082
+VGlut-F-700166,lobula columnar neuron LC4,754,19,2.5199
+VGlut-F-700167,adult uniglomerular antennal lobe projection neuron,2731,0,0.0
+VGlut-F-700169,adult antennal lobe projection neuron VM7 adPN,534,0,0.0
+VGlut-F-700178,lobula columnar neuron LC12,887,14,1.5784
+VGlut-F-700179,adult antennal lobe projection neuron DL2d adPN,3046,1,0.0328
+VGlut-F-700182,adult antennal lobe projection neuron DL2v adPN,201,0,0.0
+VGlut-F-700184,lobula columnar neuron LC12,940,24,2.5532
+VGlut-F-700185,adult antennal lobe projection neuron DL2v adPN,3154,2,0.0634
+VGlut-F-700188,adult antennal lobe projection neuron DA1,39,0,0.0
+VGlut-F-700198,antennal lobe projection neuron of ALl1 lineage,350,0,0.0
+VGlut-F-700201,antennal lobe projection neuron of ALl1 lineage,165,0,0.0
+VGlut-F-700202,antennal lobe projection neuron of ALl1 lineage,168,0,0.0
+VGlut-F-700203,adult multiglomerular antennal lobe projection neuron,139,0,0.0
+VGlut-F-700209,adult antennal lobe projection neuron DL2d adPN,285,0,0.0
+VGlut-F-700210,adult antennal lobe projection neuron DL2d adPN,3097,1,0.0323
+VGlut-F-700214,adult multiglomerular antennal lobe projection neuron,1115,0,0.0
+VGlut-F-700215,adult antennal lobe projection neuron DL2d adPN,337,0,0.0
+VGlut-F-700217,alpha/beta surface Kenyon cell,5672,139,2.4506
+VGlut-F-700218,adult multiglomerular antennal lobe projection neuron vPN,1941,0,0.0
+VGlut-F-700221,adult antennal lobe projection neuron VM7 adPN,2717,0,0.0
+VGlut-F-700232,antennal lobe projection neuron of ALl1 lineage,1172,0,0.0
+VGlut-F-700240,adult antennal lobe projection neuron DL2d adPN,192,0,0.0
+VGlut-F-700243,adult multiglomerular antennal lobe projection neuron vPN,1534,0,0.0
+VGlut-F-700244,adult multiglomerular antennal lobe projection neuron,1226,0,0.0
+VGlut-F-700245,adult antennal lobe projection neuron DL2d adPN,128,0,0.0
+VGlut-F-700246,adult multiglomerular antennal lobe projection neuron,886,0,0.0
+VGlut-F-700254,adult antennal lobe projection neuron DL2d adPN,252,0,0.0
+VGlut-F-700259,adult multiglomerular antennal lobe projection neuron,133,0,0.0
+VGlut-F-700269,adult multiglomerular antennal lobe projection neuron vPN,78,0,0.0
+VGlut-F-700270,adult multiglomerular antennal lobe projection neuron,896,0,0.0
+VGlut-F-700274,antennal lobe projection neuron of ALl1 lineage,230,0,0.0
+VGlut-F-700275,adult antennal lobe projection neuron VA1v adPN,65,0,0.0
+VGlut-F-700285,adult antennal lobe projection neuron DL2d adPN,176,0,0.0
+VGlut-F-700287,adult antennal lobe projection neuron DL2v adPN,299,0,0.0
+VGlut-F-700289,adult antennal lobe projection neuron VM5v adPN,3181,2,0.0629
+VGlut-F-700294,alpha/beta surface Kenyon cell,566,0,0.0
+VGlut-F-700301,adult antennal lobe projection neuron DL2d adPN,3092,1,0.0323
+VGlut-F-700307,adult antennal lobe projection neuron VM5v adPN,289,0,0.0
+VGlut-F-700311,lobula columnar neuron LC4,543,9,1.6575
+VGlut-F-700313,lobula columnar neuron LC4,391,18,4.6036
+VGlut-F-700321,adult antennal lobe projection neuron VA1v adPN,1755,2,0.114
+VGlut-F-700323,adult antennal lobe projection neuron DL2v adPN,3311,2,0.0604
+VGlut-F-700326,alpha/beta surface Kenyon cell,445,0,0.0
+VGlut-F-700333,adult multiglomerular antennal lobe projection neuron,2086,0,0.0
+VGlut-F-700344,antennal lobe projection neuron of ALl1 lineage,1186,0,0.0
+VGlut-F-700355,alpha/beta core Kenyon cell,1090,0,0.0
+VGlut-F-700358,adult antennal lobe projection neuron DL2d adPN,3207,1,0.0312
+VGlut-F-700359,adult antennal lobe projection neuron DL2d adPN,412,0,0.0
+VGlut-F-700407,adult multiglomerular antennal lobe projection neuron,2228,0,0.0
+VGlut-F-700410,adult multiglomerular antennal lobe projection neuron vPN,1803,0,0.0
+VGlut-F-700412,adult antennal lobe projection neuron DL2d adPN,3233,1,0.0309
+VGlut-F-700414,adult multiglomerular antennal lobe projection neuron,1114,0,0.0
+VGlut-F-700420,adult multiglomerular antennal lobe projection neuron vPN,1788,0,0.0
+VGlut-F-700422,alpha/beta surface Kenyon cell,6242,139,2.2269
+VGlut-F-700427,alpha/beta core Kenyon cell,6442,111,1.7231
+VGlut-F-700428,adult multiglomerular antennal lobe projection neuron vPN,1811,0,0.0
+VGlut-F-700437,adult antennal lobe projection neuron DL2d adPN,268,0,0.0
+VGlut-F-700439,adult antennal lobe projection neuron DL2d adPN,3181,1,0.0314
+VGlut-F-700440,adult antennal lobe projection neuron DL2d adPN,167,0,0.0
+VGlut-F-700453,lobula columnar neuron LC9,1957,39,1.9928
+VGlut-F-700455,adult multiglomerular antennal lobe projection neuron,1065,0,0.0
+VGlut-F-700460,adult uniglomerular antennal lobe projection neuron,351,0,0.0
+VGlut-F-700461,alpha/beta core Kenyon cell,1135,0,0.0
+VGlut-F-700463,antennal lobe projection neuron of ALl1 lineage,2429,0,0.0
+VGlut-F-700464,adult antennal lobe projection neuron DM6 adPN,320,0,0.0
+VGlut-F-700465,antennal lobe projection neuron of ALl1 lineage,2836,0,0.0
+VGlut-F-700471,adult multiglomerular antennal lobe projection neuron,1337,0,0.0
+VGlut-F-700473,adult multiglomerular antennal lobe projection neuron vPN,1744,0,0.0
+VGlut-F-700476,adult multiglomerular antennal lobe projection neuron,1990,0,0.0
+VGlut-F-700480,alpha/beta posterior Kenyon cell,1237,0,0.0
+VGlut-F-700484,adult antennal lobe projection neuron VM5v adPN,3299,2,0.0606
+VGlut-F-700494,antennal lobe projection neuron of ALl1 lineage,248,0,0.0
+VGlut-F-700500,adult multiglomerular antennal lobe projection neuron adPN,196,0,0.0
+VGlut-F-700501,adult multiglomerular antennal lobe projection neuron vPN,79,0,0.0
+VGlut-F-700502,alpha/beta posterior Kenyon cell,899,0,0.0
+VGlut-F-700504,adult antennal lobe projection neuron DL2v adPN,212,0,0.0
+VGlut-F-700509,adult gamma Kenyon cell,582,0,0.0
+VGlut-F-700514,adult multiglomerular antennal lobe projection neuron vPN,2227,0,0.0
+VGlut-F-700515,adult uniglomerular antennal lobe projection neuron,2931,0,0.0
+VGlut-F-700518,antennal lobe projection neuron of ALl1 lineage,1062,0,0.0
+VGlut-F-700523,adult multiglomerular antennal lobe projection neuron vPN,177,0,0.0
+VGlut-F-700526,lobula columnar neuron LC9,1917,38,1.9823
+VGlut-F-700528,alpha/beta core Kenyon cell,2743,111,4.0467
+VGlut-F-700530,adult antennal lobe projection neuron VM5d adPN,644,0,0.0
+VGlut-F-700533,adult antennal lobe projection neuron VM7 adPN,2700,0,0.0
+VGlut-F-700538,adult multiglomerular antennal lobe projection neuron,372,0,0.0
+VGlut-F-700539,adult antennal lobe projection neuron DL2d adPN,2977,1,0.0336
+VGlut-F-700540,lobula columnar neuron LC4,648,20,3.0864
+VGlut-F-700546,adult multiglomerular antennal lobe projection neuron,801,0,0.0
+VGlut-F-700547,adult antennal lobe projection neuron VA1v adPN,52,0,0.0
+VGlut-F-700550,alpha/beta surface Kenyon cell,2972,139,4.677
+VGlut-F-700552,adult multiglomerular antennal lobe projection neuron vPN,66,0,0.0
+VGlut-F-700558,adult multiglomerular antennal lobe projection neuron adPN,130,0,0.0
+VGlut-F-700559,adult multiglomerular antennal lobe projection neuron vPN,157,0,0.0
+VGlut-F-700563,adult antennal lobe projection neuron VC3 adPN,2741,0,0.0
+VGlut-F-700564,adult multiglomerular antennal lobe projection neuron,976,0,0.0
+VGlut-F-700567,adult multiglomerular antennal lobe projection neuron adPN,1687,0,0.0
+VGlut-F-700568,lobula columnar neuron LC9,1876,58,3.0917
+VGlut-F-700569,adult multiglomerular antennal lobe projection neuron vPN,2003,0,0.0
+VGlut-F-700570,adult antennal lobe projection neuron DL2d adPN,3176,1,0.0315
+VGlut-F-700572,alpha/beta core Kenyon cell,6055,111,1.8332
+VGlut-F-700575,lobula columnar neuron LC6,1451,35,2.4121
+VGlut-F-700576,antennal lobe projection neuron of ALl1 lineage,1434,0,0.0
+VGlut-F-700581,adult multiglomerular antennal lobe projection neuron,1443,0,0.0
+VGlut-F-700588,adult antennal lobe projection neuron DL2d adPN,3116,1,0.0321
+VGlut-F-700596,adult antennal lobe projection neuron VM5d adPN,692,0,0.0
+VGlut-F-700597,adult antennal lobe projection neuron VM5d adPN,2861,2,0.0699
+VGlut-F-700598,adult antennal lobe projection neuron DL2v adPN,384,0,0.0
+VGlut-F-700609,lobula columnar neuron LC12,1109,28,2.5248
+VGlut-F-800006,alpha/beta core Kenyon cell,6122,111,1.8131
+VGlut-F-800012,antennal lobe projection neuron of ALl1 lineage,1196,0,0.0
+VGlut-F-800014,alpha/beta core Kenyon cell,481,0,0.0
+VGlut-F-800016,antennal lobe projection neuron of ALl1 lineage,1003,0,0.0
+VGlut-F-800027,antennal lobe projection neuron of ALl1 lineage,215,0,0.0
+VGlut-F-800031,adult antennal lobe projection neuron DL2d adPN,117,0,0.0
+VGlut-F-800044,adult antennal lobe projection neuron DL2d adPN,414,0,0.0
+VGlut-F-800046,adult antennal lobe projection neuron DL2d adPN,3082,1,0.0324
+VGlut-F-800047,adult antennal lobe projection neuron DL2v adPN,25,0,0.0
+VGlut-F-800048,adult antennal lobe projection neuron DL2d adPN,3161,1,0.0316
+VGlut-F-800053,adult antennal lobe projection neuron DL2d adPN,210,0,0.0
+VGlut-F-800067,adult antennal lobe projection neuron DL2d adPN,3111,1,0.0321
+VGlut-F-800071,adult antennal lobe projection neuron VM5d adPN,526,0,0.0
+VGlut-F-800072,adult antennal lobe projection neuron VC4 adPN,550,0,0.0
+VGlut-F-800073,alpha/beta surface Kenyon cell,2995,139,4.6411
+VGlut-F-800075,adult antennal lobe projection neuron DL2d adPN,179,0,0.0
+VGlut-F-800089,adult antennal lobe projection neuron DL2v adPN,2913,2,0.0687
+VGlut-F-800095,adult multiglomerular antennal lobe projection neuron,249,0,0.0
+VGlut-F-800097,adult antennal lobe projection neuron DL2d adPN,157,0,0.0
+VGlut-F-800102,adult antennal lobe projection neuron DL2d adPN,3149,1,0.0318
+VGlut-F-800104,adult antennal lobe projection neuron DL2d adPN,333,0,0.0
+VGlut-F-800116,adult multiglomerular antennal lobe projection neuron,1186,0,0.0
+VGlut-F-800118,adult antennal lobe projection neuron DL2d adPN,3160,1,0.0316
+VGlut-F-800121,adult antennal lobe projection neuron DL2d adPN,3060,1,0.0327
+VGlut-F-800122,alpha/beta surface Kenyon cell,6080,139,2.2862
+VGlut-F-800123,adult antennal lobe projection neuron DL2d adPN,206,0,0.0
+VGlut-F-800124,adult antennal lobe projection neuron DL2d adPN,3252,1,0.0308
+VGlut-F-800128,adult multiglomerular antennal lobe projection neuron vPN,1336,0,0.0
+VGlut-F-800131,adult multiglomerular antennal lobe projection neuron,142,0,0.0
+VGlut-F-800148,antennal lobe projection neuron of ALl1 lineage,928,0,0.0
+VGlut-F-800175,alpha/beta core Kenyon cell,6440,111,1.7236
+VGlut-F-800205,alpha/beta core Kenyon cell,356,0,0.0
+VGlut-F-800208,alpha/beta core Kenyon cell,1551,0,0.0
+VGlut-F-800211,adult antennal lobe projection neuron DL2d adPN,216,0,0.0
+VGlut-F-800239,antennal lobe projection neuron of ALl1 lineage,769,0,0.0
+VGlut-F-800247,adult antennal lobe projection neuron VL2a vPN,6,0,0.0
+VGlut-F-800249,adult alpha'/beta' Kenyon cell,1215,0,0.0
+VGlut-F-800251,alpha/beta core Kenyon cell,1269,0,0.0
+VGlut-F-800257,adult multiglomerular antennal lobe projection neuron vPN,1134,0,0.0
+VGlut-F-800259,adult uniglomerular antennal lobe projection neuron,2894,0,0.0
+VGlut-F-800270,adult multiglomerular antennal lobe projection neuron vPN,151,0,0.0
+VGlut-F-800275,adult antennal lobe projection neuron DL2d adPN,3273,1,0.0306
+VGlut-F-800276,adult multiglomerular antennal lobe projection neuron vPN,1576,0,0.0
+VGlut-F-800284,adult multiglomerular antennal lobe projection neuron vPN,1594,0,0.0
+VGlut-F-800286,antennal lobe projection neuron of ALl1 lineage,261,0,0.0
+VGlut-F-800288,antennal lobe projection neuron of ALl1 lineage,337,0,0.0
+VGlut-F-800289,antennal lobe projection neuron of ALl1 lineage,1516,0,0.0
+VGlut-F-800290,adult multiglomerular antennal lobe projection neuron vPN,1995,0,0.0
+VGlut-F-800291,adult multiglomerular antennal lobe projection neuron,1275,0,0.0
+VGlut-F-800295,adult antennal lobe projection neuron VM5d adPN,2886,2,0.0693
+VGlut-F-800313,adult gamma Kenyon cell,2578,375,14.5462
+VGlut-F-800315,alpha/beta surface Kenyon cell,6171,139,2.2525
+VGlut-F-800317,adult antennal lobe projection neuron DA1,2830,1,0.0353
+VGlut-F-800322,adult gamma Kenyon cell,459,0,0.0
+VGlut-F-800323,adult multiglomerular antennal lobe projection neuron adPN,78,0,0.0
+VGlut-F-800326,lobula columnar neuron LC4,559,11,1.9678
+VGlut-F-800329,adult antennal lobe projection neuron DA1,48,0,0.0
+VGlut-F-900006,alpha/beta core Kenyon cell,6232,111,1.7811
+VGlut-F-900027,alpha/beta core Kenyon cell,3074,111,3.6109
+VGlut-F-900042,lobula columnar neuron LC4,568,16,2.8169
+VGlut-F-900045,adult antennal lobe projection neuron VM5d adPN,2805,2,0.0713
+VGlut-F-900046,antennal lobe projection neuron of ALl1 lineage,366,0,0.0
+VGlut-F-900048,alpha/beta core Kenyon cell,1160,0,0.0
+VGlut-F-900052,adult antennal lobe projection neuron DL2d adPN,255,0,0.0
+VGlut-F-900058,alpha/beta core Kenyon cell,5505,111,2.0163
+VGlut-F-900059,adult multiglomerular antennal lobe projection neuron adPN,403,0,0.0
+VGlut-F-900060,adult antennal lobe projection neuron VC3 adPN,457,0,0.0
+VGlut-F-900061,antennal lobe projection neuron of ALl1 lineage,1456,0,0.0
+VGlut-F-900068,adult antennal lobe projection neuron DL2d adPN,3501,1,0.0286
+VGlut-F-900075,lobula columnar neuron LC9,1795,37,2.0613
+VGlut-F-900081,adult antennal lobe projection neuron DL2d adPN,3097,1,0.0323
+VGlut-F-900088,alpha/beta core Kenyon cell,284,0,0.0
+VGlut-F-900094,alpha/beta surface Kenyon cell,1159,0,0.0
+VGlut-F-900095,alpha/beta core Kenyon cell,4975,111,2.2312
+VGlut-F-900097,antennal lobe projection neuron of ALl1 lineage,241,0,0.0
+VGlut-F-900098,antennal lobe projection neuron of ALl1 lineage,1177,0,0.0
+VGlut-F-900100,adult multiglomerular antennal lobe projection neuron,229,0,0.0
+VGlut-F-900102,adult antennal lobe projection neuron DL2d adPN,179,0,0.0
+VGlut-F-900109,antennal lobe projection neuron of ALl1 lineage,214,0,0.0
+VGlut-F-900112,antennal lobe projection neuron of ALl1 lineage,209,0,0.0
+VGlut-F-900113,adult multiglomerular antennal lobe projection neuron,1256,0,0.0
+VGlut-F-900114,adult multiglomerular antennal lobe projection neuron,1247,0,0.0
+VGlut-F-900120,antennal lobe projection neuron of ALl1 lineage,1871,0,0.0
+VGlut-F-900121,adult multiglomerular antennal lobe projection neuron,302,0,0.0
+VGlut-F-900124,adult multiglomerular antennal lobe projection neuron vPN,302,0,0.0
+VGlut-F-900125,adult antennal lobe projection neuron DL2d adPN,3247,1,0.0308
+VGlut-F-900127,adult antennal lobe projection neuron DL2d adPN,2829,1,0.0353
+VGlut-F-900134,adult multiglomerular antennal lobe projection neuron,320,0,0.0
+fru-F-000001,adult gamma Kenyon cell,2990,376,12.5753
+fru-F-000002,adult gamma Kenyon cell,374,0,0.0
+fru-F-000006,gamma dorsal Kenyon cell,2556,49,1.9171
+fru-F-000007,gamma dorsal Kenyon cell,450,0,0.0
+fru-F-000009,adult gamma Kenyon cell,463,0,0.0
+fru-F-000011,gamma dorsal Kenyon cell,2677,49,1.8304
+fru-F-000014,alpha/beta core Kenyon cell,240,0,0.0
+fru-F-000016,adult gamma Kenyon cell,2144,376,17.5373
+fru-F-000017,adult gamma Kenyon cell,2714,376,13.8541
+fru-F-000018,adult gamma Kenyon cell,434,0,0.0
+fru-F-000019,adult gamma Kenyon cell,437,0,0.0
+fru-F-000022,alpha/beta surface Kenyon cell,5895,139,2.3579
+fru-F-000023,alpha/beta core Kenyon cell,456,0,0.0
+fru-F-000025,adult antennal lobe projection neuron DP1l,2750,0,0.0
+fru-F-000026,alpha/beta core Kenyon cell,2977,94,3.1575
+fru-F-000028,adult gamma Kenyon cell,2763,376,13.6084
+fru-F-000031,alpha/beta core Kenyon cell,3066,111,3.6204
+fru-F-000033,alpha/beta surface Kenyon cell,1320,0,0.0
+fru-F-000035,gamma dorsal Kenyon cell,375,0,0.0
+fru-F-000045,adult gamma Kenyon cell,558,0,0.0
+fru-F-000046,alpha/beta core Kenyon cell,3053,111,3.6358
+fru-F-000048,gamma dorsal Kenyon cell,2638,49,1.8575
+fru-F-000050,adult gamma Kenyon cell,2731,365,13.3651
+fru-F-000059,alpha/beta core Kenyon cell,312,0,0.0
+fru-F-000060,alpha/beta core Kenyon cell,6085,111,1.8242
+fru-F-000062,alpha/beta core Kenyon cell,423,0,0.0
+fru-F-000063,alpha/beta core Kenyon cell,3016,88,2.9178
+fru-F-000064,adult gamma Kenyon cell,345,0,0.0
+fru-F-000067,alpha/beta core Kenyon cell,3037,111,3.6549
+fru-F-000075,alpha/beta core Kenyon cell,195,0,0.0
+fru-F-000079,adult antennal lobe projection neuron DL2d adPN,128,0,0.0
+fru-F-000081,lobula columnar neuron LC10,1261,296,23.4734
+fru-F-000085,gamma dorsal Kenyon cell,2604,49,1.8817
+fru-F-000086,adult uniglomerular antennal lobe projection neuron,1246,0,0.0
+fru-F-000088,adult gamma Kenyon cell,2341,370,15.8052
+fru-F-000107,alpha/beta core Kenyon cell,3408,111,3.257
+fru-F-000108,lobula columnar neuron LC10,1358,266,19.5876
+fru-F-000112,adult alpha'/beta' Kenyon cell,2402,129,5.3705
+fru-F-000120,antennal lobe projection neuron of ALl1 lineage,2808,0,0.0
+fru-F-000135,adult gamma Kenyon cell,532,0,0.0
+fru-F-000140,adult gamma Kenyon cell,587,0,0.0
+fru-F-100000,adult gamma Kenyon cell,2760,376,13.6232
+fru-F-100002,adult gamma Kenyon cell,2558,376,14.699
+fru-F-100003,alpha/beta core Kenyon cell,6371,111,1.7423
+fru-F-100004,adult gamma Kenyon cell,380,0,0.0
+fru-F-100006,adult gamma Kenyon cell,330,0,0.0
+fru-F-100009,adult gamma Kenyon cell,2626,376,14.3184
+fru-F-100010,adult gamma Kenyon cell,2681,376,14.0246
+fru-F-100011,adult gamma Kenyon cell,311,0,0.0
+fru-F-100014,adult gamma Kenyon cell,2818,376,13.3428
+fru-F-100016,alpha/beta core Kenyon cell,2668,111,4.1604
+fru-F-100019,adult gamma Kenyon cell,2609,376,14.4117
+fru-F-100020,adult gamma Kenyon cell,2476,376,15.1858
+fru-F-100021,adult gamma Kenyon cell,361,0,0.0
+fru-F-100025,adult gamma Kenyon cell,356,0,0.0
+fru-F-100026,adult gamma Kenyon cell,356,0,0.0
+fru-F-100028,alpha/beta surface Kenyon cell,5926,139,2.3456
+fru-F-100033,adult gamma Kenyon cell,2782,376,13.5155
+fru-F-100035,alpha/beta surface Kenyon cell,3111,139,4.468
+fru-F-100037,adult gamma Kenyon cell,2784,375,13.4698
+fru-F-100038,adult gamma Kenyon cell,2628,376,14.3075
+fru-F-100039,alpha/beta core Kenyon cell,3063,111,3.6239
+fru-F-100041,alpha/beta core Kenyon cell,1421,0,0.0
+fru-F-100042,alpha/beta core Kenyon cell,1409,0,0.0
+fru-F-100046,adult gamma Kenyon cell,522,0,0.0
+fru-F-100048,adult gamma Kenyon cell,2620,376,14.3511
+fru-F-100054,adult gamma Kenyon cell,491,0,0.0
+fru-F-100060,lobula columnar neuron LC11,700,12,1.7143
+fru-F-100061,adult gamma Kenyon cell,346,0,0.0
+fru-F-100072,adult gamma Kenyon cell,347,0,0.0
+fru-F-100076,adult gamma Kenyon cell,507,0,0.0
+fru-F-100079,adult gamma Kenyon cell,441,0,0.0
+fru-F-100090,adult gamma Kenyon cell,413,0,0.0
+fru-F-200001,alpha/beta core Kenyon cell,1571,0,0.0
+fru-F-200004,adult gamma Kenyon cell,492,0,0.0
+fru-F-200006,adult gamma Kenyon cell,251,0,0.0
+fru-F-200008,adult gamma Kenyon cell,2799,376,13.4334
+fru-F-200010,adult gamma Kenyon cell,2461,376,15.2783
+fru-F-200011,adult gamma Kenyon cell,452,0,0.0
+fru-F-200013,adult gamma Kenyon cell,441,0,0.0
+fru-F-200014,adult gamma Kenyon cell,2640,376,14.2424
+fru-F-200015,adult gamma Kenyon cell,536,0,0.0
+fru-F-200017,adult gamma Kenyon cell,542,0,0.0
+fru-F-200020,adult gamma Kenyon cell,2448,376,15.3595
+fru-F-200021,alpha/beta core Kenyon cell,6113,111,1.8158
+fru-F-200022,adult gamma Kenyon cell,2579,376,14.5793
+fru-F-200023,alpha/beta core Kenyon cell,6442,111,1.7231
+fru-F-200026,alpha/beta core Kenyon cell,185,0,0.0
+fru-F-200027,lobula columnar neuron LC10,1510,267,17.6821
+fru-F-200030,alpha/beta core Kenyon cell,2410,70,2.9046
+fru-F-200032,adult gamma Kenyon cell,160,0,0.0
+fru-F-200036,alpha/beta surface Kenyon cell,3169,139,4.3862
+fru-F-200037,adult gamma Kenyon cell,176,0,0.0
+fru-F-200040,alpha/beta core Kenyon cell,319,0,0.0
+fru-F-200043,alpha/beta core Kenyon cell,262,0,0.0
+fru-F-200044,adult gamma Kenyon cell,285,0,0.0
+fru-F-200045,adult gamma Kenyon cell,2728,376,13.783
+fru-F-200046,adult gamma Kenyon cell,457,0,0.0
+fru-F-200047,alpha/beta core Kenyon cell,381,0,0.0
+fru-F-200048,alpha/beta core Kenyon cell,5764,111,1.9257
+fru-F-200049,adult gamma Kenyon cell,2716,376,13.8439
+fru-F-200055,adult gamma Kenyon cell,2545,376,14.7741
+fru-F-200057,alpha/beta core Kenyon cell,3150,111,3.5238
+fru-F-200059,alpha/beta core Kenyon cell,6054,111,1.8335
+fru-F-200060,lobula columnar neuron LC10,1268,284,22.3975
+fru-F-200065,adult gamma Kenyon cell,2528,376,14.8734
+fru-F-200067,alpha/beta core Kenyon cell,3305,110,3.3283
+fru-F-200071,adult gamma Kenyon cell,356,0,0.0
+fru-F-200074,alpha/beta core Kenyon cell,3302,111,3.3616
+fru-F-200075,alpha/beta core Kenyon cell,275,0,0.0
+fru-F-200076,lobula columnar neuron LC10,1405,277,19.7153
+fru-F-200080,adult gamma Kenyon cell,2687,376,13.9933
+fru-F-200086,lobula columnar neuron LC10,1610,277,17.205
+fru-F-200091,alpha/beta core Kenyon cell,2994,111,3.7074
+fru-F-200098,alpha/beta core Kenyon cell,2764,109,3.9436
+fru-F-200099,alpha/beta core Kenyon cell,1392,0,0.0
+fru-F-200102,alpha/beta surface Kenyon cell,1210,0,0.0
+fru-F-200104,alpha/beta core Kenyon cell,6477,111,1.7138
+fru-F-200109,alpha/beta core Kenyon cell,5536,111,2.0051
+fru-F-200112,adult gamma Kenyon cell,2650,376,14.1887
+fru-F-200115,alpha/beta core Kenyon cell,1223,0,0.0
+fru-F-200117,alpha/beta core Kenyon cell,3095,111,3.5864
+fru-F-200136,lobula columnar neuron LC11,987,15,1.5198
+fru-F-200150,lobula columnar neuron LC10,1348,291,21.5875
+fru-F-200161,adult gamma Kenyon cell,162,0,0.0
+fru-F-200163,adult gamma Kenyon cell,320,0,0.0
+fru-F-200172,lobula columnar neuron LC10,1561,291,18.6419
+fru-F-200180,adult gamma Kenyon cell,55,0,0.0
+fru-F-300005,adult gamma Kenyon cell,412,0,0.0
+fru-F-300006,adult gamma Kenyon cell,2705,376,13.9002
+fru-F-300008,lobula columnar neuron LC10,1375,153,11.1273
+fru-F-300010,adult gamma Kenyon cell,387,0,0.0
+fru-F-300014,alpha/beta core Kenyon cell,6419,111,1.7292
+fru-F-300017,adult antennal lobe projection neuron VM5d adPN,2574,2,0.0777
+fru-F-300024,adult gamma Kenyon cell,512,0,0.0
+fru-F-300026,alpha/beta core Kenyon cell,427,0,0.0
+fru-F-300028,lobula columnar neuron LC6,1066,36,3.3771
+fru-F-300031,alpha/beta core Kenyon cell,412,0,0.0
+fru-F-300033,adult gamma Kenyon cell,2392,375,15.6773
+fru-F-300035,alpha/beta core Kenyon cell,572,0,0.0
+fru-F-300036,adult antennal lobe projection neuron VL2p vPN,1596,0,0.0
+fru-F-300039,adult gamma Kenyon cell,282,0,0.0
+fru-F-300046,adult gamma Kenyon cell,2607,376,14.4227
+fru-F-300057,alpha/beta core Kenyon cell,3262,111,3.4028
+fru-F-300062,alpha/beta core Kenyon cell,1105,0,0.0
+fru-F-300064,alpha/beta core Kenyon cell,6498,111,1.7082
+fru-F-300066,alpha/beta core Kenyon cell,369,0,0.0
+fru-F-300067,alpha/beta core Kenyon cell,6120,111,1.8137
+fru-F-300069,adult gamma Kenyon cell,2606,375,14.3899
+fru-F-300074,lobula columnar neuron LC11,829,14,1.6888
+fru-F-300077,alpha/beta core Kenyon cell,6449,111,1.7212
+fru-F-300079,lobula columnar neuron LC11,907,16,1.7641
+fru-F-300083,alpha/beta surface Kenyon cell,247,0,0.0
+fru-F-300084,alpha/beta core Kenyon cell,1465,0,0.0
+fru-F-300090,adult antennal lobe projection neuron VM7 adPN,499,0,0.0
+fru-F-300091,lobula columnar neuron LC10,1290,286,22.1705
+fru-F-300093,adult antennal lobe projection neuron DL2d adPN,3223,1,0.031
+fru-F-300096,adult gamma Kenyon cell,2397,376,15.6863
+fru-F-300098,alpha/beta core Kenyon cell,6291,111,1.7644
+fru-F-300100,adult gamma Kenyon cell,2677,375,14.0082
+fru-F-300112,adult gamma Kenyon cell,2838,376,13.2488
+fru-F-300121,adult gamma Kenyon cell,468,0,0.0
+fru-F-400001,adult gamma Kenyon cell,2536,376,14.8265
+fru-F-400002,lobula columnar neuron LC6,1679,36,2.1441
+fru-F-400004,adult gamma Kenyon cell,2585,375,14.5068
+fru-F-400006,adult gamma Kenyon cell,2724,376,13.8032
+fru-F-400007,lobula columnar neuron LC11,676,16,2.3669
+fru-F-400012,adult gamma Kenyon cell,503,0,0.0
+fru-F-400017,adult gamma Kenyon cell,2692,376,13.9673
+fru-F-400019,adult gamma Kenyon cell,2585,376,14.5455
+fru-F-400021,lobula columnar neuron LC11,814,13,1.5971
+fru-F-400024,adult gamma Kenyon cell,439,0,0.0
+fru-F-400026,alpha/beta core Kenyon cell,2960,111,3.75
+fru-F-400028,adult gamma Kenyon cell,2553,376,14.7278
+fru-F-400037,adult gamma Kenyon cell,294,0,0.0
+fru-F-400041,adult antennal lobe projection neuron VC3 adPN,3115,0,0.0
+fru-F-400045,alpha/beta core Kenyon cell,377,0,0.0
+fru-F-400050,adult antennal lobe projection neuron VA1v adPN,29,0,0.0
+fru-F-400051,antennal lobe projection neuron of ALl1 lineage,2580,0,0.0
+fru-F-400053,adult gamma Kenyon cell,450,0,0.0
+fru-F-400054,adult gamma Kenyon cell,524,0,0.0
+fru-F-400055,alpha/beta core Kenyon cell,6419,111,1.7292
+fru-F-400066,alpha/beta core Kenyon cell,4258,110,2.5834
+fru-F-400070,alpha/beta core Kenyon cell,3411,110,3.2249
+fru-F-400076,alpha/beta surface Kenyon cell,362,0,0.0
+fru-F-400078,adult gamma Kenyon cell,2688,376,13.9881
+fru-F-400080,alpha/beta posterior Kenyon cell,290,0,0.0
+fru-F-400083,alpha/beta core Kenyon cell,3236,109,3.3684
+fru-F-400086,adult antennal lobe projection neuron DM6 adPN,2812,3,0.1067
+fru-F-400088,alpha/beta core Kenyon cell,5815,111,1.9089
+fru-F-400090,adult gamma Kenyon cell,639,0,0.0
+fru-F-400102,adult gamma Kenyon cell,369,0,0.0
+fru-F-400113,alpha/beta surface Kenyon cell,525,0,0.0
+fru-F-400115,adult gamma Kenyon cell,2680,376,14.0299
+fru-F-400116,alpha/beta core Kenyon cell,1546,0,0.0
+fru-F-400120,adult gamma Kenyon cell,445,0,0.0
+fru-F-400125,adult antennal lobe projection neuron VM5v adPN,2611,2,0.0766
+fru-F-400129,alpha/beta surface Kenyon cell,330,0,0.0
+fru-F-400134,adult gamma Kenyon cell,551,0,0.0
+fru-F-400145,lobula columnar neuron LC11,907,14,1.5436
+fru-F-400148,adult gamma Kenyon cell,2691,376,13.9725
+fru-F-400149,adult antennal lobe projection neuron DA1,66,0,0.0
+fru-F-400161,alpha/beta core Kenyon cell,6205,111,1.7889
+fru-F-400163,alpha/beta core Kenyon cell,1271,0,0.0
+fru-F-400166,lobula columnar neuron LC10,1131,191,16.8877
+fru-F-400178,lobula columnar neuron LC14,1263,25,1.9794
+fru-F-400181,alpha/beta core Kenyon cell,462,0,0.0
+fru-F-400195,alpha/beta surface Kenyon cell,2979,139,4.666
+fru-F-400218,lobula columnar neuron LC10,1189,261,21.9512
+fru-F-400230,adult antennal lobe projection neuron VM5d adPN,534,0,0.0
+fru-F-500000,alpha/beta core Kenyon cell,5881,111,1.8874
+fru-F-500003,alpha/beta core Kenyon cell,435,0,0.0
+fru-F-500006,alpha/beta surface Kenyon cell,5005,139,2.7772
+fru-F-500007,alpha/beta surface Kenyon cell,929,0,0.0
+fru-F-500012,alpha/beta surface Kenyon cell,3178,139,4.3738
+fru-F-500013,alpha/beta surface Kenyon cell,6363,139,2.1845
+fru-F-500019,gamma dorsal Kenyon cell,2531,11,0.4346
+fru-F-500020,alpha/beta core Kenyon cell,6329,111,1.7538
+fru-F-500021,alpha/beta core Kenyon cell,2867,111,3.8716
+fru-F-500022,alpha/beta core Kenyon cell,406,0,0.0
+fru-F-500023,alpha/beta core Kenyon cell,1445,0,0.0
+fru-F-500025,alpha/beta surface Kenyon cell,1469,0,0.0
+fru-F-500026,alpha/beta core Kenyon cell,2893,111,3.8368
+fru-F-500030,alpha/beta surface Kenyon cell,6143,139,2.2627
+fru-F-500034,adult gamma Kenyon cell,521,0,0.0
+fru-F-500035,alpha/beta surface Kenyon cell,2914,139,4.7701
+fru-F-500048,lobula columnar neuron LC10,1618,231,14.2769
+fru-F-500055,alpha/beta core Kenyon cell,2892,111,3.8382
+fru-F-500057,adult gamma Kenyon cell,180,0,0.0
+fru-F-500062,lobula columnar neuron LC10,1529,214,13.9961
+fru-F-500063,alpha/beta core Kenyon cell,1398,0,0.0
+fru-F-500067,alpha/beta core Kenyon cell,6357,111,1.7461
+fru-F-500070,alpha/beta surface Kenyon cell,3093,139,4.494
+fru-F-500071,alpha/beta surface Kenyon cell,949,0,0.0
+fru-F-500072,alpha/beta surface Kenyon cell,2948,139,4.7151
+fru-F-500084,alpha/beta surface Kenyon cell,336,0,0.0
+fru-F-500088,lobula columnar neuron LC10,1494,300,20.0803
+fru-F-500092,adult antennal lobe projection neuron VM5v adPN,2901,2,0.0689
+fru-F-500094,adult gamma Kenyon cell,541,0,0.0
+fru-F-500095,alpha/beta core Kenyon cell,344,0,0.0
+fru-F-500096,adult antennal lobe projection neuron VM5v adPN,2773,2,0.0721
+fru-F-500097,adult gamma Kenyon cell,2481,376,15.1552
+fru-F-500103,adult antennal lobe projection neuron DL2d adPN,3208,1,0.0312
+fru-F-500105,alpha/beta surface Kenyon cell,6256,139,2.2219
+fru-F-500106,alpha/beta surface Kenyon cell,361,0,0.0
+fru-F-500108,alpha/beta surface Kenyon cell,363,0,0.0
+fru-F-500112,alpha/beta core Kenyon cell,1335,0,0.0
+fru-F-500124,alpha/beta surface Kenyon cell,6093,139,2.2813
+fru-F-500126,alpha/beta surface Kenyon cell,818,0,0.0
+fru-F-500138,alpha/beta surface Kenyon cell,5679,139,2.4476
+fru-F-500140,lobula columnar neuron LC10,1819,268,14.7334
+fru-F-500144,alpha/beta core Kenyon cell,2976,111,3.7298
+fru-F-500145,gamma dorsal Kenyon cell,253,0,0.0
+fru-F-500148,alpha/beta surface Kenyon cell,1426,0,0.0
+fru-F-500153,adult gamma Kenyon cell,2621,376,14.3457
+fru-F-500155,lobula columnar neuron LC11,832,16,1.9231
+fru-F-500169,alpha/beta surface Kenyon cell,6186,139,2.247
+fru-F-500172,alpha/beta surface Kenyon cell,3066,139,4.5336
+fru-F-500176,adult multiglomerular antennal lobe projection neuron adPN,2341,0,0.0
+fru-F-500179,alpha/beta surface Kenyon cell,416,0,0.0
+fru-F-500201,alpha/beta surface Kenyon cell,1522,0,0.0
+fru-F-500211,adult multiglomerular antennal lobe projection neuron vPN,185,0,0.0
+fru-F-500218,alpha/beta surface Kenyon cell,6124,139,2.2698
+fru-F-500221,alpha/beta surface Kenyon cell,6249,139,2.2244
+fru-F-500222,adult multiglomerular antennal lobe projection neuron vPN,220,0,0.0
+fru-F-500225,alpha/beta surface Kenyon cell,3249,139,4.2782
+fru-F-500241,alpha/beta surface Kenyon cell,6004,139,2.3151
+fru-F-500243,alpha/beta surface Kenyon cell,5209,139,2.6685
+fru-F-500247,adult antennal lobe projection neuron VM5v adPN,299,0,0.0
+fru-F-500256,adult gamma Kenyon cell,2669,376,14.0877
+fru-F-500272,adult gamma Kenyon cell,6118,376,6.1458
+fru-F-600001,adult gamma Kenyon cell,424,0,0.0
+fru-F-600004,alpha/beta core Kenyon cell,4996,111,2.2218
+fru-F-600006,adult gamma Kenyon cell,3071,376,12.2436
+fru-F-600009,adult gamma Kenyon cell,526,0,0.0
+fru-F-600010,alpha/beta core Kenyon cell,2387,72,3.0163
+fru-F-600017,alpha/beta surface Kenyon cell,1198,0,0.0
+fru-F-600020,lobula columnar neuron LC10,1619,239,14.7622
+fru-F-600022,alpha/beta surface Kenyon cell,6194,139,2.2441
+fru-F-600023,alpha/beta surface Kenyon cell,1253,0,0.0
+fru-F-600024,alpha/beta surface Kenyon cell,1639,0,0.0
+fru-F-600025,alpha/beta core Kenyon cell,4703,111,2.3602
+fru-F-600028,alpha/beta core Kenyon cell,6117,111,1.8146
+fru-F-600029,alpha/beta surface Kenyon cell,327,0,0.0
+fru-F-600030,adult antennal lobe projection neuron VM5d adPN,409,0,0.0
+fru-F-600034,lobula columnar neuron LC10,1593,234,14.6893
+fru-F-600042,alpha/beta surface Kenyon cell,1362,0,0.0
+fru-F-600044,lobula columnar neuron LC10,1520,298,19.6053
+fru-F-600047,adult gamma Kenyon cell,440,0,0.0
+fru-F-600048,alpha/beta surface Kenyon cell,1417,0,0.0
+fru-F-600049,alpha/beta surface Kenyon cell,6174,139,2.2514
+fru-F-600069,alpha/beta core Kenyon cell,1072,0,0.0
+fru-F-600071,alpha/beta core Kenyon cell,1244,0,0.0
+fru-F-600073,alpha/beta surface Kenyon cell,1114,0,0.0
+fru-F-600074,alpha/beta posterior Kenyon cell,5109,40,0.7829
+fru-F-600086,alpha/beta core Kenyon cell,1160,0,0.0
+fru-F-600088,alpha/beta surface Kenyon cell,1120,0,0.0
+fru-F-600094,alpha/beta surface Kenyon cell,958,0,0.0
+fru-F-600107,alpha/beta posterior Kenyon cell,756,0,0.0
+fru-F-600112,alpha/beta surface Kenyon cell,6442,139,2.1577
+fru-F-600115,alpha/beta core Kenyon cell,1112,0,0.0
+fru-F-600119,alpha/beta core Kenyon cell,269,0,0.0
+fru-F-600120,adult multiglomerular antennal lobe projection neuron vPN,1999,0,0.0
+fru-F-700006,adult gamma Kenyon cell,542,0,0.0
+fru-F-700007,adult gamma Kenyon cell,417,0,0.0
+fru-F-700015,alpha/beta surface Kenyon cell,6444,139,2.157
+fru-F-700018,alpha/beta core Kenyon cell,1323,0,0.0
+fru-F-700019,adult gamma Kenyon cell,511,0,0.0
+fru-F-700023,adult gamma Kenyon cell,2495,376,15.0701
+fru-F-700030,alpha/beta surface Kenyon cell,5847,139,2.3773
+fru-F-700032,alpha/beta core Kenyon cell,1466,0,0.0
+fru-F-700034,alpha/beta core Kenyon cell,5537,111,2.0047
+fru-F-700037,lobula columnar neuron LC10,1327,213,16.0512
+fru-F-700058,adult uniglomerular antennal lobe projection neuron,2740,0,0.0
+fru-F-700062,alpha/beta core Kenyon cell,5748,111,1.9311
+fru-F-700064,alpha/beta surface Kenyon cell,5897,139,2.3571
+fru-F-700070,adult gamma Kenyon cell,2802,374,13.3476
+fru-F-700074,alpha/beta core Kenyon cell,3123,111,3.5543
+fru-F-700079,alpha/beta core Kenyon cell,5695,111,1.9491
+fru-F-700083,adult gamma Kenyon cell,2586,376,14.5398
+fru-F-700085,lobula columnar neuron LC10,1281,296,23.1069
+fru-F-700086,lobula columnar neuron LC11,891,8,0.8979
+fru-F-700088,alpha/beta core Kenyon cell,221,0,0.0
+fru-F-700098,alpha/beta surface Kenyon cell,2865,139,4.8517
+fru-F-700105,alpha/beta core Kenyon cell,1159,0,0.0
+fru-F-700108,lobula columnar neuron LC6,1214,33,2.7183
+fru-F-700117,lobula columnar neuron LC6,1368,36,2.6316
+fru-F-700119,adult uniglomerular antennal lobe projection neuron,301,0,0.0
+fru-F-700121,alpha/beta core Kenyon cell,6000,111,1.85
+fru-F-700122,alpha/beta core Kenyon cell,378,0,0.0
+fru-F-700144,alpha/beta core Kenyon cell,3104,111,3.576
+fru-F-700145,alpha/beta core Kenyon cell,1475,0,0.0
+fru-F-700149,alpha/beta surface Kenyon cell,2896,139,4.7997
+fru-F-700150,adult multiglomerular antennal lobe projection neuron vPN,214,0,0.0
+fru-F-700152,alpha/beta core Kenyon cell,150,0,0.0
+fru-F-700154,alpha/beta core Kenyon cell,354,0,0.0
+fru-F-700165,adult antennal lobe projection neuron VA1v adPN,2825,2,0.0708
+fru-F-700168,alpha/beta core Kenyon cell,1358,0,0.0
+fru-F-700180,adult multiglomerular antennal lobe projection neuron vPN,146,0,0.0
+fru-F-800006,alpha/beta core Kenyon cell,2657,111,4.1776
+fru-F-800007,alpha/beta core Kenyon cell,1537,0,0.0
+fru-F-800008,alpha/beta core Kenyon cell,1120,0,0.0
+fru-F-800012,alpha/beta core Kenyon cell,445,0,0.0
+fru-F-800013,alpha/beta core Kenyon cell,2493,69,2.7677
+fru-F-800014,alpha/beta core Kenyon cell,1559,0,0.0
+fru-F-800019,adult antennal lobe projection neuron VA1v adPN,48,0,0.0
+fru-F-800022,alpha/beta core Kenyon cell,297,0,0.0
+fru-F-800024,alpha/beta core Kenyon cell,5981,111,1.8559
+fru-F-800031,adult antennal lobe projection neuron VM5d adPN,2851,2,0.0702
+fru-F-800040,adult antennal lobe projection neuron VA1v adPN,50,0,0.0
+fru-F-800046,lobula columnar neuron LC10,1364,278,20.3812
+fru-F-900002,alpha/beta surface Kenyon cell,234,0,0.0
+fru-F-900003,alpha/beta core Kenyon cell,858,0,0.0
+fru-F-900004,alpha/beta core Kenyon cell,3155,111,3.5182
+fru-F-900008,adult antennal lobe projection neuron VA1v adPN,2621,2,0.0763
+fru-F-900009,alpha/beta core Kenyon cell,6311,111,1.7588
+fru-F-900011,alpha/beta core Kenyon cell,1160,0,0.0
+fru-F-900012,alpha/beta core Kenyon cell,3377,110,3.2573
+fru-F-900015,alpha/beta core Kenyon cell,2739,111,4.0526
+fru-F-900018,alpha/beta core Kenyon cell,3202,111,3.4666
+fru-F-900024,alpha/beta core Kenyon cell,3192,104,3.2581
+fru-M-000004,alpha/beta core Kenyon cell,6111,111,1.8164
+fru-M-000005,adult gamma Kenyon cell,54,0,0.0
+fru-M-000006,adult gamma Kenyon cell,415,0,0.0
+fru-M-000010,lobula columnar neuron LC10,1618,215,13.288
+fru-M-000014,alpha/beta core Kenyon cell,3152,111,3.5216
+fru-M-000016,adult gamma Kenyon cell,2822,376,13.3239
+fru-M-000018,adult gamma Kenyon cell,2665,376,14.1088
+fru-M-000021,adult gamma Kenyon cell,397,0,0.0
+fru-M-000024,alpha/beta core Kenyon cell,1609,0,0.0
+fru-M-000025,alpha/beta core Kenyon cell,3232,111,3.4344
+fru-M-000028,alpha/beta core Kenyon cell,382,0,0.0
+fru-M-000029,alpha/beta core Kenyon cell,416,0,0.0
+fru-M-000030,adult gamma Kenyon cell,2740,376,13.7226
+fru-M-000031,adult gamma Kenyon cell,431,0,0.0
+fru-M-000035,adult multiglomerular antennal lobe projection neuron,64,0,0.0
+fru-M-000046,gamma dorsal Kenyon cell,2519,49,1.9452
+fru-M-000048,gamma dorsal Kenyon cell,331,0,0.0
+fru-M-000051,adult gamma Kenyon cell,2641,376,14.237
+fru-M-000054,alpha/beta core Kenyon cell,494,0,0.0
+fru-M-000055,alpha/beta core Kenyon cell,6065,111,1.8302
+fru-M-000059,alpha/beta core Kenyon cell,412,0,0.0
+fru-M-000061,alpha/beta core Kenyon cell,464,0,0.0
+fru-M-000067,alpha/beta core Kenyon cell,1411,0,0.0
+fru-M-000079,alpha/beta core Kenyon cell,3246,110,3.3888
+fru-M-000080,adult gamma Kenyon cell,198,0,0.0
+fru-M-000081,alpha/beta core Kenyon cell,1365,0,0.0
+fru-M-000088,adult gamma Kenyon cell,321,0,0.0
+fru-M-000089,adult multiglomerular antennal lobe projection neuron vPN,200,0,0.0
+fru-M-000090,adult gamma Kenyon cell,2838,376,13.2488
+fru-M-000093,adult gamma Kenyon cell,224,0,0.0
+fru-M-000099,alpha/beta core Kenyon cell,1569,0,0.0
+fru-M-000102,alpha/beta core Kenyon cell,1427,0,0.0
+fru-M-000107,adult gamma Kenyon cell,367,0,0.0
+fru-M-000110,alpha/beta core Kenyon cell,3122,111,3.5554
+fru-M-000111,adult gamma Kenyon cell,435,0,0.0
+fru-M-000115,alpha/beta core Kenyon cell,445,0,0.0
+fru-M-000120,alpha/beta core Kenyon cell,3110,111,3.5691
+fru-M-000122,alpha/beta core Kenyon cell,469,0,0.0
+fru-M-000124,adult gamma Kenyon cell,2756,376,13.643
+fru-M-000127,adult gamma Kenyon cell,2018,375,18.5828
+fru-M-000129,alpha/beta core Kenyon cell,2799,111,3.9657
+fru-M-000131,adult gamma Kenyon cell,2644,376,14.2209
+fru-M-000132,alpha/beta core Kenyon cell,385,0,0.0
+fru-M-000134,adult multiglomerular antennal lobe projection neuron,2237,0,0.0
+fru-M-000136,alpha/beta core Kenyon cell,2821,111,3.9348
+fru-M-000137,alpha/beta core Kenyon cell,6173,111,1.7982
+fru-M-000140,alpha/beta core Kenyon cell,464,0,0.0
+fru-M-000142,adult gamma Kenyon cell,382,0,0.0
+fru-M-000144,alpha/beta core Kenyon cell,2477,75,3.0279
+fru-M-000147,adult gamma Kenyon cell,2794,376,13.4574
+fru-M-000149,adult gamma Kenyon cell,529,0,0.0
+fru-M-000151,alpha/beta posterior Kenyon cell,5909,40,0.6769
+fru-M-000159,alpha/beta core Kenyon cell,3329,111,3.3343
+fru-M-000164,adult gamma Kenyon cell,360,0,0.0
+fru-M-000166,adult gamma Kenyon cell,422,0,0.0
+fru-M-000170,lobula columnar neuron LC11,1131,16,1.4147
+fru-M-000183,alpha/beta core Kenyon cell,1184,0,0.0
+fru-M-000192,lobula columnar neuron LC10,1269,275,21.6706
+fru-M-000197,alpha/beta core Kenyon cell,3135,111,3.5407
+fru-M-000198,alpha/beta core Kenyon cell,436,0,0.0
+fru-M-000214,adult gamma Kenyon cell,318,0,0.0
+fru-M-000220,alpha/beta core Kenyon cell,3188,111,3.4818
+fru-M-100001,adult gamma Kenyon cell,527,0,0.0
+fru-M-100003,adult gamma Kenyon cell,2719,375,13.7918
+fru-M-100006,alpha/beta core Kenyon cell,2945,111,3.7691
+fru-M-100007,adult gamma Kenyon cell,2688,376,13.9881
+fru-M-100009,gamma dorsal Kenyon cell,2320,49,2.1121
+fru-M-100013,adult gamma Kenyon cell,2793,376,13.4622
+fru-M-100014,adult gamma Kenyon cell,416,0,0.0
+fru-M-100017,adult gamma Kenyon cell,2881,376,13.051
+fru-M-100020,adult gamma Kenyon cell,2745,376,13.6976
+fru-M-100023,alpha/beta core Kenyon cell,324,0,0.0
+fru-M-100032,adult gamma Kenyon cell,2759,356,12.9032
+fru-M-100033,alpha/beta core Kenyon cell,153,0,0.0
+fru-M-100034,alpha/beta core Kenyon cell,487,0,0.0
+fru-M-100035,alpha/beta core Kenyon cell,2319,110,4.7434
+fru-M-100037,alpha/beta core Kenyon cell,6147,111,1.8058
+fru-M-100038,alpha/beta core Kenyon cell,1663,0,0.0
+fru-M-100039,alpha/beta core Kenyon cell,2396,111,4.6327
+fru-M-100045,alpha/beta core Kenyon cell,343,0,0.0
+fru-M-100047,alpha/beta core Kenyon cell,6257,111,1.774
+fru-M-100050,adult multiglomerular antennal lobe projection neuron vPN,1562,0,0.0
+fru-M-100053,gamma dorsal Kenyon cell,1245,49,3.9357
+fru-M-100060,alpha/beta core Kenyon cell,503,0,0.0
+fru-M-100064,alpha/beta core Kenyon cell,291,0,0.0
+fru-M-100068,alpha/beta core Kenyon cell,447,0,0.0
+fru-M-100070,adult gamma Kenyon cell,547,0,0.0
+fru-M-100078,alpha/beta core Kenyon cell,2748,111,4.0393
+fru-M-100083,alpha/beta core Kenyon cell,2786,111,3.9842
+fru-M-100086,alpha/beta core Kenyon cell,2961,111,3.7487
+fru-M-100092,alpha/beta core Kenyon cell,3018,111,3.6779
+fru-M-100095,adult gamma Kenyon cell,533,0,0.0
+fru-M-100099,alpha/beta core Kenyon cell,6299,111,1.7622
+fru-M-100100,alpha/beta core Kenyon cell,405,0,0.0
+fru-M-100102,adult gamma Kenyon cell,2776,376,13.5447
+fru-M-100104,alpha/beta core Kenyon cell,2812,111,3.9474
+fru-M-100109,alpha/beta core Kenyon cell,2799,111,3.9657
+fru-M-100110,lobula columnar neuron LC11,969,16,1.6512
+fru-M-100112,alpha/beta core Kenyon cell,3136,111,3.5395
+fru-M-100114,adult gamma Kenyon cell,477,0,0.0
+fru-M-100121,alpha/beta core Kenyon cell,3013,111,3.684
+fru-M-100129,alpha/beta core Kenyon cell,1309,0,0.0
+fru-M-100130,lobula columnar neuron LC11,1022,14,1.3699
+fru-M-100132,alpha/beta core Kenyon cell,3083,111,3.6004
+fru-M-100139,adult uniglomerular antennal lobe projection neuron,439,0,0.0
+fru-M-100140,alpha/beta core Kenyon cell,457,0,0.0
+fru-M-100148,alpha/beta core Kenyon cell,484,0,0.0
+fru-M-100149,adult gamma Kenyon cell,2679,376,14.0351
+fru-M-100152,lobula columnar neuron LC11,870,12,1.3793
+fru-M-100161,alpha/beta core Kenyon cell,3098,111,3.583
+fru-M-100163,adult gamma Kenyon cell,2773,376,13.5593
+fru-M-100164,alpha/beta core Kenyon cell,409,0,0.0
+fru-M-100169,adult gamma Kenyon cell,437,0,0.0
+fru-M-100170,alpha/beta core Kenyon cell,6225,111,1.7831
+fru-M-100171,alpha/beta core Kenyon cell,335,0,0.0
+fru-M-100177,adult gamma Kenyon cell,2275,375,16.4835
+fru-M-100179,alpha/beta core Kenyon cell,1473,0,0.0
+fru-M-100183,alpha/beta core Kenyon cell,479,0,0.0
+fru-M-100185,lobula columnar neuron LC11,868,13,1.4977
+fru-M-100186,alpha/beta core Kenyon cell,6415,111,1.7303
+fru-M-100187,lobula columnar neuron LC10,1708,258,15.1054
+fru-M-100198,alpha/beta core Kenyon cell,2639,110,4.1682
+fru-M-100207,alpha/beta core Kenyon cell,2907,107,3.6808
+fru-M-100232,adult gamma Kenyon cell,2870,376,13.101
+fru-M-100237,adult gamma Kenyon cell,2791,376,13.4719
+fru-M-200000,adult gamma Kenyon cell,460,0,0.0
+fru-M-200002,alpha/beta core Kenyon cell,6161,111,1.8017
+fru-M-200004,adult gamma Kenyon cell,446,0,0.0
+fru-M-200005,alpha/beta core Kenyon cell,2874,111,3.8622
+fru-M-200006,alpha/beta core Kenyon cell,2605,111,4.261
+fru-M-200009,adult gamma Kenyon cell,367,0,0.0
+fru-M-200015,adult gamma Kenyon cell,2039,372,18.2442
+fru-M-200019,alpha/beta surface Kenyon cell,3102,139,4.481
+fru-M-200020,alpha/beta core Kenyon cell,530,0,0.0
+fru-M-200022,adult gamma Kenyon cell,2766,376,13.5936
+fru-M-200024,gamma dorsal Kenyon cell,2528,49,1.9383
+fru-M-200034,adult gamma Kenyon cell,2995,376,12.5543
+fru-M-200039,alpha/beta core Kenyon cell,482,0,0.0
+fru-M-200041,adult gamma Kenyon cell,406,0,0.0
+fru-M-200043,alpha/beta core Kenyon cell,453,0,0.0
+fru-M-200047,gamma dorsal Kenyon cell,548,0,0.0
+fru-M-200050,alpha/beta core Kenyon cell,2743,111,4.0467
+fru-M-200051,alpha/beta core Kenyon cell,542,0,0.0
+fru-M-200066,alpha/beta core Kenyon cell,1843,0,0.0
+fru-M-200068,alpha/beta core Kenyon cell,6160,111,1.8019
+fru-M-200089,alpha/beta core Kenyon cell,427,0,0.0
+fru-M-200094,adult gamma Kenyon cell,2535,376,14.8323
+fru-M-200099,alpha/beta core Kenyon cell,478,0,0.0
+fru-M-200109,adult gamma Kenyon cell,577,0,0.0
+fru-M-200111,lobula columnar neuron LC11,896,16,1.7857
+fru-M-200112,alpha/beta core Kenyon cell,3171,111,3.5005
+fru-M-200117,alpha/beta surface Kenyon cell,366,0,0.0
+fru-M-200123,alpha/beta core Kenyon cell,408,0,0.0
+fru-M-200126,alpha/beta core Kenyon cell,3170,111,3.5016
+fru-M-200130,adult gamma Kenyon cell,2584,376,14.5511
+fru-M-200131,alpha/beta core Kenyon cell,484,0,0.0
+fru-M-200132,alpha/beta core Kenyon cell,296,0,0.0
+fru-M-200136,alpha/beta core Kenyon cell,2763,111,4.0174
+fru-M-200137,alpha/beta core Kenyon cell,558,0,0.0
+fru-M-200141,alpha/beta surface Kenyon cell,6372,139,2.1814
+fru-M-200142,alpha/beta core Kenyon cell,395,0,0.0
+fru-M-200147,adult gamma Kenyon cell,2744,375,13.6662
+fru-M-200150,alpha/beta core Kenyon cell,3293,111,3.3708
+fru-M-200157,alpha/beta core Kenyon cell,2766,111,4.013
+fru-M-200158,alpha/beta core Kenyon cell,389,0,0.0
+fru-M-200160,gamma dorsal Kenyon cell,2652,49,1.8477
+fru-M-200163,alpha/beta core Kenyon cell,2636,111,4.2109
+fru-M-200165,alpha/beta core Kenyon cell,3126,111,3.5509
+fru-M-200166,adult gamma Kenyon cell,2806,376,13.3999
+fru-M-200171,alpha/beta core Kenyon cell,2971,111,3.7361
+fru-M-200173,alpha/beta core Kenyon cell,3022,111,3.6731
+fru-M-200174,adult gamma Kenyon cell,3050,376,12.3279
+fru-M-200176,alpha/beta core Kenyon cell,2493,111,4.4525
+fru-M-200180,adult gamma Kenyon cell,2686,376,13.9985
+fru-M-200182,alpha/beta core Kenyon cell,558,0,0.0
+fru-M-200186,alpha/beta core Kenyon cell,1262,0,0.0
+fru-M-200188,gamma dorsal Kenyon cell,459,0,0.0
+fru-M-200191,alpha/beta core Kenyon cell,198,0,0.0
+fru-M-200194,alpha/beta core Kenyon cell,2935,111,3.7819
+fru-M-200200,alpha/beta core Kenyon cell,451,0,0.0
+fru-M-200203,alpha/beta core Kenyon cell,412,0,0.0
+fru-M-200204,gamma dorsal Kenyon cell,2930,49,1.6724
+fru-M-200207,alpha/beta surface Kenyon cell,1375,0,0.0
+fru-M-200209,lobula columnar neuron LC10,1517,248,16.3481
+fru-M-200212,alpha/beta core Kenyon cell,3125,111,3.552
+fru-M-200215,lobula columnar neuron LC10,1345,302,22.4535
+fru-M-200216,adult gamma Kenyon cell,294,0,0.0
+fru-M-200221,alpha/beta core Kenyon cell,3068,111,3.618
+fru-M-200225,alpha/beta core Kenyon cell,249,0,0.0
+fru-M-200227,alpha/beta core Kenyon cell,3062,111,3.6251
+fru-M-200232,alpha/beta core Kenyon cell,6289,111,1.765
+fru-M-200247,alpha/beta core Kenyon cell,2942,111,3.7729
+fru-M-200250,alpha/beta core Kenyon cell,6348,111,1.7486
+fru-M-200259,alpha/beta surface Kenyon cell,6264,139,2.219
+fru-M-200261,alpha/beta core Kenyon cell,2812,111,3.9474
+fru-M-200267,alpha/beta core Kenyon cell,1482,0,0.0
+fru-M-200276,alpha/beta surface Kenyon cell,5408,139,2.5703
+fru-M-200280,alpha/beta core Kenyon cell,328,0,0.0
+fru-M-200287,alpha/beta core Kenyon cell,2691,111,4.1249
+fru-M-200296,alpha/beta core Kenyon cell,6184,111,1.795
+fru-M-200307,alpha/beta core Kenyon cell,6256,111,1.7743
+fru-M-200319,adult antennal lobe projection neuron DA1,123,0,0.0
+fru-M-200327,adult gamma Kenyon cell,424,0,0.0
+fru-M-200337,alpha/beta core Kenyon cell,476,0,0.0
+fru-M-200339,adult antennal lobe projection neuron DC2 adPN,2842,0,0.0
+fru-M-300004,alpha/beta core Kenyon cell,442,0,0.0
+fru-M-300006,lobula columnar neuron LC10,1385,295,21.2996
+fru-M-300011,adult gamma Kenyon cell,537,0,0.0
+fru-M-300013,adult gamma Kenyon cell,560,0,0.0
+fru-M-300015,adult gamma Kenyon cell,2628,373,14.1933
+fru-M-300016,alpha/beta core Kenyon cell,2674,111,4.1511
+fru-M-300020,adult gamma Kenyon cell,454,0,0.0
+fru-M-300021,alpha/beta core Kenyon cell,2971,111,3.7361
+fru-M-300022,adult gamma Kenyon cell,2675,376,14.0561
+fru-M-300023,adult gamma Kenyon cell,496,0,0.0
+fru-M-300025,alpha/beta core Kenyon cell,6299,111,1.7622
+fru-M-300029,alpha/beta surface Kenyon cell,230,0,0.0
+fru-M-300030,adult gamma Kenyon cell,391,0,0.0
+fru-M-300033,alpha/beta core Kenyon cell,6238,111,1.7794
+fru-M-300040,adult gamma Kenyon cell,483,0,0.0
+fru-M-300053,alpha/beta core Kenyon cell,547,0,0.0
+fru-M-300054,adult gamma Kenyon cell,648,0,0.0
+fru-M-300058,alpha/beta core Kenyon cell,6489,111,1.7106
+fru-M-300069,gamma dorsal Kenyon cell,413,0,0.0
+fru-M-300070,lobula columnar neuron LC10,1523,286,18.7787
+fru-M-300075,alpha/beta core Kenyon cell,617,0,0.0
+fru-M-300081,alpha/beta core Kenyon cell,2860,111,3.8811
+fru-M-300082,alpha/beta core Kenyon cell,181,0,0.0
+fru-M-300084,alpha/beta core Kenyon cell,215,0,0.0
+fru-M-300087,alpha/beta core Kenyon cell,2928,111,3.791
+fru-M-300097,adult gamma Kenyon cell,2376,375,15.7828
+fru-M-300098,adult gamma Kenyon cell,2572,375,14.5801
+fru-M-300100,alpha/beta core Kenyon cell,298,0,0.0
+fru-M-300107,alpha/beta core Kenyon cell,459,0,0.0
+fru-M-300109,alpha/beta core Kenyon cell,3069,111,3.6168
+fru-M-300112,alpha/beta core Kenyon cell,248,0,0.0
+fru-M-300114,alpha/beta core Kenyon cell,2933,111,3.7845
+fru-M-300116,alpha/beta core Kenyon cell,6183,111,1.7952
+fru-M-300119,alpha/beta core Kenyon cell,322,0,0.0
+fru-M-300125,alpha/beta core Kenyon cell,394,0,0.0
+fru-M-300126,alpha/beta core Kenyon cell,6185,111,1.7947
+fru-M-300127,alpha/beta core Kenyon cell,579,0,0.0
+fru-M-300131,adult gamma Kenyon cell,420,0,0.0
+fru-M-300133,alpha/beta core Kenyon cell,491,0,0.0
+fru-M-300134,alpha/beta surface Kenyon cell,6147,139,2.2613
+fru-M-300139,alpha/beta core Kenyon cell,6024,111,1.8426
+fru-M-300145,alpha/beta core Kenyon cell,3154,111,3.5193
+fru-M-300154,adult antennal lobe projection neuron VM7 adPN,339,0,0.0
+fru-M-300157,alpha/beta core Kenyon cell,6315,111,1.7577
+fru-M-300172,alpha/beta core Kenyon cell,379,0,0.0
+fru-M-300173,alpha/beta core Kenyon cell,2616,111,4.2431
+fru-M-300176,alpha/beta core Kenyon cell,1415,0,0.0
+fru-M-300181,alpha/beta core Kenyon cell,2999,111,3.7012
+fru-M-300182,alpha/beta core Kenyon cell,452,0,0.0
+fru-M-300188,adult gamma Kenyon cell,2344,375,15.9983
+fru-M-300201,alpha/beta core Kenyon cell,283,0,0.0
+fru-M-300202,alpha/beta core Kenyon cell,2846,111,3.9002
+fru-M-300205,alpha/beta core Kenyon cell,5407,111,2.0529
+fru-M-300207,lobula columnar neuron LC10,1202,299,24.8752
+fru-M-300215,alpha/beta core Kenyon cell,1290,0,0.0
+fru-M-300220,alpha/beta core Kenyon cell,2723,111,4.0764
+fru-M-300230,alpha/beta core Kenyon cell,3107,111,3.5726
+fru-M-300233,lobula columnar neuron LC10,1342,217,16.1699
+fru-M-300245,adult gamma Kenyon cell,2642,375,14.1938
+fru-M-300247,alpha/beta core Kenyon cell,367,0,0.0
+fru-M-300252,alpha/beta core Kenyon cell,3184,111,3.4862
+fru-M-300265,adult gamma Kenyon cell,614,0,0.0
+fru-M-300273,adult multiglomerular antennal lobe projection neuron vPN,311,0,0.0
+fru-M-300274,alpha/beta core Kenyon cell,6198,111,1.7909
+fru-M-300275,alpha/beta core Kenyon cell,294,0,0.0
+fru-M-300279,alpha/beta core Kenyon cell,2889,111,3.8422
+fru-M-300282,lobula columnar neuron LC10,1295,178,13.7452
+fru-M-300309,alpha/beta core Kenyon cell,6415,111,1.7303
+fru-M-400000,alpha/beta surface Kenyon cell,319,0,0.0
+fru-M-400006,alpha/beta core Kenyon cell,433,0,0.0
+fru-M-400008,adult gamma Kenyon cell,557,0,0.0
+fru-M-400010,alpha/beta core Kenyon cell,2854,111,3.8893
+fru-M-400011,alpha/beta surface Kenyon cell,396,0,0.0
+fru-M-400015,adult gamma Kenyon cell,2850,375,13.1579
+fru-M-400016,adult gamma Kenyon cell,414,0,0.0
+fru-M-400021,adult gamma Kenyon cell,416,0,0.0
+fru-M-400023,alpha/beta core Kenyon cell,6128,111,1.8114
+fru-M-400026,lobula columnar neuron LC11,1080,13,1.2037
+fru-M-400036,alpha/beta core Kenyon cell,2786,111,3.9842
+fru-M-400037,lobula columnar neuron LC10,1667,238,14.2771
+fru-M-400038,alpha/beta core Kenyon cell,6172,111,1.7984
+fru-M-400039,alpha/beta core Kenyon cell,420,0,0.0
+fru-M-400040,lobula columnar neuron LC10,1634,239,14.6267
+fru-M-400041,adult antennal lobe projection neuron DL2d adPN,335,0,0.0
+fru-M-400042,adult antennal lobe projection neuron DL2d adPN,3247,1,0.0308
+fru-M-400045,alpha/beta core Kenyon cell,575,0,0.0
+fru-M-400049,alpha/beta core Kenyon cell,443,0,0.0
+fru-M-400058,alpha/beta core Kenyon cell,234,0,0.0
+fru-M-400060,adult gamma Kenyon cell,2454,375,15.2812
+fru-M-400063,alpha/beta core Kenyon cell,410,0,0.0
+fru-M-400071,adult alpha'/beta' Kenyon cell,2862,188,6.5688
+fru-M-400074,adult gamma Kenyon cell,2468,376,15.235
+fru-M-400077,adult gamma Kenyon cell,2551,375,14.7001
+fru-M-400080,adult gamma Kenyon cell,2858,376,13.1561
+fru-M-400087,adult multiglomerular antennal lobe projection neuron vPN,1659,0,0.0
+fru-M-400089,alpha/beta core Kenyon cell,3196,111,3.4731
+fru-M-400093,alpha/beta core Kenyon cell,346,0,0.0
+fru-M-400099,alpha/beta core Kenyon cell,3010,111,3.6877
+fru-M-400101,adult gamma Kenyon cell,395,0,0.0
+fru-M-400105,lobula columnar neuron LC10,1593,292,18.3302
+fru-M-400108,alpha/beta surface Kenyon cell,489,0,0.0
+fru-M-400109,adult multiglomerular antennal lobe projection neuron vPN,1734,0,0.0
+fru-M-400111,alpha/beta core Kenyon cell,2914,111,3.8092
+fru-M-400113,alpha/beta core Kenyon cell,238,0,0.0
+fru-M-400116,alpha/beta core Kenyon cell,6024,111,1.8426
+fru-M-400123,gamma dorsal Kenyon cell,2897,49,1.6914
+fru-M-400127,alpha/beta core Kenyon cell,3045,111,3.6453
+fru-M-400130,adult antennal lobe projection neuron VA1v adPN,202,0,0.0
+fru-M-400136,alpha/beta core Kenyon cell,3005,111,3.6938
+fru-M-400142,adult gamma Kenyon cell,2579,367,14.2303
+fru-M-400144,adult gamma Kenyon cell,2749,376,13.6777
+fru-M-400149,alpha/beta surface Kenyon cell,6359,139,2.1859
+fru-M-400153,alpha/beta core Kenyon cell,6354,111,1.7469
+fru-M-400154,alpha/beta core Kenyon cell,246,0,0.0
+fru-M-400157,alpha/beta core Kenyon cell,1317,0,0.0
+fru-M-400160,adult gamma Kenyon cell,2648,376,14.1994
+fru-M-400163,lobula columnar neuron LC10,1261,260,20.6186
+fru-M-400173,alpha/beta surface Kenyon cell,324,0,0.0
+fru-M-400176,adult gamma Kenyon cell,538,0,0.0
+fru-M-400178,alpha/beta core Kenyon cell,2712,111,4.0929
+fru-M-400188,adult gamma Kenyon cell,304,0,0.0
+fru-M-400189,lobula columnar neuron LC10,1384,251,18.1358
+fru-M-400192,antennal lobe projection neuron of ALl1 lineage,2,0,0.0
+fru-M-400210,alpha/beta surface Kenyon cell,410,0,0.0
+fru-M-400212,adult alpha'/beta' Kenyon cell,511,0,0.0
+fru-M-400216,adult uniglomerular antennal lobe projection neuron,3113,0,0.0
+fru-M-400223,antennal lobe projection neuron of ALl1 lineage,2711,0,0.0
+fru-M-400229,alpha/beta surface Kenyon cell,6203,139,2.2409
+fru-M-500006,lobula columnar neuron LC11,893,8,0.8959
+fru-M-500008,lobula columnar neuron LC10,1483,242,16.3183
+fru-M-500021,alpha/beta surface Kenyon cell,378,0,0.0
+fru-M-500029,alpha/beta surface Kenyon cell,377,0,0.0
+fru-M-500032,alpha/beta core Kenyon cell,2765,111,4.0145
+fru-M-500036,adult antennal lobe projection neuron DL2d adPN,213,0,0.0
+fru-M-500041,alpha/beta core Kenyon cell,3051,111,3.6382
+fru-M-500052,alpha/beta core Kenyon cell,3109,111,3.5703
+fru-M-500055,adult gamma Kenyon cell,450,0,0.0
+fru-M-500063,alpha/beta core Kenyon cell,464,0,0.0
+fru-M-500080,alpha/beta core Kenyon cell,3063,111,3.6239
+fru-M-500083,alpha/beta core Kenyon cell,1535,0,0.0
+fru-M-500085,alpha/beta core Kenyon cell,2011,102,5.0721
+fru-M-500090,alpha/beta core Kenyon cell,2850,111,3.8947
+fru-M-500092,alpha/beta surface Kenyon cell,2909,139,4.7783
+fru-M-500096,alpha/beta core Kenyon cell,1479,0,0.0
+fru-M-500099,alpha/beta surface Kenyon cell,784,0,0.0
+fru-M-500112,adult gamma Kenyon cell,113,0,0.0
+fru-M-500118,alpha/beta surface Kenyon cell,305,0,0.0
+fru-M-500123,adult antennal lobe projection neuron DL2d adPN,3249,1,0.0308
+fru-M-500126,alpha/beta core Kenyon cell,3054,111,3.6346
+fru-M-500127,alpha/beta core Kenyon cell,490,0,0.0
+fru-M-500134,alpha/beta core Kenyon cell,3139,111,3.5362
+fru-M-500138,alpha/beta core Kenyon cell,414,0,0.0
+fru-M-500142,alpha/beta core Kenyon cell,6391,111,1.7368
+fru-M-500143,alpha/beta surface Kenyon cell,1215,0,0.0
+fru-M-500147,alpha/beta surface Kenyon cell,3100,139,4.4839
+fru-M-500152,adult gamma Kenyon cell,465,0,0.0
+fru-M-500154,adult antennal lobe projection neuron DL2d adPN,371,0,0.0
+fru-M-500162,gamma dorsal Kenyon cell,363,0,0.0
+fru-M-500169,adult antennal lobe projection neuron DL2d adPN,3123,1,0.032
+fru-M-500170,alpha/beta surface Kenyon cell,1376,0,0.0
+fru-M-500171,adult antennal lobe projection neuron DL2d adPN,420,0,0.0
+fru-M-500172,adult gamma Kenyon cell,414,0,0.0
+fru-M-500175,gamma dorsal Kenyon cell,2648,49,1.8505
+fru-M-500179,alpha/beta core Kenyon cell,3101,111,3.5795
+fru-M-500180,adult gamma Kenyon cell,457,0,0.0
+fru-M-500197,alpha/beta core Kenyon cell,2655,111,4.1808
+fru-M-500205,alpha/beta core Kenyon cell,518,0,0.0
+fru-M-500208,lobula columnar neuron LC11,1227,9,0.7335
+fru-M-500211,adult antennal lobe projection neuron VM7 adPN,2740,0,0.0
+fru-M-500212,alpha/beta core Kenyon cell,424,0,0.0
+fru-M-500214,adult antennal lobe projection neuron VM5v adPN,2997,2,0.0667
+fru-M-500217,alpha/beta core Kenyon cell,2388,70,2.9313
+fru-M-500225,alpha/beta core Kenyon cell,6202,111,1.7897
+fru-M-500229,alpha/beta surface Kenyon cell,6409,139,2.1688
+fru-M-500232,lobula columnar neuron LC14,1255,26,2.0717
+fru-M-500246,lobula columnar neuron LC10,1253,172,13.7271
+fru-M-600002,lobula columnar neuron LC10,1198,207,17.2788
+fru-M-600008,adult antennal lobe projection neuron VM5v adPN,541,0,0.0
+fru-M-600013,alpha/beta surface Kenyon cell,384,0,0.0
+fru-M-600014,alpha/beta core Kenyon cell,3200,109,3.4062
+fru-M-600017,alpha/beta surface Kenyon cell,6034,139,2.3036
+fru-M-600018,alpha/beta core Kenyon cell,1332,0,0.0
+fru-M-600029,alpha/beta surface Kenyon cell,358,0,0.0
+fru-M-600031,alpha/beta core Kenyon cell,417,0,0.0
+fru-M-600036,alpha/beta surface Kenyon cell,1262,0,0.0
+fru-M-600039,adult gamma Kenyon cell,446,0,0.0
+fru-M-600045,alpha/beta core Kenyon cell,5490,111,2.0219
+fru-M-600050,alpha/beta surface Kenyon cell,1450,0,0.0
+fru-M-600056,alpha/beta core Kenyon cell,6133,111,1.8099
+fru-M-600061,alpha/beta surface Kenyon cell,544,0,0.0
+fru-M-600062,adult antennal lobe projection neuron DL2d adPN,3170,1,0.0315
+fru-M-600067,alpha/beta core Kenyon cell,1396,0,0.0
+fru-M-600068,alpha/beta core Kenyon cell,3086,111,3.5969
+fru-M-600071,alpha/beta core Kenyon cell,1186,0,0.0
+fru-M-600076,adult gamma Kenyon cell,207,0,0.0
+fru-M-600089,alpha/beta core Kenyon cell,405,0,0.0
+fru-M-700000,lobula columnar neuron LC10,1546,297,19.2109
+fru-M-700012,alpha/beta core Kenyon cell,422,0,0.0
+fru-M-700020,lobula columnar neuron LC10,1376,177,12.8634
+fru-M-700023,adult gamma Kenyon cell,441,0,0.0
+fru-M-700027,alpha/beta core Kenyon cell,1474,0,0.0
+fru-M-700028,alpha/beta core Kenyon cell,423,0,0.0
+fru-M-700029,alpha/beta core Kenyon cell,6161,111,1.8017
+fru-M-700032,adult gamma Kenyon cell,471,0,0.0
+fru-M-700034,alpha/beta surface Kenyon cell,3022,139,4.5996
+fru-M-700046,alpha/beta core Kenyon cell,2881,111,3.8528
+fru-M-700062,alpha/beta core Kenyon cell,422,0,0.0
+fru-M-700066,alpha/beta core Kenyon cell,6219,111,1.7849
+fru-M-700068,alpha/beta surface Kenyon cell,3013,139,4.6133
+fru-M-700069,lobula columnar neuron LC10,1210,168,13.8843
+fru-M-700075,alpha/beta core Kenyon cell,3113,111,3.5657
+fru-M-700076,alpha/beta core Kenyon cell,337,0,0.0
+fru-M-700086,alpha/beta core Kenyon cell,2861,111,3.8798
+fru-M-700102,lobula columnar neuron LC11,1133,12,1.0591
+fru-M-700109,alpha/beta core Kenyon cell,6584,111,1.6859
+fru-M-700153,alpha/beta core Kenyon cell,3123,111,3.5543
+fru-M-700157,adult antennal lobe projection neuron DL2d adPN,3148,1,0.0318
+fru-M-700169,alpha/beta core Kenyon cell,1101,0,0.0
+fru-M-800008,alpha/beta core Kenyon cell,2815,111,3.9432
+fru-M-800012,alpha/beta core Kenyon cell,3391,111,3.2734
+fru-M-800021,adult gamma Kenyon cell,2788,376,13.4864
+fru-M-800031,lobula columnar neuron LC11,965,16,1.658
+fru-M-800032,adult antennal lobe projection neuron VM5d adPN,3018,2,0.0663
+fru-M-800036,alpha/beta core Kenyon cell,1578,0,0.0
+fru-M-800039,lobula columnar neuron LC10,1480,212,14.3243
+fru-M-800041,alpha/beta core Kenyon cell,2991,111,3.7111
+fru-M-800046,alpha/beta core Kenyon cell,6192,111,1.7926
+fru-M-800047,lobula columnar neuron LC10,1258,214,17.0111
+fru-M-800049,alpha/beta core Kenyon cell,1220,0,0.0
+fru-M-800064,alpha/beta core Kenyon cell,367,0,0.0
+fru-M-800068,gamma dorsal Kenyon cell,168,0,0.0
+fru-M-800072,alpha/beta core Kenyon cell,6209,111,1.7877
+fru-M-800076,adult multiglomerular antennal lobe projection neuron vPN,162,0,0.0
+fru-M-800089,adult multiglomerular antennal lobe projection neuron vPN,241,0,0.0
+fru-M-900012,lobula columnar neuron LC10,1579,286,18.1127
+fru-M-900015,gamma dorsal Kenyon cell,412,0,0.0
+fru-M-900016,alpha/beta core Kenyon cell,6188,111,1.7938
+fru-M-900022,alpha/beta core Kenyon cell,6312,111,1.7586
+fru-M-900023,alpha/beta core Kenyon cell,3130,111,3.5463
+fru-M-900034,alpha/beta core Kenyon cell,6114,111,1.8155
+fru-M-900035,alpha/beta core Kenyon cell,158,0,0.0
+fru-M-900037,alpha/beta core Kenyon cell,296,0,0.0
+fru-M-900046,adult gamma Kenyon cell,427,0,0.0
+fru-M-900065,alpha/beta core Kenyon cell,3178,111,3.4928
+npf-F-000000,adult antennal lobe projection neuron DL1 adPN,3278,0,0.0
+npf-F-000001,adult antennal lobe projection neuron DL1 adPN,3415,0,0.0
+npf-F-000002,adult antennal lobe projection neuron DL1 adPN,3331,0,0.0
+npf-F-000003,adult antennal lobe projection neuron DL1 adPN,252,0,0.0
+npf-F-100001,adult antennal lobe projection neuron DL1 adPN,3359,0,0.0
+npf-F-300001,adult antennal lobe projection neuron DL1 adPN,3261,0,0.0
+npf-F-300003,adult antennal lobe projection neuron DL1 adPN,3387,0,0.0
+npf-F-300012,adult antennal lobe projection neuron VM7 adPN,3052,0,0.0
+npf-F-500000,lobula columnar neuron LC10,1441,279,19.3616
+npf-M-100000,adult antennal lobe projection neuron DL1 adPN,465,0,0.0
+npf-M-200000,adult antennal lobe projection neuron DL1 adPN,3352,0,0.0
+npf-M-300006,adult antennal lobe projection neuron DA1,2420,1,0.0413

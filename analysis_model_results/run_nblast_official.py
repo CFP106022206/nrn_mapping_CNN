@@ -23,7 +23,7 @@ labeled_info 底下有兩套彼此不符的 NBLAST 分數:
   3. normalized = S(A,B)/S(A,A); mean = 兩個方向的平均
 
 執行 (venv 路徑用參數傳入, 不寫死):
-    conda run -n nblast python analysis_dense_vs_projection/run_nblast_official.py
+    conda run -n nblast python analysis_model_results/run_nblast_official.py
 
 輸出: results/nblast_official.csv   898 組人工標註配對的官方 NBLAST 分數
       欄位 fc_id, em_id, conf (專家信心 0-1), group, nblast_official

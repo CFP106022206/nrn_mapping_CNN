@@ -1,9 +1,9 @@
-# D1 / D2 子資料集分析：完整交接文件
+# 模型結果分析：完整交接文件
 
 **寫給沒有參與這次分析的人或 AI。** 讀完應該能理解：問了什麼問題、得到什麼結論、
 哪些直覺被資料否證、程式怎麼跑、以及論文哪些數字要改。
 
-日期：2026-09-08（2026-09-12 更新：標籤二值化改為 ≥ 0.5）｜ 分析資料夾：`analysis_dense_vs_projection/`
+日期：2026-09-08（2026-09-12 更新：標籤二值化改為 ≥ 0.5）｜ 分析資料夾：`analysis_model_results/`
 
 ---
 
@@ -87,6 +87,11 @@ DFP = dorsofrontal protocerebrum。細胞型別歸屬（MBON / DAN 等）本分�
 專家信心同向：D2 平均 0.634 vs D1 0.776；打 1.0 者 4.5 % vs 21.5 %（p = 7.6e-11）。
 
 ### ⭐ 主因：hemibrain 側的「海綿效應」
+
+> **關鍵實驗見 `FINDINGS.md` §4 開頭**（`s10` 第 (10) 區塊 → `sponge_effective_density.csv`）：
+> 有效密度 = 落在 FC query 凸包內的 EM cable ÷ query 凸包體積。D2 的非配對有效密度與真配對一樣高
+> （區分真假 AUC 0.517），D1 的近乎 0（AUC 0.846）；兩組服從同一條曲線，知道有效密度後組別不再帶資訊。
+> target 自身的密度反而是 D1 較高：關鍵是「密在 query 那裡」。以下各段是支撐細節。
 
 **NBLAST 對 query 的每個點取 target 的最近鄰計分。當 target 是填滿緊緻體積的高密度
 樹突叢時，query 的任何一點都能找到近鄰，分數被結構性推高——與形狀是否相符無關。**
@@ -369,7 +374,7 @@ forward ρ +0.667 → 雙向平均 +0.640 → 官方 +0.634。原因是自比對
 
 ```bash
 conda create -n nblast python=3.10 -y && conda run -n nblast pip install navis
-conda run -n nblast python analysis_dense_vs_projection/run_nblast_official.py --emit-figure-csv
+conda run -n nblast python analysis_model_results/run_nblast_official.py --emit-figure-csv
 ```
 
 產生 `results/nblast_official.csv`（s08 / s09 / s10 依賴）與
@@ -379,7 +384,7 @@ conda run -n nblast python analysis_dense_vs_projection/run_nblast_official.py -
 ### 主流程
 
 ```bash
-bash analysis_dense_vs_projection/run_all.sh     # 約 12 分鐘
+bash analysis_model_results/run_all.sh     # 約 12 分鐘
 ```
 
 | 程式 | 產出 / 對應結論 |
@@ -393,8 +398,9 @@ bash analysis_dense_vs_projection/run_all.sh     # 約 12 分鐘
 | `s07_selection_rule.py` | 交叉驗證的納入條件 |
 | `s08_expert_and_nblast.py` | 專家信心 + 官方 NBLAST 可分離度 |
 | `s09_soma_and_strahler.py` | soma 距離、權重稀釋、cable 分箱、骨幹 vs 末梢（負面結果） |
-| `s10_em_sponge_effect.py` | **海綿效應的九項驗證**（含排除三個競爭解釋、凸包穩健性、FC 側／方向／中介檢驗）。主/次指標由檔案開頭的 `PRIMARY_FEAT` / `SECONDARY_FEAT` 控制 |
+| `s10_em_sponge_effect.py` | **海綿效應的十項驗證**（第 (10) 區塊是關鍵實驗「有效密度」，見 `FINDINGS.md` §4 開頭；其餘為排除競爭解釋、凸包穩健性、FC 側／方向／中介檢驗）。主/次指標由檔案開頭的 `PRIMARY_FEAT` / `SECONDARY_FEAT` 控制 |
 | `s12_cnn_sponge_effect.py` | MorphoMatcher 與 NBLAST 並排：海綿效應只影響 NBLAST（詳見 `FINDINGS.md` §4 末） |
+| `s13_leakage_check.py` | 身分洩漏檢驗：管道有多大，以及四項證明模型沒有依賴它的關鍵證據（詳見 `FINDINGS.md` §9） |
 | `s11_figures.py` | 論文圖 fig1–fig5 |
 
 ### 圖

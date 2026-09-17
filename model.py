@@ -470,6 +470,18 @@ def MVCNN_Siamese(input_size=(50, 50, 3), pool_type="max"):
     MVCNN + Siamese Network
     输入: 两组图片 (FC, EM)，每组是50x50x3的图像（三个视角叠在RGB通道）
     输出: 二分类结果（是否同类）
+
+    ⚠️ 已知錯誤（2026-09-18 發現），新訓練請改用 `MVCNN_Siamese_3View`：
+        下方 `extract_multiview_features` 的視角切片
+        `[Lambda(lambda x: x[..., i]) for i in range(3)]` 有 Python 閉包延遲綁定問題——
+        三個 lambda 共用同一個 `i`，模型執行時 `i` 已是 2，
+        **三個「視角」全部讀到第 3 張圖（channel 2），另外兩張對輸出完全沒有影響。**
+        訓練與推論行為一致：現有所有權重（Annotator / PreTrain / FineTune）都是在
+        這個單視角狀態下訓練的（證據：6 個逐視角 BN 的 moving_mean / moving_var
+        在三個視角之間逐位元相同）。
+        暫時保留此函數不修改，讓現有權重、nrn_service 與各預測腳本行為不變。
+        不要拿舊權重去配 `MVCNN_Siamese_3View`：結構相容、可以載入，但語意不同，
+        實測 Annotator fold 0 守門 AUC 會從 0.905 掉到 0.836。
     """
     
     # 定义两个输入
@@ -519,7 +531,8 @@ def MVCNN_Siamese(input_size=(50, 50, 3), pool_type="max"):
         输出: 融合后的特征向量
         """
         # 分离三个视角 (每个channel代表一个视角)
-        views = [Lambda(lambda x: tf.expand_dims(x[..., i], axis=-1))(input_image) 
+        # ⚠️ 錯誤：lambda 延遲綁定 `i`，執行時三個都讀 channel 2。見函數說明。
+        views = [Lambda(lambda x: tf.expand_dims(x[..., i], axis=-1))(input_image)
                  for i in range(3)]
         
         # 每个视角通过共享的CNN处理
@@ -578,10 +591,92 @@ def MVCNN_Siamese(input_size=(50, 50, 3), pool_type="max"):
     # model.summary()
     return model
 
+def MVCNN_Siamese_3View(input_size=(50, 50, 3), pool_type="max", trunk_norm="bn"):
+    """
+    MVCNN + Siamese Network，修正視角切片的版本（2026-09-18）。
+
+    與 `MVCNN_Siamese` 的差別：
+      1. 視角切片正確綁定 `i`，三張視圖都會進到模型。
+         `MVCNN_Siamese` 因閉包延遲綁定，三個視角全部讀第 3 張圖。
+      2. `trunk_norm`：
+         "bn" = 與原設計相同，每個視角各一個 BatchNormalization。
+         "gn" = GroupNormalization(groups=8)，不依賴批次統計量。
+                用於多次 forward 需要互相比較的訓練（例如排序損失，見 data_process_rank.py）。
+    建層順序刻意與 `MVCNN_Siamese` 完全相同（含未使用的 bn1–bn4），
+    所以 trunk_norm="bn" 時權重檔結構相容；但舊權重是單視角訓練的，不要混用。
+    """
+    if trunk_norm not in ("bn", "gn"):
+        raise ValueError(f"trunk_norm must be 'bn' or 'gn', got {trunk_norm!r}")
+
+    inputs = [Input(shape=input_size, name="FC"),
+              Input(shape=input_size, name="EM")]
+
+    shared_conv1 = Conv2D(32, (3, 3), padding='same', name="conv1")
+    shared_bn1 = BatchNormalization(name="bn1")   # 未使用，保留以維持建層順序
+    shared_act1 = Activation("gelu", name="ac1")
+    shared_conv2 = Conv2D(32, (3, 3), padding='same', name="conv2")
+    shared_bn2 = BatchNormalization(name='bn2')
+    shared_act2 = Activation("gelu", name='ac2')
+    shared_pool1 = MaxPool2D(pool_size=(2, 2), name='pool1')
+    shared_conv3 = Conv2D(64, (3, 3), padding='same', name='conv3')
+    shared_bn3 = BatchNormalization(name='bn3')
+    shared_act3 = Activation("gelu", name='ac3')
+    shared_conv4 = Conv2D(64, (3, 3), padding='same', name='conv4')
+    shared_bn4 = BatchNormalization(name='bn4')
+    shared_act4 = Activation("gelu", name='ac4')
+    shared_pool2 = MaxPool2D(pool_size=(2, 2), name='pool2')
+
+    def process_single_view(view_input):
+        x = shared_conv1(view_input)
+        x = shared_act1(x)
+        x = shared_conv2(x)
+        x = shared_act2(x)
+        x = shared_pool1(x)
+        x = shared_conv3(x)
+        x = shared_act3(x)
+        x = shared_conv4(x)
+        # 每個視角獨立一個正規化層，不共用參數
+        if trunk_norm == "bn":
+            x = BatchNormalization()(x)
+        else:
+            x = GroupNormalization(groups=8)(x)
+        x = shared_act4(x)
+        x = shared_pool2(x)
+        x = Dropout(0.1)(x)
+        return Flatten()(x)
+
+    def extract_multiview_features(input_image):
+        # `i=i` 在建立 lambda 當下就把 i 綁進去，三個視角各自讀對應的 channel
+        views = [Lambda(lambda x, i=i: tf.expand_dims(x[..., i], axis=-1))(input_image)
+                 for i in range(3)]
+        view_features = [process_single_view(v) for v in views]
+        stacked_features = Lambda(lambda x: tf.stack(x, axis=1))(view_features)
+        if pool_type == "max":
+            return Lambda(lambda x: tf.reduce_max(x, axis=1))(stacked_features)
+        if pool_type == "mean":
+            return Lambda(lambda x: tf.reduce_mean(x, axis=1))(stacked_features)
+        return Lambda(lambda x: tf.reshape(x, (tf.shape(x)[0], -1)))(stacked_features)
+
+    features_FC = extract_multiview_features(inputs[0])
+    features_EM = extract_multiview_features(inputs[1])
+    merged = concatenate([features_FC, features_EM], axis=1)
+
+    output = Dropout(0.3)(merged)
+    output = Dense(256)(output)
+    output = BatchNormalization()(output)
+    output = Activation("gelu")(output)
+    output = Dense(1, activation="sigmoid")(output)
+    return Model(inputs=inputs, outputs=output)
+
+
 def MVCNN_Siamese_Advanced(input_size=(50, 50, 3), pool_type="max"):
     """
     增强版的MVCNN + Siamese Network
     包含更多的特征融合选项和注意力机制
+
+    ⚠️ 已知錯誤：視角切片有與 `MVCNN_Siamese` 相同的閉包延遲綁定問題
+    （三個視角都讀 channel 2）。目前專案沒有使用此函數；若要啟用，先照
+    `MVCNN_Siamese_3View` 的寫法修正。
     """
     
     # 定义两个输入

@@ -1,0 +1,3 @@
+key,n_fc,rank1_hit_pct,MRR,median_rank_of_correct,p@5_pct,pool_auc
+原 head（基線）,638,31.04,0.4585,3,65.67,0.8995
+重訓 head（探針）,638,63.2,0.6772,1,77.74,0.948

@@ -1,0 +1,1004 @@
+%=======================================================================
+%  MorphoMatcher — manuscript (converted from Markdown)
+%  Overleaf-ready. Compile with pdfLaTeX (two passes for cross-references).
+%
+%  說明：
+%   1. 圖片一律以灰色佔位框呈現，真正的 \includegraphics 已註解在旁邊。
+%      要放圖時：把圖檔放進 figs/ 資料夾，取消註解 \includegraphics，
+%      並刪掉該行的 \FigPlaceholder{...}。
+%   2. 主文共 10 張圖，LaTeX 自動編號 1–10（Fig. 8 已補上圖說，
+%      原本的 \setcounter{figure}{8} 跳號已移除）。注意 figs/ 底下的
+%      檔名仍是 fig9_Nblast_D2 與 fig11_ConfusionMatrix，與圖號不一致。
+%   3. 附錄圖改為 S 編號（原稿與主文的 Fig. 5 重號）。
+%   4. 所有原稿的疑似錯誤都保留原文，並在該處以 "% [TODO]" 標註。
+%
+%  v4 變更（由程式與 analysis_model_results/ 核對後）：
+%   - Step 4 / Results / NBLAST 各段中文改寫為英文。
+%   - 括號註解與缺表格處改為 % [TODO] 標註。
+%   - 修掉一行未被註解掉的殘句（原本會印進 PDF）。
+%   - Fig. 5 圖說內 0.48 / 0.49 不一致 → 統一為 0.48。
+%   - NBLAST D2 後半段殘留舊數字（0.65 / 0.55 / 0.95 / 0.69）已移除。
+%=======================================================================
+
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}      % Times-like 字型；不要可整行註解
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{xcolor}
+\usepackage{authblk}
+\usepackage{titlesec}
+\usepackage[authoryear,round]{natbib}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+% \usepackage{lineno}\linenumbers        % 投稿要行號時取消註解
+
+%---- 章節編號：I. II. III. / 1. 2. 3. --------------------------------
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\arabic{subsection}}
+\titlelabel{\thetitle.\quad}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
+\titleformat*{\subsubsection}{\normalsize\bfseries}
+
+%---- 圖說格式 -------------------------------------------------------
+\captionsetup{font=small,labelfont=bf,labelsep=colon}
+
+%---- 圖片佔位框 ------------------------------------------------------
+% \FigPlaceholder{寬}{高}{說明文字}
+\newcommand{\FigPlaceholder}[3]{%
+  \setlength{\fboxsep}{0pt}%
+  \fcolorbox{gray!60}{gray!8}{%
+    \parbox[c][#2][c]{#1}{\centering\small\itshape\color{gray!70!black} #3}}%
+}
+
+%---- 標題與作者 ------------------------------------------------------
+\title{\vspace{-1.2em}\bfseries MorphoMatcher: A General Tool to Match Neuron
+Morphology through Machine Learning\vspace{-0.4em}}
+
+\author[1,4]{Zhong-Ming Chen}
+\author[1,2]{Yi-Chen Shen}
+\author[1,2]{Kuan-Ting Chou}
+\author[1,3]{Kuan-Lin Feng}
+\author[1,3]{Ching-Che Charng}
+\author[1,2]{Chiau-Jou Li}
+\author[1,3]{Pin-Ju Chou}
+\author[1]{Ann-Shyn Chiang}
+\author[1,3]{Chung-Chuan Lo}
+\author[2,5,6]{Daw-Wei Wang}
+
+\affil[1]{\small\itshape Brain Research Center, National Tsing Hua University, Hsinchu, Taiwan}
+\affil[2]{\small\itshape Department of Physics, National Tsing Hua University, Hsinchu, Taiwan}
+\affil[3]{\small\itshape Institute of Systems Neuroscience, National Tsing Hua University, Hsinchu, Taiwan}
+\affil[4]{\small\itshape Department of Physics, National Taiwan University, Taipei, Taiwan}
+\affil[5]{\small\itshape Frontier Center for Theory and Computation, National Tsing Hua University, Hsinchu, Taiwan}
+\affil[6]{\small\itshape Physics Institute, National Center for Theoretical Sciences, Taipei, Taiwan}
+
+\date{}
+
+%=======================================================================
+\usepackage{placeins}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.72}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+\noindent
+Connectomic analysis has gained increasing significance in the study of brain functions at the systems level. 
+This growing demand for connectomic data has prompted the development and release of several connectome databases, utilizing different imaging technologies. 
+Given the varying features of these databases, researchers are often required to integrate and analyze data across multiple databases. 
+However, identifying neurons between different databases poses a
+considerable challenge due to the drastic difference in their imaging resolution and characteristics. 
+To address this issue, we propose MorphoMatcher, a
+machine-learning-based method that matches the morphology of neurons based on their skeletons. 
+We demonstrate our method on two large-scale databases:
+FlyCircuit (optical microscopy-based) and hemibrain (FlyEM, electron
+microscopy-based). 
+% [TODO] 原句 "1219 pairs of identical neurons ... including 624 matched pairs" 自相矛盾:
+%        1219 是候選配對總數 (624 正 / 595 負), 不是 "identical neurons"。已改為下句。
+We first generate training data comprising 1219 candidate neuron pairs by pre-screening, of which 624 were confirmed by human experts as matched (same) pairs across the two databases. 
+Next, we develop MorphoMatcher by combining Case-Based Reasoning and Machine Learning techniques and apply it to have a complete matching between 28573 neurons in the FlyCircuit database and 22520 neurons in the hemibrain database. 
+The method achieves an overall F1 score of up to 0.93, surpassing previous rule-based approaches for different types of neurons. 
+Benchmark tests are conducted for various types of neurons across
+different neuropils, and the resulting data are thoroughly analyzed. 
+Moreover, we have established a website to provide comprehensive search results across the two databases and have made MorphoMatcher readily available to identify corresponding pairs for the new data. 
+Our work paves the way for future
+systematic investigations into connectomics and neuronal function.
+
+\vspace{0.6em}
+\noindent\textbf{Keywords:} Neuronal Morphology, FlyCircuit, hemibrain,
+Connectome, Machine Learning
+\end{abstract}
+\vspace{1em}
+
+%=======================================================================
+\section{Introduction}
+%=======================================================================
+
+The connectome, often referred to as the ``wiring diagram'' of the brain,
+represents the intricate network of neural connections, providing vital insights
+into the architectural framework underlying cognitive processes and behaviors,
+and shedding light on the mechanisms behind various neurological and psychiatric
+disorders \citep{Kaiser2013,vandenHeuvel2019,Yu2021}. As several connectome
+projects have contributed to the growing collection of databases, the
+significance of these datasets in neuroscience has become widely recognized
+\citep{Chiang2011,Sotiropoulos2013,Burns2014,Oh2014,Lo2016,Coletta2020,Hulse2021,Dorkenwald2022,Dorkenwald2024,Stampfl2023}.
+However, a new challenge arises: how to analyze, integrate, and compare data
+across databases? Such cross-database analyses are pivotal because they leverage
+the synergistic effect of these databases and help answer questions that are not
+answerable by a single database. The first step toward such cross-database
+analyses is to identify whether two neurons from two databases are of the same
+type. This seemingly simple task is much more challenging than one could imagine
+as two databases may use different imaging technologies, e.g.\ optical vs.\
+electron microscopy, based on different resolutions and are curated by different
+tracing and registration algorithms. To tackle this issue, we design a
+machine-learning tool to match neurons from different connectome databases. We
+specifically focus on two well-developed connectomic databases, FlyCircuit and
+the hemibrain, for \textit{Drosophila melanogaster}.
+
+To acquire neural imaging data at the single-cell level, the primary methods
+employed by researchers are Fluorescent Light Microscopy (LM) and Electron
+Microscopy (EM). Through genetic labeling techniques, specific neurons can be visualized using LM. FlyCircuit(FC), the pioneering database in this field, houses
+approximately 20{,}000 neuronal images and traced skeletons of fruit flies
+\citep{Chiang2011,Shih2020}. Fluorescent labeling enables the visualization of
+individual neurons with full morphological detail within the brain. However, LM
+faces a fundamental limitation in resolution, attributed to the diffraction
+limits of light. As a result, it is challenging to disentangle intricate
+neuronal branches. Additionally, the neurons are randomly sampled across
+different fly brains. Although this might be an advantage for studying neural
+morphology at the population level, this type of database makes it difficult to
+construct a detailed connectome of a single individual.
+
+Conversely, EM offers substantially higher spatial resolution in current
+scientific studies. Recent research has yielded invaluable repositories of
+neuronal data for the \textit{Drosophila} brain
+\citep{Hulse2021,Dorkenwald2022,Dorkenwald2024}. The hemibrain database, also
+referred to as FlyEM, contains over 20{,}000 neurons imaged at nano-scale
+resolution \citep{Hulse2021}. This high-resolution imaging captures the
+fine-scale structures, including neuronal branches and even synapses, within a
+female fruit fly brain. Nevertheless, the majority of neurobiological studies on
+fruit flies depend on genetic tools, which are typically visualized using
+fluorescent microscopy. In order to fully leverage the potential of EM
+databases, tools are required to facilitate the matching of fluorescent neuron
+images with their corresponding neurons in these databases.
+Several methods exist for comparing neuronal images, one of which is the
+application of machine learning algorithms \citep{Scorcioni2008,Armananzas2015}. These algorithms utilize morphological features
+to classify neurons, particularly in rats [ref].%TODO% 補引用
+For the study of fly neurons,
+NBLAST serves as one of the predominant techniques \citep{Costa2016}. This method
+evaluates neuronal similarity based on both the distance and orientation of the
+skeletons. However, this method relies heavily on local segment-level positional
+and directional similarity when matching neurons, which poses challenges in
+distinguishing between neurons that are densely packed within the same
+anatomical region.
+
+In this paper, we propose a morphology-based method to compare neuronal images
+obtained by optical microscopes in FlyCircuit(FC) and by electron microscopes in the
+hemibrain(EM), called MorphoMatcher. This method is developed by combining
+Case-Based Reasoning (CBR) and data-based Machine Learning (ML) techniques,
+optimizing the parameters according to human-expert-identified neuron pairs.
+% [TODO] 數字與 Fig. 5(d) 不符且過度保守: 實測 Top-1 = 93.8 %, Top-3 = 100 % (n = 96)。
+%        建議改為 "recovers the correct hemibrain partner within the top three
+%        candidates for essentially every FlyCircuit neuron tested"。
+Based on the ground-truth data comprising more than 400 neurons in MB region and
+other neuropils, our MorphoMatcher could achieve a very high accuracy of up to
+0.9 within the top three suggested candidates for any given neuron in the
+database, surpassing previous rule-based approaches in a various types of
+neurons. Moreover, we have established a website for comprehensive search results
+between these two databases and will be regularly updated as new data become
+available. The source code of MorphoMatcher is also readily available for
+researchers upon request. The proposed morphological matching method could also
+be applied to other types of neuronal images, e.g.\ x-ray tomography. Our work
+lays the foundation for systematically integrating connectomic databases and
+harnessing their full potential in advancing neuroscience research.
+
+%=======================================================================
+\section{Method}
+%=======================================================================
+
+Our objective is to develop a matching method that considers both the spatial
+locations of neurons within a drosophila brain and their morphologies. We divide
+the method into five steps and briefly explain each step in this section
+(Fig.~\ref{fig:flowchart}). More details for each step are provided in the
+Supplementary Material. In the present study, we consider the main use case of
+MorphoMatcher: identifying the corresponding neuron images in the hemibrain
+database for a target neuron from FlyCircuit. It is straightforward to show that
+the reverse process is essentially the same, and the same method can also be
+applied to comparing neurons across different databases or acquired using
+different imaging technologies.
+
+%------------------------------- Fig. 1 -------------------------------
+% TODO Fig 1 重新排版 需要更緊湊
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig1_flowchart_morphoMatcher}
+
+  \caption{The flowchart for the development of MorphoMatcher. Due to the
+  data-driven nature of machine learning models, pseudo-labeling in Step 5
+  enables a continuous increase of the training data in Step 4. Furthermore,
+  this process can also be iterated in Step 3 for case-based reasoning in order
+  to improve the quality of data. FC stands for the FlyCircuit database and EM
+  stands for the hemibrain database.}
+  \label{fig:flowchart}
+\end{figure}
+
+\subsection*{Step 1: Data Preparation}
+
+For a target neuron in FlyCircuit, the first stage is to screen out the proper
+candidates of neurons in the hemibrain, which is physically located around the
+position of the given neuron in FlyCircuit and has similar morphology. However,
+we emphasize that the positions of neurons in the hemibrain are identified
+differently from those in FlyCircuit, using different reference frames. We have
+to perform a warping process to transform the neuron images in the hemibrain
+database into the standard brain of the FlyCircuit database. This warping
+process is based on the known structure of neuropils of drosophila and is known
+to have an error of about 50~$\mu$m on average (see Supplementary Material:
+Warping) due to the variability of the brain morphology of individual flies to
+be observed. Therefore, we allow for spatial uncertainty in the location of
+corresponding neurons in the hemibrain for any given target neuron in FlyCircuit.
+
+After warping, we process the skeleton data from the original tracing of the
+neuronal images, and then linear interpolate to make sure the points are uniformly spaced along each skeleton. 
+This process is necessary because the distances between the adjacent
+nodal points in the original tracing widely varied in both hemibrain and
+FlyCircuit. Since we will calculate the center of ``mass'' and ``moment of
+inertia'' for the pre-screening in the next step, a uniform interpolation improves
+the stability of subsequent physical quantity calculations.
+
+After interpolation, each points along the skeleton are weighted equally, and
+the ``mass'' of a neuron skeleton is simply the length of cable it contains. This is the representation used for the geometric pre-screening of Step 2.
+
+\subsection*{Step 2: Pre-Screening}
+
+Two skeletons from different datasets of the same neuron, once brought into a same reference frame, are expected to occupy nearly the same region and display a similar overall morphology.
+To compare the positions of two neurons in the same brain coordinate(FlyCircuit's standard brain) after warping neurons' skeleton from the hemibrain, we calculate the centers of ``mass'' and ``moments of inertia'' of these neurons, taking the length of each traced segment as its ``mass''.
+We have to emphasize that the original skeleton data of both databases are
+obtained by tracing the neuron images, and therefore the definition of ``mass''
+here has nothing to do with the physical mass of the real neurons. However,
+since the main purpose of these quantities is for the comparison between neuron
+morphology, this artificial definition of local ``mass'' is just a parameter for
+the convenience of calculation.
+
+Similarly, we use the same definition to calculate the ``moment of
+inertia'' of a neuron's 3D skeleton image. Diagonalizing the inertia tensor of a neuron's skeleton yields three principal moments together with the principal axes. The
+ratios of the principal moments show the gross shape of the
+neuron, whether it is drawn out along a single direction (rod-like),
+spread within a plane (disk-like), or distributed nearly isotropically
+(sphere-like).  The orientations of the principal axes describe how that
+shape is placed within the brain.
+We found that there are very few sphere-like neurons, most of the neurons have a well-defined orientation. Therefore, similar neurons are expected to have similar ``moments'' of inertia, which could be used as a parameter for pre-screening possible candidates.
+
+After calculating the center of ``mass'' and the ``moments of inertia'' for each
+neuron in the two databases, we have to identify the threshold for
+pre-screening, which is to shorten the list of possible candidates of neurons in
+the hemibrain for a target neuron in FlyCircuit by excluding neurons away from
+it or of very different rotational properties. The threshold can be obtained
+manually through the empirical understanding of those known hemibrain(EM)--FlyCircuit(FC) pairs in the
+literature or by experienced researchers. More precisely, we have
+considered comparing pairs of neurons with their center of mass distance less
+than 100~$\mu$m in space, the distance in relative moments of inertia space is
+less than 0.4, and the angular differences between their primary directions are less than 30 degrees if both of them have a comparable orientation (see more details in Supplementary Material: Screening). Using
+this pre-screening approach, we could exclude irrelevant neurons and provide
+fewer EM--FC pair candidates with higher confidence for machine learning.
+% [TODO] 需補記: 通過上述三層篩選後每顆 FC 仍有數千個候選 (D1 中位 3909),
+%        但實際送人工標注的每顆只有 D1 <= 2 / D2 <= 5 個。中間這一步縮減候選的
+%        排序方式與 k 值尚未寫進論文, 審稿人會問。見 analysis_model_results/FINDINGS.md 第 11 節。
+
+\subsection*{Step 3: Case-Based Reasoning}
+
+After the screening step described above, we obtained a short list of hemibrain
+neuron images for human calibration for each target FlyCircuit neuron. Images of
+paired FlyCircuit neurons and the hemibrain neurons were provided for human
+calibration. The criteria for assigning identical neurons from two datasets as
+the same neuron are mainly based on neuronal morphology. Since single neurons of
+FlyCircuit were obtained through a stochastic genetic labeling method which
+occasionally labels the same neuron in different individual flies, the variation
+of the same neuron can be observed. Empirically, although there may be minor
+differences between neurons from different individuals, the neuropil innervation
+patterns, the vector of the main trunks, branch morphology, and the gross
+location of the soma are largely identical. A confidence index was assigned to
+each pair, which 100\% means that two neurons belong to the same type for sure,
+while 0\% means that two neurons are from two different types. A pair is counted
+as matched when its confidence index is 50\% or above. The
+distribution of our labeled neurons in different neuropils is summarized in
+Supplementary Material: Distribution of labeled data in different neuropils.
+
+%------------------------------- Fig. 2 -------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figs/fig2_3dprojection.pdf}
+
+  \caption{The three-view projection images of a neuronal 3D skeleton data (ID: Trh-F-000008) in FlyCircuit dataset. (a) We
+  convert the 3D structure (red) of each neuron into three 2D images (blue) for efficient
+  training. The image is color-coded by the normalized Strahler numbers of each
+  branch. (b) Three views images as the input for the machine learning model}
+  \label{fig:threeview}
+\end{figure}
+
+\subsection*{Step 4: Model Training}
+
+After identifying a large number of EM--FC neuron pairs from Step 3 above, these
+pairs are treated as the ground-truth data, and are used as the initial training
+data to train a machine-learning model for the identification of other skeleton
+data.
+When we judge whether two skeletons correspond to the same neuron, the position of the soma is an important feature and can be placed in a one-to-one correspondence between two reconstructions. If we keep considering each branch in skeleton equally, the parts that carries the most cable will dominate, so that the soma and the primary branches gives rise to contribute a negligible share of the total.
+We therefore need a weighting method to make the soma region dominate the input we present to the model.	
+To weight each branch according to its proximity to the soma, we assigned each branch a
+Strahler number \citep{Vormberg2017}, which is a centripetal branch ordering
+scheme. Because the neuron images in the hemibrain have much higher spatial
+resolution than images of the same neurons in FlyCircuit, it is expected
+that the maximum Strahler number for the hemibrain skeleton is higher than that of
+FlyCircuit skeleton. Since the main trunk of each neuron always exists and
+possesses the highest Strahler number in a neuron, we can ``normalize'' the
+Strahler numbers of neurons by dividing by the maximum Strahler number. This ensures the soma weighted as 1 so that a given weight carries the same meaning in both databases, while constraining the weighted values of the entire neuron within the [0, 1] range.
+
+Neuron skeletons are sparse 3D structures with considerable
+variability in size and morphology, making them difficult to use as inputs for
+conventional image processing methods. To resolve this problem and to reduce the
+computational costs, we project the 3D skeleton structures onto the \textit{xy},
+\textit{yz}, and \textit{xz} planes in the standard brain coordinates and
+normalize these three-view 2D images by the longest distance in the skeleton
+data in a $50\times50$ grids (Fig.~\ref{fig:threeview}).
+The input to the model is therefore a pair of such representations, one for
+the FlyCircuit neuron and one for the hemibrain candidate, each consisting of
+the three projections of the Strahler-weighted skeleton stacked as three
+channels of a $50\times50$ image.
+
+We compare these three-view 2D images of a neuron
+candidate in the hemibrain to the target neuron in
+FlyCircuit (Fig.~\ref{fig:pairs}). This follows the strategy of multi-view convolutional networks, which represent a three-dimensional object by a set of two-dimensional renderings taken from
+different viewpoints \citep{Su2015}. In our case, we use three orthogonal projections as model input,
+because all skeletons have already been warped into the same reference frame, so
+that their orientation within the brain carries information in itself. We use
+results labeled by human experts confidence score as training data for a machine learning model.
+
+% ---- 以下取代原中文段落 (v3 Step 4 末) ----
+Because the number of labeled neurons is limited (453 in FlyCircuit and 587 in
+the hemibrain), a split in which no neuron appears on both sides is not
+achievable. We therefore split the data at the level of pairs: the 1219 labeled
+pairs are divided into a training set (90\%) and a test set (10\%), and 15\% of
+the training set is held out as a validation set, which is used to select the
+weights at the lowest validation loss rather than those of the last epoch. To
+evaluate the model over the entire labeled set, we repeat this as a 10-fold
+cross-validation: each fold holds out a different 10\% of the pairs, and the ten
+test folds together cover all 1219 pairs exactly once, each scored by a model
+that was not trained on it.
+
+A pair-level split unavoidably allows a neuron in a test pair to have been seen
+during training as part of a different pair. We quantified this identity
+leakage and found no measurable effect on the evaluation; the details are given
+in the Results.
+
+
+%------------------------------- Fig. 3 -------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig3_SampleOfThreeView.pdf}
+  % \FigPlaceholder{0.95\textwidth}{6cm}{[Fig.~3 --- example three-view images of three FC/FlyEM neuron pairs]}
+  \caption{Example three-view images of three pairs of neurons from the FC
+  databases (a1)--(a3) and the hemibrain (FlyEM) database (b1)--(b3). Each pair
+  of neurons (one from FC and one from FlyEM) is identified by our human experts
+  as the same type of neuron. (c1)--(c3) are the overlapped 3D representations
+  of these three neuron pairs.}
+  \label{fig:pairs}
+\end{figure}
+
+%------------------------------- Fig. 4 -------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig4_TrainingPipeline.pdf}
+  % \FigPlaceholder{0.95\textwidth}{5.5cm}{[Fig.~4 --- training protocol and network structure]}
+  \caption{The network structure of a multi-view Siamese CNN model. (a) A
+  convolutional neural network (CNN) was used to extract features independently for each view.
+  (b) Each human-labeled pair
+  of neurons is presented in the form of
+  three-view 2D images and sent into a CNN branch by view. 
+  All CNN branches shared the same set of parameters, consistent with the
+  multi-view image processing strategy used in the MVCNN method. The output is
+  a binary classification of whether the two neurons are the same types.}
+  \label{fig:training}
+\end{figure}
+
+\subsection*{Step 5: Pseudo-Labeling Augmentation}
+
+In the final stage, we apply a pseudo-labeling augmentation method
+\citep{Ran2024} to enhance our model by scanning the FlyCircuit database and
+identifying all the possible matching neurons in the hemibrain. The predicted
+results can be used for the second training process and transfer learning using
+the known ground truth. The overall accuracy can be improved by this method.
+Additionally, we also take some of the predicted results (with their scores and
+other candidates) to be calibrated by human experts again as in Step 3
+(Case-Based Reasoning in Fig.~\ref{fig:flowchart}). By repeating this loop of ML
+and human experts, we speed up the generation of FC--EM pairs for the ground truth and
+enhance the overall performance of MorphoMatcher.
+
+%=======================================================================
+\section{Results}
+%=======================================================================
+
+\subsection{Overall performance of MorphoMatcher}
+
+We first present the overall performance of MorphoMatcher compared to the
+human-labeled data. Among the labeled 1219 hemibrain (EM) -- FlyCircuit (FC) pairs, which are screened by
+the Case-Based Reasoning method with the criteria on the distance of the center
+of mass and the similarity of moments of inertia, 624 pairs are labeled as
+matched and 595 are not matched by human expert's confidence score.
+
+% ---- 以下取代原中文段落 (v3 Results 開頭) ----
+For the model this is a binary classification task. The predictions are those of
+the 10-fold cross-validation described in the Methods, so that every labeled
+pair is scored exactly once by a model that was not trained on it. The scores
+are min--max normalized to the range [0, 1], and the operating threshold is
+taken as the point on the ROC curve closest to the ideal point (0, 1); the
+accuracy, precision, recall and F1-score quoted below are the values at that
+threshold. The AUC additionally summarizes how well the model ranks pairs,
+independently of any particular choice of threshold.
+
+% [TODO] 原稿此處的三句英文 ("We shuffle the test data ten times and ensure that every
+%        neuron is tested once by a model trained on other neurons...") 描述的是舊
+%        pipeline (make_train_test_set.py, 檔頭已標 legacy), 現行為 KFold; 而且
+%        "every neuron is tested once" 講錯對象 —— 完整覆蓋的是配對而非神經, 與下一段的
+%        洩漏檢驗直接矛盾。因此整段刪除, 保留在此備查:
+%        "We shuffle the test data ten times and ensure that every neuron is tested once
+%         by a model trained on other neurons. This cross-validation approach allows us to
+%         generate unbiased predictions for each neuron, ensuring that the model's
+%         performance is assessed across all neurons in the dataset."
+
+As noted in the Methods, a pair-level split lets the same neuron appear in both
+the training and the test set, and we first quantified how large this channel
+is. Across the 1219 test pairs, the FlyCircuit neuron had already appeared in
+the training set of the same fold in 86.1\% of the pairs and the hemibrain
+neuron in 68.5\%; both had appeared in 60.3\%, and in only 5.7\% of the pairs
+(69 pairs) had neither been seen.
+
+On those 69 pairs, in which neither neuron had been seen during training, the
+model performs as well as on the rest (Table~\ref{tab:leak-strata}), and it also
+remains correct on the cases in which a prior based on identity alone
+necessarily points the wrong way (Table~\ref{tab:leak-prior}). We therefore find
+no measurable effect of identity leakage on the present labeled data. We note,
+however, that with only 69 completely unseen pairs this test can show the
+absence of a measurable effect but cannot establish that the model generalizes
+to neurons it has never seen.
+
+% [TODO] 缺 Table 1 (對應原文 "此處有表格數據")。數據已備妥於
+%        analysis_model_results/results/leakage_strata.csv, 取消註解即可使用。
+% \begin{table}[htbp]
+%   \centering
+%   \caption{Model performance on the 1219 labeled pairs, stratified by whether
+%   each neuron of the pair had appeared in the training set of the same fold.}
+%   \label{tab:leak-strata}
+%   \small
+%   \begin{tabular}{lccc}
+%     \toprule
+%     Stratum & $n$ & AUC & 95\% CI \\
+%     \midrule
+%     Neither neuron seen & 69  & 0.955 & [0.905, 0.990] \\
+%     FC neuron only      & 315 & 0.977 & [0.962, 0.990] \\
+%     EM neuron only      & 100 & 0.996 & [0.987, 1.000] \\
+%     Both seen           & 735 & 0.979 & [0.970, 0.987] \\
+%     \midrule
+%     All                 & 1219 & 0.978 & [0.971, 0.985] \\
+%     \bottomrule
+%   \end{tabular}
+%   \\[0.4em]
+%   \parbox{0.9\textwidth}{\small The difference between the two extreme strata is
+%   $-0.024$ (95\% CI $[-0.075, +0.013]$), which spans zero.}
+% \end{table}
+
+% [TODO] 缺 Table 2 (對應原文 "表格數據2")。數據已備妥於
+%        analysis_model_results/results/leakage_shortcut.csv, 取消註解即可使用。
+% \begin{table}[htbp]
+%   \centering
+%   \caption{Accuracy on pairs for which an identity-only prior --- the fraction of
+%   training pairs of that neuron that are positive --- is necessarily wrong.}
+%   \label{tab:leak-prior}
+%   \small
+%   \begin{tabular}{lcc}
+%     \toprule
+%     Case & $n$ & Model correct \\
+%     \midrule
+%     Non-matching pair, FC prior $\ge 0.5$ & 159 & 89.3\% \\
+%     Non-matching pair, EM prior $\ge 0.5$ & 103 & 89.3\% \\
+%     Matching pair, FC prior $\le 0.2$     & 103 & 84.5\% \\
+%     Matching pair, EM prior $\le 0.2$     & 60  & 71.7\% \\
+%     \midrule
+%     Reference: all pairs                  & 1219 & 92.9\% \\
+%     \bottomrule
+%   \end{tabular}
+%   \\[0.4em]
+%   \parbox{0.9\textwidth}{\small The identity-only prior is 0\% correct on these
+%   cases by construction. Used on its own it reaches an AUC of 0.848, against
+%   0.978 for the model, so identity does carry substantial label information ---
+%   but the model overrides it rather than following it.}
+% \end{table}
+
+We next analyze two representative groups of neurons in more detail.
+
+%------------------------------- Fig. 5 -------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig5_result.pdf}
+  % \FigPlaceholder{0.95\textwidth}{6.5cm}{[Fig.~5 --- inference of MorphoMatcher on the full test set, panels (a)--(d)]}
+  \caption{Inference of MorphoMatcher for a test dataset of FC--EM pairs. (a)
+  The similarity score distributions for the matched pairs (red) and non-matched
+  pairs (blue) in the human-labeled dataset. (b) The Precision, Recall,
+  F1-score as a function of the threshold of a binary classification model in
+  MorphoMatcher. We set the threshold at about 0.48, which corresponds to the point on the ROC
+  curve closest to the ideal point (0,1). At this point, the Precision is 0.94,
+  Recall is 0.92, and F1-score is 0.93. (c) ROC curve and the corresponding
+  confusion matrix at the operating threshold of 0.48. (d) The confidence to find the true matching
+  EM for a given FC neuron when only the top $k$ ($k=1$--5) highest similarity
+  scores are considered.}
+  \label{fig:inference-all}
+\end{figure}
+
+In Fig.~\ref{fig:inference-all} we show the inference results for the whole
+human-labeled dataset. We find that the overall F1-score can be as high as 0.93.
+We have to emphasize that this value is almost unchanged even if we use more
+training data in our dataset. In the rest of this paper, we will show how
+MorphoMatcher performs in subsets of neuropils and why it could show better and
+more reliable results than previous rule-based methods.
+
+We found two broad morphological patterns in these 1219 pairs of neurons. One group displays clear directional projections resembling classical
+projection neurons, whereas the other consists of neurons with more isotropic
+and locally confined arborizations, akin to local neurons. These pronounced
+morphological differences imply that the two groups may behave differently under
+the matching algorithms. To examine these distinctions more systematically, we
+selected representative examples from each group and organized them into two
+subsets, D1 and D2, for separate analysis.
+
+% [TODO] 小節標題用詞: analysis_model_results/FINDINGS.md 第 2 節建議不要用 sparse / dense
+%        當標題 —— 控制大小後 "D2 整體比 D1 密" 並不成立, 兩組真正的差異是神經突總長度
+%        (2.8x)。建議改為 "Sub-dataset D1: MB-associated neurons" 與
+%        "Sub-dataset D2: Large, regionally confined neurons"。
+\subsection{Sub dataset D1: (Mostly Sparse-type)}
+
+
+% We first target neurons in FlyCircuit dataset which are innervating MB as there are relatively well
+% studied and easier to recognize. In the rest of this paper, we may name this
+% subset as Dataset D1, which has 216 pairs in total, including 109 neurons in FC
+% and 143 neurons in hemibrain databases. These projection neurons are important,
+% especially for the olfactory system. We use the same model to show the predicted
+% results in Fig.~\ref{fig:d1}. The precision, recall, and F1-score are 0.93, 0.96,
+% and 0.94, respectively, showing an excellent result to reproduce the ground truth
+% (labeled by human experts).
+
+We first target neurons in the FlyCircuit dataset that innervate the MB, as they
+are relatively well studied and easier to recognize. In the rest of this paper,
+we name this subset Dataset D1. It has 216 pairs in total, including 109 neurons
+in FC, most of their volume is located inside the MB, and corresponding 143 neurons in the hemibrain database which is found from the
+candidates that passed the pre-screening. Human experts labeled 98 of the 216 pairs as positive and 118 as
+negative.
+% [TODO] 下面這句與資料不符, 已註解。D1 的 103 顆 FC 神經中 AL >= 5 % 為 0 顆、
+%        calyx >= 5 % 僅 1 顆, 不是嗅覺 projection neuron (見 FINDINGS.md 第 1 節)。
+%        建議替代句: "The MB is a well-established center for olfactory learning and
+%        memory, which makes MB-associated neurons a natural starting point."
+% These projection neurons are important, especially for the olfactory system.
+For Dataset D1, we use the same model to show the predicted results in
+Fig.~\ref{fig:d1}. The precision, recall, and F1-score are 0.97, 0.97, and 0.97,
+respectively, showing an excellent result in reproducing the ground truth
+labeled by human experts. Because every candidate had already passed the
+pre-screening and each projection is normalized to the bounding box of its own
+neuron, the model cannot separate these pairs by their location or overall
+size; the agreement therefore shows that it distinguishes the true partner from
+other nearby candidates by the shape and orientation of their arbors.
+
+
+%------------------------------- Fig. 6 -------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig6_Subset1Result.pdf}
+  % \FigPlaceholder{0.95\textwidth}{6.5cm}{[Fig.~6 --- inference of MorphoMatcher on sub dataset D1, panels (a)--(d3)]}
+  \caption{Inference of MorphoMatcher for sub dataset D1, which includes mostly
+  sparse-type neurons in FC database, most of their volume is inside MB and DFP. (a) The similarity score distribution of matched pairs
+  (red) and non-matched pairs (blue) in the human-labeled dataset. (b) The
+  Precision, Recall, F1-score as a function of the threshold of a binary
+  classification model in MorphoMatcher. The threshold was set to 0.49, where
+  the precision, recall and F1-score are 0.97, 0.97, and 0.97, respectively. (c)
+  The confusion matrix. (d1)--(d3) are three example pairs correctly inferred by
+  MorphoMatcher.}
+  \label{fig:d1}
+\end{figure}
+
+\subsection{Sub dataset D2 (Mostly Dense-type)}
+
+Neurons whose synaptic arbors are concentrated within a single neuropil tend to
+form densely packed and spatially overlapping structures. Such morphology
+generally reduces their discriminability in morphology-based matching tasks,
+making it more challenging to determine corresponding pairs across databases. To
+systematically examine this type of neurons, we selected 682 human-validated
+pairs, including 150 neurons from the FlyCircuit (FC) dataset and 349 neurons
+from the hemibrain dataset, and compiled them as Dataset D2.
+
+Using the same MorphoMatcher model, we evaluated its performance on this dataset
+(Fig.~\ref{fig:d2}). From the confusion matrix, the precision, recall, and
+F1-score for identifying correct pairs are 0.89, 0.92, and 0.90, respectively,
+demonstrating that MorphoMatcher maintains strong performance even for neurons
+with dense and locally clustered arborizations, and reproduces human judgments
+with high reliability.
+
+%------------------------------- Fig. 7 -------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig7_Subset2Result.pdf}
+  % \FigPlaceholder{0.95\textwidth}{6.5cm}{[Fig.~7 --- inference of MorphoMatcher on sub dataset D2, panels (a)--(f)]}
+  \caption{Inference of MorphoMatcher for Sub dataset D2, which includes mostly
+  dense-type neurons, obtained in the FC database. (a) The similarity score
+  distribution of matched pairs (red) and non-matched pairs (blue) in the
+  human-labeled dataset. (b) The Precision, Recall, F1-score as a function of
+  the threshold of a binary classification model in MorphoMatcher. The threshold was set to
+  0.40, where the precision, recall and F1-score are 0.89, 0.92, and
+  0.90, respectively. (c) The confusion matrix for this dataset. (d)--(f) are
+  three typical pairs correctly predicted by MorphoMatcher.}
+  \label{fig:d2}
+\end{figure}
+
+\subsection{Demonstration of MorphoMatcher for All the Neurons in the Databases}
+
+In this work, we further apply MorphoMatcher, which was trained by 1219 FC--EM
+pairs, to other neurons not in the human labeled databases. In order to provide
+more useful information for future researchers, for each given neuron in the FC
+database, for example, we use MorphoMatcher to calculate the matching scores of
+the possible neuron images in the hemibrain (FlyEM) database. The scores of
+these candidates are evaluated by the similarity of the morphology compared to
+the target neuron in FC. Note that we have set a threshold to screen out the
+relative positions of their center of mass as well as their moment of inertia
+(see Supplementary Material: Identify position and moment of inertia comparison).
+
+%=======================================================================
+\section{Comparison to NBLAST}
+%=======================================================================
+
+NBLAST (Neuron BLAST) is a computational algorithm designed for the rapid and
+sensitive comparison of neuronal structures within the FlyCircuit and hemibrain
+databases. It operates by decomposing neuronal images into shorter segments,
+enabling a detailed comparison based on both positional and local geometric
+features. The algorithm assigns matching scores using a statistical model that
+differentiates true matches from non-matches. Given its rule-based nature, it is
+particularly insightful and essential to compare NBLAST with our MorphoMatcher,
+which employs a data-driven machine learning approach to neuron matching. This
+comparison provides a critical evaluation of the strengths and limitations of
+both methodologies in neuronal structure analysis.
+
+\subsection{Sub dataset D1: (Mostly Sparse-type)}
+
+Dataset D1 includes 216 pairs in total, including 109 neurons in FC and 143
+neurons in hemibrain databases. Figure~\ref{fig:nblast-d1}(a) illustrates the
+distribution of NBLAST scores for these 216 pairs, categorized into matching
+pairs (Label 1) and non-matching pairs (Label 0).
+
+%------------------------------- Fig. 8 -------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig8_Nblast_D1.pdf}
+  % \FigPlaceholder{0.95\textwidth}{6.5cm}{[Fig.~8 --- NBLAST inference on Dataset D1, panels (a)--(d3)]}
+  \caption{Inference results of NBLAST. (a) The similarity score distribution of
+  matched pairs (red) and non-matched pairs (blue) in Dataset D1. (b) Precision, recall, and F1 score as a function of the decision threshold, calculated based on the NBLAST similarity scores after min--max normalized to the range [0, 1]. The arrow marks the decision threshold at 0.74, taken as the point on the ROC curve in (c) closest to the upper-left corner (0, 1), legend values are correspond to the respective metrics at this threshold.
+(c) ROC curve and the confusion matrix obtained at the decision threshold. The red dot marks the selected operating point, which AUC = 0.95. (d1)--(d2) show two pairs of different neurons but NBLAST gives a high similarity score. (d3) shows a matching pair whose two reconstructions are spatially offset, NBLAST scores this pair with low similarity, whereas MorphoMatcher recovers the match.}
+  \label{fig:nblast-d1}
+\end{figure}
+
+% ---- 以下取代原中文句 "可以看到在D1資料集上，我們的模型略微超過NBLAST。" ----
+On Dataset D1 both methods perform well, with MorphoMatcher ahead of NBLAST: an
+F1-score of 0.97 against 0.91 and an AUC of 0.99 against 0.95, corresponding to
+6 versus 17 misclassified pairs out of 216. As we show below, however, this
+comparison understates the difference between the two methods, because the
+non-matching candidates of D1 rarely meet the conditions under which the NBLAST
+score becomes unreliable.
+
+
+\subsection{Sub dataset D2 (Mostly Dense-type)}
+
+We further applied NBLAST to Dataset D2, which comprises 682 neuron pairs,
+including 150 neurons from the FlyCircuit (FC) dataset and 349 neurons from the
+hemibrain dataset. The resulting score distribution, along with precision,
+recall, and F1-score as functions of the threshold, are presented in
+Fig.~\ref{fig:nblast-d2}(a) and (b). Compared to Dataset D1, these neurons are
+mostly concentrated in a single neuropil, resulting in a very dense distribution
+of synapses. In this situation, NBLAST can easily confuse them, leading to an
+optimal F1-score of 0.73 at a threshold of 0.73, as further demonstrated by the
+confusion matrix in Fig.~\ref{fig:nblast-d2}(c). The score distributions of
+matching and non-matching pairs overlap substantially over the range 0.6 to 0.9,
+in sharp contrast to the MorphoMatcher results (Fig.~\ref{fig:d2}(a)).
+
+%------------------------------- Fig. 9 ------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig9_Nblast_D2.pdf}
+  % \FigPlaceholder{0.95\textwidth}{6.5cm}{[Fig.~9 --- NBLAST inference on Dataset D2, panels (a)--(d3)]}
+  \caption{Inference results of NBLAST. (a) The similarity score distribution of
+  matched pairs (red) and non-matched pairs (blue) in Dataset D2. (b) The
+  Precision, Recall, F1-score of the same-type pairs as a function of the
+  threshold in NBLAST. It shows that the highest F1-score can be obtained by
+  setting the threshold to 0.73, leading to a precision of 0.70, a recall of
+  0.77, and a F1 score of 0.73. (c) The confusion matrix. (d1)--(d3) are three
+  examples that different neurons but NBLAST gives high similarity score.}
+  \label{fig:nblast-d2}
+\end{figure}
+
+% [TODO] 原稿此處有兩段與上文重複、且數字為舊實作的文字, 已整段刪除, 保留備查:
+%        (a) "However, when comparing these results ... MorphoMatcher's performance
+%            remains comparable to or slightly surpasses that of NBLAST. This outcome is
+%            somewhat surprising, given that sparse neuronal structures typically provide
+%            fewer discriminative features..." —— 本節談的是 dense (D2), 且 F1 0.90 vs 0.73
+%            並非 "comparable to or slightly surpasses"。
+%        (b) "The optimal F1-score emerged at a threshold of 0.65; ... a precision of 0.55,
+%            a recall of 0.95, and an F1-score of 0.69." —— 舊 NBLAST 實作的數字。
+%            官方 navis 實作為 0.73 / 0.70 / 0.77 / 0.73, 見上一段與 Fig. 9。
+%        (c) "although NBLAST achieves a very high recall, its precision is considerably
+%            lower" —— 此論述結構隨新數字失效 (R 0.77, 不是 0.95)。
+
+Comparing these results with MorphoMatcher on the same pairs
+(Fig.~\ref{fig:d2}), the gap is substantial: an F1-score of 0.90 against 0.73
+and an AUC of 0.97 against 0.83, with 35 false positives at the operating point
+against 100 for NBLAST. Only five pairs are false positives for both methods, so
+the two approaches fail on largely disjoint sets of pairs.
+Figure~\ref{fig:nblast-d2}(d1)--(d3) presents three representative pairs of
+different neurons that NBLAST scores as matches.
+
+% 舊的解釋（已棄用，保留備查）:
+% These errors can be attributed primarily to the dense branching of the neurons,
+% which yields high local similarity scores based on branch orientation and
+% distance, despite clear differences in overall morphological patterns. In other
+% words, whereas MorphoMatcher emphasizes global morphological structures, NBLAST
+% places greater weight on branch-level features, making it prone to
+% misidentifying neurons that are spatially close yet morphologically distinct.
+
+% ---- 以下取代原中文段落 (v3 NBLAST D2 末) ----
+We attribute these errors to the way NBLAST scores a pair: for every point of
+the query it takes the nearest neighbour in the target. When the target is a
+high-density arbor filling a compact volume, every query point finds a near
+neighbour, and the score is pushed up structurally, regardless of whether the
+two shapes actually agree. The effect is a property of whichever neuron plays
+the role of the target rather than of a particular database: when the query and
+target roles are exchanged, the side that dominates the score changes with them.
+In practice it is the hemibrain side that triggers it, because the hemibrain
+density distribution has a much heavier upper tail than that of FlyCircuit (the
+ratio of the 90th to the 10th percentile is 9.7 against 3.5, and 16.3\% of
+hemibrain neurons are denser than the 99th percentile of FlyCircuit); optical
+reconstruction simply does not resolve the densities that EM does.
+
+% [TODO] 以下兩段是「閘門 x 劑量」的量化證據 (資料: analysis_model_results/results/
+%        sponge_gate_dose.csv 與 sponge_density_bins.csv)。建議保留在主文 ——
+%        沒有這些數字, 上一段只是一個講得通的假說, 且審稿人會問「是不是 D2 的 EM
+%        本來就比較密」「是不是 D2 的候選被篩得比較難」, 這兩段正好各自擋掉一個。
+%        若版面不足, 可將第二段 (D1 不是免疫) 移到 Supplementary。
+The effect requires two conditions at once: the two neurons must overlap in
+space (a gate), and the target must be dense (a dose). Pooling the non-matching
+pairs of both subsets into a single table and splitting them by the distance
+between the two centers of mass and by the cable density of the hemibrain
+neuron, the fraction of non-matching pairs that reach the score level of true
+pairs rises from 13.3\% to 53.7\% with density when the two neurons are
+co-located (center-of-mass distance below 40~$\mu$m), but stays at 0.0\% and
+2.0\% when they are not. Density therefore inflates the score only once the two
+neurons occupy the same region.
+
+This also explains why D1 is comparatively unaffected, and it is not because its
+hemibrain candidates are sparser. They are in fact denser than those of D2
+(median 0.0074 against 0.0053~$\mu$m/$\mu$m$^3$, $p = 2 \times 10^{-4}$), and
+among its co-located non-matching pairs the dependence of the score on density
+is the same as in D2 ($\rho = +0.64$ in both). What differs is only how often
+the gate is open. Once co-location and density are known, the subset label
+carries no further information about whether a non-matching pair will reach the
+score level of a true pair (5-fold AUC 0.924 against 0.923 with the label
+added). MorphoMatcher shows no such dependence on the same pairs: its
+non-matching scores are uncorrelated with hemibrain density ($\rho = -0.095$),
+and in the densest quartile of hemibrain candidates none of its non-matching
+pairs reaches the score level of a true pair, against 67.7\% for NBLAST.
+
+
+\subsection{Clustering Neurons in FlyCircuit}
+
+To further compare the effectiveness of MorphoMatcher and NBLAST, we selected
+316 neurons from the FlyCircuit database, spanning four known neuropils: PN, KC,
+ALLN, and FB. We applied both models to classify these neurons and analyzed
+their performance.
+
+In Fig.~\ref{fig:simmatrix}, we present the similarity matrix (or distance
+matrix) heatmap, where the color intensity represents the matching scores
+computed by NBLAST as well as MorphoMatcher. We can find that neurons from these
+four neuropils are generally well-clustered, but neurons in ALLN and PN exhibit
+significant overlap. This likely results from the spatial proximity of these two
+neuropils, causing the rule-based scores for neurons within these regions to
+remain finite, unlike the more distinct score separations observed in other
+neuropils. On the other hand, the MorphoMatcher similarity matrix
+(Fig.~\ref{fig:simmatrix}b) displays markedly sharper block structures and
+clearer separations between neuropil-defined groups. Neurons from KC and FB form
+compact, high-similarity clusters, while ALLN and PN become more distinctly
+partitioned. In the MorphoMatcher matrix, the FB group further divides into
+three subclusters. Two similarly sized clusters correspond to left--right
+symmetric FB neuron classes, which share global morphology but occupy mirrored
+positions in the central complex. The remaining, smaller cluster represents a
+distinct FB subtype with a different arborization pattern. MorphoMatcher cleanly
+separates this minority subtype from the bilateral classes, whereas NBLAST mixes
+the bilateral FB neurons across the resulting subclusters. This indicates that
+MorphoMatcher captures global organizational differences within dense-type
+neurons that rule-based, local-geometry methods fail to distinguish.
+
+%------------------------------- Fig. 10 ------------------------------
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figs/fig11_ConfusionMatrix.png}
+  % \FigPlaceholder{0.95\textwidth}{6cm}{[Fig.~10 --- similarity matrices from NBLAST (a) and MorphoMatcher (b)]}
+  \caption{The similarity matrix diagrams for the four types of FC neurons:
+  `ALLN,' `PN,' `KC,' and `FB.' Part (a) shows the similarity scores obtained
+  from NBLAST, and part (b) shows the similarity scores obtained from
+  MorphoMatcher. Each part contains classification results obtained after
+  reordering using hierarchical clustering.}
+  \label{fig:simmatrix}
+\end{figure}
+
+%=======================================================================
+\section{Discussion}
+%=======================================================================
+
+A key observation from our results is the different matching behavior exhibited
+by sparse-type versus dense-type neurons. Sparse projection neurons, which
+extend clear directional trajectories across neuropils, provide distinctive
+global morphology that allows both human experts and machine-learning models to
+identify cross-database correspondences with high confidence. In contrast,
+neurons whose arbors are confined to single neuropils form densely overlapping
+local structures, substantially reducing morphological discriminability even
+under ideal imaging conditions.
+% [TODO] 下面這句與 Results 的結論衝突, 已註解。「D2 的表現下降反映的是內在結構限制而非
+%        演算法限制」在 MorphoMatcher 於 D2 仍有 AUC 0.969 的情況下不成立 ——
+%        D2 對 NBLAST 困難的原因是最近鄰計分遇上密集 target, 是演算法特有的。
+% The reduced performance observed in Dataset D2 therefore reflects intrinsic
+% structural constraints rather than algorithm-specific limitations, emphasizing
+% the importance of morphology-informed subset analysis in evaluating neuron
+% matching methods.
+The larger drop observed for NBLAST on Dataset D2 is specific to its scoring
+scheme rather than a general limit of morphology-based matching, and it
+emphasizes the importance of morphology-informed subset analysis in evaluating
+neuron matching methods.
+Notably, MorphoMatcher maintains robust accuracy across both categories,
+indicating that the three-view global morphology encoding is capable of
+capturing structurally meaningful features even when local geometry is
+ambiguous.
+
+Our comparison with NBLAST further highlights complementary strengths between
+rule-based and learning-based approaches. NBLAST excels at capturing fine-scale
+local geometry, which benefits neurons with well-defined local branch
+orientations. However, because NBLAST relies heavily on local segment geometry,
+it tends to misidentify dense-type neurons: their branches are packed within a
+restricted volume, causing unrelated cell types to share many locally similar
+segments and therefore appear spuriously similar under the NBLAST scoring
+scheme. MorphoMatcher instead leverages global structural information and learns
+cross-database invariances, including resolution differences and partial arbor
+missingness, enabling more stable performance across heterogeneous neuron types.
+This global representation, together with the normalization of branch hierarchy,
+reduces the influence of fine-scale variability and allows the model to remain
+effective even for densely arborized neurons. Rather than replacing NBLAST,
+MorphoMatcher offers a complementary tool that emphasizes robustness and
+modality-invariant morphology encoding.
+
+Despite its strong performance, MorphoMatcher is subject to several limitations.
+First, the warping process used to align hemibrain neurons into the FlyCircuit
+standard brain introduces spatial uncertainty on the order of tens of
+micrometers, which may impact position-based pre-screening. Second, although
+pseudo-labeling expands the training set and improves performance, the method
+still benefits from high-quality human-labeled data.
+% [TODO] 建議在此補第三項限制 (審稿人必問, 且 Results 已鋪陳):
+%        訓練與評估的切分以配對為單位, 同一顆神經可跨折出現; 1219 組測試配對中兩側都未
+%        出現於訓練集的僅 69 組。我們量到的洩漏影響不顯著, 但樣本數不足以證明模型能推廣
+%        到完全未見的神經。見 FINDINGS.md 第 9 節「限制與應該怎麼寫」。
+Future improvements may
+arise from two complementary directions. First, further advances in registration
+accuracy would reduce the spatial uncertainty introduced during the alignment of
+hemibrain neurons to the FlyCircuit standard brain, thereby improving the
+reliability of position-based pre-screening. Second, with the assistance of
+MorphoMatcher, human experts can more efficiently validate and label additional
+neuron types, gradually expanding the diversity of the training dataset. As the
+collection of annotated pairs grows and the model is retrained iteratively, its
+generalizability across heterogeneous neuron classes is expected to improve,
+ultimately extending the applicability of morphology-based matching to larger
+and more diverse connectomic datasets.
+
+Looking forward, MorphoMatcher provides a scalable foundation for cross-modal
+connectomic integration. The framework can be extended to other EM or LM
+datasets, applied as a feature extractor for downstream clustering or neuron
+type discovery, or combined with graph-based and transformer-based architectures
+for richer encoding of morphological structure. As more large-scale connectomes
+become available, tools like MorphoMatcher will be essential for unifying
+datasets across modalities, individuals, and imaging technologies. By enabling
+reliable correspondence between existing databases, this work lays the
+groundwork for more comprehensive comparative studies of neuronal types and
+circuit architectures across the \textit{Drosophila} brain.
+
+%=======================================================================
+\section{Conclusion}
+%=======================================================================
+
+MorphoMatcher is a machine-learning framework for identifying corresponding
+neurons across the FlyCircuit and hemibrain datasets using morphology alone. The
+model produces highly discriminative similarity scores, substantially reducing
+false-positive matches and maintaining strong performance across both sparse and
+dense morphological classes. Complementing rule-based methods such as NBLAST,
+MorphoMatcher offers a robust, modality-invariant representation that supports
+reliable cross-database integration of EM and LM data. As additional annotated
+neuron pairs become available, the framework can be iteratively refined and
+extended to broader connectomic datasets, further enhancing its value for
+large-scale, cross-modal neuroscience research.
+
+%=======================================================================
+%  References
+%=======================================================================
+% [TODO] 原稿註記：Using the Journal of Neuroscience format for the moment. May change later.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+%=======================================================================
+%  Supplementary Material
+%=======================================================================
+
+\clearpage
+\appendix
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\setcounter{section}{0}
+\renewcommand{\thesection}{S\arabic{section}}
+
+\section*{\centering Supplementary Material}
+
+\subsection*{Distribution of labeled data in different neuropils}
+
+To implement the machine learning approach to the task of morphology matching,
+our human experts have systematically labeled 1219 EM--FC pairs, which include
+453 neurons in the FlyCircuit database and 587 neurons in the hemibrain (FlyEM)
+database. These labeled neurons are considered to be the ``ground truth'' to
+train and test our machine learning model as described in the methodology (see
+also Fig.~\ref{fig:flowchart}). In Fig.~\ref{fig:S-neuropil}, we show the top 12
+neuropils that have the most innervating neurons in the FC and EM databases and
+the human-labeled ground-truth dataset.
+% 註：原稿此圖亦編為 "Fig. 5"，與主文 Fig. 5 重號，此處已改為 Fig. S1。
+
+%------------------------------- Fig. S1 ------------------------------
+\begin{figure}[htbp]
+  \centering
+  % \includegraphics[width=0.8\textwidth]{figs/figS1a_neuropil_FC.pdf}
+  \FigPlaceholder{0.8\textwidth}{5cm}{[Fig.~S1(a) --- neuropil distribution, FC database]}
+  \\[1em]
+  % \includegraphics[width=0.8\textwidth]{figs/figS1b_neuropil_EM.pdf}
+  \FigPlaceholder{0.8\textwidth}{5cm}{[Fig.~S1(b) --- neuropil distribution, EM database]}
+  \caption{The neuropil distribution of the ground truth, labeled by our human
+  experts for the identification of neuron images in FC and EM databases. For
+  the convenience of comparison, here we only show the top 12 neuropils with the
+  most number of innervating neurons in (a) FC database and in (b) EM database,
+  if a neuron has more than 10\% of the branch length innervating these
+  neuropils. In the insets, we show the number of neurons (pink histogram)
+  innervating in these neuropils.}
+  \label{fig:S-neuropil}
+\end{figure}
+
+\subsection*{S2. Identify position and moment of inertia comparison}
+
+In order to compare the morphologic features of each neuron, we use skeleton
+data (SWC file) and neglect the width information of neuron branches. We then
+transformed neuron structures into segments of half micrometer. By taking each
+segment as a massive point of a unit mass at its center, we could then calculate
+the center of mass (C.M.) position and the moment of inertia ($I$) through the
+standard rigid-body formulae.
+% [TODO] 原稿此句未寫完（"through the standard ridgit "），此處暫補為
+%        "standard rigid-body formulae"，請確認用詞並視需要補上公式。
+
+This position cannot be precisely identified, because the position of neurons
+can be shifted or misplaced for a few micrometers during the warping process.
+Besides, neurons of large difference in their morphology could be also excluded
+easily according to the distribution of their cluster.
+
+\end{document}

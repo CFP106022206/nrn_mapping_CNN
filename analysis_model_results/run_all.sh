@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # 重現 D1 (projection) vs D2 (dense) 的全部量化分析。
-#   bash analysis_dense_vs_projection/run_all.sh
-# 每一步都寫進 analysis_dense_vs_projection/results/, 且可重複執行。
+#   bash analysis_model_results/run_all.sh
+# 每一步都寫進 analysis_model_results/results/, 且可重複執行。
 #
 # 前置: NBLAST 基準分數需要 navis, 裝在獨立的 conda 環境:
 #   conda create -n nblast python=3.10 -y && conda run -n nblast pip install navis
-#   conda run -n nblast python analysis_dense_vs_projection/run_nblast_official.py --emit-figure-csv
+#   conda run -n nblast python analysis_model_results/run_nblast_official.py --emit-figure-csv
 # 該步驟只需跑一次, 輸出 results/nblast_official.csv (s08/s09/s10 依賴它)。
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -27,6 +27,7 @@ python3 s08_expert_and_nblast.py       # 專家信心 + 官方 NBLAST 可分離�
 python3 s09_soma_and_strahler.py       # soma 距離、Strahler 稀釋、cable 分箱
 python3 s10_em_sponge_effect.py        # hemibrain 海綿效應 (NBLAST 失效的主因)
 python3 s12_cnn_sponge_effect.py       # MorphoMatcher 並排: 海綿效應是否為 NBLAST 特有
+python3 s13_leakage_check.py           # 身分洩漏: 管道有多大, 模型有沒有依賴它
 python3 s11_figures.py                 # 論文用圖 fig1-fig5
 
 echo

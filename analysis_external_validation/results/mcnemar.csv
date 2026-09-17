@@ -1,0 +1,5 @@
+scope,n_fc,finetune_only_correct,annotator_only_correct,both_correct,p_value,better,significant_p05
+all,1225,111,223,159,8.77e-10,annotator,True
+ALPN,138,5,4,0,1,finetune,False
+KC,846,84,203,69,1.57e-12,annotator,True
+LC,241,22,16,90,0.418,finetune,False

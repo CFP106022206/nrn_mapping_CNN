@@ -313,8 +313,8 @@ def build_figure(pairs, overlays, cmap=None, scalebar_um=None, px_per_um=None):
                  ha='center', va='bottom', fontsize=7.5,
                  fontweight='bold', color=color)
 
-    group_title(0, 2, 'FlyCircuit (LM)', NEURON_FC)
-    group_title(3, 5, 'hemibrain (EM)', NEURON_EM)
+    group_title(0, 2, 'FlyCircuit (LM)', 'black')
+    group_title(3, 5, 'hemibrain (EM)', 'black')
     bo = fig.axes[6].get_position()
     fig.text(bo.x0 + bo.width / 2, top.y1 + 0.062,
              'Overlay in standard brain',

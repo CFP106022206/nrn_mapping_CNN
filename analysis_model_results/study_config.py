@@ -1,7 +1,7 @@
 """dense / projection 兩組神經量化研究的共用設定。
 
 所有路徑都相對於 repository 根目錄解析, 因此 pipeline 可以從任何位置執行:
-    python analysis_dense_vs_projection/s01_build_neuron_lists.py
+    python analysis_model_results/s01_build_neuron_lists.py
 """
 from __future__ import annotations
 

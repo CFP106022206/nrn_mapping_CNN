@@ -1,6 +1,7 @@
-# D1 (projection) vs D2 (dense) 的量化分析
+# 模型結果分析
 
-論文中兩個 sub dataset 的定義依據, 以及 NBLAST 在 D2 上表現不佳的機制。
+從各個角度檢驗模型訓練結果: 兩個 sub dataset (D1 / D2) 的定義依據、NBLAST 在 D2 上表現不佳的機制、
+MorphoMatcher 與 NBLAST 的並排比較, 以及交叉驗證的身分洩漏檢驗。
 所有程式只讀 repository 內既有的資料, 輸出寫進 `results/`。
 
 ## 執行
@@ -8,10 +9,10 @@
 ```bash
 # 一次性: 建立 NBLAST 環境並算出基準分數
 conda create -n nblast python=3.10 -y && conda run -n nblast pip install navis
-conda run -n nblast python analysis_dense_vs_projection/run_nblast_official.py --emit-figure-csv
+conda run -n nblast python analysis_model_results/run_nblast_official.py --emit-figure-csv
 
 # 主流程 (約 12 分鐘)
-bash analysis_dense_vs_projection/run_all.sh
+bash analysis_model_results/run_all.sh
 ```
 
 ## 輸入
@@ -42,8 +43,9 @@ D1 與 D2 有 3 個 FC、14 個 hemibrain 神經重疊; 所有組間比較都只
 | `s07_selection_rule.py` | `selection_rule_*.csv` — 交叉驗證的納入條件 |
 | `s08_expert_and_nblast.py` | `confidence_by_group.csv`, `nblast_separability.csv` |
 | `s09_soma_and_strahler.py` | `soma_*.csv`, `nblast_cable_bins.csv` |
-| `s10_em_sponge_effect.py` | `sponge_*.csv` — 海綿效應的九項驗證 |
+| `s10_em_sponge_effect.py` | `sponge_*.csv` — 海綿效應的十項驗證（第 (10) 項為關鍵實驗「有效密度」） |
 | `s12_cnn_sponge_effect.py` | `cnn_*.csv` — MorphoMatcher 與 NBLAST 並排: 海綿效應是否為 NBLAST 特有。需 repository 根目錄的 `result/test_label_FineTune_miniLR_D1-D6_*.csv` |
+| `s13_leakage_check.py` | `leakage_*.csv` — 身分洩漏檢驗: 管道大小、捷徑上限, 以及四項關鍵證據（分層 AUC、反向案例、預訓練管道曝光與分層、annotator 記憶外溢）。需 `train_test_split/`、`result/test_label_*`、`preTrain_label/` |
 | `s11_figures.py` | `figures/fig1..fig5` (PDF 向量 + PNG 300 dpi) |
 
 ## 方法上必須注意的事

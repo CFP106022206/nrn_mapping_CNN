@@ -26,6 +26,7 @@ import keras
 keras.config.enable_unsafe_deserialization() # 关闭keras safe mode
 
 from util import load_pkl
+import model as model_lib
 from model import MVCNN_Siamese
 from swc_util import make_numpy_from_standard_views
 from typing import Dict, Tuple, List
@@ -62,6 +63,11 @@ class Config:
 
     scheduler_exp: float = 0.0  # 0 means off
     min_lr: float = 1e-10
+
+    # 用 model.py 裡哪個函數建模。預設 "MVCNN_Siamese" 維持舊行為，相容現有權重；
+    # ⚠️ 它有視角切片錯誤（三個視角都讀第 3 張圖），新訓練的模型請用
+    # "MVCNN_Siamese_3View" 並換一個 model_name，不要覆蓋舊權重。見 model.py 的說明。
+    model_builder: str = "MVCNN_Siamese"
 
 
 def set_seed(seed: int) -> None:
@@ -235,7 +241,9 @@ def main(cfg: Config) -> None:
 
     # model
     _, H, W = resolutions
-    model = MVCNN_Siamese((H, W, resolutions[0]))
+    build_model = getattr(model_lib, cfg.model_builder)
+    model = build_model((H, W, resolutions[0]))
+    print(f"model_builder={cfg.model_builder}")
 
     if cfg.use_pretrain_model:
         pretrain_path = Path(cfg.pretrain_model)
@@ -276,7 +284,7 @@ def main(cfg: Config) -> None:
         pickle.dump(history.history, f)
 
     # reload best and eval
-    best = MVCNN_Siamese((H, W, resolutions[0]))  # 重新建同结构
+    best = build_model((H, W, resolutions[0]))  # 重新建同结构
     # NOTE: We only call `predict()` below; compiling is unnecessary and can
     # trigger optimizer-state loading warnings when `.weights.h5` contains saved
     # optimizer variables from a different Keras/optimizer implementation.

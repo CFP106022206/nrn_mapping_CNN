@@ -1,3 +1,6 @@
+# [legacy] 舊 pipeline。現行流程是 Data_process_Train.py / data_process_fineTune.py,
+# 分割檔一律取自 ./train_test_split/ (由 make_cross_val_set.py 產生)。
+# 本檔原本讀 ./data/ 底下的舊版分割, 該版本已於 2026-09-12 刪除, 路徑已改指向 train_test_split。
 '''
 Data_process_Train.py 的使用信心度版本
 
@@ -62,8 +65,8 @@ tf.random.set_seed(seed)
 save_model_name  = 'Annotator_D1-D6_' +str(num_splits)
 
 # load train, test
-label_table_train = pd.read_csv('./data/train_split_' + str(num_splits) +'_D1-D6.csv')
-label_table_test = pd.read_csv('./data/test_split_' + str(num_splits) +'_D1-D6.csv')
+label_table_train = pd.read_csv('./train_test_split/train_split_' + str(num_splits) +'_D1-D6.csv')
+label_table_test = pd.read_csv('./train_test_split/test_split_' + str(num_splits) +'_D1-D6.csv')
 
 
 # turn to numpy array
