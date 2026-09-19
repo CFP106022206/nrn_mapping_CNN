@@ -106,6 +106,14 @@
 專家標註只用在訓練的 BCE 項與**守門指標**（專家測試集 AUC），後者才是個體層級。
 所以「rank-1 56 %」讀成「排第一的 EM **型別對**」，不是「就是那一顆」。
 
+⛔ **2026-09-19：型別標籤本身的可靠性已被推翻，本檔的所有型別相關結果需重新檢視。**
+FC 端的 VFB 細分類個體歸屬標記為 `Unattributed`，且 90.9% 等於該 FC 的 NBlast
+最高分鄰居的型別——也就是說，用它評判本專案的 CNN 實質上是拿 CNN 跟 NBlast 比。
+受影響最大的是 `type_label == 0.0` 當負例這件事：全部 `0.0` 裡 68% 來自
+`same_family`（同大類、不同亞型），而那一層正是最依賴 NBlast 推導的。
+只有 `different_family` 的 `0.0` 仍算硬證據。
+詳見 `analysis_external_validation/README.md` 頂部警示。
+
 耗時（實測推算，RTX PRO 5000）
 ----
 | | 凍結 trunk | `--tune-trunk` |
@@ -444,6 +452,9 @@ def build_index(df: pd.DataFrame, train_fc: list[str], cfg: Config) -> dict:
               f"移除 {len(ho):,} 顆 EM、{n0 - len(sub):,} 對（訓練側）")
     pos = {fc: g[g.type_label == 1.0].em_id.to_numpy()
            for fc, g in sub.groupby("fc_id", observed=True)}
+    # ⛔ type_label == 0.0 的 68% 來自 same_family（同大類不同亞型），而 FC 側的
+    #    細分類是 NBlast 推導的，不是獨立證據。要嚴謹的話應改成只取
+    #    relation == "different_family"。見本檔頂部說明。
     neg = {fc: g[g.type_label == 0.0].em_id.to_numpy()
            for fc, g in sub.groupby("fc_id", observed=True)}
     globally_good = set()
@@ -604,8 +615,11 @@ def retrieval_report(ev: pd.DataFrame, keys: dict[str, str],
 
 def main(cfg: Config) -> None:
     import tensorflow as tf
+    from gpu_config import enable_gpu_memory_growth
+
+    enable_gpu_memory_growth()
     from data_process_fineTune import make_numpy_from_standard_views, set_seed
-    from model import MVCNN_Siamese, MVCNN_Siamese_3View
+    from model import MVCNN_Siamese, MVCNN_Siamese_3View, load_3view_weights
 
     set_seed(cfg.seed)
     rng = np.random.default_rng(cfg.seed)
@@ -1058,8 +1072,8 @@ def main(cfg: Config) -> None:
     cmp = None
     cmp_path = cfg.compare_weights_tpl.format(fold=cfg.fold) if cfg.compare_weights_tpl else ""
     if cmp_path and Path(cmp_path).exists():
-        cmp = MVCNN_Siamese_3View(cfg.input_size)
-        cmp.load_weights(cmp_path)
+        # 自動判斷對照權重是共用分支 BN 的新版還是舊版結構
+        cmp, _share = load_3view_weights(cmp_path, cfg.input_size)
         print(f"[rank] 對照模型 {Path(cmp_path).name}：為 {len(ev_pairs):,} 對打分…", flush=True)
         ev["compare"] = score_pairs(ev_pairs, model=cmp)
     elif cmp_path:

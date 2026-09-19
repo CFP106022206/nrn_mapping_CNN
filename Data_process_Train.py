@@ -25,8 +25,14 @@ from sklearn.metrics import confusion_matrix, f1_score
 import keras
 keras.config.enable_unsafe_deserialization() # 关闭keras safe mode
 
+
+from gpu_config import enable_gpu_memory_growth
+
+enable_gpu_memory_growth()
+
 from util import load_pkl
 import model as model_lib
+import view_geometry
 from model import MVCNN_Siamese
 from swc_util import make_numpy_from_standard_views
 from typing import Dict, Tuple, List
@@ -68,6 +74,28 @@ class Config:
     # ⚠️ 它有視角切片錯誤（三個視角都讀第 3 張圖），新訓練的模型請用
     # "MVCNN_Siamese_3View" 並換一個 model_name，不要覆蓋舊權重。見 model.py 的說明。
     model_builder: str = "MVCNN_Siamese"
+    # view pooling 方式，傳給建模函數。"max" = 原設計（跨視角取最大值，
+    # 視角身分被丟棄）；"concat" = 不聚合，三個視角的特徵並排保留，
+    # head 輸入維度變三倍。
+    pool_type: str = "max"
+
+    # augmentation 的幾何模式。
+    # "legacy" = 原本的做法：對三個 channel 施加同一個 2D 旋轉/翻轉。
+    #   ⚠️ 三張視圖共用座標軸，所以這在幾何上不成立——5 個操作裡只有 rot0（恆等）
+    #   和 rot180（其實是點反演）對應得到真實 3D 變換，rot90/rot270/flip 產生的
+    #   三視圖組合任何 3D 物體都生不出來。單視角模型看不到這個問題（它只讀一張圖），
+    #   三視角模型才會被影響。
+    # "physical" = 只用真實可達的 3D 變換，拆成「視角重排 + 各視角自己的 2D 操作」，
+    #   對應表由 view_geometry.py 數值反解並驗證。樣本數與 legacy 相同（每對 10 筆），
+    #   所以兩者可以直接對照。
+    aug_mode: str = "legacy"
+
+    # 額外傳給建模函數的參數，例如 (("share_branch_norm", True),)。
+    # 用 tuple of tuple 而不是 dict，因為 Config 是 frozen dataclass 需要可雜湊。
+    model_kwargs: tuple = ()
+
+    # 訓練集取樣比例（資料縮放曲線用）。只影響訓練集，val / test 不變。
+    train_frac: float = 1.0
 
 
 def set_seed(seed: int) -> None:
@@ -84,7 +112,36 @@ def load_splits(cfg: Config) -> tuple[pd.DataFrame, pd.DataFrame]:
     return pd.read_csv(train_csv), pd.read_csv(test_csv)
 
 
-def make_tf_dataset(x, y, batch_size, training, seed):
+# --- 幾何上正確的 augmentation（aug_mode="physical"）---------------------------
+# 繞軸 0 自旋一圈（C4）+ 點反演，結構與 legacy 的「4 個旋轉 + 1 個反射」相同、
+# ⚠️ 原註解寫「最長主軸」有兩個錯：軸 0 其實延伸最短；而且 CNN 的視圖是標準腦座標、
+#    不是主軸座標系。見 MVCNN_VIEW_BUG_INVESTIGATION.md §0a。新訓練請用 data_process_train_v2.py。
+# 樣本數也相同，差別只在幾何是否成立。其中「點反演」就是 legacy 的 rot180
+# （對三個 channel 都轉 180° 恰好等於 -x,-y,-z），所以兩組只差 3 個操作。
+_PHYSICAL_NAMES = ("+x,+y,+z", "+x,-z,+y", "+x,-y,-z", "+x,+z,-y", "-x,-y,-z")
+PHYSICAL_SPECS = tuple(view_geometry.TABLE[n][1] for n in _PHYSICAL_NAMES)
+
+
+def apply_view_spec(img, spec):
+    """spec 是三個 (來源視角, rot90 次數, 是否左右翻)，對應一個真實 3D 變換。
+
+    順序必須和 view_geometry._d4 一致：先翻再轉。
+    """
+    chans = []
+    for j, k, flip in spec:
+        c = img[..., j:j + 1]
+        if flip:
+            c = tf.image.flip_left_right(c)
+        if k:
+            c = tf.image.rot90(c, k)
+        chans.append(c)
+    return tf.concat(chans, axis=-1)
+
+
+_LEAK_REPRO = os.environ.get("NRN_LEAK_REPRO") == "1"
+
+
+def make_tf_dataset(x, y, batch_size, training, seed, aug_mode="legacy"):
     """
     x shape: (N,2,H,W,3)
     model input:
@@ -116,22 +173,29 @@ def make_tf_dataset(x, y, batch_size, training, seed):
             else:
                 fc0, em0 = fc, em
             
-            # Rotation
-            for rot in range(4):
+            if aug_mode == "physical":
+                # 幾何上真實可達的 5 個變換，每個拆成三個視角各自的 (來源, rot90 次數, 翻轉)
+                for spec in PHYSICAL_SPECS:
+                    fc_list.append(apply_view_spec(fc0, spec))
+                    em_list.append(apply_view_spec(em0, spec))
+                    label_list.append(label)
+            else:
+                # Rotation
+                for rot in range(4):
 
-                fc_r = tf.image.rot90(fc0, rot)
-                em_r = tf.image.rot90(em0, rot)
+                    fc_r = tf.image.rot90(fc0, rot)
+                    em_r = tf.image.rot90(em0, rot)
 
-                fc_list.append(fc_r)
-                em_list.append(em_r)
+                    fc_list.append(fc_r)
+                    em_list.append(em_r)
+                    label_list.append(label)
+
+                # Flip
+                fc_f = tf.image.flip_left_right(fc0)
+                em_f = tf.image.flip_left_right(em0)
+                fc_list.append(fc_f)
+                em_list.append(em_f)
                 label_list.append(label)
-            
-            # Flip
-            fc_f = tf.image.flip_left_right(fc0)
-            em_f = tf.image.flip_left_right(em0)
-            fc_list.append(fc_f)
-            em_list.append(em_f)
-            label_list.append(label)
     
         fc_stack = tf.stack(fc_list)
         em_stack = tf.stack(em_list)
@@ -143,6 +207,14 @@ def make_tf_dataset(x, y, batch_size, training, seed):
 
     if training:
         ds = ds.flat_map(augment)
+        # 2026-09-19 修正：擴增後必須再洗一次牌。
+        # 原本只在「對」的層級洗牌，batch 邊界與 flat_map 邊界互相對齊，
+        # 每批只混到 1-2 對、41.2% 的批次標籤全同（正確洗牌應為 0.0%），
+        # BatchNorm 的 batch 統計量因此洩漏標籤。
+        # 見 MVCNN_VIEW_BUG_INVESTIGATION.md §0b。
+        # NRN_LEAK_REPRO=1 可重現修正前的行為，只用來量這個 bug 的代價。
+        if not _LEAK_REPRO:
+            ds = ds.shuffle(2048, seed=seed + 1, reshuffle_each_iteration=True)
     else:
         ds = ds.map(
             lambda pair, label: ({"FC": pair[0], "EM": pair[1]}, label),
@@ -166,6 +238,32 @@ def make_tf_dataset(x, y, batch_size, training, seed):
     ds = ds.prefetch(tf.data.AUTOTUNE)
 
     return ds
+
+class BinarizedAUC(tf.keras.metrics.AUC):
+    """把 soft label 依 >= 0.5 二值化再算 AUC。
+
+    Keras 原生 AUC 會把 y_true 當成權重累加，soft label 下算出來的東西和
+    評估時用的 `roc_auc_score((label >= 0.5), pred)` 定義不同，不能拿來選模型。
+    """
+
+    def __init__(self, *args, num_thresholds=1000, **kw):
+        # 預設 200 個閾值的離散誤差約 2.7e-4，比 165 個驗證樣本的 AUC 粒度
+        # （1/(n_pos*n_neg) 約 1.5e-4）還粗。調到 1000 可對齊 sklearn 到 1e-4 以內。
+        super().__init__(*args, num_thresholds=num_thresholds, **kw)
+
+    def update_state(self, y_true, y_pred, sample_weight=None):
+        return super().update_state(
+            tf.cast(y_true >= 0.5, y_pred.dtype), y_pred, sample_weight)
+
+
+class BinarizedAccuracy(tf.keras.metrics.BinaryAccuracy):
+    """同上。原本直接用 BinaryAccuracy 是壞的——它拿 y_pred>0.5 去比未二值化的
+    soft label，所以 log 裡會出現 0.41 這種看不懂的數字。"""
+
+    def update_state(self, y_true, y_pred, sample_weight=None):
+        return super().update_state(
+            tf.cast(y_true >= 0.5, y_pred.dtype), y_pred, sample_weight)
+
 
 def scheduler_factory(cfg: Config):
     def scheduler(epoch, lr):
@@ -232,18 +330,31 @@ def main(cfg: Config) -> None:
     y_val = pair_val["label"].to_numpy(dtype=np.float32)
     y_test = pair_test["label"].to_numpy(dtype=np.float32)
 
+    # 資料縮放曲線用：只縮小訓練集，驗證集與測試集維持原大小。
+    # 若連驗證集一起縮，各資料量下的 checkpoint 選擇噪音會不同，曲線會被污染。
+    # 依二值化標籤分層，避免小比例時正負比例偏掉。
+    if cfg.train_frac < 1.0:
+        idx, _ = train_test_split(
+            np.arange(len(y_train)), train_size=cfg.train_frac,
+            random_state=cfg.seed, stratify=(y_train >= 0.5).astype(int))
+        x_train, y_train = x_train[idx], y_train[idx]
+        pair_train = pair_train.iloc[idx]
+        print(f"train_frac={cfg.train_frac}: 訓練集縮到 {len(y_train)} 對")
+
     print(f"Train {len(x_train)} | Val {len(x_val)} | Test {len(x_test)}")
 
     # build datasets
-    ds_train = make_tf_dataset(x_train, y_train, cfg.batch_size, training=True, seed=cfg.seed)
+    ds_train = make_tf_dataset(x_train, y_train, cfg.batch_size, training=True, seed=cfg.seed,
+                               aug_mode=cfg.aug_mode)
     ds_val = make_tf_dataset(x_val, y_val, cfg.batch_size, training=False, seed=cfg.seed)
     ds_test = make_tf_dataset(x_test, y_test, cfg.batch_size, training=False, seed=cfg.seed)
 
     # model
     _, H, W = resolutions
-    build_model = getattr(model_lib, cfg.model_builder)
+    _fn = getattr(model_lib, cfg.model_builder)
+    build_model = lambda shape: _fn(shape, pool_type=cfg.pool_type, **dict(cfg.model_kwargs))
     model = build_model((H, W, resolutions[0]))
-    print(f"model_builder={cfg.model_builder}")
+    print(f"model_builder={cfg.model_builder} pool_type={cfg.pool_type} aug_mode={cfg.aug_mode} model_kwargs={dict(cfg.model_kwargs)}")
 
     if cfg.use_pretrain_model:
         pretrain_path = Path(cfg.pretrain_model)
@@ -256,7 +367,7 @@ def main(cfg: Config) -> None:
     model.compile(
         optimizer=tf.keras.optimizers.AdamW(learning_rate=cfg.initial_lr),
         loss=tf.keras.losses.BinaryFocalCrossentropy(gamma=2.0, from_logits=False),
-        metrics=[tf.keras.metrics.BinaryAccuracy(name="bi_acc")],
+        metrics=[BinarizedAccuracy(name="bi_acc"), BinarizedAUC(name="auc")],
     )
 
     callbacks = [
@@ -267,7 +378,19 @@ def main(cfg: Config) -> None:
             save_weights_only=True,
             mode="min",
             verbose=1,
-        )
+        ),
+        # 同一次訓練另外存一份「val AUC 最佳」的權重。訓練軌跡完全相同，
+        # 差別只在挑哪個 epoch，所以這是選擇準則的完美對照，且不花額外 GPU。
+        # 預設的權重檔（上面那個）維持 val_loss 準則不動，既有結果仍可比。
+        # 背景：val_loss 對三視角模型不追蹤守門 AUC，見 MODEL_PIPELINE_HANDOVER.md §13.0c。
+        tf.keras.callbacks.ModelCheckpoint(
+            filepath=str(Path(cfg.save_model_dir) / f"{save_model_name}_bestauc.weights.h5"),
+            monitor="val_auc",
+            save_best_only=True,
+            save_weights_only=True,
+            mode="max",
+            verbose=0,
+        ),
     ]
     if cfg.scheduler_exp > 0:
         callbacks.append(tf.keras.callbacks.LearningRateScheduler(scheduler_factory(cfg), verbose=1))

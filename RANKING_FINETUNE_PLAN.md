@@ -568,6 +568,9 @@ def train_step(self, data):
 > 5. 再做 `n_correct_in_pool` 分層的機制驗證。
 
 
+> ⚠️ **2026-09-19 附註**：此處把型別 `0.0` 當成可靠負例。經查證 FC 側的細分類是 NBlast 推導的（見 `analysis_external_validation/README.md` 頂部警示）。本段結論（專家標註與型別判定幾乎無交集、無硬衝突）不受影響——交集太小，且那 22 對專家分數全為 0 與型別判定同向——但引用 `0.0` 作為硬證據時要加註。
+
+
 實作在 `data_process_rank.py`（架構與參數見 `MODEL_PIPELINE_HANDOVER.md` §14）。
 以下全部是 **fold 0、trunk 凍結、`--head-init scratch`**，評估集 383 顆 FC。
 

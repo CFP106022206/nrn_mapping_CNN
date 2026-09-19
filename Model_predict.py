@@ -12,6 +12,10 @@ import pandas as pd
 import keras
 import tensorflow as tf
 
+from gpu_config import enable_gpu_memory_growth
+
+enable_gpu_memory_growth()
+
 from model import MVCNN_Siamese
 from swc_util import _load_views_from_npz, _pad_to_same_size, _resize_to_50
 

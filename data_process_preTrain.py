@@ -97,6 +97,11 @@ def make_tf_dataset(x, y, batch_size, training, seed):
 
     if training:
         ds = ds.flat_map(augment)
+        # 2026-09-19 修正：擴增後必須再洗一次牌。原本只在「對」的層級洗牌，
+        # batch 邊界與 flat_map 邊界互相對齊，同一對的擴增擠在同一批，
+        # 批內標籤全同會讓 BatchNorm 的 batch 統計量洩漏標籤。
+        # 見 MVCNN_VIEW_BUG_INVESTIGATION.md §0b。
+        ds = ds.shuffle(2048, seed=seed + 1, reshuffle_each_iteration=True)
     else:
         ds = ds.map(
             lambda pair, label: ({"FC": pair[0], "EM": pair[1]}, label),
